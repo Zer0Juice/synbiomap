@@ -1,0 +1,24 @@
+---
+title: "Slides"
+---
+
+The presentation slides are available as a PDF download.
+
+[Download Slides (PDF)](assets/slides.pdf){.btn .btn-primary}
+
+::: {.callout-note}
+Slides are generated from `slides/main.tex` using LaTeX Beamer.
+Run `pdflatex slides/main.tex` to compile.
+:::
+
+## Slide outline
+
+1. Motivation — why study synthetic biology innovation trajectories?
+2. Research question and hypotheses
+3. Data — papers, patents, iGEM projects, and parts
+4. Methods — embeddings, UMAP, HDBSCAN
+5. Results — semantic clustering across artifact types
+6. Case study — carbon capture in synthetic biology
+7. City-level patterns
+8. Discussion and limitations
+9. Implications

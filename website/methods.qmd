@@ -1,0 +1,88 @@
+---
+title: "Methods"
+---
+
+This page describes how the corpus was built, how artifacts were embedded and
+clustered, and how the carbon-capture case study was identified.
+
+## Data sources
+
+| Artifact type | Source | Access method |
+|---------------|--------|---------------|
+| Academic papers | [OpenAlex](https://openalex.org) | Free REST API |
+| Patents | [Lens.org](https://www.lens.org) | Free API (token required) |
+| iGEM projects | iGEM community data | CSV download |
+| iGEM parts | iGEM Parts Registry | CSV download / API |
+
+All artifacts are normalized to a **shared schema** before processing.
+See `src/utils/schema.py` for field definitions.
+
+## Corpus construction
+
+Papers and patents were retrieved by searching for synthetic biology keywords
+in titles and abstracts. The seed keywords were:
+
+- `synthetic biology`
+- `metabolic engineering`
+- `genetic engineering`
+
+Citation expansion was applied to papers: we also retrieved works that cite
+highly-cited seed papers, to capture related work that uses different
+terminology.
+
+The keyword list and year range can be adjusted in `config/settings.yaml`.
+
+## Case study identification
+
+Artifacts were tagged as belonging to the **carbon capture case study** if
+their title or abstract contained at least one of these keywords:
+
+- carbon capture, carbon sequestration, CO2 fixation,
+  carbon dioxide reduction, carbon neutral, biofuel,
+  carbon cycle, autotrophic, RuBisCO, Calvin cycle, carboxylase
+
+A **confidence score** (0–1) measures the fraction of keywords matched.
+Any keyword match sets `case_study_flag = True`.
+
+## Embeddings
+
+Each artifact's title and abstract were concatenated and encoded with a
+pre-trained sentence-transformer model
+([`all-MiniLM-L6-v2`](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)).
+This model encodes text into a 384-dimensional vector that captures
+semantic meaning.
+
+> Reimers & Gurevych (2019). *Sentence-BERT: Sentence Embeddings using
+> Siamese BERT-Networks.* EMNLP 2019. [arXiv:1908.10084](https://arxiv.org/abs/1908.10084)
+
+## Dimensionality reduction (UMAP)
+
+Embeddings were projected to 2D with **UMAP** for visualization.
+UMAP was chosen over t-SNE because it better preserves global structure
+alongside local neighborhoods.
+
+> McInnes et al. (2018). *UMAP: Uniform Manifold Approximation and
+> Projection for Dimension Reduction.* [arXiv:1802.03426](https://arxiv.org/abs/1802.03426)
+
+Key parameters (adjustable in `config/settings.yaml`):
+
+| Parameter | Value | Meaning |
+|-----------|-------|---------|
+| `n_neighbors` | 15 | Local neighborhood size |
+| `min_dist` | 0.1 | Minimum spread in projected space |
+| `metric` | cosine | Distance metric for embeddings |
+
+## Clustering (HDBSCAN)
+
+Clusters were identified with **HDBSCAN**, a density-based algorithm that
+does not require specifying the number of clusters in advance.
+Points that do not belong to any cluster are labeled as noise (label = -1).
+
+> Campello et al. (2013). *Density-Based Clustering Based on Hierarchical
+> Density Estimates.* ECML PKDD 2013.
+
+## Geocoding
+
+Institution locations from OpenAlex and Lens.org were converted to
+latitude/longitude using Nominatim (OpenStreetMap), with results cached
+locally. Analysis is at the **city level**.

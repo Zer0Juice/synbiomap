@@ -1,0 +1,35 @@
+---
+title: "Paper"
+---
+
+The manuscript is available as a PDF download and is also rendered inline below.
+
+::: {.callout-note}
+The manuscript is a work in progress. This page will be updated as the paper develops.
+:::
+
+[Download PDF](assets/manuscript.pdf){.btn .btn-primary}
+
+## Abstract
+
+*(To be written after initial results are available.)*
+
+## Introduction
+
+*(See [Methods](methods.qmd) for pipeline details.)*
+
+## Results
+
+*(See [Results](results.qmd).)*
+
+## Case Study: Carbon Capture
+
+*(See [Case Study: Carbon Capture](case-study.qmd).)*
+
+## Discussion
+
+*(To be written.)*
+
+## References
+
+*(Managed in `manuscript/references.bib`.)*

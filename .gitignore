@@ -1,0 +1,71 @@
+# Environment and secrets
+.env
+*.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data: raw downloads are not committed (too large / re-fetchable)
+data/raw/
+data/embeddings/
+data/geo/geocoding_cache.json
+
+# Keep processed CSVs and small exports
+!data/processed/.gitkeep
+!data/embeddings/.gitkeep
+!data/geo/.gitkeep
+
+# Quarto build artifacts
+website/_site/
+website/.quarto/
+/_site/
+/.quarto/
+
+# LaTeX build artifacts
+manuscript/*.aux
+manuscript/*.log
+manuscript/*.out
+manuscript/*.bbl
+manuscript/*.blg
+manuscript/*.fls
+manuscript/*.fdb_latexmk
+manuscript/*.synctex.gz
+manuscript/*.pdf
+slides/*.aux
+slides/*.log
+slides/*.out
+slides/*.bbl
+slides/*.blg
+slides/*.fls
+slides/*.fdb_latexmk
+slides/*.synctex.gz
+slides/*.pdf
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Obsidian vault config
+.obsidian/
+
+# Claude Code local settings (personal, not for sharing)
+.claude/settings.local.json
+
+# Editor
+.vscode/
+*.swp
+*.swo

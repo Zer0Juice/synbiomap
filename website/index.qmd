@@ -1,0 +1,48 @@
+---
+title: "Patents, Papers, Parts & Planet"
+subtitle: "Do student projects, academic research, and patents in synthetic biology form local innovation trajectories?"
+---
+
+## What this project is about
+
+This project asks whether student research projects, academic publications, and patents
+within synthetic biology cluster together meaningfully — not just topically, but
+also geographically.
+
+The guiding idea is that innovation in a technical field may follow a local path:
+
+1. **Student projects** (iGEM teams) introduce early ideas
+2. **Academic papers** develop and refine them
+3. **Patents** reflect downstream application and translation
+
+We test whether these three artifact types occupy **related regions of semantic
+space**, share **thematic clusters**, and show **plausible city-level temporal
+continuity** in the same subfield.
+
+We do not claim to show causation. The language we use is:
+semantic relatedness, association, cluster overlap, plausible temporal sequence,
+and local innovation trajectory.
+
+## Primary case study: carbon capture in synthetic biology
+
+The main worked example throughout this project is **carbon capture in synthetic
+biology** — engineering microorganisms to fix CO₂ or produce carbon-neutral fuels.
+This subfield is large enough to find examples across all three artifact types,
+and is directly relevant to planetary sustainability.
+
+::: {.callout-note}
+All visualizations and results pages support filtering to the carbon-capture
+case study. Look for the **"Carbon Capture"** toggle.
+:::
+
+## Navigate the site
+
+| Page | What you will find |
+|------|-------------------|
+| [Paper](paper.qmd) | The full manuscript |
+| [Methods](methods.qmd) | How we built the corpus, embeddings, and clusters |
+| [Results](results.qmd) | Main findings across all artifact types |
+| [Case Study: Carbon Capture](case-study.qmd) | Deep dive into the carbon capture subfield |
+| [Explorer](explorer.qmd) | Interactive semantic space and geographic views |
+| [Reproducibility](reproducibility.qmd) | How to re-run the pipeline |
+| [Slides](slides.qmd) | Presentation slides |

@@ -1,0 +1,36 @@
+---
+title: "Results"
+---
+
+::: {.callout-note}
+Results will be filled in once the pipeline has been run on the full corpus.
+This page is a placeholder for the main findings.
+:::
+
+## Corpus overview
+
+| Artifact type | Count | Year range | Cities covered |
+|---------------|-------|------------|----------------|
+| Papers | — | — | — |
+| Patents | — | — | — |
+| iGEM projects | — | — | — |
+| iGEM parts | — | — | — |
+
+## Semantic space
+
+A shared 2D projection of all artifact types.
+See the [Explorer](explorer.qmd) for the interactive version.
+
+## Clustering
+
+Description of the main clusters found across artifact types.
+
+## City-level patterns
+
+Which cities show the highest concentration of synthetic biology activity?
+Do they show cross-type thematic overlap?
+
+## Carbon capture subset
+
+Summary statistics for the carbon-capture case study slice.
+Full analysis on the [Case Study: Carbon Capture](case-study.qmd) page.

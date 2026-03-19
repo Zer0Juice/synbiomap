@@ -1,0 +1,39 @@
+# Core data science
+pandas>=2.0
+numpy>=1.26
+scipy>=1.11
+
+# HTTP and API clients
+requests>=2.31
+httpx>=0.25
+
+# Embedding models
+# sentence-transformers uses HuggingFace models locally (no API key needed)
+sentence-transformers>=2.6
+torch>=2.0
+
+# Dimensionality reduction and clustering
+umap-learn>=0.5
+hdbscan>=0.8
+
+# Geocoding
+geopy>=2.4
+
+# Environment variable loading
+python-dotenv>=1.0
+
+# Quarto-compatible notebook execution
+nbformat>=5.9
+nbconvert>=7.0
+jupyter>=1.0
+ipykernel>=6.0
+
+# Interactive visualization (exports static HTML for Quarto/GitHub Pages)
+plotly>=5.18
+altair>=5.0
+
+# Progress bars in notebooks
+tqdm>=4.66
+
+# Optional: speed up OpenAlex paging
+pyalex>=0.13

@@ -1,0 +1,47 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "Patents, Papers, Parts & Planet"
+  description: "Tracing synthetic biology innovation from student projects to patents"
+  site-url: "https://zer0juice.github.io/synbio-diversification"
+  repo-url: "https://github.com/Zer0Juice/synbio-diversification"
+  repo-actions: [issue]
+
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: paper.qmd
+        text: Paper
+      - href: methods.qmd
+        text: Methods
+      - href: results.qmd
+        text: Results
+      - href: case-study.qmd
+        text: "Case Study: Carbon Capture"
+      - href: explorer.qmd
+        text: Explorer
+      - href: reproducibility.qmd
+        text: Reproducibility
+      - href: slides.qmd
+        text: Slides
+
+  page-footer:
+    left: "CSH Thesis Project — Synthetic Biology Innovation"
+    right:
+      - icon: github
+        href: "https://github.com/Zer0Juice/synbio-diversification"
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    code-tools: true
+    highlight-style: github
+
+execute:
+  freeze: auto  # only re-render notebooks when their source changes

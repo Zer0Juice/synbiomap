@@ -1,0 +1,50 @@
+---
+title: "Case Study: Carbon Capture in Synthetic Biology"
+---
+
+This page is the dedicated case study for **carbon capture in synthetic biology**.
+It uses the carbon-capture slice of the corpus — artifacts tagged with
+`case_study_flag = True` — to show how student projects, papers, and patents
+relate to each other within a specific subfield.
+
+::: {.callout-tip}
+## Why carbon capture?
+Carbon capture in synthetic biology (engineering microbes to fix CO₂ or
+produce carbon-neutral fuels) is a subfield large enough to find examples
+across all three artifact types, with clear real-world relevance.
+:::
+
+## What counts as "carbon capture" here?
+
+Artifacts are included if their title or abstract contains at least one of:
+
+> carbon capture · carbon sequestration · CO₂ fixation · carbon dioxide reduction ·
+> carbon neutral · biofuel · carbon cycle · autotrophic · RuBisCO · Calvin cycle · carboxylase
+
+A `case_study_confidence` score records how many keywords matched.
+
+## Corpus snapshot
+
+| Type | Count | Earliest year | Most active city |
+|------|-------|--------------|-----------------|
+| Papers | — | — | — |
+| Patents | — | — | — |
+| iGEM projects | — | — | — |
+
+## Semantic map (carbon capture only)
+
+*(Interactive plot showing only carbon-capture artifacts in the shared embedding space.)*
+
+## Timeline
+
+*(Year-by-year counts of papers, patents, and projects tagged to this case study.)*
+
+## City-level view
+
+*(Map showing carbon-capture activity by city, filterable by artifact type.)*
+
+## Interpretation
+
+*(To be written once results are available. Will discuss whether carbon-capture
+projects, papers, and patents cluster together, which cities are most active,
+and whether the temporal sequence is consistent with the innovation trajectory idea.)*

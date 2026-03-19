@@ -1,0 +1,242 @@
+\documentclass[aspectratio=169, 12pt]{beamer}
+
+% --- Theme ---
+\usetheme{metropolis}
+\usecolortheme{default}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+% --- Colours ---
+\definecolor{synblue}{HTML}{1f6aa5}
+\definecolor{syngreen}{HTML}{2a9d5c}
+\definecolor{synorange}{HTML}{e76f1a}
+\setbeamercolor{frametitle}{bg=synblue}
+\setbeamercolor{progress bar}{fg=syngreen}
+
+% --- Title ---
+\title{Patents, Papers, Parts \& Planet}
+\subtitle{Tracing Synthetic Biology Innovation Trajectories\\from Student Projects to Patents}
+\author{[Author Name]}
+\institute{CSH Vienna / TU Straubing}
+\date{\today}
+
+% ============================================================
+\begin{document}
+% ============================================================
+
+\maketitle
+
+% ------------------------------------------------------------
+\begin{frame}{Overview}
+  \tableofcontents
+\end{frame}
+
+% ============================================================
+\section{Motivation}
+% ============================================================
+
+\begin{frame}{Why study innovation trajectories in synthetic biology?}
+  \begin{itemize}
+    \item Synthetic biology is a frontier technology with real-world impact
+    \item Innovation leaves traces across \textbf{multiple knowledge artifacts}:
+      student projects, papers, patents
+    \item These traces cluster \textbf{geographically}
+    \item We want to understand: do these artifact types form related
+      \emph{local innovation trajectories}?
+  \end{itemize}
+\end{frame}
+
+% ============================================================
+\section{Research Question}
+% ============================================================
+
+\begin{frame}{Research question}
+  \begin{block}{}
+    \Large Do iGEM student projects, academic papers, and patents in synthetic
+    biology occupy \textbf{semantically related regions} of the same knowledge
+    space at the \textbf{city level}?
+  \end{block}
+
+  \vspace{1em}
+  \textbf{Working hypothesis:} a plausible innovation sequence
+  \begin{enumerate}
+    \item Student projects introduce early ideas
+    \item Academic papers develop them
+    \item Patents reflect downstream application
+  \end{enumerate}
+
+  \vspace{1em}
+  \textit{We test association, not causation.}
+\end{frame}
+
+% ============================================================
+\section{Data}
+% ============================================================
+
+\begin{frame}{Three types of artifact}
+  \begin{columns}
+    \column{0.33\textwidth}
+    \textbf{\textcolor{synblue}{Papers}}\\
+    OpenAlex API\\
+    \textasciitilde{}[N] records\\
+    [year range]
+
+    \column{0.33\textwidth}
+    \textbf{\textcolor{synorange}{Patents}}\\
+    Lens.org API\\
+    \textasciitilde{}[N] records\\
+    [year range]
+
+    \column{0.33\textwidth}
+    \textbf{\textcolor{syngreen}{iGEM Projects}}\\
+    iGEM Registry\\
+    \textasciitilde{}[N] teams\\
+    [year range]
+  \end{columns}
+
+  \vspace{2em}
+  All normalized to a \textbf{shared schema}: id, type, title, text, year, city, country, \ldots
+\end{frame}
+
+% ============================================================
+\section{Methods}
+% ============================================================
+
+\begin{frame}{Pipeline overview}
+  \begin{enumerate}
+    \item \textbf{Ingest} papers, patents, iGEM projects from APIs
+    \item \textbf{Embed} each artifact's title + abstract with a sentence-transformer
+    \item \textbf{Reduce} to 2D with UMAP
+    \item \textbf{Cluster} with HDBSCAN
+    \item \textbf{Geocode} institution locations
+    \item \textbf{Tag} carbon-capture artifacts with keyword matching
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Embedding model}
+  \begin{itemize}
+    \item \texttt{all-MiniLM-L6-v2} (sentence-transformers library)
+    \item 384-dimensional dense vectors
+    \item Captures semantic meaning of title + abstract
+    \item Fast, local, no API key required
+  \end{itemize}
+
+  \vspace{1em}
+  \textit{Reimers \& Gurevych (2019), Sentence-BERT, EMNLP 2019}
+\end{frame}
+
+\begin{frame}{Dimensionality reduction and clustering}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{UMAP} (2D projection)
+    \begin{itemize}
+      \item Preserves local and global structure
+      \item cosine metric
+      \item $n\_\text{neighbors} = 15$
+    \end{itemize}
+
+    \column{0.5\textwidth}
+    \textbf{HDBSCAN} (clustering)
+    \begin{itemize}
+      \item No fixed number of clusters
+      \item Handles noise/outliers
+      \item $\text{min\_cluster\_size} = 10$
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+\section{Results}
+% ============================================================
+
+\begin{frame}{Semantic space — all artifact types}
+  \begin{center}
+    \textit{[Figure: UMAP scatter plot colored by artifact type]}\\
+    \vspace{1em}
+    \small Papers, patents, and iGEM projects in the same 2D space.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Cluster composition}
+  \begin{center}
+    \textit{[Figure: bar charts showing artifact type mix per cluster]}
+  \end{center}
+\end{frame}
+
+\begin{frame}{City-level patterns}
+  \begin{center}
+    \textit{[Figure: map of synthetic biology activity by city]}
+  \end{center}
+\end{frame}
+
+% ============================================================
+\section{Case Study: Carbon Capture}
+% ============================================================
+
+\begin{frame}{Carbon capture in synthetic biology}
+  \begin{itemize}
+    \item Engineering microorganisms to fix CO\textsubscript{2} or produce carbon-neutral fuels
+    \item Tagged by keyword matching: [N] papers, [N] patents, [N] iGEM projects
+    \item \textbf{Do they cluster together?}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Carbon capture — semantic view}
+  \begin{center}
+    \textit{[Figure: UMAP with carbon-capture artifacts highlighted]}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Carbon capture — timeline}
+  \begin{center}
+    \textit{[Figure: year-by-year counts of papers, patents, projects]}
+  \end{center}
+\end{frame}
+
+% ============================================================
+\section{Discussion}
+% ============================================================
+
+\begin{frame}{What we found}
+  \begin{itemize}
+    \item [Main finding 1]
+    \item [Main finding 2]
+    \item [Main finding 3]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Limitations}
+  \begin{itemize}
+    \item Keyword-based corpus construction can miss or over-include
+    \item Geocoding is approximate; some locations missing
+    \item Semantic similarity $\neq$ citation or collaboration link
+    \item No causal claim — observational association only
+  \end{itemize}
+\end{frame}
+
+% ============================================================
+\section{Implications}
+% ============================================================
+
+\begin{frame}{Implications}
+  \begin{itemize}
+    \item iGEM as an early-signal dataset for innovation monitoring
+    \item Synthetic biology subfields may have detectable local trajectories
+    \item Shared semantic space as a tool for cross-artifact analysis
+    \item Carbon capture: [substantive finding about this subfield]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[standout]
+  Thank you.\\
+  \vspace{1em}
+  \small
+  Code and data: \href{https://github.com/Zer0Juice/synbio-diversification}{github.com/Zer0Juice/synbio-diversification}\\
+  Website: [GitHub Pages URL]
+\end{frame}
+
+% ============================================================
+\end{document}

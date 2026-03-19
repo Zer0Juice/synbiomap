@@ -1,0 +1,55 @@
+---
+title: "Reproducibility"
+---
+
+This page explains how to re-run the full pipeline from scratch.
+
+## Requirements
+
+- Python 3.11+
+- API credentials (see `.env.example`)
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Zer0Juice/synbio-diversification
+cd synbio-diversification
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Set up credentials
+cp .env.example .env
+# Edit .env and fill in your API keys
+
+# 4. Run the pipeline (see notebooks/ for step-by-step walkthroughs)
+```
+
+## Step-by-step notebooks
+
+| Notebook | What it does |
+|----------|-------------|
+| `01_ingest_papers.ipynb` | Download papers from OpenAlex |
+| `02_ingest_patents.ipynb` | Download patents from Lens.org |
+| `03_ingest_projects.ipynb` | Load iGEM project and parts data |
+| `04_embed.ipynb` | Generate embeddings for all artifacts |
+| `05_cluster.ipynb` | UMAP reduction and HDBSCAN clustering |
+| `06_visualize.ipynb` | Export data for the website visualizations |
+| `walkthrough_carbon_capture.ipynb` | End-to-end walkthrough for the case study |
+
+## Configuration
+
+All major parameters (keywords, model name, clustering settings) are in
+`config/settings.yaml`. Edit that file to change the pipeline behaviour.
+
+## Data
+
+Raw data files are not committed to the repository (too large).
+Processed CSVs in `data/processed/` are committed and can be used to
+skip the ingestion step.
+
+## Rendering the website locally
+
+```bash
+# Install Quarto: https://quarto.org/docs/get-started/
+quarto preview website/
+```

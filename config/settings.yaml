@@ -1,0 +1,98 @@
+# ============================================================
+# Pipeline configuration
+# Edit this file to change keywords, model choices, and limits.
+# ============================================================
+
+# --- Corpus construction ---
+# These keywords are used to retrieve papers and patents from APIs.
+# The "seed" keywords define the core topic.
+# The "expansion" keywords broaden the search using related terms.
+
+corpus:
+  seed_keywords:
+    - "synthetic biology"
+    - "metabolic engineering"
+    - "genetic engineering"
+
+  # Carbon capture is the primary case study subfield.
+  # These keywords are used to tag artifacts as belonging to the case study.
+  carbon_capture_keywords:
+    - "carbon capture"
+    - "carbon sequestration"
+    - "CO2 fixation"
+    - "carbon dioxide reduction"
+    - "carbon neutral"
+    - "biofuel"
+    - "carbon cycle"
+    - "autotrophic"
+    - "RuBisCO"
+    - "Calvin cycle"
+    - "carboxylase"
+
+  # Minimum year for inclusion (inclusive)
+  year_min: 2000
+  # Maximum year for inclusion (inclusive); set to null for no limit
+  year_max: null
+
+  # Maximum number of papers to retrieve from OpenAlex (per query)
+  openalex_max_results: 5000
+  # Maximum number of patents to retrieve from Lens.org (per query)
+  lens_max_results: 2000
+
+# --- Embedding model ---
+# We use a sentence-transformer model that encodes short texts well.
+# "all-MiniLM-L6-v2" is fast and performs well on scientific abstracts.
+# For higher quality, try "allenai-specter" (trained on scientific papers).
+# Reference: Reimers & Gurevych (2019) "Sentence-BERT: Sentence Embeddings
+#            using Siamese BERT-Networks." EMNLP 2019.
+embedding:
+  model: "all-MiniLM-L6-v2"
+  batch_size: 64
+  # Text field to embed (combined title + abstract)
+  text_field: "text"
+
+# --- Dimensionality reduction ---
+# UMAP reduces high-dimensional embeddings to 2D for visualization.
+# Reference: McInnes et al. (2018) "UMAP: Uniform Manifold Approximation
+#            and Projection for Dimension Reduction." arXiv:1802.03426.
+umap:
+  n_components: 2
+  n_neighbors: 15
+  min_dist: 0.1
+  metric: "cosine"
+  random_state: 42
+
+# --- Clustering ---
+# HDBSCAN finds clusters of variable density without requiring a fixed
+# number of clusters. Noise points are labeled -1.
+# Reference: Campello et al. (2013) "Density-Based Clustering Based on
+#            Hierarchical Density Estimates." ECML PKDD 2013.
+clustering:
+  min_cluster_size: 10
+  min_samples: 5
+  metric: "euclidean"  # applied to UMAP-reduced coordinates
+
+# --- Case study tagging ---
+# Artifacts are tagged as carbon-capture case study items if their
+# title+abstract contain at least one keyword AND the confidence
+# threshold (fraction of keywords matched) exceeds this value.
+case_study:
+  confidence_threshold: 0.0  # any keyword match qualifies
+  flag_field: "case_study_flag"
+  confidence_field: "case_study_confidence"
+
+# --- Geocoding ---
+# Nominatim is the free OpenStreetMap geocoder.
+# Set provider to "opencage" to use OpenCage (requires API key in .env).
+geocoding:
+  provider: "nominatim"
+  user_agent: "synbio-patents-papers-parts"
+  cache_file: "data/geo/geocoding_cache.json"
+
+# --- Output paths ---
+output:
+  processed_dir: "data/processed"
+  embeddings_file: "data/embeddings/embeddings.json"
+  projections_file: "data/embeddings/projections.json"
+  clusters_file: "data/embeddings/clusters.json"
+  website_data_dir: "website/assets/data"
