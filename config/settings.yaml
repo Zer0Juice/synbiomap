@@ -4,22 +4,64 @@
 # ============================================================
 
 # --- Corpus construction ---
-# These keywords are used to retrieve papers and patents from APIs.
-# The "seed" keywords define the core topic.
-# The "expansion" keywords broaden the search using related terms.
+# Papers and patents are retrieved in three layers, based on:
+#   Shapira, Kwon & Youtie (2017) "Tracking the emergence of synthetic
+#   biology." Scientometrics 112(3), pp. 1457–1478.
+#
+# The key principle: synthetic biology is a self-identifying community,
+# so the primary signal is the term itself. Broad terms like "metabolic
+# engineering" are NOT used for retrieval — they would swamp the corpus
+# with unrelated work. They appear only as post-hoc classification labels.
 
 corpus:
-  seed_keywords:
-    - "synthetic biology"
-    - "metabolic engineering"
-    - "genetic engineering"
 
-  # Carbon capture is the primary case study subfield.
-  # These keywords are used to tag artifacts as belonging to the case study.
+  # Layer 1 — Core self-identifying terms (narrow, high precision).
+  # Papers using these terms are almost certainly within synthetic biology.
+  # This is the seed set for citation expansion.
+  core_keywords:
+    - "synthetic biology"
+    - "synthetic genomics"
+    - "synthetic genome"
+
+  # Layer 2 — Subfield terms (broader, catches work predating the label).
+  # Many foundational synthetic biology papers were published before the
+  # field adopted the "synthetic biology" name, or come from adjacent
+  # subfields that closely identify with it.
+  subfield_keywords:
+    - "synthetic gene network"
+    - "synthetic gene circuit"
+    - "synthetic genetic circuit"
+    - "synthetic cell"
+    - "minimal genome"
+    - "minimal cell"
+    - "standard biological parts"
+    - "artificial genetic system"
+    - "BioBrick"
+    - "genetic toggle switch"
+    - "repressilator"
+    - "orthogonal genetic"
+    - "xenobiology"
+    - "cell-free synthetic biology"
+
+  # Layer 3 — Citation expansion from Layer 1 seed papers.
+  # For each Layer 1 paper we fetch its cited references (backward snowball)
+  # and the papers that cite it (forward snowball). This captures related
+  # work that uses different terminology.
+  # Set enabled: false to skip this step (much faster, smaller corpus).
+  citation_expansion:
+    enabled: true
+    max_references_per_paper: 200   # backward: papers cited by each seed
+    max_citing_per_paper: 200       # forward: papers citing each seed
+    layer1_only: true               # only expand from core keyword hits
+
+  # Carbon capture keywords — used for CASE STUDY TAGGING only, not retrieval.
+  # These are applied after the corpus is built to flag the carbon-capture
+  # subset. Matching any one keyword sets case_study_flag = True.
   carbon_capture_keywords:
     - "carbon capture"
     - "carbon sequestration"
     - "CO2 fixation"
+    - "carbon dioxide fixation"
     - "carbon dioxide reduction"
     - "carbon neutral"
     - "biofuel"
@@ -28,15 +70,17 @@ corpus:
     - "RuBisCO"
     - "Calvin cycle"
     - "carboxylase"
+    - "carbon concentrating mechanism"
+    - "photorespiration"
 
   # Minimum year for inclusion (inclusive)
   year_min: 2000
   # Maximum year for inclusion (inclusive); set to null for no limit
   year_max: null
 
-  # Maximum number of papers to retrieve from OpenAlex (per query)
+  # Maximum results per keyword query (across all layers)
   openalex_max_results: 5000
-  # Maximum number of patents to retrieve from Lens.org (per query)
+  # Maximum patents to retrieve from Lens.org (per query)
   lens_max_results: 2000
 
 # --- Embedding model ---

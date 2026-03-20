@@ -53,20 +53,24 @@ def search_papers(
     year_max: int | None = None,
     max_results: int = 5000,
     per_page: int = 200,
+    retrieval_reason: str = "keyword",
 ) -> Iterator[dict]:
     """
     Search OpenAlex for papers matching any of the given keywords.
 
-    Yields raw OpenAlex work objects (dicts) one at a time.
-    The caller is responsible for normalizing them via normalize.py.
+    Yields raw OpenAlex work objects (dicts) one at a time, with a
+    `retrieval_reason` field injected so the caller can track which layer
+    of the corpus construction strategy found each paper.
 
     Parameters
     ----------
-    keywords : list of strings to search for in title/abstract
-    year_min : earliest publication year (inclusive)
-    year_max : latest publication year (inclusive)
-    max_results : stop after yielding this many results
-    per_page : number of results per API request (max 200 for OpenAlex)
+    keywords        : strings to search for in title/abstract (any match)
+    year_min        : earliest publication year (inclusive)
+    year_max        : latest publication year (inclusive)
+    max_results     : stop after yielding this many results
+    per_page        : results per API request (max 200 for OpenAlex)
+    retrieval_reason: label injected into each result dict, e.g.
+                      "core_keyword", "subfield_keyword", "citation_expansion"
     """
     # Build the filter string (OpenAlex uses a custom filter syntax)
     # We search title_and_abstract for any of the keywords
@@ -114,6 +118,7 @@ def search_papers(
         for work in results:
             if yielded >= max_results:
                 return
+            work["retrieval_reason"] = retrieval_reason
             yield work
             yielded += 1
 
@@ -180,6 +185,88 @@ def get_citing_works(
         if not next_cursor:
             break
         params["cursor"] = next_cursor
+        time.sleep(0.1)
+
+
+def get_referenced_work_ids(work_id: str) -> list[str]:
+    """
+    Return the list of OpenAlex IDs that a given paper cites (backward snowball).
+
+    OpenAlex stores these as full URLs like "https://openalex.org/W123".
+    We strip them to bare IDs like "W123" for use in batch fetching.
+
+    Parameters
+    ----------
+    work_id : an OpenAlex work ID, e.g. "W2741809807"
+    """
+    headers, auth_params = _get_auth()
+    try:
+        response = requests.get(
+            f"{OPENALEX_BASE}/works/{work_id}",
+            params=auth_params,
+            headers=headers,
+            timeout=30,
+        )
+        response.raise_for_status()
+        data = response.json()
+    except requests.RequestException as e:
+        logger.error(f"Failed to fetch work {work_id}: {e}")
+        return []
+
+    raw_ids = data.get("referenced_works", [])
+    # Strip URL prefix to get bare IDs: "https://openalex.org/W123" → "W123"
+    return [r.split("/")[-1] for r in raw_ids if r]
+
+
+def fetch_works_by_ids(
+    work_ids: list[str],
+    retrieval_reason: str = "citation_expansion",
+    batch_size: int = 50,
+) -> Iterator[dict]:
+    """
+    Fetch full work objects for a list of OpenAlex IDs.
+
+    OpenAlex supports filtering by up to ~50 IDs per request using
+    `filter=ids.openalex:W1|W2|W3`. We chunk the list and page through it.
+
+    Used for both backward snowballing (fetch the papers a seed cites) and
+    as a complement to the forward snowball in get_citing_works().
+
+    Parameters
+    ----------
+    work_ids        : list of bare OpenAlex IDs, e.g. ["W123", "W456"]
+    retrieval_reason: label injected into each yielded work dict
+    batch_size      : IDs per request (keep ≤ 50 to stay within URL limits)
+    """
+    headers, auth_params = _get_auth()
+
+    for i in range(0, len(work_ids), batch_size):
+        chunk = work_ids[i : i + batch_size]
+        id_filter = "|".join(chunk)
+
+        params = {
+            "filter": f"ids.openalex:{id_filter}",
+            "per-page": batch_size,
+            **auth_params,
+        }
+
+        try:
+            response = requests.get(
+                f"{OPENALEX_BASE}/works",
+                params=params,
+                headers=headers,
+                timeout=30,
+            )
+            response.raise_for_status()
+            data = response.json()
+        except requests.RequestException as e:
+            logger.error(f"Batch fetch failed for chunk {i}–{i+batch_size}: {e}")
+            continue
+
+        for work in data.get("results", []):
+            work["retrieval_reason"] = retrieval_reason
+            yield work
+
         time.sleep(0.1)
 
 
