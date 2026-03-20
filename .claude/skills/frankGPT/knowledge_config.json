@@ -1,0 +1,86 @@
+{
+  "_comment": "frankGPT knowledge base configuration. Edit this file to add authors or seed papers, then re-run build_knowledge_base.py.",
+
+  "sections": [
+    {
+      "name": "neffke",
+      "label": "Frank Neffke",
+      "description": "Always loaded. Neffke's full body of work — the primary intellectual source for frankGPT.",
+      "always_load": true,
+      "top_n": null,
+      "authors": [
+        { "name": "Frank Neffke", "orcid": "0000-0002-3924-6636" }
+      ]
+    },
+    {
+      "name": "eeg",
+      "label": "Evolutionary Economic Geography",
+      "description": "Load for questions about regional diversification, path dependence, relatedness, resilience, spinoffs, and industrial evolution.",
+      "always_load": false,
+      "top_n": 20,
+      "authors": [
+        { "name": "Ron Boschma",            "orcid": "0000-0001-5592-1876" },
+        { "name": "Pierre-Alexandre Balland","orcid": "0000-0003-2787-4376" },
+        { "name": "David L. Rigby",          "orcid": "0000-0002-8555-1308" },
+        { "name": "Martin Henning",          "orcid": "0000-0002-8081-5095" },
+        { "name": "Ron Martin",              "orcid": "0000-0002-6203-0518" },
+        { "name": "Andrés Rodríguez-Pose",   "orcid": "0000-0002-8041-0856" }
+      ],
+      "seed_dois": [
+        "10.1080/0034340052000320887",
+        "10.1080/00343400601120296"
+      ]
+    },
+    {
+      "name": "complexity",
+      "label": "Economic Complexity",
+      "description": "Load for questions about the product space, fitness-complexity, economic complexity index, and knowledge diffusion.",
+      "always_load": false,
+      "top_n": 20,
+      "authors": [
+        { "name": "César A. Hidalgo",   "orcid": "0000-0002-6977-9492" },
+        { "name": "Ricardo Hausmann",   "orcid": "0000-0001-9284-5745" },
+        { "name": "Dario Diodato",      "orcid": "0000-0001-6902-2468" },
+        { "name": "Neave O'Clery",      "orcid": "0000-0003-1876-8002" }
+      ],
+      "seed_dois": [
+        "10.1126/science.1144581"
+      ]
+    },
+    {
+      "name": "agglomeration",
+      "label": "Agglomeration & Urban Economics",
+      "description": "Load for questions about cities, agglomeration economies, co-location, density, and spatial sorting.",
+      "always_load": false,
+      "top_n": 15,
+      "authors": [
+        { "name": "Gilles Duranton", "orcid": "0000-0002-5261-9927" },
+        { "name": "Diego Puga",      "orcid": "0000-0003-2640-1534" },
+        { "name": "Edward L. Glaeser", "openalex_id": "A5113890882" }
+      ],
+      "seed_dois": [
+        "10.1086/261856",
+        "10.1257/aer.89.2.311",
+        "10.1086/261763"
+      ]
+    },
+    {
+      "name": "methods",
+      "label": "Econometrics & Methods",
+      "description": "Load for questions about empirical strategy, identification, shift-share instruments, difference-in-differences, event studies, or panel data design.",
+      "always_load": false,
+      "top_n": 0,
+      "authors": [],
+      "seed_dois": [
+        "10.1257/aer.20181047",
+        "10.1093/restud/rdab030",
+        "10.1016/j.jeconom.2020.12.001",
+        "10.1016/j.jeconom.2021.03.014",
+        "10.1016/j.jeconom.2020.09.006",
+        "10.1515/9781400829828",
+        "10.1093/qje/qjt034",
+        "10.3982/ecta9466"
+      ]
+    }
+  ]
+}

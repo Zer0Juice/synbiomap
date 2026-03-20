@@ -1,0 +1,164 @@
+\documentclass[10pt,aspectratio=169]{beamer}
+
+% -------------------------------------------------
+% Theme (Solarized Light)
+% -------------------------------------------------
+\usetheme{metropolis}
+\metroset{
+  progressbar=none,
+  numbering=fraction
+}
+\setbeamertemplate{navigation symbols}{}
+
+% -------------------------------------------------
+% Fonts -- requires LuaLaTeX or XeLaTeX
+% -------------------------------------------------
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+\setsansfont{Latin Modern Sans}
+\setmonofont{Latin Modern Mono}
+
+% -------------------------------------------------
+% Colors: Solarized Light
+%   Base3  #fdf6e3  background
+%   Base2  #eee8d5  background highlight
+%   Base1  #93a1a1  secondary content
+%   Base00 #657b83  body text
+%   Base01 #586e75  emphasis / headings
+%   Blue   #268bd2  primary accent
+%   Cyan   #2aa198  secondary accent
+% -------------------------------------------------
+\usepackage{xcolor}
+\definecolor{SolBase3} {HTML}{fdf6e3}
+\definecolor{SolBase2} {HTML}{eee8d5}
+\definecolor{SolBase1} {HTML}{93a1a1}
+\definecolor{SolBase00}{HTML}{657b83}
+\definecolor{SolBase01}{HTML}{586e75}
+\definecolor{SolBlue}  {HTML}{268bd2}
+\definecolor{SolCyan}  {HTML}{2aa198}
+
+\setbeamercolor{background canvas}{bg=SolBase3}
+\setbeamercolor{normal text}{fg=SolBase00}
+\setbeamercolor{alerted text}{fg=SolBlue}
+
+\setbeamercolor{frametitle}{bg=SolBase3, fg=SolBase01}
+\setbeamercolor{title}{fg=SolBase01}
+\setbeamercolor{subtitle}{fg=SolBase00}
+
+\setbeamercolor{progress bar}{fg=SolBlue}
+\setbeamercolor{block title}{fg=SolBase3, bg=SolBase01}
+\setbeamercolor{block body}{bg=SolBase2, fg=SolBase00}
+
+% Optional refinements
+\setbeamercolor{section title}{fg=SolBase01}
+\setbeamercolor{footline}{fg=SolBase1}
+\setbeamercolor{item}{fg=SolBlue}
+\setbeamercolor{subitem}{fg=SolCyan}
+
+% -------------------------------------------------
+% Packages
+% -------------------------------------------------
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=SolBlue,
+  urlcolor=SolCyan,
+  citecolor=SolBlue
+}
+
+% -------------------------------------------------
+% Typography and spacing tweaks
+% -------------------------------------------------
+\usefonttheme{professionalfonts}
+\setlength{\parskip}{0.4em}
+\linespread{1.05}
+
+% Slightly more breathing room in tables
+\renewcommand{\arraystretch}{1.15}
+
+% Cleaner captions if figures/tables are used
+\setbeamerfont{caption}{size=\small}
+\setbeamercolor{caption name}{fg=SolBase01}
+
+% -------------------------------------------------
+% Useful macros
+% -------------------------------------------------
+\newcommand{\highlight}[1]{\textcolor{SolBlue}{\textbf{#1}}}
+\newcommand{\source}[1]{\vspace{0.5em}\hfill{\scriptsize\textcolor{SolBase1}{#1}}}
+
+% -------------------------------------------------
+% Title information
+% -------------------------------------------------
+\title{Title of the Talk}
+\subtitle{A concise and informative subtitle}
+\author{Your Name}
+\institute{Your Institution}
+\date{\today}
+
+\begin{document}
+
+% -------------------------------------------------
+% Title slide
+% -------------------------------------------------
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% -------------------------------------------------
+% Example section
+% -------------------------------------------------
+\section{Motivation}
+
+\begin{frame}{Why this question matters}
+\begin{itemize}
+  \item Regions do not diversify randomly.
+  \item Existing capabilities shape which new activities can emerge.
+  \item The interesting question is not whether change happens, but \highlight{how}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A visual slide should look like this}
+  \centering
+  \includegraphics[width=0.82\textwidth]{figures/example.pdf}
+  
+  \source{Source: Author's calculations}
+\end{frame}
+
+\section{Main result}
+
+\begin{frame}{Related capabilities predict regional entry}
+\begin{block}{Main takeaway}
+Regions are more likely to enter industries that are cognitively and organizationally related to their existing activities.
+\end{block}
+\end{frame}
+
+\begin{frame}{Illustrative table}
+\centering
+\begin{tabular}{lcc}
+\toprule
+Variable & Model 1 & Model 2 \\
+\midrule
+Relatedness & 0.245*** & 0.198*** \\
+Controls & Yes & Yes \\
+Fixed effects & No & Yes \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+{\small Standard errors omitted here because this is a slide, not a punishment.}
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}{Conclusion}
+\begin{itemize}
+  \item Diversification is structured by existing capabilities.
+  \item Mechanisms matter more than slogans.
+  \item Policy works better when it respects regional capability constraints.
+\end{itemize}
+\end{frame}
+
+\end{document}
