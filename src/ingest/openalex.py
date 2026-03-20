@@ -1,11 +1,14 @@
 """
 openalex.py — fetch academic papers from the OpenAlex API.
 
-OpenAlex is a free, open index of scholarly works. No API key is needed,
-but providing a "polite pool" email (set OPENALEX_EMAIL in .env) gives
-faster response times.
-
+OpenAlex is a free, open index of scholarly works.
 API documentation: https://docs.openalex.org/
+
+Authentication (both optional, set in .env):
+  OPENALEX_EMAIL   — enables the "polite pool" for faster response times
+  OPENALEX_API_KEY — free account key from openalex.org; grants 10,000
+                     filtered queries/day and 1,000 full-text searches/day.
+                     Passed as the `api_key` query parameter.
 
 Methodology note:
   We retrieve papers by searching for synthetic biology keywords in titles
@@ -27,15 +30,21 @@ logger = logging.getLogger(__name__)
 OPENALEX_BASE = "https://api.openalex.org"
 
 
-def _get_headers() -> dict:
+def _get_auth() -> tuple[dict, dict]:
     """
-    Build request headers. Including an email enables the "polite pool"
-    on OpenAlex, which has higher rate limits.
+    Return (headers, auth_params) for OpenAlex requests.
+
+    - Email in User-Agent enables the polite pool (faster responses).
+    - api_key as a query parameter grants higher daily rate limits.
+      Both are optional; either, both, or neither can be set.
     """
     email = os.getenv("OPENALEX_EMAIL", "")
-    if email:
-        return {"User-Agent": f"mailto:{email}"}
-    return {}
+    api_key = os.getenv("OPENALEX_API_KEY", "")
+
+    headers = {"User-Agent": f"mailto:{email}"} if email else {}
+    auth_params = {"api_key": api_key} if api_key else {}
+
+    return headers, auth_params
 
 
 def search_papers(
@@ -71,13 +80,15 @@ def search_papers(
 
     filter_str = ",".join(filters)
 
+    headers, auth_params = _get_auth()
+
     params = {
         "filter": filter_str,
         "per-page": per_page,
         "cursor": "*",  # cursor-based pagination for large result sets
+        **auth_params,
     }
 
-    headers = _get_headers()
     yielded = 0
 
     logger.info(f"Starting OpenAlex search with filter: {filter_str}")
@@ -134,12 +145,15 @@ def get_citing_works(
     work_id : OpenAlex work ID, e.g. "W2741809807"
     max_results : maximum number of citing works to return
     """
+    headers, auth_params = _get_auth()
+
     params = {
         "filter": f"cites:{work_id}",
         "per-page": 200,
         "cursor": "*",
+        **auth_params,
     }
-    headers = _get_headers()
+
     yielded = 0
 
     while yielded < max_results:
