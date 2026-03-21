@@ -34,6 +34,7 @@ sys.path.insert(0, str(REPO_ROOT))
 
 from src.utils.config import load_config
 from src.ingest import openalex, normalize
+from src.geo.geocode import geocode_dataframe
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s  %(message)s")
 logger = logging.getLogger(__name__)
@@ -55,9 +56,18 @@ def run():
     raw_records: list[dict] = []
 
     def _collect(work: dict, reason: str):
-        """Add a work to raw_records if we haven't seen its ID yet."""
+        """Add a work to raw_records if we haven't seen its ID yet.
+
+        We skip papers without an abstract — the API filter (has_abstract:true)
+        should already exclude them, but this is a safety check.
+        """
         fields = openalex.extract_fields(work)
         fields["retrieval_reason"] = reason
+
+        # Skip if no abstract (can't embed or cluster without text)
+        if not fields.get("abstract", "").strip():
+            return
+
         oa_id = fields.get("openalex_id", "")
         if oa_id and oa_id in seen_ids:
             return  # already in corpus from an earlier layer
@@ -168,14 +178,50 @@ def run():
 
     print(f"Carbon capture tagged: {papers_df['case_study_flag'].sum()} papers")
 
+    # ------------------------------------------------------------------
+    # Geocoding — fill in lat/lon for papers that still need it
+    # ------------------------------------------------------------------
+    # Many papers already have coordinates from OpenAlex's institution geo
+    # data. We only call the geocoder for the remainder.
+    geo_cfg = cfg["geocoding"]
+    need_geocoding = papers_df["lat"].isna() & (
+        papers_df["city"].notna() | papers_df["country"].notna()
+    )
+    n_need = need_geocoding.sum()
+    n_have = papers_df["lat"].notna().sum()
+    print(f"\nCoordinates from OpenAlex: {n_have} papers")
+    print(f"Need geocoding (city/country but no lat/lon): {n_need} papers")
+
+    if n_need > 0:
+        cache_path = REPO_ROOT / geo_cfg["cache_file"]
+        print(f"Geocoding via {geo_cfg['provider']} (cache: {cache_path.relative_to(REPO_ROOT)})...")
+        print("This may take a while — Nominatim allows 1 request/second.")
+        papers_df = geocode_dataframe(
+            df=papers_df,
+            cache_file=cache_path,
+            provider=geo_cfg["provider"],
+            user_agent=geo_cfg["user_agent"],
+        )
+        n_geocoded = papers_df["lat"].notna().sum() - n_have
+        print(f"Geocoded {n_geocoded} additional papers")
+
     output_path = REPO_ROOT / "data" / "processed" / "papers.csv"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     papers_df.to_csv(output_path, index=False)
     print(f"Saved to {output_path.relative_to(REPO_ROOT)}")
 
     print(f"\nYear range: {papers_df['year'].min()} — {papers_df['year'].max()}")
+    print(f"Papers with coordinates: {papers_df['lat'].notna().sum()} / {len(papers_df)}")
     print("\nTop countries:")
     print(papers_df["country"].value_counts().head(10).to_string())
+
+    # Citation link summary
+    papers_with_citations = (papers_df["cited_works"].str.len() > 0).sum()
+    total_citation_links = papers_df["cited_works"].dropna().apply(
+        lambda x: len(x.split(";")) if x else 0
+    ).sum()
+    print(f"\nCitation links: {papers_with_citations} papers have cited_works "
+          f"({total_citation_links:,} total edges)")
 
     return papers_df
 

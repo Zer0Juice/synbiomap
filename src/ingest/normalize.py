@@ -54,16 +54,19 @@ def normalize_papers(raw_records: list[dict], carbon_keywords: list[str]) -> pd.
             "year": rec.get("year"),
             "city": rec.get("city"),
             "country": rec.get("country"),
-            "lat": None,  # filled in later by geocoding
-            "lon": None,
+            "lat": rec.get("lat"),   # pre-filled from OpenAlex geo when available
+            "lon": rec.get("lon"),   # remaining NaNs filled by geocoding in script 01
             "theme_primary": None,   # filled in later by clustering
             "theme_secondary": None,
             "retrieval_reason": rec.get("retrieval_reason", "keyword"),
+            # Semicolon-separated list of OpenAlex IDs this paper cites.
+            # Used to draw citation edges in the semantic space explorer.
+            "cited_works": rec.get("cited_works", ""),
         }
         row.update(_tag_case_study(text, carbon_keywords))
         rows.append(row)
 
-    return pd.DataFrame(rows, columns=REQUIRED_COLUMNS)
+    return pd.DataFrame(rows, columns=REQUIRED_COLUMNS + ["cited_works"])
 
 
 def normalize_patents(raw_records: list[dict], carbon_keywords: list[str]) -> pd.DataFrame:
