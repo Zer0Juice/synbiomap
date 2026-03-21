@@ -80,8 +80,46 @@ corpus:
 
   # Maximum results per keyword query (across all layers)
   openalex_max_results: 5000
-  # Maximum patents to retrieve from Lens.org (per query)
+  # Maximum patents to retrieve from Lens.org (per layer query)
   lens_max_results: 2000
+
+  # Patent-specific configuration
+  # IPC (International Patent Classification) codes used to scope the patent search.
+  # Synthetic biology has no dedicated IPC code, so we use the relevant technical
+  # classes and combine them with keywords (AND logic) to reduce false positives.
+  # Source: van Doren, Koenigstein & Reiss (2013, Systems and Synthetic Biology)
+  #   C12N — Micro-organisms; mutation or genetic engineering (core)
+  #   C12P — Fermentation or enzyme-using processes
+  #   C12Q — Measuring/testing processes involving enzymes or nucleic acids
+  #   C12S — Processes using enzymes or micro-organisms (older code, now merged)
+  #   C40B — Combinatorial chemistry; gene/peptide libraries
+  patent_ipc_codes:
+    - "C12N"
+    - "C12P"
+    - "C12Q"
+    - "C12S"
+    - "C40B"
+
+  # Layer 1 patent keywords — core self-identifying terms (AND with IPC codes)
+  patent_core_keywords:
+    - "synthetic biology"
+    - "synthetic genomics"
+    - "synthetic genome"
+
+  # Layer 2 patent keywords — engineering and enabling technology terms
+  # Based on van Doren et al. (2013) three-part keyword strategy.
+  # Applied WITH the IPC filter to stay within the technical scope.
+  patent_subfield_keywords:
+    - "genetic circuit"
+    - "synthetic gene circuit"
+    - "gene synthesis"
+    - "DNA assembly"
+    - "BioBrick"
+    - "cell-free synthetic"
+    - "synthetic gene network"
+    - "minimal genome"
+    - "orthogonal genetic"
+    - "metabolic pathway engineering"
 
 # --- Embedding model ---
 # We use a sentence-transformer model that encodes short texts well.
