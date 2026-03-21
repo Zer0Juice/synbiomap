@@ -49,7 +49,7 @@ corpus:
   # work that uses different terminology.
   # Set enabled: false to skip this step (much faster, smaller corpus).
   citation_expansion:
-    enabled: true
+    enabled: false
     max_references_per_paper: 200   # backward: papers cited by each seed
     max_citing_per_paper: 200       # forward: papers citing each seed
     layer1_only: true               # only expand from core keyword hits
