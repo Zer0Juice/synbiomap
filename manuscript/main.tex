@@ -106,25 +106,213 @@ using UMAP \citep{mcinnes2018umap}.
 \label{sec:background}
 % ============================================================
 
-\subsection{Knowledge geography and local spillovers}
+\subsection{A Field That Named Itself in a Hurry}
 
-The idea that knowledge spillovers are geographically localized is
-well established in the economics of innovation.
-\citet{jaffe1993geographic} showed that patent citations cluster near
-the citing patent's geographic origin.
-\citet{audretsch1996r} found that R\&D spillovers attenuate with distance.
+In the year 2000, two groups of researchers published papers in the same
+issue of \textit{Nature} describing things that did not previously exist:
+a genetic toggle switch and a synthetic oscillator, both running inside
+living \textit{E.~coli} cells \citep{gardner2000toggle,elowitz2000synthetic}.
+The universe, which does not typically trouble itself with editorial timing,
+had apparently decided to make a point.
+What both papers demonstrated was not merely that you could manipulate the
+genes of a bacterium---this had been possible since the 1970s---but that
+you could redesign the \textit{regulatory logic} of a living cell as one
+redesigns a circuit board.
+Not modify the logic.
+Not nudge it.
+Redesign it, from specifications, on purpose.
 
-\subsection{Synthetic biology as a case}
+The field that crystallised around these demonstrations acquired its current
+name somewhat opportunistically.
+``Synthetic biology'' had appeared before---the phrase carries prior
+incarnations in the early twentieth century and again in the 1970s, when it
+described directed genetic modification more generically
+\citep{cameron2014brief}.
+What followed 2000 was different in ambition: an explicit engineering
+programme.
+Where earlier biology had described life and molecular biology had unpicked
+its components, synthetic biology announced the intention to \textit{design}
+it from first principles, following the same logic used to design integrated
+circuits or suspension bridges.
+This was, by any reasonable assessment, an extraordinary thing to announce,
+and it was announced with corresponding enthusiasm.
 
-Synthetic biology is an emerging discipline at the intersection of
-molecular biology, genetic engineering, and engineering design principles.
-[Expand with literature on synbio innovation geography.]
+\citet{endy2005foundations} articulated the engineering agenda most clearly:
+abstraction hierarchies, standardised parts, decoupled design and manufacture.
+The BioBricks parts standard followed, defining a format in which genetic
+components could be combined and recombined across projects---a metaphor
+involving Lego that was irresistible even then, and has since been thoroughly
+exhausted by press releases.
+In 2003, an MIT course gave rise to iGEM, a student competition that would
+grow from five teams to several hundred within a decade, producing an open
+repository of biological parts and demonstrating that undergraduate students
+with a fermentation flask and a standard parts registry could contribute
+genuine designs to a frontier research field \citep{igem}.
 
-\subsection{Text embeddings for innovation analysis}
+It is worth pausing on this last point.
+iGEM's artefacts are publicly deposited, documented, and traceable.
+A team in Chiba in 2005 could build on a BioBrick registered by a team in
+Edinburgh in 2004.
+The Registry of Standard Biological Parts is, in this respect, a kind of
+distributed laboratory notebook for an entire generation of apprentice
+engineers.
+Whether those apprentices \textit{lead} subsequent research, or
+\textit{follow} it, or simply work in parallel with it, is one of the
+questions this paper exists to ask.
 
-Recent work has used neural text embeddings to study semantic similarity
-across scientific documents.
-[Add relevant citations.]
+\subsection{The Geography of Clever Ideas}
+
+If synthetic biology is unusual for being an engineering discipline grown
+inside a biological science, it is, in this respect, a perfectly ordinary
+instance of a phenomenon that economists of innovation have studied for over
+a century: the tendency of knowledge-intensive activity to cluster in space.
+
+\citet{marshall1890principles} identified the phenomenon in Victorian
+industrial districts and could not quite explain it.
+His successors fared better.
+\citet{jaffe1993geographic} showed that patent citations cluster
+geographically: patents are significantly more likely to cite other patents
+from the same metropolitan area than the local share of knowledge production
+would predict.
+The implication is uncomfortable but hard to avoid.
+Knowledge, despite being ostensibly weightless, travels poorly across
+distance.
+It sticks to the coffee machines, the seminar rooms, the chance conversations
+between postdocs on the way to the cafeteria.
+\citet{audretsch1996r} confirmed that R\&D spillovers attenuate with
+distance across industries broadly, not only in any single sector.
+
+The mechanism is imperfectly understood but generally attributed to tacit
+knowledge: the kind of expertise that cannot be written down, that lives in
+the hands and intuitions of practitioners, and that is therefore transmitted
+face-to-face or not at all \citep{polanyi1966tacit}.
+A paper or a patent is an artefact---a crystallised residue of what was once
+tacit knowledge and has been partially made explicit.
+A city is where the tacit knowledge lives that produced the artefact.
+
+\citet{bathelt2004clusters} described this ambient propagation as
+``local buzz'': the continuous circulation of information within a geographic
+cluster of related firms and institutions, enabling rapid diffusion of
+knowledge, norms, and research agendas that would travel far more slowly
+between cities.
+The implication for a field like synthetic biology is that innovation
+trajectories---the sequence of ideas from early exploration to commercial
+application---should show spatial coherence.
+Artefacts from the same city should concern related problems more often than
+would be expected by chance, because the people who produced them were
+embedded in the same local knowledge environment.
+Whether this prediction holds for three very different artefact types---student
+projects, academic publications, and patents---is the empirical question at
+the heart of the present analysis.
+
+\subsection{The Peculiar Case of the Student Engineer}
+
+iGEM occupies an anomalous position in the innovation system.
+It is not a conventional university research programme, not an industry
+R\&D pipeline, and not an outreach exercise, though it has elements of all
+three.
+Its participants are undergraduates and postgraduates doing original
+biological engineering on an annual cycle, with results deposited in a public
+registry and judged at a global jamboree.
+Viewed with sufficient distance, the organisational form is rather odd:
+a kind of open-source hardware movement for living systems, in which the
+barrier to entry is a functioning university and a willing supervisor.
+
+The canonical linear account of innovation places basic research upstream
+and application downstream, with knowledge flowing from academic publication
+to commercial patent.
+The iGEM model complicates this picture in at least two ways.
+First, iGEM projects are designed rather than discovered: teams identify an
+application and engineer the biology to enable it.
+This is closer to the logic of downstream application than upstream
+exploration---yet the participants are students, not commercial engineers.
+Second, iGEM teams routinely work with cutting-edge capabilities; a team
+implementing a CRISPR-based diagnostic in 2013 or a carbon-fixation pathway
+in 2010 was working at the research frontier, not in a training room.
+
+What we do not have, at present, is a systematic characterisation of whether
+iGEM project themes correspond to the themes of concurrent or subsequent
+academic publication and commercial patenting---and in particular whether
+that correspondence, where it exists, is geographically structured.
+This is a gap that the present analysis proposes to address: modestly,
+computationally, and with the appropriate epistemic hedges firmly in place.
+
+\subsection{Measuring a Field That Keeps Moving}
+
+Finding ``all the synthetic biology'' in a large archive turns out to be a
+methodological problem of considerable subtlety.
+The field's terminological promiscuity is part of the difficulty.
+Synthetic biology shares vocabulary with genetic engineering, metabolic
+engineering, molecular biology, and protein design to an extent that makes
+keyword search without careful scoping an exercise in catching everything
+while meaning to catch something specific.
+
+\citet{shapira2017tracking} addressed this directly by distinguishing core
+self-identifying terms---``synthetic biology'', ``synthetic genomics''---from
+subfield terms that preceded or transcend the label: ``BioBrick'',
+``repressilator'', ``minimal genome''.
+Broad terms like ``metabolic engineering'' are excluded from retrieval; they
+would import entire adjacent literatures with only partial overlap.
+This two-layer approach underlies the paper corpus construction used here.
+
+The patent literature presents a distinct but related problem.
+Patent language is strategically expansive---applicants are motivated to
+claim the widest possible scope---and synthetic biology patents in particular
+overlap heavily with general biotechnology and genetic engineering.
+\citet{oldham2018synbio} found that pure keyword searches radically
+overestimate synthetic biology patent activity because the vocabulary is shared
+across disciplines.
+\citet{vandoren2013synbio}, taking a more structured approach, combined
+keyword groups with an International Patent Classification (IPC) scope filter
+restricted to biologically relevant class codes (C12N, C12P, C12Q, C12S,
+C40B), using AND logic.
+The intersection of ``resembles synthetic biology by keywords'' and ``is
+classified in the correct technical domain'' is substantially more precise
+than either criterion alone.
+The patent corpus construction used here follows \citeauthor{vandoren2013synbio}
+directly.
+
+These methodological choices are not technical decoration.
+They determine what the field \textit{is}, operationally, for the purpose of
+everything that follows.
+
+\subsection{A Common Tongue for Uncommon Artefacts}
+
+The final methodological challenge is the hardest to make look easy:
+comparing a student project description written by undergraduates with a
+peer-reviewed abstract and a patent claims section requires a framework that
+abstracts across genre, vocabulary, and register.
+A student team describing their ``carbon-sequestration device using engineered
+\textit{E.~coli}'' and a patent claiming ``a method for biological conversion
+of atmospheric CO\textsubscript{2} via enhanced carbonic anhydrase expression
+in recombinant microorganisms'' may be, at some level, describing the same
+idea.
+No keyword overlap will tell you that.
+
+Neural text embeddings offer a way through this impasse.
+\citet{reimers2019sentencebert} demonstrated that sentence-transformer models
+produce high-dimensional vector representations in which semantic relatedness
+corresponds to geometric proximity.
+Documents that mean similar things end up close together in the embedding
+space regardless of surface-level vocabulary differences.
+The model has learned, from the statistical structure of language across vast
+corpora, that certain concepts tend to appear in similar contexts; it does
+not need to be told explicitly that ``carbonic anhydrase'' and ``carbon
+capture'' belong to the same conceptual neighbourhood.
+
+Projecting these high-dimensional vectors to two dimensions using UMAP
+\citep{mcinnes2018umap} and identifying clusters with HDBSCAN
+\citep{campello2013hdbscan} produces a semantic map in which artefacts
+discussing similar problems cluster together, whether they are student project
+descriptions, journal abstracts, or patent claims.
+This shared representation is what makes it possible to ask whether the three
+artefact types overlap thematically and whether that overlap is geographically
+localised.
+
+The present analysis is, then, an attempt to answer a question about the
+structure of a nascent field using tools borrowed from machine learning and
+applied to a domain they were not originally designed for.
+This is, more or less, what all good borrowing looks like.
 
 % ============================================================
 \section{Data}
