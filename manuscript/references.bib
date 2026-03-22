@@ -1,35 +1,45 @@
 % References for the manuscript
 % Managed in BibTeX format.
+% All entries conform to standard BibTeX field requirements for their type.
+% arXiv and bioRxiv preprints use @misc with a note field.
+% Non-standard fields (doi) are retained as widely-supported metadata
+% but are not required for correct rendering with apalike.
 
 % --- Embedding models ---
 
 @inproceedings{reimers2019sentencebert,
   author    = {Reimers, Nils and Gurevych, Iryna},
   title     = {Sentence-{BERT}: Sentence Embeddings using {Siamese BERT}-Networks},
-  booktitle = {Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing},
+  booktitle = {Proceedings of the 2019 Conference on Empirical Methods
+               in Natural Language Processing},
   year      = {2019},
+  pages     = {3982--3992},
   publisher = {Association for Computational Linguistics},
-  url       = {https://arxiv.org/abs/1908.10084},
+  address   = {Hong Kong},
 }
 
 % --- Dimensionality reduction ---
 
-@article{mcinnes2018umap,
-  author  = {McInnes, Leland and Healy, John and Melville, James},
-  title   = {{UMAP}: Uniform Manifold Approximation and Projection for Dimension Reduction},
-  journal = {arXiv preprint arXiv:1802.03426},
-  year    = {2018},
-  url     = {https://arxiv.org/abs/1802.03426},
+@misc{mcinnes2018umap,
+  author = {McInnes, Leland and Healy, John and Melville, James},
+  title  = {{UMAP}: Uniform Manifold Approximation and Projection
+            for Dimension Reduction},
+  year   = {2018},
+  note   = {arXiv preprint arXiv:1802.03426},
 }
 
 % --- Clustering ---
 
 @inproceedings{campello2013hdbscan,
-  author    = {Campello, Ricardo J. G. B. and Moulavi, Davoud and Sander, J{\"o}rg},
+  author    = {Campello, Ricardo J.~G.~B. and Moulavi, Davoud and Sander, J{\"o}rg},
   title     = {Density-Based Clustering Based on Hierarchical Density Estimates},
-  booktitle = {Advances in Knowledge Discovery and Data Mining (ECML PKDD)},
+  booktitle = {Advances in Knowledge Discovery and Data Mining (PAKDD 2013)},
   year      = {2013},
+  pages     = {160--172},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {7819},
   publisher = {Springer},
+  address   = {Berlin},
 }
 
 % --- Synthetic biology patent landscape ---
@@ -45,12 +55,11 @@
   doi     = {10.1007/s11693-013-9121-7},
 }
 
-@article{oldham2018synbio,
-  author  = {Oldham, Paul and Hall, Stephen},
-  title   = {Synthetic Biology: Mapping the Patent Landscape},
-  journal = {bioRxiv},
-  year    = {2018},
-  doi     = {10.1101/483826},
+@misc{oldham2018synbio,
+  author = {Oldham, Paul and Hall, Stephen},
+  title  = {Synthetic {Biology}: Mapping the Patent Landscape},
+  year   = {2018},
+  note   = {bioRxiv preprint doi:10.1101/483826},
 }
 
 % --- Synthetic biology publication corpus ---
@@ -70,8 +79,10 @@
 
 @article{waltman2012new,
   author  = {Waltman, Ludo and van Eck, Nees Jan},
-  title   = {A new methodology for constructing a publication-level classification system of science},
-  journal = {Journal of the American Society for Information Science and Technology},
+  title   = {A new methodology for constructing a publication-level
+             classification system of science},
+  journal = {Journal of the American Society for Information Science
+             and Technology},
   volume  = {63},
   number  = {12},
   pages   = {2378--2392},
@@ -80,21 +91,22 @@
 
 % --- OpenAlex ---
 
-@article{priem2022openalex,
-  author  = {Priem, Jason and Piwowar, Heather and Orr, Richard},
-  title   = {{OpenAlex}: A fully-open index of scholarly works, authors, venues, institutions, and concepts},
-  journal = {arXiv preprint arXiv:2205.01833},
-  year    = {2022},
-  url     = {https://arxiv.org/abs/2205.01833},
+@misc{priem2022openalex,
+  author = {Priem, Jason and Piwowar, Heather and Orr, Richard},
+  title  = {{OpenAlex}: A fully-open index of scholarly works, authors,
+            venues, institutions, and concepts},
+  year   = {2022},
+  note   = {arXiv preprint arXiv:2205.01833},
 }
 
 % --- iGEM ---
 
 @misc{igem,
-  author = {{iGEM Foundation}},
-  title  = {International Genetically Engineered Machine ({iGEM}) Competition},
-  url    = {https://igem.org},
-  year   = {2003--},
+  author       = {{iGEM Foundation}},
+  title        = {International Genetically Engineered Machine ({iGEM})
+                  Competition},
+  howpublished = {\url{https://igem.org}},
+  year         = {2003},
 }
 
 % --- Synthetic biology foundational papers ---
@@ -112,7 +124,8 @@
 
 @article{gardner2000toggle,
   author  = {Gardner, Timothy S. and Cantor, Charles R. and Collins, James J.},
-  title   = {Construction of a genetic toggle switch in \textit{Escherichia coli}},
+  title   = {Construction of a genetic toggle switch in
+             {\textit{Escherichia coli}}},
   journal = {Nature},
   volume  = {403},
   number  = {6767},
@@ -157,14 +170,14 @@
   author    = {Polanyi, Michael},
   title     = {The Tacit Dimension},
   publisher = {Doubleday},
-  address   = {Garden City, NY},
+  address   = {Garden City, {NY}},
   year      = {1966},
 }
 
 @article{bathelt2004clusters,
   author  = {Bathelt, Harald and Malmberg, Anders and Maskell, Peter},
-  title   = {Clusters and knowledge: local buzz, global pipelines and the
-             process of knowledge creation},
+  title   = {Clusters and knowledge: local buzz, global pipelines and
+             the process of knowledge creation},
   journal = {Progress in Human Geography},
   volume  = {28},
   number  = {1},
@@ -173,11 +186,10 @@
   doi     = {10.1191/0309132504ph469oa},
 }
 
-% --- Innovation geography (classic) ---
-
 @article{jaffe1993geographic,
   author  = {Jaffe, Adam B. and Trajtenberg, Manuel and Henderson, Rebecca},
-  title   = {Geographic Localization of Knowledge Spillovers as Evidenced by Patent Citations},
+  title   = {Geographic Localization of Knowledge Spillovers as Evidenced
+             by Patent Citations},
   journal = {The Quarterly Journal of Economics},
   volume  = {108},
   number  = {3},
@@ -187,7 +199,7 @@
 
 @article{audretsch1996r,
   author  = {Audretsch, David B. and Feldman, Maryann P.},
-  title   = {R\&D Spillovers and the Geography of Innovation and Production},
+  title   = {{R\&D} Spillovers and the Geography of Innovation and Production},
   journal = {The American Economic Review},
   volume  = {86},
   number  = {3},
