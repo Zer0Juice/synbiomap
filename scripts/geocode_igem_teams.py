@@ -51,7 +51,7 @@ OPENALEX_BASE = "https://api.openalex.org/institutions"
 ROR_BASE      = "https://api.ror.org/v2/organizations"
 OLLAMA_MODEL  = "qwen2.5:3b"
 NOMINATIM_DELAY = 1.1
-REQUEST_DELAY   = 0.6   # OpenAlex / ROR polite delay
+REQUEST_DELAY   = 1.0   # OpenAlex / ROR polite delay (OpenAlex rate-limits at ~1 req/s)
 OLLAMA_BATCH    = 30    # institutions per LLM call
 
 # Keys to try when extracting a city name from a Nominatim address dict
@@ -115,14 +115,25 @@ def lookup_openalex(institution: str, iso3: str, cache: dict) -> dict | None:
     if iso2:
         params["filter"] = f"country_code:{iso2}"
 
-    time.sleep(REQUEST_DELAY)
-    try:
-        r = requests.get(OPENALEX_BASE, params=params, timeout=15,
-                         headers={"User-Agent": "synbio-igem-geocoder"})
-        r.raise_for_status()
-        results = r.json().get("results", [])
-    except Exception as e:
-        print(f"  OpenAlex error for '{institution}': {e}", flush=True)
+    # Retry once on 429 (rate limit) with a longer back-off before giving up.
+    for attempt in range(2):
+        time.sleep(REQUEST_DELAY if attempt == 0 else 5.0)
+        try:
+            r = requests.get(OPENALEX_BASE, params=params, timeout=15,
+                             headers={"User-Agent": "synbio-igem-geocoder"})
+            if r.status_code == 429:
+                if attempt == 0:
+                    continue   # retry after back-off
+                cache[key] = None
+                return None
+            r.raise_for_status()
+            results = r.json().get("results", [])
+            break
+        except Exception as e:
+            print(f"  OpenAlex error for '{institution}': {e}", flush=True)
+            cache[key] = None
+            return None
+    else:
         cache[key] = None
         return None
 
@@ -164,7 +175,8 @@ def lookup_ror(institution: str, iso3: str, cache: dict) -> dict | None:
 
     time.sleep(REQUEST_DELAY)
     try:
-        r = requests.get(ROR_BASE, params={"query": institution, "page_size": 5},
+        # Note: ROR v2 does not accept a page_size parameter; default returns 20 results
+        r = requests.get(ROR_BASE, params={"query": institution},
                          timeout=15, headers={"User-Agent": "synbio-igem-geocoder"})
         r.raise_for_status()
         items = r.json().get("items", [])
@@ -259,11 +271,12 @@ def batch_llm_extract(pairs: list[tuple[str, str, str]], cache: dict) -> dict:
             # Extract outermost JSON array from the response
             match = re.search(r'\[.*\]', raw, re.DOTALL)
             parsed = json.loads(match.group(0)) if match else []
-            # Flatten if the model returned [[{...}], [{...}]] instead of [{...}, {...}]
-            parsed = [
-                item[0] if isinstance(item, list) and item else item
-                for item in parsed
-            ]
+            # Recursively unwrap nested lists until we have a dict (or give up)
+            def _unwrap(item):
+                while isinstance(item, list):
+                    item = item[0] if item else {}
+                return item if isinstance(item, dict) else {}
+            parsed = [_unwrap(item) for item in parsed]
         except Exception as e:
             print(f"  Ollama error on batch {batch_start}: {e}", flush=True)
             parsed = []
