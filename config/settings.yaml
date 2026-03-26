@@ -54,6 +54,41 @@ corpus:
     max_citing_per_paper: 200       # forward: papers citing each seed
     layer1_only: true               # only expand from core keyword hits
 
+  # Layer 4 — Forward snowball from specific reference works.
+  # Any paper that cites one of the listed DOIs is added to the corpus.
+  # This is how we include all papers that cite the BioBrick Registry.
+  #
+  # The BioBrick Registry (parts.igem.org) is the iGEM community's
+  # shared catalogue of standardised DNA parts. It is the most-cited
+  # infrastructure resource in synthetic biology. Capturing its citers
+  # brings in the full breadth of registry-using experimental work,
+  # much of which does not use broad "synthetic biology" keywords.
+  #
+  # Seed works (all resolve to their OpenAlex records via DOI):
+  #
+  #   Shetty, Endy & Knight (2008) "Engineering BioBrick vectors from
+  #   BioBrick parts." J Biol Eng 2:5. DOI: 10.1186/1754-1611-2-5
+  #   → The canonical methods paper for BioBrick assembly; widely cited
+  #     by anyone reporting Registry-based experimental work.
+  #
+  #   Smolke (2009) "Building outside of the box: iGEM and the BioBricks
+  #   Foundation." Nature Biotechnology 27:1099–1102.
+  #   DOI: 10.1038/nbt1109-1099
+  #   → The primary commentary introducing the Registry to the broader
+  #     scientific community; frequently used as the citable Registry
+  #     reference in papers that do not cite the Shetty methods paper.
+  #
+  # Set enabled: false to skip. Increase max_citing_per_seed if you
+  # want more coverage (each seed may have thousands of citers).
+  reference_seed_expansion:
+    enabled: true
+    max_citing_per_seed: 5000
+    seeds:
+      - doi: "10.1186/1754-1611-2-5"
+        label: "BioBrick vectors paper (Shetty et al. 2008)"
+      - doi: "10.1038/nbt1109-1099"
+        label: "iGEM and BioBricks Foundation (Smolke 2009)"
+
   # Carbon capture keywords — used for CASE STUDY TAGGING only, not retrieval.
   # These are applied after the corpus is built to flag the carbon-capture
   # subset. Matching any one keyword sets case_study_flag = True.

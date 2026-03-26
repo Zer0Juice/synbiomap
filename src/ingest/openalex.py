@@ -277,6 +277,44 @@ def fetch_works_by_ids(
         time.sleep(0.1)
 
 
+def resolve_doi_to_openalex_id(doi: str) -> str | None:
+    """
+    Look up an OpenAlex work ID from a DOI.
+
+    Useful for seeding citation-based corpus expansion from a known
+    paper (e.g. the BioBrick Registry paper) when you only have its DOI.
+
+    Parameters
+    ----------
+    doi : the DOI string, with or without the https://doi.org/ prefix,
+          e.g. "10.1186/1754-1611-2-5"
+
+    Returns the bare OpenAlex ID like "W2741809807", or None if not found.
+    """
+    # Normalise: strip any URL prefix
+    doi = doi.replace("https://doi.org/", "").replace("http://doi.org/", "").strip()
+
+    headers, auth_params = _get_auth()
+    try:
+        response = requests.get(
+            f"{OPENALEX_BASE}/works/https://doi.org/{doi}",
+            params=auth_params,
+            headers=headers,
+            timeout=30,
+        )
+        if response.status_code == 404:
+            logger.warning(f"DOI not found in OpenAlex: {doi}")
+            return None
+        response.raise_for_status()
+        data = response.json()
+        raw_id = data.get("id", "")
+        # Strip URL prefix: "https://openalex.org/W123" → "W123"
+        return raw_id.split("/")[-1] if raw_id else None
+    except requests.RequestException as e:
+        logger.error(f"Failed to resolve DOI {doi}: {e}")
+        return None
+
+
 def extract_fields(work: dict) -> dict:
     """
     Pull the fields we care about from a raw OpenAlex work object.
