@@ -1,0 +1,26 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {2}Background and Related Work}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}A Field That Named Itself in a Hurry}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}The Geography of Clever Ideas}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}The Peculiar Case of the Student Engineer}{4}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Measuring a Field That Keeps Moving}{5}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}A Common Tongue for Uncommon Artefacts}{5}{subsection.2.5}%
+\contentsline {section}{\numberline {3}Data}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Papers (OpenAlex)}{6}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Patents (Lens.org)}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}iGEM projects and parts}{6}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Shared schema}{6}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Methods}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Embedding}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Dimensionality reduction}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Clustering}{7}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Case study identification}{7}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Geocoding}{7}{subsection.4.5}%
+\contentsline {section}{\numberline {5}Results}{7}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Corpus overview}{8}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Semantic clustering}{8}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}City-level patterns}{8}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Carbon capture case study}{8}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Discussion}{8}{section.6}%
+\contentsline {section}{\numberline {7}Limitations}{8}{section.7}%
+\contentsline {section}{\numberline {8}Conclusion}{8}{section.8}%
