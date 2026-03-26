@@ -204,19 +204,24 @@ def _build_nominatim():
     return Nominatim(user_agent="synbio-igem-geocoder")
 
 
-def batch_llm_extract(pairs: list[tuple[str, str]], cache: dict) -> dict:
+def batch_llm_extract(pairs: list[tuple[str, str, str]], cache: dict) -> dict:
     """
     Use a local Ollama model to extract city + country from institution names.
 
     Called only for institution+country pairs that OpenAlex and ROR both failed
     to match. Processes in batches for efficiency.
 
-    Returns a dict mapping (institution, iso3) → {"city": str, "country": str}.
+    Each entry is (institution, iso3, team_name). The team name is included in
+    the prompt as extra context — many iGEM institutions have vague names like
+    "Department of Microbiology" but the team name (e.g. "CBNU-Korea") encodes
+    the parent university, which the model can use to infer the city.
+
+    Returns a dict mapping (institution, iso3, team_name) → {"city": str, "country": str}.
     """
     import ollama
 
     # Filter to pairs not already cached
-    todo = [(inst, iso3) for inst, iso3 in pairs
+    todo = [(inst, iso3, team) for inst, iso3, team in pairs
             if f"llm:{inst}:{iso3}" not in cache]
     if not todo:
         return {}
@@ -227,18 +232,21 @@ def batch_llm_extract(pairs: list[tuple[str, str]], cache: dict) -> dict:
     for batch_start in range(0, len(todo), OLLAMA_BATCH):
         batch = todo[batch_start : batch_start + OLLAMA_BATCH]
 
-        # Build numbered list for the prompt
+        # Include team name alongside institution name for context.
+        # This helps when the institution alone is too generic (e.g. a department
+        # name) but the team name encodes the parent university abbreviation.
         lines = "\n".join(
-            f'{i+1}. "{inst}" (country ISO3: {iso3})'
-            for i, (inst, iso3) in enumerate(batch)
+            f'{i+1}. Institution: "{inst}" | Team name: "{team}" | Country ISO3: {iso3}'
+            for i, (inst, iso3, team) in enumerate(batch)
         )
         prompt = (
-            "You are a geocoding assistant. For each institution below, return "
-            "the city it is located in and the country name in English.\n"
+            "You are a geocoding assistant. For each entry below, use both the "
+            "institution name AND the team name as clues to identify the city "
+            "the institution is located in.\n"
             "Reply ONLY with a valid JSON array — no explanation, no markdown.\n"
             "Each element: {\"city\": \"...\", \"country\": \"...\"}\n"
             "If you are unsure, make your best guess.\n\n"
-            f"Institutions:\n{lines}"
+            f"Entries:\n{lines}"
         )
 
         try:
@@ -260,13 +268,13 @@ def batch_llm_extract(pairs: list[tuple[str, str]], cache: dict) -> dict:
             print(f"  Ollama error on batch {batch_start}: {e}", flush=True)
             parsed = []
 
-        for i, (inst, iso3) in enumerate(batch):
+        for i, (inst, iso3, team) in enumerate(batch):
             entry = parsed[i] if i < len(parsed) else {}
             city    = entry.get("city", "")
             country = entry.get("country", "")
             result  = {"city": city, "country": country}
             cache[f"llm:{inst}:{iso3}"] = result
-            results[(inst, iso3)] = result
+            results[(inst, iso3, team)] = result
 
         print(f"  Ollama: {min(batch_start + OLLAMA_BATCH, len(todo))}/{len(todo)} done",
               flush=True)
@@ -320,23 +328,26 @@ def main():
     pairs_df = (
         df[no_city & df["institution"].notna() &
            ~df["institution"].str.startswith("http", na=False)]
-        [["institution", "country"]]
-        .drop_duplicates()
+        [["institution", "country", "name"]]
+        # De-duplicate by institution+country; keep one representative team name
+        # per group (used as extra context for the Ollama tier).
+        .drop_duplicates(subset=["institution", "country"])
+        .reset_index(drop=True)
     )
-    pairs = list(zip(pairs_df["institution"], pairs_df["country"]))
+    pairs = list(zip(pairs_df["institution"], pairs_df["country"], pairs_df["name"]))
     print(f"Pass 1: {no_city.sum()} teams without city → {len(pairs)} unique institution+country pairs")
 
     # --- Tier 1: OpenAlex ---
     oa_miss = []
     oa_hits = 0
-    oa_cached = sum(1 for inst, iso3 in pairs if f"openalex:{inst}:{iso3}" in cache)
+    oa_cached = sum(1 for inst, iso3, _ in pairs if f"openalex:{inst}:{iso3}" in cache)
     print(f"  OpenAlex: {oa_cached} cached, {len(pairs)-oa_cached} to fetch")
-    for i, (inst, iso3) in enumerate(pairs):
+    for i, (inst, iso3, team_name) in enumerate(pairs):
         result = lookup_openalex(inst, iso3, cache)
         if result:
             oa_hits += 1
         else:
-            oa_miss.append((inst, iso3))
+            oa_miss.append((inst, iso3, team_name))
         if (i + 1) % 200 == 0:
             save_cache(cache)
             print(f"    {i+1}/{len(pairs)} OpenAlex done…", flush=True)
@@ -346,14 +357,14 @@ def main():
     # --- Tier 2: ROR ---
     ror_miss = []
     ror_hits = 0
-    ror_cached = sum(1 for inst, iso3 in oa_miss if f"ror:{inst}:{iso3}" in cache)
+    ror_cached = sum(1 for inst, iso3, _ in oa_miss if f"ror:{inst}:{iso3}" in cache)
     print(f"  ROR: {ror_cached} cached, {len(oa_miss)-ror_cached} to fetch")
-    for i, (inst, iso3) in enumerate(oa_miss):
+    for i, (inst, iso3, team_name) in enumerate(oa_miss):
         result = lookup_ror(inst, iso3, cache)
         if result:
             ror_hits += 1
         else:
-            ror_miss.append((inst, iso3))
+            ror_miss.append((inst, iso3, team_name))
         if (i + 1) % 100 == 0:
             save_cache(cache)
             print(f"    {i+1}/{len(oa_miss)} ROR done…", flush=True)
@@ -366,7 +377,7 @@ def main():
         save_cache(cache)
 
         nom_hits = 0
-        for (inst, iso3), llm in llm_results.items():
+        for (inst, iso3, _team), llm in llm_results.items():
             city = llm.get("city", "")
             if not city:
                 continue
@@ -380,7 +391,7 @@ def main():
 
     # --- Apply Pass 1 results ---
     filled_city = filled_coords = 0
-    for inst, iso3 in pairs:
+    for inst, iso3, _team_name in pairs:
         result = (
             cache.get(f"openalex:{inst}:{iso3}") or
             cache.get(f"ror:{inst}:{iso3}")
