@@ -1,110 +1,79 @@
 """
-geocode_igem_teams.py — fill city, lat, lon for iGEM teams.
+geocode_igem_teams.py — fill city, lat, lon for iGEM teams using a three-tier pipeline.
 
-Two passes:
-  Pass 1 — teams with no city (years 2009-2023):
-    Geocodes by institution name. Constrains Nominatim to the team's country
-    using the countrycodes parameter, which prevents cross-country false positives
-    (e.g. "Osaka Univ." matching a city in Utah instead of Japan).
-    Common abbreviations are expanded before querying (e.g. "Univ." → "University").
-    If Nominatim returns null, falls back to OpenCage.
-    Fills city, lat, and lon.
+Why not plain Nominatim?
+  Nominatim is a place database, not an institution database. Querying it with
+  institution names like "Osaka Univ." can return the wrong country entirely.
+  The APIs below are purpose-built for research organisations.
 
-  Pass 2 — teams with city but no lat/lon (years 2024-2025):
-    Geocodes by city + country. Fills lat and lon only.
+Three-tier pipeline for teams that have no city (years 2009-2023):
 
-Why countrycodes matters:
-  Without a country constraint, Nominatim's free-text search can match any
-  location globally. A short or abbreviated institution name like "Osaka Univ."
-  may rank a small US city above Osaka, Japan. Constraining to the correct
-  ISO2 country code eliminates this class of error entirely.
+  Tier 1 — OpenAlex institutions API
+    Covers ~100k research organisations with structured geo data.
+    Filters by country code to prevent cross-country false positives.
+
+  Tier 2 — ROR (Research Organization Registry)
+    Broader coverage than OpenAlex (includes high schools, community labs).
+    Used as fallback when OpenAlex returns no result.
+
+  Tier 3 — Ollama (qwen2.5:3b, running locally)
+    For names that neither database can match (abbreviations, unusual formats).
+    The model extracts city + country, which is then geocoded with Nominatim.
+
+Pass 2 (teams with city but no lat/lon):
+    Geocodes existing city + country directly with Nominatim.
 
 Caching:
-  All results are cached in data/geo/igem_geocoding_cache.json.
-  Cache keys embed the country code so results are unambiguous.
-  Re-running the script skips anything already cached.
+    All results cached in data/geo/igem_geocoding_cache.json with tier-prefixed
+    keys so each tier's data is distinguishable. Re-runs skip cached entries.
 
 Usage:
     python scripts/geocode_igem_teams.py
-
-Requires:
-    OPENCAGE_API_KEY in .env (used as fallback when Nominatim returns null)
 """
 
 import json
-import os
 import re
 import sys
 import time
 from pathlib import Path
 
+import pandas as pd
 import pycountry
+import requests
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT  = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
-
-from dotenv import load_dotenv
-load_dotenv(REPO_ROOT / ".env")
 
 CSV_PATH   = REPO_ROOT / "data" / "raw" / "projects" / "igem_teams_with_descriptions_2004_2025.csv"
 CACHE_PATH = REPO_ROOT / "data" / "geo" / "igem_geocoding_cache.json"
 
-NOMINATIM_DELAY = 1.1   # seconds — Nominatim policy: max 1 req/s
-OPENCAGE_DELAY  = 0.5   # OpenCage free tier: 1 req/s, paid: 15 req/s
-USER_AGENT = "synbio-igem-geocoder"
+OPENALEX_BASE = "https://api.openalex.org/institutions"
+ROR_BASE      = "https://api.ror.org/v2/organizations"
+OLLAMA_MODEL  = "qwen2.5:3b"
+NOMINATIM_DELAY = 1.1
+REQUEST_DELAY   = 0.6   # OpenAlex / ROR polite delay
+OLLAMA_BATCH    = 30    # institutions per LLM call
 
-# Address fields to try when extracting a city name from a Nominatim response.
-# Nominatim uses different keys depending on the settlement type.
+# Keys to try when extracting a city name from a Nominatim address dict
 CITY_KEYS = ["city", "town", "village", "municipality", "county", "state_district"]
 
-# Common abbreviations found in iGEM institution names.
-# Applied as whole-word replacements before geocoding.
-ABBREV_MAP = {
-    r"\bUniv\b\.?":   "University",
-    r"\bInst\b\.?":   "Institute",
-    r"\bTech\b\.?":   "Technology",
-    r"\bNatl\b\.?":   "National",
-    r"\bIntl\b\.?":   "International",
-    r"\bDept\b\.?":   "Department",
-    r"\bCol\b\.?":    "College",
-    r"\bSci\b\.?":    "Science",
-    r"\bEng\b\.?":    "Engineering",
-    r"\bMed\b\.?":    "Medical",
-    r"\bAcad\b\.?":   "Academy",
-    r"\bLab\b\.?s?":  "Laboratory",
-}
-
 
 # ---------------------------------------------------------------------------
-# Helpers
+# Country code helpers
 # ---------------------------------------------------------------------------
 
-def iso3_to_iso2(iso3: str) -> str | None:
-    """Convert an ISO 3166-1 alpha-3 country code to alpha-2 (e.g. 'JPN' → 'JP')."""
+def _iso3_to_iso2(iso3: str) -> str | None:
     try:
-        return pycountry.countries.get(alpha_3=iso3).alpha_2.lower()
+        return pycountry.countries.get(alpha_3=iso3).alpha_2
     except AttributeError:
         return None
 
 
-def country_name(iso3: str) -> str:
-    """Return the English country name for an ISO3 code (e.g. 'JPN' → 'Japan')."""
+def _country_name(iso3: str) -> str:
     try:
         return pycountry.countries.get(alpha_3=iso3).name
     except AttributeError:
         return ""
-
-
-def expand_abbreviations(name: str) -> str:
-    """Replace common abbreviations with full words."""
-    for pattern, replacement in ABBREV_MAP.items():
-        name = re.sub(pattern, replacement, name, flags=re.IGNORECASE)
-    return name.strip()
-
-
-def extract_city(raw_address: dict) -> str:
-    """Pick the best city-level name from a Nominatim address dict."""
-    return next((raw_address[k] for k in CITY_KEYS if k in raw_address), "")
 
 
 # ---------------------------------------------------------------------------
@@ -125,109 +94,211 @@ def save_cache(cache: dict) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Geocoders
+# Tier 1 — OpenAlex institutions
+# ---------------------------------------------------------------------------
+
+def lookup_openalex(institution: str, iso3: str, cache: dict) -> dict | None:
+    """
+    Search the OpenAlex institutions API for an organisation by name.
+
+    OpenAlex covers ~100k research institutions worldwide and supports
+    country_code filtering to avoid cross-country false positives.
+    Reference: Priem et al. (2022) "OpenAlex: A fully-open index of the world's
+    research output." arXiv:2205.01833.
+    """
+    iso2 = _iso3_to_iso2(iso3)
+    key = f"openalex:{institution}:{iso3}"
+    if key in cache:
+        return cache[key]
+
+    params = {"search": institution, "per_page": 1}
+    if iso2:
+        params["filter"] = f"country_code:{iso2}"
+
+    time.sleep(REQUEST_DELAY)
+    try:
+        r = requests.get(OPENALEX_BASE, params=params, timeout=15,
+                         headers={"User-Agent": "synbio-igem-geocoder"})
+        r.raise_for_status()
+        results = r.json().get("results", [])
+    except Exception as e:
+        print(f"  OpenAlex error for '{institution}': {e}", flush=True)
+        cache[key] = None
+        return None
+
+    if not results:
+        cache[key] = None
+        return None
+
+    geo = results[0].get("geo") or {}
+    if not geo.get("latitude"):
+        cache[key] = None
+        return None
+
+    result = {
+        "city": geo.get("city", ""),
+        "lat":  geo["latitude"],
+        "lon":  geo["longitude"],
+    }
+    cache[key] = result
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Tier 2 — ROR
+# ---------------------------------------------------------------------------
+
+def lookup_ror(institution: str, iso3: str, cache: dict) -> dict | None:
+    """
+    Search the Research Organization Registry (ROR) for an organisation.
+
+    ROR covers ~100k organisations including non-university institutions
+    (high schools, community labs, companies) that may not appear in OpenAlex.
+    Reference: Lammey (2020) "ROR: The Research Organization Registry."
+    Science Editing 7(1), pp. 67-71.
+    """
+    iso2 = _iso3_to_iso2(iso3)
+    key = f"ror:{institution}:{iso3}"
+    if key in cache:
+        return cache[key]
+
+    time.sleep(REQUEST_DELAY)
+    try:
+        r = requests.get(ROR_BASE, params={"query": institution, "page_size": 5},
+                         timeout=15, headers={"User-Agent": "synbio-igem-geocoder"})
+        r.raise_for_status()
+        items = r.json().get("items", [])
+    except Exception as e:
+        print(f"  ROR error for '{institution}': {e}", flush=True)
+        cache[key] = None
+        return None
+
+    # Filter to correct country then take the first matching result
+    for item in items:
+        locs = item.get("locations") or []
+        if not locs:
+            continue
+        gd = locs[0].get("geonames_details") or {}
+        if iso2 and gd.get("country_code", "").upper() != iso2.upper():
+            continue
+        if not gd.get("lat"):
+            continue
+        result = {
+            "city": gd.get("city_name", ""),
+            "lat":  gd["lat"],
+            "lon":  gd["lng"],
+        }
+        cache[key] = result
+        return result
+
+    cache[key] = None
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Tier 3 — Ollama LLM extraction → Nominatim
 # ---------------------------------------------------------------------------
 
 def _build_nominatim():
     from geopy.geocoders import Nominatim
-    return Nominatim(user_agent=USER_AGENT)
+    return Nominatim(user_agent="synbio-igem-geocoder")
 
 
-def _build_opencage():
-    from geopy.geocoders import OpenCage
-    api_key = os.getenv("OPENCAGE_API_KEY", "")
-    if not api_key:
-        return None
-    return OpenCage(api_key=api_key)
-
-
-def geocode_institution(nominatim, opencage, institution: str, iso3: str, cache: dict) -> dict | None:
+def batch_llm_extract(pairs: list[tuple[str, str]], cache: dict) -> dict:
     """
-    Geocode an institution name constrained to its country.
+    Use a local Ollama model to extract city + country from institution names.
 
-    Strategy:
-      1. Expand abbreviations in the institution name.
-      2. Query Nominatim with countrycodes=<iso2> to prevent cross-country matches.
-      3. If Nominatim returns null, fall back to OpenCage with country name appended.
+    Called only for institution+country pairs that OpenAlex and ROR both failed
+    to match. Processes in batches for efficiency.
 
-    Returns {"city": str, "lat": float, "lon": float} or None.
+    Returns a dict mapping (institution, iso3) → {"city": str, "country": str}.
     """
-    if not institution or institution.startswith("http"):
-        return None
+    import ollama
 
-    iso2 = iso3_to_iso2(iso3)
-    cache_key = f"inst:{institution}:{iso3}"
-    if cache_key in cache:
-        return cache[cache_key]
+    # Filter to pairs not already cached
+    todo = [(inst, iso3) for inst, iso3 in pairs
+            if f"llm:{inst}:{iso3}" not in cache]
+    if not todo:
+        return {}
 
-    expanded = expand_abbreviations(institution)
-    result = None
+    print(f"  Ollama: extracting city from {len(todo)} institution names…", flush=True)
+    results = {}
 
-    # --- Nominatim (primary) ---
+    for batch_start in range(0, len(todo), OLLAMA_BATCH):
+        batch = todo[batch_start : batch_start + OLLAMA_BATCH]
+
+        # Build numbered list for the prompt
+        lines = "\n".join(
+            f'{i+1}. "{inst}" (country ISO3: {iso3})'
+            for i, (inst, iso3) in enumerate(batch)
+        )
+        prompt = (
+            "You are a geocoding assistant. For each institution below, return "
+            "the city it is located in and the country name in English.\n"
+            "Reply ONLY with a valid JSON array — no explanation, no markdown.\n"
+            "Each element: {\"city\": \"...\", \"country\": \"...\"}\n"
+            "If you are unsure, make your best guess.\n\n"
+            f"Institutions:\n{lines}"
+        )
+
+        try:
+            response = ollama.chat(
+                model=OLLAMA_MODEL,
+                messages=[{"role": "user", "content": prompt}],
+                options={"temperature": 0},
+            )
+            raw = response["message"]["content"].strip()
+            # Extract outermost JSON array from the response
+            match = re.search(r'\[.*\]', raw, re.DOTALL)
+            parsed = json.loads(match.group(0)) if match else []
+            # Flatten if the model returned [[{...}], [{...}]] instead of [{...}, {...}]
+            parsed = [
+                item[0] if isinstance(item, list) and item else item
+                for item in parsed
+            ]
+        except Exception as e:
+            print(f"  Ollama error on batch {batch_start}: {e}", flush=True)
+            parsed = []
+
+        for i, (inst, iso3) in enumerate(batch):
+            entry = parsed[i] if i < len(parsed) else {}
+            city    = entry.get("city", "")
+            country = entry.get("country", "")
+            result  = {"city": city, "country": country}
+            cache[f"llm:{inst}:{iso3}"] = result
+            results[(inst, iso3)] = result
+
+        print(f"  Ollama: {min(batch_start + OLLAMA_BATCH, len(todo))}/{len(todo)} done",
+              flush=True)
+
+    return results
+
+
+def geocode_city_nominatim(nominatim, city: str, iso3: str, cache: dict) -> dict | None:
+    """Geocode a clean city string with Nominatim, constrained to country."""
+    from geopy.geocoders import Nominatim  # noqa
+    iso2 = _iso3_to_iso2(iso3)
+    key = f"city:{city}:{iso3}"
+    if key in cache:
+        return cache[key]
+
     time.sleep(NOMINATIM_DELAY)
     try:
         kwargs = {"addressdetails": True, "language": "en"}
         if iso2:
             kwargs["country_codes"] = iso2
-        loc = nominatim.geocode(expanded, **kwargs)
-        if loc:
-            addr = loc.raw.get("address", {})
-            result = {
-                "city": extract_city(addr),
-                "lat": loc.latitude,
-                "lon": loc.longitude,
-            }
+        loc = nominatim.geocode(city, **kwargs)
+        if not loc:
+            cache[key] = None
+            return None
+        addr = loc.raw.get("address", {})
+        resolved_city = next((addr[k] for k in CITY_KEYS if k in addr), city)
+        result = {"city": resolved_city, "lat": loc.latitude, "lon": loc.longitude}
     except Exception as e:
-        print(f"  Nominatim error for '{expanded}': {e}", flush=True)
-
-    # --- OpenCage fallback ---
-    if result is None and opencage is not None:
-        cname = country_name(iso3)
-        query = f"{expanded}, {cname}".strip(", ")
-        time.sleep(OPENCAGE_DELAY)
-        try:
-            loc = opencage.geocode(query, language="en")
-            if loc:
-                # OpenCage embeds address components in loc.raw["components"]
-                components = loc.raw.get("components", {})
-                city = (
-                    components.get("city")
-                    or components.get("town")
-                    or components.get("village")
-                    or components.get("municipality")
-                    or ""
-                )
-                result = {"city": city, "lat": loc.latitude, "lon": loc.longitude}
-        except Exception as e:
-            print(f"  OpenCage error for '{query}': {e}", flush=True)
-
-    cache[cache_key] = result
-    return result
-
-
-def geocode_city_country(nominatim, city: str, country_iso3: str, cache: dict) -> dict | None:
-    """
-    Geocode city + country for Pass 2 (fill lat/lon on teams that already have city).
-    Returns {"lat": float, "lon": float} or None.
-    """
-    iso2 = iso3_to_iso2(country_iso3) or ""
-    cache_key = f"city:{city}:{country_iso3}"
-    if cache_key in cache:
-        return cache[cache_key]
-
-    query = city
-    time.sleep(NOMINATIM_DELAY)
-    try:
-        kwargs = {"language": "en"}
-        if iso2:
-            kwargs["country_codes"] = iso2
-        loc = nominatim.geocode(query, **kwargs)
-        result = {"lat": loc.latitude, "lon": loc.longitude} if loc else None
-    except Exception as e:
-        print(f"  Nominatim error for '{query}': {e}", flush=True)
+        print(f"  Nominatim error for '{city}': {e}", flush=True)
         result = None
 
-    cache[cache_key] = result
+    cache[key] = result
     return result
 
 
@@ -236,86 +307,116 @@ def geocode_city_country(nominatim, city: str, country_iso3: str, cache: dict) -
 # ---------------------------------------------------------------------------
 
 def main():
-    import pandas as pd
-
     df = pd.read_csv(CSV_PATH)
-    print(f"Loaded {len(df)} teams from {CSV_PATH.name}")
+    print(f"Loaded {len(df)} teams from {CSV_PATH.name}\n")
 
-    cache   = load_cache()
-    nom     = _build_nominatim()
-    oc      = _build_opencage()
-    if oc is None:
-        print("WARNING: OPENCAGE_API_KEY not found — Nominatim only, no fallback")
+    cache = load_cache()
+    nom   = _build_nominatim()
 
     # ------------------------------------------------------------------
-    # Pass 1: institution → city + lat/lon (no-city rows)
+    # Pass 1: institution → city + lat/lon  (teams where city is null)
     # ------------------------------------------------------------------
     no_city = df["city"].isna()
-    pass1_df = df[no_city][["institution", "country"]].drop_duplicates()
-    # Drop rows with URL-only or empty institution names
-    pass1_df = pass1_df[
-        pass1_df["institution"].notna() &
-        ~pass1_df["institution"].str.startswith("http", na=False)
-    ]
-
-    already_cached = sum(
-        1 for _, r in pass1_df.iterrows()
-        if f"inst:{r['institution']}:{r['country']}" in cache
+    pairs_df = (
+        df[no_city & df["institution"].notna() &
+           ~df["institution"].str.startswith("http", na=False)]
+        [["institution", "country"]]
+        .drop_duplicates()
     )
-    todo = len(pass1_df) - already_cached
-    print(f"\nPass 1: {no_city.sum()} teams need city, {len(pass1_df)} unique institution+country pairs")
-    print(f"  Cached: {already_cached}  |  To fetch: {todo}")
+    pairs = list(zip(pairs_df["institution"], pairs_df["country"]))
+    print(f"Pass 1: {no_city.sum()} teams without city → {len(pairs)} unique institution+country pairs")
 
-    done = 0
-    for _, row in pass1_df.iterrows():
-        geocode_institution(nom, oc, row["institution"], row["country"], cache)
-        done += 1
-        if done % 100 == 0:
+    # --- Tier 1: OpenAlex ---
+    oa_miss = []
+    oa_hits = 0
+    oa_cached = sum(1 for inst, iso3 in pairs if f"openalex:{inst}:{iso3}" in cache)
+    print(f"  OpenAlex: {oa_cached} cached, {len(pairs)-oa_cached} to fetch")
+    for i, (inst, iso3) in enumerate(pairs):
+        result = lookup_openalex(inst, iso3, cache)
+        if result:
+            oa_hits += 1
+        else:
+            oa_miss.append((inst, iso3))
+        if (i + 1) % 200 == 0:
             save_cache(cache)
-            print(f"  {done}/{len(pass1_df)} done…", flush=True)
+            print(f"    {i+1}/{len(pairs)} OpenAlex done…", flush=True)
     save_cache(cache)
+    print(f"  OpenAlex: {oa_hits} found, {len(oa_miss)} still missing")
 
-    # Apply Pass 1 to DataFrame
+    # --- Tier 2: ROR ---
+    ror_miss = []
+    ror_hits = 0
+    ror_cached = sum(1 for inst, iso3 in oa_miss if f"ror:{inst}:{iso3}" in cache)
+    print(f"  ROR: {ror_cached} cached, {len(oa_miss)-ror_cached} to fetch")
+    for i, (inst, iso3) in enumerate(oa_miss):
+        result = lookup_ror(inst, iso3, cache)
+        if result:
+            ror_hits += 1
+        else:
+            ror_miss.append((inst, iso3))
+        if (i + 1) % 100 == 0:
+            save_cache(cache)
+            print(f"    {i+1}/{len(oa_miss)} ROR done…", flush=True)
+    save_cache(cache)
+    print(f"  ROR: {ror_hits} found, {len(ror_miss)} still missing")
+
+    # --- Tier 3: Ollama → Nominatim ---
+    if ror_miss:
+        llm_results = batch_llm_extract(ror_miss, cache)
+        save_cache(cache)
+
+        nom_hits = 0
+        for (inst, iso3), llm in llm_results.items():
+            city = llm.get("city", "")
+            if not city:
+                continue
+            geo = geocode_city_nominatim(nom, city, iso3, cache)
+            if geo:
+                # Store result under the institution key so apply-step can find it
+                cache[f"openalex:{inst}:{iso3}"] = geo   # reuse openalex key for apply step
+                nom_hits += 1
+        save_cache(cache)
+        print(f"  Ollama+Nominatim: {nom_hits}/{len(ror_miss)} resolved")
+
+    # --- Apply Pass 1 results ---
     filled_city = filled_coords = 0
-    for _, row in pass1_df.iterrows():
-        result = cache.get(f"inst:{row['institution']}:{row['country']}")
+    for inst, iso3 in pairs:
+        result = (
+            cache.get(f"openalex:{inst}:{iso3}") or
+            cache.get(f"ror:{inst}:{iso3}")
+        )
         if not result:
             continue
-        mask = no_city & (df["institution"] == row["institution"]) & (df["country"] == row["country"])
+        mask = no_city & (df["institution"] == inst) & (df["country"] == iso3)
         if result.get("city"):
             df.loc[mask, "city"] = result["city"]
             filled_city += mask.sum()
         df.loc[mask, "lat"] = result["lat"]
         df.loc[mask, "lon"] = result["lon"]
         filled_coords += mask.sum()
-
-    print(f"  Filled city for {filled_city} rows, lat/lon for {filled_coords} rows")
+    print(f"\nPass 1 applied: city filled for {filled_city} rows, lat/lon for {filled_coords} rows")
 
     # ------------------------------------------------------------------
-    # Pass 2: city + country → lat/lon (have city, missing coords)
+    # Pass 2: city + country → lat/lon  (teams with city but no coords)
     # ------------------------------------------------------------------
     needs_latlon = df["city"].notna() & df["lat"].isna()
-    pass2_df = df[needs_latlon][["city", "country"]].drop_duplicates()
-
-    already_p2 = sum(
-        1 for _, r in pass2_df.iterrows()
-        if f"city:{r['city']}:{r['country']}" in cache
+    p2_pairs = (
+        df[needs_latlon][["city", "country"]]
+        .drop_duplicates()
     )
-    print(f"\nPass 2: {needs_latlon.sum()} teams need lat/lon, {len(pass2_df)} unique city+country pairs")
-    print(f"  Cached: {already_p2}  |  To fetch: {len(pass2_df) - already_p2}")
+    print(f"\nPass 2: {needs_latlon.sum()} teams with city but no lat/lon → {len(p2_pairs)} unique pairs")
+    p2_cached = sum(1 for _, r in p2_pairs.iterrows() if f"city:{r['city']}:{r['country']}" in cache)
+    print(f"  Cached: {p2_cached}, to fetch: {len(p2_pairs)-p2_cached}")
 
-    done2 = 0
-    for _, row in pass2_df.iterrows():
-        geocode_city_country(nom, row["city"], row["country"], cache)
-        done2 += 1
-        if done2 % 100 == 0:
+    for i, (_, row) in enumerate(p2_pairs.iterrows()):
+        geocode_city_nominatim(nom, row["city"], row["country"], cache)
+        if (i + 1) % 100 == 0:
             save_cache(cache)
-            print(f"  {done2}/{len(pass2_df)} done…", flush=True)
+            print(f"  {i+1}/{len(p2_pairs)} done…", flush=True)
     save_cache(cache)
 
-    # Apply Pass 2
     filled_p2 = 0
-    for _, row in pass2_df.iterrows():
+    for _, row in p2_pairs.iterrows():
         result = cache.get(f"city:{row['city']}:{row['country']}")
         if not result:
             continue
@@ -323,7 +424,7 @@ def main():
         df.loc[mask, "lat"] = result["lat"]
         df.loc[mask, "lon"] = result["lon"]
         filled_p2 += mask.sum()
-    print(f"  Filled lat/lon for {filled_p2} rows")
+    print(f"Pass 2 applied: lat/lon filled for {filled_p2} rows")
 
     # ------------------------------------------------------------------
     # Summary and save
@@ -332,6 +433,13 @@ def main():
     print(f"  city non-null : {df['city'].notna().sum()}/{len(df)}")
     print(f"  lat  non-null : {df['lat'].notna().sum()}/{len(df)}")
     print(f"  lon  non-null : {df['lon'].notna().sum()}/{len(df)}")
+
+    still_missing = df[df["city"].isna()]["institution"].dropna().unique()
+    print(f"\n  {len(still_missing)} institutions still unresolved:")
+    for inst in still_missing[:20]:
+        print(f"    - {inst}")
+    if len(still_missing) > 20:
+        print(f"    … and {len(still_missing)-20} more")
 
     df.to_csv(CSV_PATH, index=False)
     print(f"\nSaved to {CSV_PATH.relative_to(REPO_ROOT)}")
