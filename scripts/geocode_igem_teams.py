@@ -258,9 +258,13 @@ def batch_llm_extract(pairs: list[tuple[str, str, str]], cache: dict) -> dict:
         )
     client = anthropic.Anthropic(api_key=api_key)
 
+    # When institution is blank, key by team name to avoid collisions
+    def _llm_key(inst, iso3, team):
+        return f"llm:{inst}:{iso3}" if inst else f"llm:{team}:{iso3}"
+
     # Filter to pairs not already cached
     todo = [(inst, iso3, team) for inst, iso3, team in pairs
-            if f"llm:{inst}:{iso3}" not in cache]
+            if _llm_key(inst, iso3, team) not in cache]
     if not todo:
         return {}
 
@@ -274,7 +278,9 @@ def batch_llm_extract(pairs: list[tuple[str, str, str]], cache: dict) -> dict:
         # This helps when the institution alone is too generic (e.g. a department
         # name) but the team name encodes the parent university abbreviation.
         lines = "\n".join(
-            f'{i+1}. Institution: "{inst}" | Team name: "{team}" | Country ISO3: {iso3}'
+            (f'{i+1}. Institution: "{inst}" | Team name: "{team}" | Country ISO3: {iso3}'
+             if inst else
+             f'{i+1}. Team name: "{team}" | Country ISO3: {iso3} (institution unknown)')
             for i, (inst, iso3, team) in enumerate(batch)
         )
         prompt = (
@@ -305,7 +311,7 @@ def batch_llm_extract(pairs: list[tuple[str, str, str]], cache: dict) -> dict:
             city    = entry.get("city", "")
             country = entry.get("country", "")
             result  = {"city": city, "country": country}
-            cache[f"llm:{inst}:{iso3}"] = result
+            cache[_llm_key(inst, iso3, team)] = result
             results[(inst, iso3, team)] = result
 
         print(f"  Haiku: {min(batch_start + OLLAMA_BATCH, len(todo))}/{len(todo)} done",
@@ -369,17 +375,31 @@ def main():
     # Pass 1: institution → city + lat/lon  (teams where city is null)
     # ------------------------------------------------------------------
     no_city = df["city"].isna()
-    pairs_df = (
+
+    # Pairs where institution is known (skip URL-only entries)
+    inst_pairs_df = (
         df[no_city & df["institution"].notna() &
-           ~df["institution"].str.startswith("http", na=False)]
+           ~df["institution"].str.startswith("http", na=False) &
+           (df["institution"].str.strip() != "")]
         [["institution", "country", "name"]]
-        # De-duplicate by institution+country; keep one representative team name
-        # per group (used as extra context for the Ollama tier).
         .drop_duplicates(subset=["institution", "country"])
         .reset_index(drop=True)
     )
+
+    # Pairs where institution is blank — go straight to Haiku using team name
+    blank_inst_df = (
+        df[no_city & (df["institution"].isna() | (df["institution"].str.strip() == ""))]
+        [["name", "country"]]
+        .assign(institution="")
+        [["institution", "country", "name"]]
+        .drop_duplicates(subset=["name", "country"])
+        .reset_index(drop=True)
+    )
+
+    pairs_df = pd.concat([inst_pairs_df, blank_inst_df], ignore_index=True)
     pairs = list(zip(pairs_df["institution"], pairs_df["country"], pairs_df["name"]))
-    print(f"Pass 1: {no_city.sum()} teams without city → {len(pairs)} unique institution+country pairs")
+    print(f"Pass 1: {no_city.sum()} teams without city → {len(pairs)} unique pairs "
+          f"({len(inst_pairs_df)} with institution, {len(blank_inst_df)} team-name-only)")
 
     # --- Tier 1: OpenAlex ---
     oa_miss = []
@@ -387,6 +407,9 @@ def main():
     oa_cached = sum(1 for inst, iso3, _ in pairs if f"openalex:{inst}:{iso3}" in cache)
     print(f"  OpenAlex: {oa_cached} cached, {len(pairs)-oa_cached} to fetch")
     for i, (inst, iso3, team_name) in enumerate(pairs):
+        if not inst:
+            oa_miss.append((inst, iso3, team_name))  # no institution → skip to Haiku
+            continue
         result = lookup_openalex(inst, iso3, cache)
         if result:
             oa_hits += 1
@@ -398,53 +421,48 @@ def main():
     save_cache(cache)
     print(f"  OpenAlex: {oa_hits} found, {len(oa_miss)} still missing")
 
-    # --- Tier 2: ROR ---
-    ror_miss = []
-    ror_hits = 0
-    ror_cached = sum(1 for inst, iso3, _ in oa_miss if f"ror:{inst}:{iso3}" in cache)
-    print(f"  ROR: {ror_cached} cached, {len(oa_miss)-ror_cached} to fetch")
-    for i, (inst, iso3, team_name) in enumerate(oa_miss):
-        result = lookup_ror(inst, iso3, cache)
-        if result:
-            ror_hits += 1
-        else:
-            ror_miss.append((inst, iso3, team_name))
-        if (i + 1) % 100 == 0:
-            save_cache(cache)
-            print(f"    {i+1}/{len(oa_miss)} ROR done…", flush=True)
-    save_cache(cache)
-    print(f"  ROR: {ror_hits} found, {len(ror_miss)} still missing")
+    # ROR (Research Organization Registry) was removed from the pipeline because
+    # its fuzzy search returned wrong institutions for abbreviated names
+    # (e.g. "Osaka Univ." → Shizuoka, "US Naval Academy" → New York).
+    # OpenAlex misses go directly to Haiku, which is more accurate (100% vs ROR ~65%).
+    ror_miss = oa_miss
 
-    # --- Tier 3: Ollama → Nominatim ---
+    # --- Tier 2: Haiku → Nominatim ---
     if ror_miss:
         llm_results = batch_llm_extract(ror_miss, cache)
         save_cache(cache)
 
         nom_hits = 0
-        for (inst, iso3, _team), llm in llm_results.items():
+        for (inst, iso3, team), llm in llm_results.items():
             city = llm.get("city", "")
             if not city:
                 continue
             geo = geocode_city_nominatim(nom, city, iso3, cache)
             if geo:
-                # Store under "nom:" prefix so LLM-derived results are
-                # distinguishable from real OpenAlex/ROR results in the cache.
-                cache[f"nom:{inst}:{iso3}"] = geo
+                # Key by team name when institution is blank
+                nom_key = f"nom:{inst}:{iso3}" if inst else f"nom:{team}:{iso3}"
+                cache[nom_key] = geo
                 nom_hits += 1
         save_cache(cache)
         print(f"  Ollama+Nominatim: {nom_hits}/{len(ror_miss)} resolved")
 
     # --- Apply Pass 1 results ---
     filled_city = filled_coords = 0
-    for inst, iso3, _team_name in pairs:
-        result = (
-            cache.get(f"openalex:{inst}:{iso3}") or
-            cache.get(f"ror:{inst}:{iso3}") or
-            cache.get(f"nom:{inst}:{iso3}")
-        )
+    for inst, iso3, team_name in pairs:
+        if inst:
+            result = (
+                cache.get(f"openalex:{inst}:{iso3}") or
+                cache.get(f"nom:{inst}:{iso3}")
+            )
+            mask = no_city & (df["institution"] == inst) & (df["country"] == iso3)
+        else:
+            result = cache.get(f"nom:{team_name}:{iso3}")
+            mask = (no_city &
+                    df["institution"].isna() &
+                    (df["name"] == team_name) &
+                    (df["country"] == iso3))
         if not result:
             continue
-        mask = no_city & (df["institution"] == inst) & (df["country"] == iso3)
         if result.get("city"):
             df.loc[mask, "city"] = result["city"]
             filled_city += mask.sum()
@@ -501,7 +519,7 @@ def main():
     # Normalize whitespace: replace any runs of \r \n \t with a single space.
     # iGEM institution descriptions sometimes embed raw newlines and tabs.
     import re as _re
-    for col in df.select_dtypes(include="object").columns:
+    for col in df.select_dtypes(include="str").columns:
         df[col] = df[col].apply(
             lambda v: _re.sub(r'[\r\n\t]+', ' ', v).strip() if isinstance(v, str) else v
         )
