@@ -506,12 +506,13 @@ def main():
     # ------------------------------------------------------------------
     # HKG and MAC are country-level ISO codes — Nominatim has no sub-national
     # city to match when constrained by country_codes=HK or MO.
-    HARDCODED = {
+    # Country-level ISO codes where Nominatim has no sub-national city to match
+    HARDCODED_COUNTRY = {
         "HKG": {"city": "Hong Kong", "lat": 22.3193, "lon": 114.1694},
         "MAC": {"city": "Macau",     "lat": 22.1987, "lon": 113.5439},
     }
     filled_p3 = 0
-    for iso3, geo in HARDCODED.items():
+    for iso3, geo in HARDCODED_COUNTRY.items():
         mask = df["city"].isna() & (df["country"] == iso3)
         df.loc[mask, "city"] = geo["city"]
         df.loc[mask, "lat"]  = geo["lat"]
@@ -519,6 +520,30 @@ def main():
         filled_p3 += mask.sum()
         if mask.sum():
             print(f"Pass 3: filled {mask.sum()} {iso3} teams → {geo['city']}")
+
+    # Teams with URL-only institutions or wrong country codes in the source data
+    HARDCODED_TEAMS = {
+        # team name                city               lat        lon
+        "ArtScienceBangalore": ("Bangalore",       12.9716,   77.5946),  # Srishti Institute; IND
+        "TzuChiU_Formosa":     ("Hualien",         23.9711,  121.6016),  # Tzu Chi Univ, Taiwan; src country=USA
+        "SUSTC-Shenzhen-A":    ("Shenzhen",        22.5431,  114.0579),  # SUSTech; src country=USA
+        "SUSTC-Shenzhen-B":    ("Shenzhen",        22.5431,  114.0579),  # SUSTech; src country=USA
+        "LIKA-CESAR-Brasil":   ("Recife",          -8.0476,  -34.8770),  # UFPE LIKA; URL-only institution
+        "Nagahama":            ("Nagahama",        35.3686,  136.2727),  # Nagahama Inst Bio-Science; src country=JEY
+        "Tel-Hai":             ("Kiryat Shmona",   33.2075,   35.5689),  # Tel-Hai College; URL-only institution
+        "Virginia":            ("Charlottesville", 38.0336,  -78.5080),  # Univ of Virginia; URL-only institution
+        "SBS_NY":              ("Stony Brook",     40.9176,  -73.1276),  # The Stony Brook School; src country=CHN
+        "UPRM":                ("Mayagüez",        18.2011,  -67.1397),  # Univ of Puerto Rico Mayagüez
+        "The_Webb_Schools":    ("Claremont",       34.0967, -117.7198),  # The Webb Schools CA; src country=CHN
+        "RUM-UPRM":            ("Mayagüez",        18.2011,  -67.1397),  # Univ of Puerto Rico Mayagüez
+    }
+    for team, (city, lat, lon) in HARDCODED_TEAMS.items():
+        mask = df["city"].isna() & (df["name"] == team)
+        df.loc[mask, "city"] = city
+        df.loc[mask, "lat"]  = lat
+        df.loc[mask, "lon"]  = lon
+        filled_p3 += mask.sum()
+
     if filled_p3:
         print(f"Pass 3 applied: {filled_p3} rows filled")
 
