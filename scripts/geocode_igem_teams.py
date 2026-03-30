@@ -502,6 +502,27 @@ def main():
     print(f"Pass 2 applied: lat/lon filled for {filled_p2} rows")
 
     # ------------------------------------------------------------------
+    # Pass 3: hard-code country-level regions that Nominatim can't resolve
+    # ------------------------------------------------------------------
+    # HKG and MAC are country-level ISO codes — Nominatim has no sub-national
+    # city to match when constrained by country_codes=HK or MO.
+    HARDCODED = {
+        "HKG": {"city": "Hong Kong", "lat": 22.3193, "lon": 114.1694},
+        "MAC": {"city": "Macau",     "lat": 22.1987, "lon": 113.5439},
+    }
+    filled_p3 = 0
+    for iso3, geo in HARDCODED.items():
+        mask = df["city"].isna() & (df["country"] == iso3)
+        df.loc[mask, "city"] = geo["city"]
+        df.loc[mask, "lat"]  = geo["lat"]
+        df.loc[mask, "lon"]  = geo["lon"]
+        filled_p3 += mask.sum()
+        if mask.sum():
+            print(f"Pass 3: filled {mask.sum()} {iso3} teams → {geo['city']}")
+    if filled_p3:
+        print(f"Pass 3 applied: {filled_p3} rows filled")
+
+    # ------------------------------------------------------------------
     # Summary and save
     # ------------------------------------------------------------------
     print(f"\n=== Final coverage ===")
