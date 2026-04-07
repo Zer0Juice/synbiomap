@@ -1,0 +1,98 @@
+/*
+ * solarized-light.scss
+ * Applies the Solarized Light color palette (Ethan Schoonover, 2011)
+ * to the Quarto/Bootstrap theme.
+ *
+ * Palette reference: https://ethanschoonover.com/solarized/
+ *   base3  #fdf6e3  main background
+ *   base2  #eee8d5  highlighted background / alt rows
+ *   base1  #93a1a1  comments / secondary text
+ *   base0  #657b83  body text
+ *   base00 #586e75  emphasized text
+ *   base01 #073642  headings / strong
+ *   yellow  #b58900
+ *   orange  #cb4b16
+ *   red     #dc322f
+ *   blue    #268bd2  links / primary
+ *   cyan    #2aa198
+ *   green   #859900
+ */
+
+/*-- scss:defaults --*/
+
+// Background & surface
+$body-bg:            #fdf6e3;
+$body-color:         #657b83;
+$headings-color:     #073642;
+
+// Links
+$link-color:         #268bd2;
+$link-hover-color:   #2aa198;
+
+// Navbar
+$navbar-bg:          #eee8d5;
+$navbar-fg:          #586e75;
+$navbar-hl:          #268bd2;
+
+// Sidebar / TOC
+$sidebar-bg:         #eee8d5;
+$sidebar-fg:         #586e75;
+$sidebar-hl:         #268bd2;
+
+// Footer
+$footer-bg:          #eee8d5;
+$footer-fg:          #93a1a1;
+
+// Code blocks
+$code-bg:            #eee8d5;
+$code-color:         #586e75;
+
+// Borders & dividers
+$border-color:       #d4cbb7;  // slightly darker than base2
+
+// Callout / card accent
+$primary:            #268bd2;  // blue
+$secondary:          #93a1a1;  // base1
+$success:            #859900;  // green
+$info:               #2aa198;  // cyan
+$warning:            #b58900;  // yellow
+$danger:             #dc322f;  // red
+
+/*-- scss:rules --*/
+
+// Subtle table striping using base2
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: #eee8d5;
+}
+
+// Inline code
+code:not(.sourceCode) {
+  color: #cb4b16;
+  background-color: #eee8d5;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+
+// Navbar border
+.navbar {
+  border-bottom: 1px solid #d4cbb7;
+}
+
+// Footer border
+.nav-footer {
+  border-top: 1px solid #d4cbb7;
+}
+
+// Blockquotes
+blockquote {
+  border-left: 3px solid #268bd2;
+  color: #586e75;
+  background-color: #eee8d5;
+  padding: 0.5em 1em;
+}
+
+// Active TOC item
+.sidebar nav[role=doc-toc] ul > li > a.active {
+  color: #268bd2;
+  font-weight: 600;
+}
