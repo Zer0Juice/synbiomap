@@ -61,13 +61,27 @@ def load_model(model_name: str = "allenai-specter"):
     The model is downloaded on first use and cached by HuggingFace in
     ~/.cache/huggingface/.
 
+    Device selection (in priority order):
+      1. CUDA  — NVIDIA GPU (not present on most Macs)
+      2. MPS   — Apple Silicon GPU (M1/M2/M3 Mac); typically 5–10x faster than CPU
+      3. CPU   — fallback
+
     Parameters
     ----------
     model_name : HuggingFace model name or local path
     """
+    import torch
     from sentence_transformers import SentenceTransformer
-    logger.info(f"Loading embedding model: {model_name}")
-    return SentenceTransformer(model_name)
+
+    if torch.cuda.is_available():
+        device = "cuda"
+    elif torch.backends.mps.is_available():
+        device = "mps"
+    else:
+        device = "cpu"
+
+    logger.info(f"Loading embedding model: {model_name} (device={device})")
+    return SentenceTransformer(model_name, device=device)
 
 
 def generate_embeddings(

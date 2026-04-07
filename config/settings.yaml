@@ -169,7 +169,7 @@ corpus:
 #       because cached vectors from a different model are not compatible.
 embedding:
   model: "allenai-specter"
-  batch_size: 64
+  batch_size: 256
   # Text field to embed (combined title + abstract)
   text_field: "text"
 
