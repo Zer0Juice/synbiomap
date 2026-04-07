@@ -46,29 +46,25 @@ logger = logging.getLogger(__name__)
 
 class Specter2Model:
     """
-    Wraps the SPECTER2 model (allenai/specter2_base + specter2 adapter) so it
-    has the same .encode(texts) interface as a SentenceTransformer.
+    Wraps the SPECTER2 base model (allenai/specter2_base) so it has the same
+    .encode(texts) interface as a SentenceTransformer.
 
-    SPECTER2 is loaded with the `adapters` library, which extends HuggingFace
-    Transformers with lightweight task-specific adapter layers.
+    We load the model with plain HuggingFace Transformers (AutoModel +
+    AutoTokenizer), which avoids the `adapters` library and its dependency
+    conflicts. The base model is already fine-tuned on scientific citation
+    data and produces high-quality embeddings for scientific text.
 
-    Requires: pip install adapters transformers torch
+    Requires: pip install transformers torch
     """
 
-    def __init__(self, base: str = "allenai/specter2_base",
-                 adapter: str = "allenai/specter2"):
+    def __init__(self, base: str = "allenai/specter2_base"):
         import torch
-        from transformers import AutoTokenizer
-        from adapters import AutoAdapterModel
+        from transformers import AutoTokenizer, AutoModel
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        logger.info(f"Loading SPECTER2 base model from {base} (device={self.device})")
+        logger.info(f"Loading SPECTER2 from {base} (device={self.device})")
         self.tokenizer = AutoTokenizer.from_pretrained(base)
-        self.model = AutoAdapterModel.from_pretrained(base)
-
-        logger.info(f"Loading SPECTER2 adapter from {adapter}")
-        self.model.load_adapter(adapter, source="hf", load_as="specter2",
-                                set_active=True)
+        self.model = AutoModel.from_pretrained(base)
         self.model.to(self.device)
         self.model.eval()
 
@@ -113,8 +109,8 @@ def load_model(model_name: str = "allenai/specter2_base"):
     """
     Load an embedding model by name.
 
-    If model_name is "allenai/specter2_base" (or contains "specter2"),
-    we load SPECTER2 with its task adapter via the `adapters` library.
+    If model_name contains "specter2", we load SPECTER2 using plain
+    HuggingFace Transformers (no `adapters` library needed).
     Otherwise we fall back to loading a standard SentenceTransformer model.
 
     The model is downloaded on first use and cached by HuggingFace in
@@ -125,9 +121,8 @@ def load_model(model_name: str = "allenai/specter2_base"):
     model_name : HuggingFace model name or local path
     """
     if "specter2" in model_name.lower():
-        logger.info("Detected SPECTER2 — loading with adapters library")
-        return Specter2Model(base="allenai/specter2_base",
-                             adapter="allenai/specter2")
+        logger.info("Detected SPECTER2 — loading with plain transformers")
+        return Specter2Model(base="allenai/specter2_base")
     else:
         from sentence_transformers import SentenceTransformer
         logger.info(f"Loading SentenceTransformer model: {model_name}")
