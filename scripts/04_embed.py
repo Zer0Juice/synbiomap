@@ -31,8 +31,10 @@ def run():
 
     # --- 1. Load all processed CSVs ---
     processed_dir = REPO_ROOT / 'data' / 'processed'
+    # Parts are excluded: they are short registry entries without abstracts,
+    # so they don't carry enough text for meaningful embeddings.
     dfs = []
-    for name in ['papers', 'patents', 'projects', 'parts']:
+    for name in ['papers', 'patents', 'projects']:
         path = processed_dir / f'{name}.csv'
         if path.exists() and path.stat().st_size > 0:
             try:
