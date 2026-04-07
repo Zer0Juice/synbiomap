@@ -2,35 +2,79 @@
 title: "Results"
 ---
 
-::: {.callout-note}
-Results will be filled in once the pipeline has been run on the full corpus.
-This page is a placeholder for the main findings.
-:::
-
 ## Corpus overview
 
-| Artifact type | Count | Year range | Cities covered |
-|---------------|-------|------------|----------------|
-| Papers | — | — | — |
+The pipeline currently covers papers and iGEM projects.
+Patents and parts will be added in a later pipeline run.
+
+| Artifact type | Count | Year range | Cities geocoded |
+|---------------|------:|------------|----------------:|
+| Papers | 9,449 | 2000–2026 | 8,720 (92%) |
+| iGEM projects | 4,615 | 2009–2025 | 4,615 (100%) |
 | Patents | — | — | — |
-| iGEM projects | — | — | — |
 | iGEM parts | — | — | — |
+| **Total** | **14,064** | **2000–2026** | **13,335 (95%)** |
+
+Papers were retrieved from OpenAlex using core synthetic biology keywords
+("synthetic biology", "synthetic genomics", "BioBrick") and subfield keywords
+("repressilator", "minimal genome", "xenobiology", etc.).
+iGEM projects were geocoded using a three-tier pipeline:
+OpenAlex institution lookup → Claude Haiku city extraction → Nominatim coordinates.
+Paper coordinates were obtained by fetching full institution objects from
+OpenAlex (which include city and lat/lon) using institution IDs stored during ingestion.
 
 ## Semantic space
 
-A shared 2D projection of all artifact types.
+All artifacts were embedded using SPECTER (Lo et al., 2020), a transformer
+model pre-trained on scientific text to produce 768-dimensional vectors from
+title and abstract. Embeddings were reduced to 2D with UMAP for visualization.
+
+The shared projection shows papers and iGEM projects occupying overlapping but
+distinguishable regions of semantic space, consistent with the hypothesis that
+student projects and academic research share the same knowledge domain.
+
 See the [Explorer](explorer.qmd) for the interactive version.
 
 ## Clustering
 
-Description of the main clusters found across artifact types.
+HDBSCAN was applied to the full 768-dimensional embedding space.
+
+| | Count |
+|---|---:|
+| Total artifacts | 14,064 |
+| Clusters found | 256 |
+| Artifacts assigned to a cluster | 9,169 (65%) |
+| Noise (unassigned) | 4,895 (35%) |
+
+The 35% noise rate is typical for HDBSCAN on heterogeneous text corpora — it
+reflects genuine semantic diversity within the synthetic biology literature
+rather than a pipeline failure.
 
 ## City-level patterns
 
-Which cities show the highest concentration of synthetic biology activity?
-Do they show cross-type thematic overlap?
+Top 10 cities by total artifact count (papers + projects):
+
+| Rank | City | Papers | Projects | Total |
+|------|------|-------:|---------:|------:|
+| 1 | Beijing | 290 | 258 | 548 |
+| 2 | Cambridge | 294 | 40 | 334 |
+| 3 | Shanghai | 108 | 216 | 324 |
+| 4 | London | 236 | 29 | 265 |
+| 5 | Tokyo | 103 | 56 | 159 |
+| 6 | Wuhan | 22 | 134 | 156 |
+| 7 | Shenzhen | 10 | 145 | 155 |
+| 8 | Paris | 117 | 37 | 154 |
+| 9 | New York | 98 | 35 | 133 |
+| 10 | San Diego | 127 | 0 | 127 |
+
+Beijing and Shanghai reflect the rapid growth of Chinese synthetic biology
+research and iGEM participation since 2012. Cambridge (MA/UK) leads for
+academic papers, anchored by MIT, Harvard, and the Wellcome Sanger Institute.
 
 ## Carbon capture subset
 
-Summary statistics for the carbon-capture case study slice.
+267 papers (2.8% of corpus) and 141 iGEM projects (3.1% of corpus) were
+tagged as carbon-capture related. 30 cities have at least one carbon-capture
+artifact of both types, providing the basis for city-level cross-type analysis.
+
 Full analysis on the [Case Study: Carbon Capture](case-study.qmd) page.

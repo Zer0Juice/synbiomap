@@ -6,8 +6,8 @@ subtitle: "Do student projects, academic research, and patents in synthetic biol
 ## What this project is about
 
 This project asks whether student research projects, academic publications, and patents
-within synthetic biology cluster together meaningfully — not just topically, but
-also geographically.
+within synthetic biology cluster together meaningfully. Does a city specializing in a specific cluster of student research
+predict further specialization in academic and commercial fields?
 
 The guiding idea is that innovation in a technical field may follow a local path:
 
@@ -15,18 +15,22 @@ The guiding idea is that innovation in a technical field may follow a local path
 2. **Academic papers** develop and refine them
 3. **Patents** reflect downstream application and translation
 
+We look at each artifact as a different expression of innovation and knowledge creation in a local region.
+Each artifact represents a unique expression of innovation, and the relatedness between them can show novel insights
+into innovation in an emergent field.
+
 We test whether these three artifact types occupy **related regions of semantic
 space**, share **thematic clusters**, and show **plausible city-level temporal
 continuity** in the same subfield.
 
-We do not claim to show causation. The language we use is:
+**We do not claim to show causation.** The language we use is:
 semantic relatedness, association, cluster overlap, plausible temporal sequence,
 and local innovation trajectory.
 
 ## Primary case study: carbon capture in synthetic biology
 
 The main worked example throughout this project is **carbon capture in synthetic
-biology** — engineering microorganisms to fix CO₂ or produce carbon-neutral fuels.
+biology** : engineering microorganisms to fix CO₂ or produce carbon-neutral fuels.
 This subfield is large enough to find examples across all three artifact types,
 and is directly relevant to planetary sustainability.
 

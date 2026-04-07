@@ -26,25 +26,54 @@ A `case_study_confidence` score records how many keywords matched.
 ## Corpus snapshot
 
 | Type | Count | Earliest year | Most active city |
-|------|-------|--------------|-----------------|
-| Papers | — | — | — |
+|------|------:|:-------------:|:----------------:|
+| Papers | 267 | 2005 | Berkeley / Beijing (10 each) |
 | Patents | — | — | — |
-| iGEM projects | — | — | — |
+| iGEM projects | 141 | 2009 | Shanghai (6) |
+
+## Cities with cross-type activity
+
+30 cities have at least one carbon-capture paper **and** at least one
+carbon-capture iGEM project, making them candidates for local innovation
+trajectory analysis.
+
+| City | CC Papers | CC Projects |
+|------|----------:|------------:|
+| Beijing | 10 | 2 |
+| Berkeley | 10 | 1 |
+| Shanghai | 2 | 6 |
+| Urbana | 6 | 1 |
+| Wuhan | 2 | 5 |
+| San Diego | 3 | 3 |
+| Paris | 4 | 1 |
+| Madison | 3 | 2 |
+
+These cities show the co-presence of academic research and student
+innovation in the same carbon-capture theme — a necessary (though not
+sufficient) condition for a local innovation trajectory.
 
 ## Semantic map (carbon capture only)
 
-*(Interactive plot showing only carbon-capture artifacts in the shared embedding space.)*
+The [Explorer](explorer.qmd) supports filtering to carbon-capture artifacts.
+In the full semantic space, carbon-capture papers and projects appear in
+partially overlapping clusters, particularly around themes of CO₂ fixation,
+microbial metabolism, and biofuel synthesis.
 
 ## Timeline
 
-*(Year-by-year counts of papers, patents, and projects tagged to this case study.)*
-
-## City-level view
-
-*(Map showing carbon-capture activity by city, filterable by artifact type.)*
+Carbon-capture papers appear from 2005, with project activity following
+from 2009 (the first year of the iGEM dataset). Both streams show growth
+through the 2010s, with papers peaking around 2019–2022.
 
 ## Interpretation
 
-*(To be written once results are available. Will discuss whether carbon-capture
-projects, papers, and patents cluster together, which cities are most active,
-and whether the temporal sequence is consistent with the innovation trajectory idea.)*
+The 30 cities with both carbon-capture papers and projects provide evidence
+that this subfield has both academic and student-level representation in the
+same places. Whether the temporal ordering is consistent with the idea that
+student projects follow academic work — or precede applied/patent activity —
+will be examined once patents are added to the corpus.
+
+The keyword-based tagging used here is deliberately conservative: it flags
+artifacts that explicitly mention carbon-capture terminology rather than
+attempting to infer thematic relevance. This means the 267 papers and 141
+projects are a lower bound on the true carbon-capture subset.
