@@ -11,8 +11,8 @@ This page explains how to re-run the full pipeline from scratch.
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/Zer0Juice/synbio-diversification
-cd synbio-diversification
+git clone https://github.com/Zer0Juice/synbiomap
+cd synbiomap
 
 # 2. Install dependencies
 pip install -r requirements.txt

@@ -7,8 +7,8 @@ project:
 website:
   title: "Patents, Papers, Parts & Planet"
   description: "Tracing synthetic biology innovation from student projects to patents"
-  site-url: "https://zer0juice.github.io/synbio-diversification"
-  repo-url: "https://github.com/Zer0Juice/synbio-diversification"
+  site-url: "https://zer0juice.github.io/synbiomap"
+  repo-url: "https://github.com/Zer0Juice/synbiomap"
   repo-actions: [issue]
 
   navbar:
@@ -34,7 +34,7 @@ website:
     left: "CSH Thesis Project — Synthetic Biology Innovation"
     right:
       - icon: github
-        href: "https://github.com/Zer0Juice/synbio-diversification"
+        href: "https://github.com/Zer0Juice/synbiomap"
 
 format:
   html:
