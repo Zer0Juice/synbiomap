@@ -129,6 +129,8 @@ def generate_embeddings(
     batch_ids = [i for i, _ in to_embed]
     batch_texts = [t for _, t in to_embed]
 
+    import torch
+
     for start in tqdm(range(0, len(batch_texts), batch_size), desc="Embedding"):
         chunk_ids = batch_ids[start : start + batch_size]
         chunk_texts = batch_texts[start : start + batch_size]
@@ -143,6 +145,14 @@ def generate_embeddings(
         # Save this batch to disk immediately — only a tiny binary file is
         # written, not the entire cache. Progress is safe after every batch.
         _save_batch(chunk_ids, vectors, cache_file)
+
+        # Release the MPS (Apple Silicon GPU) memory allocator cache after
+        # each batch. Without this, PyTorch's MPS backend accumulates residual
+        # allocations across batches, which fragments GPU memory and causes
+        # batch speed to degrade progressively over a long run.
+        # The CUDA equivalent is torch.cuda.empty_cache().
+        if torch.backends.mps.is_available():
+            torch.mps.empty_cache()
 
     logger.info(f"Embeddings complete. Cache now has {len(cache)} entries.")
     return cache
