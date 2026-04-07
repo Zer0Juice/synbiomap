@@ -41,12 +41,13 @@
     }
 
     // Group projections by artifact type for separate trace colors
+    // Colors drawn from the Solarized Light palette (Ethan Schoonover, 2011)
     const types = ["paper", "patent", "project", "part"];
     const colors = {
-      paper: "#4e79a7",
-      patent: "#f28e2b",
-      project: "#59a14f",
-      part: "#e15759",
+      paper:   "#268bd2",  // blue
+      patent:  "#cb4b16",  // orange
+      project: "#859900",  // green
+      part:    "#d33682",  // magenta
     };
 
     const traces = types.map((type) => {
@@ -69,10 +70,14 @@
     });
 
     const layout = {
-      title: "Semantic Space — All Artifacts",
+      title: { text: "Semantic Space — All Artifacts", font: { color: "#073642" } },
       showlegend: true,
-      xaxis: { title: "UMAP 1", showgrid: false, zeroline: false },
-      yaxis: { title: "UMAP 2", showgrid: false, zeroline: false },
+      paper_bgcolor: "#fdf6e3",
+      plot_bgcolor:  "#fdf6e3",
+      font: { color: "#657b83" },
+      xaxis: { title: "UMAP 1", showgrid: false, zeroline: false, color: "#93a1a1" },
+      yaxis: { title: "UMAP 2", showgrid: false, zeroline: false, color: "#93a1a1" },
+      legend: { bgcolor: "#eee8d5", bordercolor: "#d4cbb7", borderwidth: 1 },
       margin: { t: 40, l: 40, r: 20, b: 40 },
     };
 
