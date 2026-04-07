@@ -29,7 +29,11 @@ def run():
     print("=== Step 3: Ingest iGEM Projects and Parts ===\n")
 
     # --- 1. Load and normalize projects ---
+    # Accept either the canonical name or the actual downloaded filename
+    _alt = REPO_ROOT / 'data' / 'raw' / 'projects' / 'igem_teams_with_descriptions_2004_2025.csv'
     projects_path = REPO_ROOT / 'data' / 'raw' / 'projects' / 'igem_projects.csv'
+    if not projects_path.exists() and _alt.exists():
+        projects_path = _alt
     if not projects_path.exists():
         print(f"ERROR: {projects_path.relative_to(REPO_ROOT)} not found.")
         print("Download iGEM project data and place it there first.")
@@ -46,29 +50,38 @@ def run():
 
     print(f"Projects: {len(projects_df)}, carbon capture: {projects_df['case_study_flag'].sum()}")
 
-    # --- 2. Load and normalize parts ---
+    # --- 2. Load and normalize parts (optional — run 03b_fetch_parts.py first) ---
     parts_path = REPO_ROOT / 'data' / 'raw' / 'parts' / 'igem_parts.csv'
     if not parts_path.exists():
-        print(f"ERROR: {parts_path.relative_to(REPO_ROOT)} not found.")
-        return None, None
+        print(f"WARNING: {parts_path.relative_to(REPO_ROOT)} not found.")
+        print("Skipping parts — run scripts/03b_fetch_parts.py to generate it.")
+        import pandas as pd
+        parts_df = pd.DataFrame()
+    else:
+        raw_parts_df = igem.load_parts(str(parts_path))
+        raw_part_records = [igem.extract_part_fields(row) for _, row in raw_parts_df.iterrows()]
 
-    raw_parts_df = igem.load_parts(str(parts_path))
-    raw_part_records = [igem.extract_part_fields(row) for _, row in raw_parts_df.iterrows()]
+        parts_df = normalize.normalize_parts(
+            raw_records=raw_part_records,
+            carbon_keywords=cfg['corpus']['carbon_capture_keywords'],
+        )
 
-    parts_df = normalize.normalize_parts(
-        raw_records=raw_part_records,
-        carbon_keywords=cfg['corpus']['carbon_capture_keywords'],
-    )
-
-    print(f"Parts: {len(parts_df)}, carbon capture: {parts_df['case_study_flag'].sum()}")
+        print(f"Parts: {len(parts_df)}, carbon capture: {parts_df['case_study_flag'].sum()}")
 
     # --- 3. Save ---
     processed_dir = REPO_ROOT / 'data' / 'processed'
     processed_dir.mkdir(parents=True, exist_ok=True)
 
     projects_df.to_csv(processed_dir / 'projects.csv', index=False)
-    parts_df.to_csv(processed_dir / 'parts.csv', index=False)
-    print(f"\nSaved projects.csv and parts.csv to {processed_dir.relative_to(REPO_ROOT)}/")
+    print(f"Saved projects.csv to {processed_dir.relative_to(REPO_ROOT)}/")
+
+    # Only write parts.csv if there is actual data — an empty file causes
+    # pandas errors in later steps.
+    if len(parts_df) > 0:
+        parts_df.to_csv(processed_dir / 'parts.csv', index=False)
+        print(f"Saved parts.csv ({len(parts_df)} parts) to {processed_dir.relative_to(REPO_ROOT)}/")
+    else:
+        print("No parts data — parts.csv not written. Run scripts/03b_fetch_parts.py to add parts.")
 
     return projects_df, parts_df
 
