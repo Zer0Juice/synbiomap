@@ -45,8 +45,11 @@ def run():
     print(f"{len(df)} artifacts loaded")
 
     # --- 2. Export artifacts.json ---
-    # Only keep the fields the website needs to keep the file small.
-    web_cols = ['id', 'type', 'title', 'year', 'city', 'country',
+    # Keep the fields the website needs.
+    # 'text' (title + abstract) is included so the explorer can show abstracts
+    # on demand when a user selects an artifact. GitHub Pages gzip-compresses
+    # JSON, so the extra text adds ~2–4 MB transfer, which is acceptable.
+    web_cols = ['id', 'type', 'title', 'text', 'year', 'city', 'country',
                 'case_study_flag', 'cluster_label']
     artifacts = (
         df[web_cols]
