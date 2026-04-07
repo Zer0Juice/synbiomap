@@ -1,21 +1,30 @@
 """
 embeddings.py — generate and cache text embeddings for all artifacts.
 
-We use sentence-transformers, a library that wraps pre-trained transformer
-models and makes it easy to encode sentences into fixed-size vectors.
-
 Model choice:
-  "all-MiniLM-L6-v2" is the default. It is small (80MB), fast, and performs
-  well on scientific text. For higher quality, "allenai-specter" was trained
-  specifically on scientific papers and may give better results.
+  We use SPECTER2 ("allenai/specter2_base"), a transformer model trained
+  specifically on scientific papers using citation-informed contrastive
+  learning. It produces 768-dimensional embeddings well-suited to measuring
+  semantic relatedness across patents, papers, and research projects in
+  scientific domains like synthetic biology.
 
-  Reference: Reimers & Gurevych (2019) "Sentence-BERT: Sentence Embeddings
-  using Siamese BERT-Networks." EMNLP 2019. https://arxiv.org/abs/1908.10084
+  Reference: Singh et al. (2022) "SciRepEval: A Multi-Format Benchmark for
+  Scientific Document Representations." arXiv:2211.13308.
+  Original SPECTER: Cohan et al. (2020) "SPECTER: Document-level
+  Representation Learning using Citation-informed Transformers."
+  ACL 2020. https://arxiv.org/abs/2004.13313
+
+  SPECTER2 uses the `adapters` library (not sentence-transformers) to load
+  task-specific adapter weights on top of the base model. We wrap it in a
+  small class so the rest of the pipeline can call .encode() as usual.
 
 Caching:
   Embeddings are expensive to compute. We cache them in a JSON file so
   that re-running the pipeline skips already-embedded texts.
   Cache key = artifact id → embedding vector (list of floats).
+
+  NOTE: If you switch models, delete data/embeddings/embeddings.json so the
+  cache is rebuilt with the new model's vectors.
 """
 
 from __future__ import annotations
@@ -31,20 +40,98 @@ from tqdm import tqdm
 logger = logging.getLogger(__name__)
 
 
-def load_model(model_name: str = "all-MiniLM-L6-v2"):
-    """
-    Load a sentence-transformer model.
+# ---------------------------------------------------------------------------
+# SPECTER2 wrapper
+# ---------------------------------------------------------------------------
 
-    The model is downloaded on first use and cached by the
-    sentence-transformers library in ~/.cache/huggingface/.
+class Specter2Model:
+    """
+    Wraps the SPECTER2 model (allenai/specter2_base + specter2 adapter) so it
+    has the same .encode(texts) interface as a SentenceTransformer.
+
+    SPECTER2 is loaded with the `adapters` library, which extends HuggingFace
+    Transformers with lightweight task-specific adapter layers.
+
+    Requires: pip install adapters transformers torch
+    """
+
+    def __init__(self, base: str = "allenai/specter2_base",
+                 adapter: str = "allenai/specter2"):
+        import torch
+        from transformers import AutoTokenizer
+        from adapters import AutoAdapterModel
+
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        logger.info(f"Loading SPECTER2 base model from {base} (device={self.device})")
+        self.tokenizer = AutoTokenizer.from_pretrained(base)
+        self.model = AutoAdapterModel.from_pretrained(base)
+
+        logger.info(f"Loading SPECTER2 adapter from {adapter}")
+        self.model.load_adapter(adapter, source="hf", load_as="specter2",
+                                set_active=True)
+        self.model.to(self.device)
+        self.model.eval()
+
+    def encode(self, texts: list[str], batch_size: int = 16,
+               show_progress_bar: bool = False) -> np.ndarray:
+        """
+        Encode a list of strings into a (n, 768) float32 NumPy array.
+
+        We use the CLS token representation, which is the standard choice for
+        SPECTER2 document-level embeddings.
+
+        max_length=512 matches the model's training context window.
+        """
+        import torch
+
+        all_vecs = []
+        iterator = range(0, len(texts), batch_size)
+        if show_progress_bar:
+            iterator = tqdm(iterator, desc="SPECTER2 encode")
+
+        for start in iterator:
+            chunk = texts[start : start + batch_size]
+            inputs = self.tokenizer(
+                chunk,
+                padding=True,
+                truncation=True,
+                max_length=512,
+                return_tensors="pt",
+            ).to(self.device)
+
+            with torch.no_grad():
+                outputs = self.model(**inputs)
+
+            # CLS token (first token) from the last hidden state
+            vecs = outputs.last_hidden_state[:, 0, :].cpu().float().numpy()
+            all_vecs.append(vecs)
+
+        return np.vstack(all_vecs)
+
+
+def load_model(model_name: str = "allenai/specter2_base"):
+    """
+    Load an embedding model by name.
+
+    If model_name is "allenai/specter2_base" (or contains "specter2"),
+    we load SPECTER2 with its task adapter via the `adapters` library.
+    Otherwise we fall back to loading a standard SentenceTransformer model.
+
+    The model is downloaded on first use and cached by HuggingFace in
+    ~/.cache/huggingface/.
 
     Parameters
     ----------
     model_name : HuggingFace model name or local path
     """
-    from sentence_transformers import SentenceTransformer
-    logger.info(f"Loading embedding model: {model_name}")
-    return SentenceTransformer(model_name)
+    if "specter2" in model_name.lower():
+        logger.info("Detected SPECTER2 — loading with adapters library")
+        return Specter2Model(base="allenai/specter2_base",
+                             adapter="allenai/specter2")
+    else:
+        from sentence_transformers import SentenceTransformer
+        logger.info(f"Loading SentenceTransformer model: {model_name}")
+        return SentenceTransformer(model_name)
 
 
 def generate_embeddings(

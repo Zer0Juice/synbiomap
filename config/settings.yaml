@@ -22,6 +22,8 @@ corpus:
     - "synthetic biology"
     - "synthetic genomics"
     - "synthetic genome"
+    - "BioBrick"
+
 
   # Layer 2 — Subfield terms (broader, catches work predating the label).
   # Many foundational synthetic biology papers were published before the
@@ -36,7 +38,6 @@ corpus:
     - "minimal cell"
     - "standard biological parts"
     - "artificial genetic system"
-    - "BioBrick"
     - "genetic toggle switch"
     - "repressilator"
     - "orthogonal genetic"
@@ -159,12 +160,17 @@ corpus:
 # --- Embedding model ---
 # We use a sentence-transformer model that encodes short texts well.
 # "all-MiniLM-L6-v2" is fast and performs well on scientific abstracts.
-# For higher quality, try "allenai-specter" (trained on scientific papers).
-# Reference: Reimers & Gurevych (2019) "Sentence-BERT: Sentence Embeddings
-#            using Siamese BERT-Networks." EMNLP 2019.
+# SPECTER2 is trained on scientific papers using citation-informed contrastive
+# learning, making it the best available model for embedding patents, papers,
+# and student projects in a shared scientific semantic space.
+# Reference: Singh et al. (2022) "SciRepEval." arXiv:2211.13308.
+# Requires: pip install adapters transformers torch
+# NOTE: delete data/embeddings/embeddings.json if switching models,
+#       because cached vectors from a different model are not compatible.
 embedding:
-  model: "all-MiniLM-L6-v2"
-  batch_size: 64
+  model: "allenai/specter2_base"
+  # SPECTER2 is heavier than MiniLM; smaller batches prevent out-of-memory errors.
+  batch_size: 16
   # Text field to embed (combined title + abstract)
   text_field: "text"
 

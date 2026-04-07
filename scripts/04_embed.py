@@ -34,12 +34,18 @@ def run():
     dfs = []
     for name in ['papers', 'patents', 'projects', 'parts']:
         path = processed_dir / f'{name}.csv'
-        if path.exists():
-            df = pd.read_csv(path)
-            dfs.append(df)
-            print(f"Loaded {len(df)} records from {name}.csv")
+        if path.exists() and path.stat().st_size > 0:
+            try:
+                df = pd.read_csv(path)
+                if len(df) > 0:
+                    dfs.append(df)
+                    print(f"Loaded {len(df)} records from {name}.csv")
+                else:
+                    print(f"Empty: {name}.csv (skipping)")
+            except Exception as e:
+                print(f"Could not read {name}.csv: {e} (skipping)")
         else:
-            print(f"Not found: {name}.csv (skipping)")
+            print(f"Not found or empty: {name}.csv (skipping)")
 
     if not dfs:
         print("ERROR: No processed CSVs found. Run steps 01–03 first.")
@@ -49,11 +55,15 @@ def run():
     print(f"\nTotal: {len(combined)} artifacts across {combined['type'].nunique()} types")
 
     # --- 2. Load embedding model ---
-    # Using all-MiniLM-L6-v2: a lightweight, fast model (80 MB) that produces
-    # 384-dimensional embeddings. It works well for semantic similarity tasks.
-    # See: Reimers & Gurevych (2019), https://arxiv.org/abs/1908.10084
+    # Using SPECTER2 (allenai/specter2_base): a model trained on scientific
+    # papers using citation-informed contrastive learning. It produces
+    # 768-dimensional embeddings that capture scientific meaning well across
+    # patents, papers, and student projects.
+    # First run downloads ~440 MB (base model) + adapter weights.
+    # Reference: Singh et al. (2022) "SciRepEval." arXiv:2211.13308.
     model_name = cfg['embedding']['model']
-    print(f"\nLoading model: {model_name} (downloads ~80 MB on first use)")
+    print(f"\nLoading model: {model_name}")
+    print("(First run downloads ~440 MB of model weights — this is normal.)")
     model = load_model(model_name)
     print("Model loaded.")
 

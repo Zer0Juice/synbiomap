@@ -8,8 +8,11 @@ requests>=2.31
 httpx>=0.25
 
 # Embedding models
-# sentence-transformers uses HuggingFace models locally (no API key needed)
+# SPECTER2 uses the `adapters` library on top of HuggingFace Transformers.
+# sentence-transformers is kept as a fallback for other models.
+adapters>=0.2
 sentence-transformers>=2.6
+transformers>=4.35
 torch>=2.0
 
 # Dimensionality reduction and clustering
