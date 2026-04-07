@@ -52,21 +52,25 @@ def normalize_papers(raw_records: list[dict], carbon_keywords: list[str]) -> pd.
             "title": title,
             "text": text,
             "year": rec.get("year"),
-            "city": rec.get("city"),
+            "city": rec.get("city"),       # filled by geocode_papers.py
             "country": rec.get("country"),
-            "lat": rec.get("lat"),   # pre-filled from OpenAlex geo when available
-            "lon": rec.get("lon"),   # remaining NaNs filled by geocoding in script 01
-            "theme_primary": None,   # filled in later by clustering
+            "lat": rec.get("lat"),         # filled by geocode_papers.py
+            "lon": rec.get("lon"),         # filled by geocode_papers.py
+            "theme_primary": None,         # filled in later by clustering
             "theme_secondary": None,
             "retrieval_reason": rec.get("retrieval_reason", "keyword"),
             # Semicolon-separated list of OpenAlex IDs this paper cites.
             # Used to draw citation edges in the semantic space explorer.
             "cited_works": rec.get("cited_works", ""),
+            # Semicolon-separated list of OpenAlex institution IDs for this
+            # paper's authors. Used by geocode_papers.py to look up city/lat/lon
+            # from the full institution objects without re-fetching all works.
+            "institution_ids": rec.get("institution_ids", ""),
         }
         row.update(_tag_case_study(text, carbon_keywords))
         rows.append(row)
 
-    return pd.DataFrame(rows, columns=REQUIRED_COLUMNS + ["cited_works"])
+    return pd.DataFrame(rows, columns=REQUIRED_COLUMNS + ["cited_works", "institution_ids"])
 
 
 def normalize_patents(raw_records: list[dict], carbon_keywords: list[str]) -> pd.DataFrame:
@@ -129,8 +133,8 @@ def normalize_projects(raw_records: list[dict], carbon_keywords: list[str]) -> p
             "year": rec.get("year"),
             "city": rec.get("city"),
             "country": rec.get("country"),
-            "lat": None,
-            "lon": None,
+            "lat": rec.get("lat"),
+            "lon": rec.get("lon"),
             "theme_primary": None,
             "theme_secondary": None,
             "retrieval_reason": rec.get("retrieval_reason", "igem"),

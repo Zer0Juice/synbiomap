@@ -36,8 +36,13 @@ def run():
     dfs = []
     for name in ['papers', 'patents', 'projects', 'parts']:
         path = processed_dir / f'{name}.csv'
-        if path.exists():
-            dfs.append(pd.read_csv(path))
+        if path.exists() and path.stat().st_size > 0:
+            try:
+                df = pd.read_csv(path)
+                if len(df) > 0:
+                    dfs.append(df)
+            except Exception:
+                pass
 
     if not dfs:
         print("ERROR: No processed CSVs found. Run steps 01–03 first.")

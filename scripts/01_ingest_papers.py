@@ -34,7 +34,6 @@ sys.path.insert(0, str(REPO_ROOT))
 
 from src.utils.config import load_config
 from src.ingest import openalex, normalize
-from src.geo.geocode import geocode_dataframe
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s  %(message)s")
 logger = logging.getLogger(__name__)
@@ -178,32 +177,11 @@ def run():
 
     print(f"Carbon capture tagged: {papers_df['case_study_flag'].sum()} papers")
 
-    # ------------------------------------------------------------------
-    # Geocoding — fill in lat/lon for papers that still need it
-    # ------------------------------------------------------------------
-    # Many papers already have coordinates from OpenAlex's institution geo
-    # data. We only call the geocoder for the remainder.
-    geo_cfg = cfg["geocoding"]
-    need_geocoding = papers_df["lat"].isna() & (
-        papers_df["city"].notna() | papers_df["country"].notna()
-    )
-    n_need = need_geocoding.sum()
-    n_have = papers_df["lat"].notna().sum()
-    print(f"\nCoordinates from OpenAlex: {n_have} papers")
-    print(f"Need geocoding (city/country but no lat/lon): {n_need} papers")
-
-    if n_need > 0:
-        cache_path = REPO_ROOT / geo_cfg["cache_file"]
-        print(f"Geocoding via {geo_cfg['provider']} (cache: {cache_path.relative_to(REPO_ROOT)})...")
-        print("This may take a while — Nominatim allows 1 request/second.")
-        papers_df = geocode_dataframe(
-            df=papers_df,
-            cache_file=cache_path,
-            provider=geo_cfg["provider"],
-            user_agent=geo_cfg["user_agent"],
-        )
-        n_geocoded = papers_df["lat"].notna().sum() - n_have
-        print(f"Geocoded {n_geocoded} additional papers")
+    # Note: city/lat/lon are NOT filled here. OpenAlex works responses contain
+    # dehydrated institution objects that lack geo data. Run the next step:
+    #   python scripts/geocode_papers.py
+    # That script uses the institution_ids column saved here to batch-fetch
+    # full institution objects from OpenAlex, which do include city/lat/lon.
 
     output_path = REPO_ROOT / "data" / "processed" / "papers.csv"
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -211,7 +189,8 @@ def run():
     print(f"Saved to {output_path.relative_to(REPO_ROOT)}")
 
     print(f"\nYear range: {papers_df['year'].min()} — {papers_df['year'].max()}")
-    print(f"Papers with coordinates: {papers_df['lat'].notna().sum()} / {len(papers_df)}")
+    print(f"Institution IDs saved: {(papers_df['institution_ids'] != '').sum()} / {len(papers_df)} papers")
+    print("Run scripts/geocode_papers.py next to fill in city/lat/lon.")
     print("\nTop countries:")
     print(papers_df["country"].value_counts().head(10).to_string())
 

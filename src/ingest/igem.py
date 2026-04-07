@@ -116,16 +116,33 @@ def extract_project_fields(row: pd.Series) -> dict:
 
     Returns a flat dict ready to be passed to normalize.py.
     """
+    # Support both old column names (team_name, abstract, …) and the
+    # actual downloaded CSV column names (name, projectAbstract, …).
+    team_name = str(row.get("team_name") or row.get("name") or "")
+    title     = str(row.get("projectTitle") or row.get("team_name") or row.get("name") or "")
+    abstract  = str(row.get("abstract") or row.get("projectAbstract") or "")
+    univ      = str(row.get("university") or row.get("institution") or "")
+    track     = str(row.get("track") or row.get("section") or row.get("village") or "")
+    wiki_url  = str(row.get("wiki_url") or row.get("wikiURL") or "")
+    def _safe_float(v):
+        try:
+            f = float(v)
+            return f if f == f else None  # filter NaN
+        except (TypeError, ValueError):
+            return None
+
     return {
-        "igem_team": str(row.get("team_name", "") or ""),
-        "title": str(row.get("team_name", "") or ""),  # team name is the best title
-        "abstract": str(row.get("abstract", "") or ""),
+        "igem_team": team_name,
+        "title": title if title else team_name,
+        "abstract": abstract,
         "year": _safe_int(row.get("year")),
-        "university": str(row.get("university", "") or ""),
+        "university": univ,
         "city": str(row.get("city", "") or "") or None,
         "country": str(row.get("country", "") or "") or None,
-        "track": str(row.get("track", "") or ""),
-        "wiki_url": str(row.get("wiki_url", "") or ""),
+        "lat": _safe_float(row.get("lat")),
+        "lon": _safe_float(row.get("lon")),
+        "track": track,
+        "wiki_url": wiki_url,
     }
 
 

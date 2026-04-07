@@ -325,10 +325,25 @@ def extract_fields(work: dict) -> dict:
     # We need to reconstruct it in reading order.
     abstract = _reconstruct_abstract(work.get("abstract_inverted_index") or {})
 
-    # Institutions are nested; we take the first affiliated institution's location.
-    # OpenAlex often includes lat/lon directly in the institution geo object,
-    # so we capture them here to avoid unnecessary geocoding later.
-    city, country, lat, lon = _extract_location(work)
+    # Extract country from the first author's institution.
+    # Note: authorships in works responses contain *dehydrated* institution
+    # objects — they include id, display_name, and country_code, but NOT the
+    # geo sub-object (city, lat, lon). Full geo data requires a separate call
+    # to the /institutions endpoint (done by scripts/geocode_papers.py).
+    country = _extract_country(work)
+
+    # Collect all unique institution IDs across all authorships.
+    # These are stored so geocode_papers.py can batch-fetch the full institution
+    # objects (which do include geo data) without re-fetching the works.
+    inst_ids: list[str] = []
+    seen_inst: set[str] = set()
+    for authorship in work.get("authorships", []):
+        for inst in authorship.get("institutions", []):
+            inst_id = inst.get("id", "")
+            if inst_id and inst_id not in seen_inst:
+                inst_ids.append(inst_id)
+                seen_inst.add(inst_id)
+    institution_ids = ";".join(inst_ids)
 
     # referenced_works is a list of OpenAlex URLs like "https://openalex.org/W123".
     # We strip them to bare IDs ("W123") so they match the id field of other papers.
@@ -342,10 +357,11 @@ def extract_fields(work: dict) -> dict:
         "abstract": abstract,
         "year": work.get("publication_year"),
         "doi": work.get("doi", ""),
-        "city": city,
+        "city": None,          # filled by geocode_papers.py
         "country": country,
-        "lat": lat,
-        "lon": lon,
+        "lat": None,           # filled by geocode_papers.py
+        "lon": None,           # filled by geocode_papers.py
+        "institution_ids": institution_ids,
         "cited_works": cited_works,
     }
 
@@ -368,49 +384,21 @@ def _reconstruct_abstract(inverted_index: dict) -> str:
     return " ".join(word for _, word in word_positions)
 
 
-def _extract_location(work: dict) -> tuple[str | None, str | None, float | None, float | None]:
+def _extract_country(work: dict) -> str | None:
     """
-    Extract city, country, latitude, and longitude from the first author's institution.
+    Extract country from the first author's institution in a works response.
 
-    OpenAlex institution objects have a "geo" sub-object that contains city,
-    country, and coordinates. We prefer the first author's first institution
-    that has any location data.
+    Works responses contain *dehydrated* institution objects: they include
+    id, display_name, and country_code, but the geo sub-object (city, lat,
+    lon) is absent. Full geo data is fetched separately by geocode_papers.py
+    using the institution IDs stored in each paper record.
 
-    Fallback strategy (in order):
-      1. geo.city + geo.country + geo.latitude + geo.longitude  (best case)
-      2. geo.country alone (city is missing but country is present)
-      3. institution-level country_code (ISO 2-letter, e.g. "US") when geo
-         is absent — converted to a human-readable name for geocoding later.
-
-    We intentionally do NOT fall back to the institution display_name because
-    geocoding a university name is unreliable.
-
-    Reference: OpenAlex institution schema —
+    Reference: OpenAlex dehydrated institution schema —
       https://docs.openalex.org/api-entities/institutions/institution-object
     """
-    authorships = work.get("authorships", [])
-    for authorship in authorships:
-        institutions = authorship.get("institutions", [])
-        for inst in institutions:
-            geo = inst.get("geo") or {}
-
-            city = geo.get("city") or None
-            country = geo.get("country") or None
-            lat = geo.get("latitude")
-            lon = geo.get("longitude")
-
-            # Convert to float if present (OpenAlex may return strings)
-            try:
-                lat = float(lat) if lat is not None else None
-                lon = float(lon) if lon is not None else None
-            except (TypeError, ValueError):
-                lat, lon = None, None
-
-            # Fallback: use top-level country_code if geo.country is missing
-            if not country:
-                country = inst.get("country_code") or None
-
-            if city or country:
-                return city, country, lat, lon
-
-    return None, None, None, None
+    for authorship in work.get("authorships", []):
+        for inst in authorship.get("institutions", []):
+            country = inst.get("country_code") or None
+            if country:
+                return country
+    return None
