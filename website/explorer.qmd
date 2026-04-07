@@ -5,35 +5,22 @@ format:
     page-layout: full
 ---
 
-This page hosts the two main interactive visualizations.
-Both are rendered client-side using precomputed data files, so they work
-on GitHub Pages without any server.
-
-## Semantic Space Explorer
-
-Explore all artifacts (papers, patents, iGEM projects, and parts) in a shared
-2D semantic space. Each point is one artifact. Points that are close together
-are semantically similar.
-
-**Controls:**
-
-- Filter by artifact type (papers / patents / projects / parts)
-- Highlight the carbon-capture case study subset
-- Hover a point to see the title and year
-- Click a point to see full details
+Search for a city to see what it works on — which artifact types are present, how its
+activity sits in the shared semantic space, and a list of individual papers, patents,
+and iGEM projects from that location.
 
 ```{=html}
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-<div id="semantic-explorer" style="width:100%; height:600px; border:1px solid #ddd; border-radius:4px;"></div>
+<div id="city-explorer"></div>
 <script src="assets/js/explorer.js"></script>
 ```
 
-## Geographic View
+## Geographic Overview
 
-City-level map showing where synthetic biology activity is concentrated.
-Bubble size reflects total artifact count; hover for a city breakdown.
+City-level map of total synthetic biology activity.
+Bubble size scales with the number of artifacts; hover for a breakdown by type.
 
 ```{=html}
-<div id="geo-explorer" style="width:100%; height:520px; border:1px solid #ddd; border-radius:4px; margin-top:2em;"></div>
+<div id="geo-explorer" style="width:100%; height:520px; border:1px solid #ddd; border-radius:4px; margin-top:1em;"></div>
 <script src="assets/js/geo.js"></script>
 ```
