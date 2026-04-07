@@ -1,0 +1,303 @@
+[
+  {
+    "objectID": "methods.html",
+    "href": "methods.html",
+    "title": "Methods",
+    "section": "",
+    "text": "This page describes how the corpus was built, how artifacts were embedded and clustered, and how the carbon-capture case study was identified."
+  },
+  {
+    "objectID": "methods.html#data-sources",
+    "href": "methods.html#data-sources",
+    "title": "Methods",
+    "section": "Data sources",
+    "text": "Data sources\n\n\n\nArtifact type\nSource\nAccess method\n\n\n\n\nAcademic papers\nOpenAlex\nFree REST API\n\n\nPatents\nLens.org\nFree API (token required)\n\n\niGEM projects\niGEM community data\nCSV download\n\n\niGEM parts\niGEM Parts Registry\nCSV download / API\n\n\n\nAll artifacts are normalized to a shared schema before processing. See src/utils/schema.py for field definitions."
+  },
+  {
+    "objectID": "methods.html#corpus-construction",
+    "href": "methods.html#corpus-construction",
+    "title": "Methods",
+    "section": "Corpus construction",
+    "text": "Corpus construction\nPapers and patents were retrieved by searching for synthetic biology keywords in titles and abstracts. The seed keywords were:\n\nsynthetic biology\nmetabolic engineering\ngenetic engineering\n\nCitation expansion was applied to papers: we also retrieved works that cite highly-cited seed papers, to capture related work that uses different terminology.\nThe keyword list and year range can be adjusted in config/settings.yaml."
+  },
+  {
+    "objectID": "methods.html#case-study-identification",
+    "href": "methods.html#case-study-identification",
+    "title": "Methods",
+    "section": "Case study identification",
+    "text": "Case study identification\nArtifacts were tagged as belonging to the carbon capture case study if their title or abstract contained at least one of these keywords:\n\ncarbon capture, carbon sequestration, CO2 fixation, carbon dioxide reduction, carbon neutral, biofuel, carbon cycle, autotrophic, RuBisCO, Calvin cycle, carboxylase\n\nA confidence score (0–1) measures the fraction of keywords matched. Any keyword match sets case_study_flag = True."
+  },
+  {
+    "objectID": "methods.html#embeddings",
+    "href": "methods.html#embeddings",
+    "title": "Methods",
+    "section": "Embeddings",
+    "text": "Embeddings\nEach artifact’s title and abstract were concatenated and encoded with a pre-trained sentence-transformer model (all-MiniLM-L6-v2). This model encodes text into a 384-dimensional vector that captures semantic meaning.\n\nReimers & Gurevych (2019). Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks. EMNLP 2019. arXiv:1908.10084"
+  },
+  {
+    "objectID": "methods.html#dimensionality-reduction-umap",
+    "href": "methods.html#dimensionality-reduction-umap",
+    "title": "Methods",
+    "section": "Dimensionality reduction (UMAP)",
+    "text": "Dimensionality reduction (UMAP)\nEmbeddings were projected to 2D with UMAP for visualization. UMAP was chosen over t-SNE because it better preserves global structure alongside local neighborhoods.\n\nMcInnes et al. (2018). UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction. arXiv:1802.03426\n\nKey parameters (adjustable in config/settings.yaml):\n\n\n\nParameter\nValue\nMeaning\n\n\n\n\nn_neighbors\n15\nLocal neighborhood size\n\n\nmin_dist\n0.1\nMinimum spread in projected space\n\n\nmetric\ncosine\nDistance metric for embeddings"
+  },
+  {
+    "objectID": "methods.html#clustering-hdbscan",
+    "href": "methods.html#clustering-hdbscan",
+    "title": "Methods",
+    "section": "Clustering (HDBSCAN)",
+    "text": "Clustering (HDBSCAN)\nClusters were identified with HDBSCAN, a density-based algorithm that does not require specifying the number of clusters in advance. Points that do not belong to any cluster are labeled as noise (label = -1).\n\nCampello et al. (2013). Density-Based Clustering Based on Hierarchical Density Estimates. ECML PKDD 2013."
+  },
+  {
+    "objectID": "methods.html#geocoding",
+    "href": "methods.html#geocoding",
+    "title": "Methods",
+    "section": "Geocoding",
+    "text": "Geocoding\nInstitution locations from OpenAlex and Lens.org were converted to latitude/longitude using Nominatim (OpenStreetMap), with results cached locally. Analysis is at the city level."
+  },
+  {
+    "objectID": "results.html",
+    "href": "results.html",
+    "title": "Results",
+    "section": "",
+    "text": "The pipeline currently covers papers and iGEM projects. Patents and parts will be added in a later pipeline run.\n\n\n\nArtifact type\nCount\nYear range\nCities geocoded\n\n\n\n\nPapers\n9,449\n2000–2026\n8,720 (92%)\n\n\niGEM projects\n4,615\n2009–2025\n4,615 (100%)\n\n\nPatents\n—\n—\n—\n\n\niGEM parts\n—\n—\n—\n\n\nTotal\n14,064\n2000–2026\n13,335 (95%)\n\n\n\nPapers were retrieved from OpenAlex using core synthetic biology keywords (“synthetic biology”, “synthetic genomics”, “BioBrick”) and subfield keywords (“repressilator”, “minimal genome”, “xenobiology”, etc.). iGEM projects were geocoded using a three-tier pipeline: OpenAlex institution lookup → Claude Haiku city extraction → Nominatim coordinates. Paper coordinates were obtained by fetching full institution objects from OpenAlex (which include city and lat/lon) using institution IDs stored during ingestion."
+  },
+  {
+    "objectID": "results.html#corpus-overview",
+    "href": "results.html#corpus-overview",
+    "title": "Results",
+    "section": "",
+    "text": "The pipeline currently covers papers and iGEM projects. Patents and parts will be added in a later pipeline run.\n\n\n\nArtifact type\nCount\nYear range\nCities geocoded\n\n\n\n\nPapers\n9,449\n2000–2026\n8,720 (92%)\n\n\niGEM projects\n4,615\n2009–2025\n4,615 (100%)\n\n\nPatents\n—\n—\n—\n\n\niGEM parts\n—\n—\n—\n\n\nTotal\n14,064\n2000–2026\n13,335 (95%)\n\n\n\nPapers were retrieved from OpenAlex using core synthetic biology keywords (“synthetic biology”, “synthetic genomics”, “BioBrick”) and subfield keywords (“repressilator”, “minimal genome”, “xenobiology”, etc.). iGEM projects were geocoded using a three-tier pipeline: OpenAlex institution lookup → Claude Haiku city extraction → Nominatim coordinates. Paper coordinates were obtained by fetching full institution objects from OpenAlex (which include city and lat/lon) using institution IDs stored during ingestion."
+  },
+  {
+    "objectID": "results.html#semantic-space",
+    "href": "results.html#semantic-space",
+    "title": "Results",
+    "section": "Semantic space",
+    "text": "Semantic space\nAll artifacts were embedded using SPECTER (Lo et al., 2020), a transformer model pre-trained on scientific text to produce 768-dimensional vectors from title and abstract. Embeddings were reduced to 2D with UMAP for visualization.\nThe shared projection shows papers and iGEM projects occupying overlapping but distinguishable regions of semantic space, consistent with the hypothesis that student projects and academic research share the same knowledge domain.\nSee the Explorer for the interactive version."
+  },
+  {
+    "objectID": "results.html#clustering",
+    "href": "results.html#clustering",
+    "title": "Results",
+    "section": "Clustering",
+    "text": "Clustering\nHDBSCAN was applied to the full 768-dimensional embedding space.\n\n\n\n\nCount\n\n\n\n\nTotal artifacts\n14,064\n\n\nClusters found\n256\n\n\nArtifacts assigned to a cluster\n9,169 (65%)\n\n\nNoise (unassigned)\n4,895 (35%)\n\n\n\nThe 35% noise rate is typical for HDBSCAN on heterogeneous text corpora — it reflects genuine semantic diversity within the synthetic biology literature rather than a pipeline failure."
+  },
+  {
+    "objectID": "results.html#city-level-patterns",
+    "href": "results.html#city-level-patterns",
+    "title": "Results",
+    "section": "City-level patterns",
+    "text": "City-level patterns\nTop 10 cities by total artifact count (papers + projects):\n\n\n\nRank\nCity\nPapers\nProjects\nTotal\n\n\n\n\n1\nBeijing\n290\n258\n548\n\n\n2\nCambridge\n294\n40\n334\n\n\n3\nShanghai\n108\n216\n324\n\n\n4\nLondon\n236\n29\n265\n\n\n5\nTokyo\n103\n56\n159\n\n\n6\nWuhan\n22\n134\n156\n\n\n7\nShenzhen\n10\n145\n155\n\n\n8\nParis\n117\n37\n154\n\n\n9\nNew York\n98\n35\n133\n\n\n10\nSan Diego\n127\n0\n127\n\n\n\nBeijing and Shanghai reflect the rapid growth of Chinese synthetic biology research and iGEM participation since 2012. Cambridge (MA/UK) leads for academic papers, anchored by MIT, Harvard, and the Wellcome Sanger Institute."
+  },
+  {
+    "objectID": "results.html#carbon-capture-subset",
+    "href": "results.html#carbon-capture-subset",
+    "title": "Results",
+    "section": "Carbon capture subset",
+    "text": "Carbon capture subset\n267 papers (2.8% of corpus) and 141 iGEM projects (3.1% of corpus) were tagged as carbon-capture related. 30 cities have at least one carbon-capture artifact of both types, providing the basis for city-level cross-type analysis.\nFull analysis on the Case Study: Carbon Capture page."
+  },
+  {
+    "objectID": "slides.html",
+    "href": "slides.html",
+    "title": "Slides",
+    "section": "",
+    "text": "The presentation slides are available as a PDF download.\nDownload Slides (PDF)"
+  },
+  {
+    "objectID": "slides.html#slide-outline",
+    "href": "slides.html#slide-outline",
+    "title": "Slides",
+    "section": "Slide outline",
+    "text": "Slide outline\n\nMotivation — why study synthetic biology innovation trajectories?\nResearch question and hypotheses\nData — papers, patents, iGEM projects, and parts\nMethods — embeddings, UMAP, HDBSCAN\nResults — semantic clustering across artifact types\nCase study — carbon capture in synthetic biology\nCity-level patterns\nDiscussion and limitations\nImplications"
+  },
+  {
+    "objectID": "explorer.html",
+    "href": "explorer.html",
+    "title": "Explorer",
+    "section": "",
+    "text": "This page hosts the two main interactive visualizations. Both are rendered client-side using precomputed data files, so they work on GitHub Pages without any server."
+  },
+  {
+    "objectID": "explorer.html#semantic-space-explorer",
+    "href": "explorer.html#semantic-space-explorer",
+    "title": "Explorer",
+    "section": "Semantic Space Explorer",
+    "text": "Semantic Space Explorer\nExplore all artifacts (papers, patents, iGEM projects, and parts) in a shared 2D semantic space. Each point is one artifact. Points that are close together are semantically similar.\nControls:\n\nFilter by artifact type (papers / patents / projects / parts)\nHighlight the carbon-capture case study subset\nHover a point to see the title and year\nClick a point to see full details"
+  },
+  {
+    "objectID": "explorer.html#geographic-view",
+    "href": "explorer.html#geographic-view",
+    "title": "Explorer",
+    "section": "Geographic View",
+    "text": "Geographic View\nCity-level map showing where synthetic biology activity is concentrated. Bubble size reflects total artifact count; hover for a city breakdown."
+  },
+  {
+    "objectID": "case-study.html",
+    "href": "case-study.html",
+    "title": "Case Study: Carbon Capture in Synthetic Biology",
+    "section": "",
+    "text": "This page is the dedicated case study for carbon capture in synthetic biology. It uses the carbon-capture slice of the corpus — artifacts tagged with case_study_flag = True — to show how student projects, papers, and patents relate to each other within a specific subfield."
+  },
+  {
+    "objectID": "case-study.html#what-counts-as-carbon-capture-here",
+    "href": "case-study.html#what-counts-as-carbon-capture-here",
+    "title": "Case Study: Carbon Capture in Synthetic Biology",
+    "section": "What counts as “carbon capture” here?",
+    "text": "What counts as “carbon capture” here?\nArtifacts are included if their title or abstract contains at least one of:\n\ncarbon capture · carbon sequestration · CO₂ fixation · carbon dioxide reduction · carbon neutral · biofuel · carbon cycle · autotrophic · RuBisCO · Calvin cycle · carboxylase\n\nA case_study_confidence score records how many keywords matched."
+  },
+  {
+    "objectID": "case-study.html#corpus-snapshot",
+    "href": "case-study.html#corpus-snapshot",
+    "title": "Case Study: Carbon Capture in Synthetic Biology",
+    "section": "Corpus snapshot",
+    "text": "Corpus snapshot\n\n\n\nType\nCount\nEarliest year\nMost active city\n\n\n\n\nPapers\n267\n2005\nBerkeley / Beijing (10 each)\n\n\nPatents\n—\n—\n—\n\n\niGEM projects\n141\n2009\nShanghai (6)"
+  },
+  {
+    "objectID": "case-study.html#cities-with-cross-type-activity",
+    "href": "case-study.html#cities-with-cross-type-activity",
+    "title": "Case Study: Carbon Capture in Synthetic Biology",
+    "section": "Cities with cross-type activity",
+    "text": "Cities with cross-type activity\n30 cities have at least one carbon-capture paper and at least one carbon-capture iGEM project, making them candidates for local innovation trajectory analysis.\n\n\n\nCity\nCC Papers\nCC Projects\n\n\n\n\nBeijing\n10\n2\n\n\nBerkeley\n10\n1\n\n\nShanghai\n2\n6\n\n\nUrbana\n6\n1\n\n\nWuhan\n2\n5\n\n\nSan Diego\n3\n3\n\n\nParis\n4\n1\n\n\nMadison\n3\n2\n\n\n\nThese cities show the co-presence of academic research and student innovation in the same carbon-capture theme — a necessary (though not sufficient) condition for a local innovation trajectory."
+  },
+  {
+    "objectID": "case-study.html#semantic-map-carbon-capture-only",
+    "href": "case-study.html#semantic-map-carbon-capture-only",
+    "title": "Case Study: Carbon Capture in Synthetic Biology",
+    "section": "Semantic map (carbon capture only)",
+    "text": "Semantic map (carbon capture only)\nThe Explorer supports filtering to carbon-capture artifacts. In the full semantic space, carbon-capture papers and projects appear in partially overlapping clusters, particularly around themes of CO₂ fixation, microbial metabolism, and biofuel synthesis."
+  },
+  {
+    "objectID": "case-study.html#timeline",
+    "href": "case-study.html#timeline",
+    "title": "Case Study: Carbon Capture in Synthetic Biology",
+    "section": "Timeline",
+    "text": "Timeline\nCarbon-capture papers appear from 2005, with project activity following from 2009 (the first year of the iGEM dataset). Both streams show growth through the 2010s, with papers peaking around 2019–2022."
+  },
+  {
+    "objectID": "case-study.html#interpretation",
+    "href": "case-study.html#interpretation",
+    "title": "Case Study: Carbon Capture in Synthetic Biology",
+    "section": "Interpretation",
+    "text": "Interpretation\nThe 30 cities with both carbon-capture papers and projects provide evidence that this subfield has both academic and student-level representation in the same places. Whether the temporal ordering is consistent with the idea that student projects follow academic work — or precede applied/patent activity — will be examined once patents are added to the corpus.\nThe keyword-based tagging used here is deliberately conservative: it flags artifacts that explicitly mention carbon-capture terminology rather than attempting to infer thematic relevance. This means the 267 papers and 141 projects are a lower bound on the true carbon-capture subset."
+  },
+  {
+    "objectID": "paper.html",
+    "href": "paper.html",
+    "title": "Paper",
+    "section": "",
+    "text": "The manuscript is available as a PDF download and is also rendered inline below.\nDownload PDF"
+  },
+  {
+    "objectID": "paper.html#abstract",
+    "href": "paper.html#abstract",
+    "title": "Paper",
+    "section": "Abstract",
+    "text": "Abstract\n(To be written after initial results are available.)"
+  },
+  {
+    "objectID": "paper.html#introduction",
+    "href": "paper.html#introduction",
+    "title": "Paper",
+    "section": "Introduction",
+    "text": "Introduction\n(See Methods for pipeline details.)"
+  },
+  {
+    "objectID": "paper.html#results",
+    "href": "paper.html#results",
+    "title": "Paper",
+    "section": "Results",
+    "text": "Results\n(See Results.)"
+  },
+  {
+    "objectID": "paper.html#case-study-carbon-capture",
+    "href": "paper.html#case-study-carbon-capture",
+    "title": "Paper",
+    "section": "Case Study: Carbon Capture",
+    "text": "Case Study: Carbon Capture\n(See Case Study: Carbon Capture.)"
+  },
+  {
+    "objectID": "paper.html#discussion",
+    "href": "paper.html#discussion",
+    "title": "Paper",
+    "section": "Discussion",
+    "text": "Discussion\n(To be written.)"
+  },
+  {
+    "objectID": "paper.html#references",
+    "href": "paper.html#references",
+    "title": "Paper",
+    "section": "References",
+    "text": "References\n(Managed in manuscript/references.bib.)"
+  },
+  {
+    "objectID": "reproducibility.html",
+    "href": "reproducibility.html",
+    "title": "Reproducibility",
+    "section": "",
+    "text": "This page explains how to re-run the full pipeline from scratch."
+  },
+  {
+    "objectID": "reproducibility.html#requirements",
+    "href": "reproducibility.html#requirements",
+    "title": "Reproducibility",
+    "section": "Requirements",
+    "text": "Requirements\n\nPython 3.11+\nAPI credentials (see .env.example)\n\n# 1. Clone the repository\ngit clone https://github.com/Zer0Juice/synbio-diversification\ncd synbio-diversification\n\n# 2. Install dependencies\npip install -r requirements.txt\n\n# 3. Set up credentials\ncp .env.example .env\n# Edit .env and fill in your API keys\n\n# 4. Run the pipeline (see notebooks/ for step-by-step walkthroughs)"
+  },
+  {
+    "objectID": "reproducibility.html#step-by-step-notebooks",
+    "href": "reproducibility.html#step-by-step-notebooks",
+    "title": "Reproducibility",
+    "section": "Step-by-step notebooks",
+    "text": "Step-by-step notebooks\n\n\n\n\n\n\n\nNotebook\nWhat it does\n\n\n\n\n01_ingest_papers.ipynb\nDownload papers from OpenAlex\n\n\n02_ingest_patents.ipynb\nDownload patents from Lens.org\n\n\n03_ingest_projects.ipynb\nLoad iGEM project and parts data\n\n\n04_embed.ipynb\nGenerate embeddings for all artifacts\n\n\n05_cluster.ipynb\nUMAP reduction and HDBSCAN clustering\n\n\n06_visualize.ipynb\nExport data for the website visualizations\n\n\nwalkthrough_carbon_capture.ipynb\nEnd-to-end walkthrough for the case study"
+  },
+  {
+    "objectID": "reproducibility.html#configuration",
+    "href": "reproducibility.html#configuration",
+    "title": "Reproducibility",
+    "section": "Configuration",
+    "text": "Configuration\nAll major parameters (keywords, model name, clustering settings) are in config/settings.yaml. Edit that file to change the pipeline behaviour."
+  },
+  {
+    "objectID": "reproducibility.html#data",
+    "href": "reproducibility.html#data",
+    "title": "Reproducibility",
+    "section": "Data",
+    "text": "Data\nRaw data files are not committed to the repository (too large). Processed CSVs in data/processed/ are committed and can be used to skip the ingestion step."
+  },
+  {
+    "objectID": "reproducibility.html#rendering-the-website-locally",
+    "href": "reproducibility.html#rendering-the-website-locally",
+    "title": "Reproducibility",
+    "section": "Rendering the website locally",
+    "text": "Rendering the website locally\n# Install Quarto: https://quarto.org/docs/get-started/\nquarto preview website/"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "",
+    "text": "This project asks whether student research projects, academic publications, and patents within synthetic biology cluster together meaningfully. Does a city specializing in a specific cluster of student research predict further specialization in academic and commercial fields?\nThe guiding idea is that innovation in a technical field may follow a local path:\n\nStudent projects (iGEM teams) introduce early ideas\nAcademic papers develop and refine them\nPatents reflect downstream application and translation\n\nWe look at each artifact as a different expression of innovation and knowledge creation in a local region. Each artifact represents a unique expression of innovation, and the relatedness between them can show novel insights into innovation in an emergent field.\nWe test whether these three artifact types occupy related regions of semantic space, share thematic clusters, and show plausible city-level temporal continuity in the same subfield.\nWe do not claim to show causation. The language we use is: semantic relatedness, association, cluster overlap, plausible temporal sequence, and local innovation trajectory."
+  },
+  {
+    "objectID": "index.html#what-this-project-is-about",
+    "href": "index.html#what-this-project-is-about",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "",
+    "text": "This project asks whether student research projects, academic publications, and patents within synthetic biology cluster together meaningfully. Does a city specializing in a specific cluster of student research predict further specialization in academic and commercial fields?\nThe guiding idea is that innovation in a technical field may follow a local path:\n\nStudent projects (iGEM teams) introduce early ideas\nAcademic papers develop and refine them\nPatents reflect downstream application and translation\n\nWe look at each artifact as a different expression of innovation and knowledge creation in a local region. Each artifact represents a unique expression of innovation, and the relatedness between them can show novel insights into innovation in an emergent field.\nWe test whether these three artifact types occupy related regions of semantic space, share thematic clusters, and show plausible city-level temporal continuity in the same subfield.\nWe do not claim to show causation. The language we use is: semantic relatedness, association, cluster overlap, plausible temporal sequence, and local innovation trajectory."
+  },
+  {
+    "objectID": "index.html#primary-case-study-carbon-capture-in-synthetic-biology",
+    "href": "index.html#primary-case-study-carbon-capture-in-synthetic-biology",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "Primary case study: carbon capture in synthetic biology",
+    "text": "Primary case study: carbon capture in synthetic biology\nThe main worked example throughout this project is carbon capture in synthetic biology : engineering microorganisms to fix CO₂ or produce carbon-neutral fuels. This subfield is large enough to find examples across all three artifact types, and is directly relevant to planetary sustainability.\n\n\n\n\n\n\nNote\n\n\n\nAll visualizations and results pages support filtering to the carbon-capture case study. Look for the “Carbon Capture” toggle."
+  },
+  {
+    "objectID": "index.html#navigate-the-site",
+    "href": "index.html#navigate-the-site",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "Navigate the site",
+    "text": "Navigate the site\n\n\n\nPage\nWhat you will find\n\n\n\n\nPaper\nThe full manuscript\n\n\nMethods\nHow we built the corpus, embeddings, and clusters\n\n\nResults\nMain findings across all artifact types\n\n\nCase Study: Carbon Capture\nDeep dive into the carbon capture subfield\n\n\nExplorer\nInteractive semantic space and geographic views\n\n\nReproducibility\nHow to re-run the pipeline\n\n\nSlides\nPresentation slides"
+  }
+]
