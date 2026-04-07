@@ -57,12 +57,11 @@ def run():
     print(f"\nTotal: {len(combined)} artifacts across {combined['type'].nunique()} types")
 
     # --- 2. Load embedding model ---
-    # Using SPECTER2 (allenai/specter2_base): a model trained on scientific
-    # papers using citation-informed contrastive learning. It produces
-    # 768-dimensional embeddings that capture scientific meaning well across
-    # patents, papers, and student projects.
-    # First run downloads ~440 MB (base model) + adapter weights.
-    # Reference: Singh et al. (2022) "SciRepEval." arXiv:2211.13308.
+    # Using SPECTER (allenai-specter): a model trained on scientific papers
+    # using citation-informed contrastive learning. It produces 768-dimensional
+    # embeddings that capture scientific meaning well across patents, papers,
+    # and student projects. Loads via sentence-transformers (~440 MB on first run).
+    # Reference: Cohan et al. (2020) "SPECTER." ACL 2020. arXiv:2004.13313.
     model_name = cfg['embedding']['model']
     print(f"\nLoading model: {model_name}")
     print("(First run downloads ~440 MB of model weights — this is normal.)")

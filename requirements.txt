@@ -8,8 +8,7 @@ requests>=2.31
 httpx>=0.25
 
 # Embedding models
-# SPECTER2 loads via plain HuggingFace Transformers (no adapters library needed).
-# sentence-transformers is kept as a fallback for other models.
+# SPECTER loads via sentence-transformers with no extra dependencies.
 sentence-transformers>=2.6
 transformers>=4.35
 torch>=2.0

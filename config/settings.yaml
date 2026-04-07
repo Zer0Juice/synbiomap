@@ -160,17 +160,16 @@ corpus:
 # --- Embedding model ---
 # We use a sentence-transformer model that encodes short texts well.
 # "all-MiniLM-L6-v2" is fast and performs well on scientific abstracts.
-# SPECTER2 is trained on scientific papers using citation-informed contrastive
-# learning, making it the best available model for embedding patents, papers,
-# and student projects in a shared scientific semantic space.
-# Reference: Singh et al. (2022) "SciRepEval." arXiv:2211.13308.
-# Requires: pip install adapters transformers torch
+# SPECTER is trained on scientific papers using citation-informed contrastive
+# learning, making it a strong model for embedding patents, papers, and student
+# projects in a shared scientific semantic space. It loads via sentence-transformers
+# with no extra dependencies.
+# Reference: Cohan et al. (2020) "SPECTER." ACL 2020. arXiv:2004.13313.
 # NOTE: delete data/embeddings/embeddings.json if switching models,
 #       because cached vectors from a different model are not compatible.
 embedding:
-  model: "allenai/specter2_base"
-  # SPECTER2 is heavier than MiniLM; smaller batches prevent out-of-memory errors.
-  batch_size: 16
+  model: "allenai-specter"
+  batch_size: 64
   # Text field to embed (combined title + abstract)
   text_field: "text"
 
