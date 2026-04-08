@@ -3,6 +3,7 @@ title: "Explorer"
 format:
   html:
     page-layout: full
+    toc: false
 ---
 
 Search for a city to see what it works on — which artifact types are present, how its
