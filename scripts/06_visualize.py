@@ -50,11 +50,20 @@ def run():
     # lazily only when the user clicks an artifact in the explorer.
     web_cols = ['id', 'type', 'title', 'year', 'city', 'country',
                 'lat', 'lon', 'case_study_flag', 'cluster_label']
-    artifacts = (
-        df[web_cols]
-        .where(pd.notnull(df[web_cols]), None)
-        .to_dict(orient='records')
-    )
+
+    # Convert to records, then replace float NaN with None.
+    # pandas .where() doesn't work for float columns (None becomes NaN again),
+    # so we do a post-pass. Browsers reject NaN — it is not valid JSON.
+    import math
+    def _clean(val):
+        if isinstance(val, float) and math.isnan(val):
+            return None
+        return val
+
+    artifacts = [
+        {k: _clean(v) for k, v in row.items()}
+        for row in df[web_cols].to_dict(orient='records')
+    ]
 
     with open(web_data_dir / 'artifacts.json', 'w') as f:
         json.dump(artifacts, f)

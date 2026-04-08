@@ -72,12 +72,18 @@
     fetch("assets/data/artifacts.json").then(r => r.json()),
     fetch("assets/data/projections.json").then(r => r.json()),
   ])
-    .then(([artifacts, projections]) => init(artifacts, projections))
+    .then(([artifacts, projections]) => {
+      try { init(artifacts, projections); }
+      catch(err) {
+        root.innerHTML = `<p style="padding:2em;color:#c00;font-family:monospace;">Init error: ${err}</p>`;
+        console.error("Explorer init error:", err);
+      }
+    })
     .catch(err => {
       root.innerHTML =
-        `<p style="padding:2em;color:#c00;">Could not load data files. ` +
-        `Run the pipeline first to generate <code>artifacts.json</code> and ` +
-        `<code>projections.json</code>.</p>`;
+        `<p style="padding:2em;color:#c00;font-family:monospace;">` +
+        `Explorer error: ${err}<br><br>` +
+        `<small>Check the browser console (F12) for details.</small></p>`;
       console.error("Explorer load error:", err);
     });
 
