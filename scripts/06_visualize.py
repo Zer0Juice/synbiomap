@@ -44,13 +44,12 @@ def run():
     df = pd.read_csv(all_artifacts_path)
     print(f"{len(df)} artifacts loaded")
 
-    # --- 2. Export artifacts.json ---
-    # Keep the fields the website needs.
-    # 'text' (title + abstract) is included so the explorer can show abstracts
-    # on demand when a user selects an artifact. GitHub Pages gzip-compresses
-    # JSON, so the extra text adds ~2–4 MB transfer, which is acceptable.
-    web_cols = ['id', 'type', 'title', 'text', 'year', 'city', 'country',
-                'case_study_flag', 'cluster_label']
+    # --- 2a. Export artifacts.json (lightweight — no text) ---
+    # Omit 'text' here to keep the file small (~1 MB vs 20 MB).
+    # The abstract text is stored separately in abstracts.json and fetched
+    # lazily only when the user clicks an artifact in the explorer.
+    web_cols = ['id', 'type', 'title', 'year', 'city', 'country',
+                'lat', 'lon', 'case_study_flag', 'cluster_label']
     artifacts = (
         df[web_cols]
         .where(pd.notnull(df[web_cols]), None)
@@ -60,6 +59,23 @@ def run():
     with open(web_data_dir / 'artifacts.json', 'w') as f:
         json.dump(artifacts, f)
     print(f"Wrote artifacts.json ({len(artifacts)} records)")
+
+    # --- 2b. Export abstracts.json (id → abstract text, fetched on demand) ---
+    # The 'text' field is "Title. Abstract…". We strip the title prefix to
+    # store only the abstract, saving space and avoiding redundancy.
+    abstracts = {}
+    for _, row in df[['id', 'title', 'text']].iterrows():
+        text  = row['text'] if pd.notnull(row['text']) else ""
+        title = row['title'] if pd.notnull(row['title']) else ""
+        abstract = text
+        if title and text.startswith(title):
+            abstract = text[len(title):].lstrip(". ").strip()
+        if abstract:
+            abstracts[row['id']] = abstract
+
+    with open(web_data_dir / 'abstracts.json', 'w') as f:
+        json.dump(abstracts, f)
+    print(f"Wrote abstracts.json ({len(abstracts)} entries)")
 
     # --- 3. Copy projections.json to website ---
     proj_src = embeddings_dir / 'projections.json'

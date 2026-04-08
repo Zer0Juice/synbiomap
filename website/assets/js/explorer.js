@@ -54,6 +54,20 @@
 
   root.innerHTML = `<p style="padding:2em;color:${SOL.base1};">Loading data…</p>`;
 
+  // abstracts.json is large (~16 MB uncompressed). Load it once lazily —
+  // only when the user first clicks an artifact — then cache the result.
+  let abstractsCache = null;
+  let abstractsLoading = null;
+
+  function getAbstracts() {
+    if (abstractsCache) return Promise.resolve(abstractsCache);
+    if (abstractsLoading) return abstractsLoading;
+    abstractsLoading = fetch("assets/data/abstracts.json")
+      .then(r => r.json())
+      .then(data => { abstractsCache = data; return data; });
+    return abstractsLoading;
+  }
+
   Promise.all([
     fetch("assets/data/artifacts.json").then(r => r.json()),
     fetch("assets/data/projections.json").then(r => r.json()),
@@ -113,18 +127,27 @@
         : citiesSorted;
       renderCityList(cityList, filtered, cityKey, onCitySelect);
       updateUMAP(plotDiv, joined, city);
-      renderDetail(detailPanel, city, null, onArtifactSelect);
+      renderDetail(detailPanel, city, null, null, onArtifactSelect);
     }
 
     function onArtifactSelect(artifactId) {
       if (state.artifactId === artifactId) {
-        // Second click: collapse detail
         state.artifactId = null;
-      } else {
-        state.artifactId = artifactId;
+        renderDetail(detailPanel, cityIndex[state.cityKey], null, null, onArtifactSelect);
+        return;
       }
+      state.artifactId = artifactId;
       const city = cityIndex[state.cityKey];
-      renderDetail(detailPanel, city, state.artifactId, onArtifactSelect);
+
+      // Show card immediately without abstract while abstracts.json loads
+      renderDetail(detailPanel, city, artifactId, null, onArtifactSelect);
+
+      getAbstracts().then(abstracts => {
+        // Only update if the user hasn't clicked away to something else
+        if (state.artifactId === artifactId) {
+          renderDetail(detailPanel, city, artifactId, abstracts, onArtifactSelect);
+        }
+      });
     }
   }
 
@@ -294,7 +317,8 @@
 
 
   // ─── Detail panel ────────────────────────────────────────────────────────
-  function renderDetail(container, city, selectedId, onArtifactSelect) {
+  // abstracts: the full {id: abstractText} map, or null if not yet loaded.
+  function renderDetail(container, city, selectedId, abstracts, onArtifactSelect) {
     const arts     = city.artifacts;
     const counts   = countByType(arts);
     const ccCount  = arts.filter(a => a.case_study_flag).length;
@@ -318,7 +342,7 @@
     let detailCard = "";
     if (selectedId) {
       const a = arts.find(x => x.id === selectedId);
-      if (a) detailCard = buildArtifactCard(a);
+      if (a) detailCard = buildArtifactCard(a, abstracts);
     }
 
     // Artifact list — most recent first, up to 100
@@ -384,12 +408,15 @@
 
 
   // ─── Artifact detail card ─────────────────────────────────────────────────
-  function buildArtifactCard(a) {
+  // abstracts: {id: abstractText} map (null while loading)
+  function buildArtifactCard(a, abstracts) {
     const color     = TYPE_COLOR[a.type] || SOL.cyan;
     const typeLabel = TYPE_LABEL[a.type] || a.type;
 
-    // Derive abstract: text = "Title. Abstract..." — strip the title prefix
-    const abstract = extractAbstract(a.text, a.title);
+    // abstracts.json is loaded lazily; show a placeholder until it arrives.
+    const abstract = abstracts
+      ? (abstracts[a.id] || "")
+      : null;  // null = still loading
 
     // Build link
     const link = buildLink(a);
@@ -431,11 +458,16 @@
         </div>
         ${cityLine ? `<div style="font-size:0.75rem;color:${SOL.base1};margin-bottom:8px;">
           📍 ${esc(cityLine)}</div>` : ""}
-        ${abstract ? `<div style="
-          font-size:0.78rem;color:${SOL.base01};line-height:1.55;
-          max-height:120px;overflow-y:auto;
-          border-top:1px solid #d4cbb7;padding-top:8px;
-        ">${esc(abstract)}</div>` : ""}
+        ${abstract === null
+          ? `<div style="font-size:0.75rem;color:${SOL.base1};border-top:1px solid #d4cbb7;padding-top:8px;">
+               Loading abstract…</div>`
+          : abstract
+            ? `<div style="
+                font-size:0.78rem;color:${SOL.base01};line-height:1.55;
+                max-height:120px;overflow-y:auto;
+                border-top:1px solid #d4cbb7;padding-top:8px;
+              ">${esc(abstract)}</div>`
+            : ""}
         ${linkBtn}
       </div>`;
   }
@@ -485,19 +517,6 @@
 
 
   // ─── Helpers ─────────────────────────────────────────────────────────────
-  /**
-   * The `text` field is "Title. Abstract text…"
-   * Strip the title prefix to get just the abstract.
-   */
-  function extractAbstract(text, title) {
-    if (!text) return "";
-    if (title && text.startsWith(title)) {
-      const rest = text.slice(title.length).replace(/^\.\s*/, "");
-      return rest.trim();
-    }
-    return text.trim();
-  }
-
   function countByType(artifacts) {
     const counts = {};
     for (const a of artifacts) counts[a.type] = (counts[a.type] || 0) + 1;
