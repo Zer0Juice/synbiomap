@@ -27,6 +27,68 @@ logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
+# ISO 3166-1 alpha-3 → alpha-2 conversion
+# ---------------------------------------------------------------------------
+# All country codes are normalised to alpha-2 (e.g. "US", "CN") throughout
+# the pipeline. iGEM geocoding produces alpha-3 codes (e.g. "USA", "CHN");
+# this table converts them so all datasets use a consistent standard.
+# Source: ISO 3166-1 (https://www.iso.org/iso-3166-country-codes.html)
+
+_ALPHA3_TO_ALPHA2: dict[str, str] = {
+    "AFG": "AF", "ALB": "AL", "DZA": "DZ", "AND": "AD", "AGO": "AO",
+    "ARG": "AR", "ARM": "AM", "AUS": "AU", "AUT": "AT", "AZE": "AZ",
+    "BHS": "BS", "BHR": "BH", "BGD": "BD", "BLR": "BY", "BEL": "BE",
+    "BLZ": "BZ", "BEN": "BJ", "BTN": "BT", "BOL": "BO", "BIH": "BA",
+    "BWA": "BW", "BRA": "BR", "BRN": "BN", "BGR": "BG", "BFA": "BF",
+    "BDI": "BI", "CPV": "CV", "KHM": "KH", "CMR": "CM", "CAN": "CA",
+    "CAF": "CF", "TCD": "TD", "CHL": "CL", "CHN": "CN", "COL": "CO",
+    "COM": "KM", "COD": "CD", "COG": "CG", "CRI": "CR", "CIV": "CI",
+    "HRV": "HR", "CUB": "CU", "CYP": "CY", "CZE": "CZ", "DNK": "DK",
+    "DJI": "DJ", "DOM": "DO", "ECU": "EC", "EGY": "EG", "SLV": "SV",
+    "GNQ": "GQ", "ERI": "ER", "EST": "EE", "SWZ": "SZ", "ETH": "ET",
+    "FJI": "FJ", "FIN": "FI", "FRA": "FR", "GAB": "GA", "GMB": "GM",
+    "GEO": "GE", "DEU": "DE", "GHA": "GH", "GRC": "GR", "GTM": "GT",
+    "GIN": "GN", "GNB": "GW", "GUY": "GY", "HTI": "HT", "HND": "HN",
+    "HKG": "HK", "HUN": "HU", "ISL": "IS", "IND": "IN", "IDN": "ID",
+    "IRN": "IR", "IRQ": "IQ", "IRL": "IE", "ISR": "IL", "ITA": "IT",
+    "JAM": "JM", "JPN": "JP", "JOR": "JO", "KAZ": "KZ", "KEN": "KE",
+    "PRK": "KP", "KOR": "KR", "KWT": "KW", "KGZ": "KG", "LAO": "LA",
+    "LVA": "LV", "LBN": "LB", "LSO": "LS", "LBR": "LR", "LBY": "LY",
+    "LIE": "LI", "LTU": "LT", "LUX": "LU", "MDG": "MG", "MWI": "MW",
+    "MYS": "MY", "MDV": "MV", "MLI": "ML", "MLT": "MT", "MRT": "MR",
+    "MUS": "MU", "MEX": "MX", "MDA": "MD", "MCO": "MC", "MNG": "MN",
+    "MNE": "ME", "MAR": "MA", "MOZ": "MZ", "MMR": "MM", "NAM": "NA",
+    "NPL": "NP", "NLD": "NL", "NZL": "NZ", "NIC": "NI", "NER": "NE",
+    "NGA": "NG", "MKD": "MK", "NOR": "NO", "OMN": "OM", "PAK": "PK",
+    "PAN": "PA", "PNG": "PG", "PRY": "PY", "PER": "PE", "PHL": "PH",
+    "POL": "PL", "PRT": "PT", "QAT": "QA", "ROU": "RO", "RUS": "RU",
+    "RWA": "RW", "SAU": "SA", "SEN": "SN", "SRB": "RS", "SLE": "SL",
+    "SGP": "SG", "SVK": "SK", "SVN": "SI", "SOM": "SO", "ZAF": "ZA",
+    "SSD": "SS", "ESP": "ES", "LKA": "LK", "SDN": "SD", "SUR": "SR",
+    "SWE": "SE", "CHE": "CH", "SYR": "SY", "TWN": "TW", "TJK": "TJ",
+    "TZA": "TZ", "THA": "TH", "TLS": "TL", "TGO": "TG", "TTO": "TT",
+    "TUN": "TN", "TUR": "TR", "TKM": "TM", "UGA": "UG", "UKR": "UA",
+    "ARE": "AE", "GBR": "GB", "USA": "US", "URY": "UY", "UZB": "UZ",
+    "VEN": "VE", "VNM": "VN", "YEM": "YE", "ZMB": "ZM", "ZWE": "ZW",
+}
+
+
+def _normalise_country(code) -> str | None:
+    """Convert ISO alpha-3 to alpha-2. Alpha-2 codes pass through unchanged."""
+    if code is None:
+        return None
+    import math
+    if isinstance(code, float) and math.isnan(code):
+        return None
+    code = str(code).strip().upper()
+    if not code or code == "NAN":
+        return None
+    if len(code) == 3:
+        return _ALPHA3_TO_ALPHA2.get(code, code)  # fall back to original if unknown
+    return code
+
+
+# ---------------------------------------------------------------------------
 # Public normalization functions — one per data source
 # ---------------------------------------------------------------------------
 
@@ -53,7 +115,7 @@ def normalize_papers(raw_records: list[dict], carbon_keywords: list[str]) -> pd.
             "text": text,
             "year": rec.get("year"),
             "city": rec.get("city"),       # filled by geocode_papers.py
-            "country": rec.get("country"),
+            "country": _normalise_country(rec.get("country")),
             "lat": rec.get("lat"),         # filled by geocode_papers.py
             "lon": rec.get("lon"),         # filled by geocode_papers.py
             "theme_primary": None,         # filled in later by clustering
@@ -96,7 +158,7 @@ def normalize_patents(raw_records: list[dict], carbon_keywords: list[str]) -> pd
             "text": text,
             "year": rec.get("year"),
             "city": rec.get("city"),
-            "country": rec.get("country"),
+            "country": _normalise_country(rec.get("country")),
             "lat": None,
             "lon": None,
             "theme_primary": None,
@@ -132,7 +194,7 @@ def normalize_projects(raw_records: list[dict], carbon_keywords: list[str]) -> p
             "text": text,
             "year": rec.get("year"),
             "city": rec.get("city"),
-            "country": rec.get("country"),
+            "country": _normalise_country(rec.get("country")),
             "lat": rec.get("lat"),
             "lon": rec.get("lon"),
             "theme_primary": None,
