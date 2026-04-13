@@ -18,9 +18,10 @@ cd synbiomap
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Configure credentials
+# 3. Configure credentials (optional — defaults work without any keys)
 cp .env.example .env
-# Edit .env — add OPENALEX_EMAIL, OPENALEX_API_KEY, LENS_API_TOKEN
+# Edit .env — add OPENALEX_EMAIL and OPENALEX_API_KEY if desired
+# No key needed for patent data (PatentsView is free and open)
 
 # 4. Place iGEM data files
 #    data/raw/projects/igem_projects.csv
@@ -64,7 +65,7 @@ python scripts/06_visualize.py
 │
 ├── scripts/                   # pipeline steps — runnable individually or via notebook
 │   ├── 01_ingest_papers.py    # fetch papers from OpenAlex (3-layer keyword strategy)
-│   ├── 02_ingest_patents.py   # fetch patents from Lens.org (IPC codes + keywords)
+│   ├── 02_ingest_patents.py   # fetch patents from PatentsView (layered keyword search)
 │   ├── 03_ingest_projects.py  # load iGEM projects and parts from CSV
 │   ├── 04_embed.py            # generate sentence embeddings (cached)
 │   ├── 05_cluster.py          # UMAP projection + HDBSCAN clustering
@@ -76,7 +77,7 @@ python scripts/06_visualize.py
 ├── src/                       # reusable Python modules (imported by scripts/)
 │   ├── ingest/
 │   │   ├── openalex.py        # OpenAlex API client
-│   │   ├── lens.py            # Lens.org patent API client
+│   │   ├── patentsview.py     # PatentsView (USPTO) patent API client
 │   │   ├── igem.py            # iGEM CSV loader
 │   │   └── normalize.py       # converts raw records to shared schema
 │   ├── embed/
@@ -100,14 +101,14 @@ python scripts/06_visualize.py
 | Source | What it provides | Access |
 |--------|-----------------|--------|
 | [OpenAlex](https://openalex.org) | Academic papers | Free REST API; optional API key for higher rate limits |
-| [Lens.org](https://www.lens.org) | Patents | Free API (token required) |
+| [PatentsView](https://patentsview.org) | US patents (USPTO) | Free, no account or API key required |
 | [iGEM Registry](https://igem.org) | Student projects and parts | CSV download |
 
 ## Corpus construction strategy
 
 **Papers** follow Shapira, Kwon & Youtie (2017, *Scientometrics*): a two-layer keyword approach where Layer 1 uses core self-identifying terms (`"synthetic biology"`, `"synthetic genomics"`) and Layer 2 uses subfield terms (`"BioBrick"`, `"repressilator"`, `"minimal genome"`, etc.). Broad terms like `"metabolic engineering"` are intentionally excluded from retrieval — they would swamp the corpus with unrelated work.
 
-**Patents** follow van Doren, Koenigstein & Reiss (2013, *Systems and Synthetic Biology*): keywords are combined with an IPC class scope filter (C12N, C12P, C12Q, C12S, C40B) using AND logic. Pure keyword search overestimates synthetic biology patent activity because the terminology overlaps heavily with general biotechnology (Oldham & Hall, 2018).
+**Patents** follow van Doren, Koenigstein & Reiss (2013, *Systems and Synthetic Biology*): a two-layer keyword strategy where Layer 1 uses core terms (`"synthetic biology"`, `"synthetic genome"`, `"BioBrick"`) and Layer 2 uses subfield terms (`"genetic circuit"`, `"gene synthesis"`, `"DNA assembly"`, etc.). An optional CPC class scope filter (C12N, C12P, C12Q, C40B) is available but off by default. Pure keyword search overestimates synthetic biology patent activity because the terminology overlaps heavily with general biotechnology (Oldham & Hall, 2018). Data source: PatentsView (USPTO, US patents only; free and open, no API key needed).
 
 All parameters are in `config/settings.yaml`.
 
