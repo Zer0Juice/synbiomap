@@ -137,30 +137,35 @@ def normalize_papers(raw_records: list[dict], carbon_keywords: list[str]) -> pd.
 
 def normalize_patents(raw_records: list[dict], carbon_keywords: list[str]) -> pd.DataFrame:
     """
-    Normalize a list of Lens.org patent dicts to the shared schema.
+    Normalize a list of PatentsView patent dicts to the shared schema.
 
     Parameters
     ----------
-    raw_records : output of lens.extract_fields() for each patent
+    raw_records : output of patentsview.extract_fields() for each patent
     carbon_keywords : list of carbon-capture keywords for case study tagging
+
+    Notes
+    -----
+    PatentsView pre-geocodes assignee addresses, so lat/lon are passed through
+    directly from the API response without a separate geocoding step.
     """
     rows = []
     for rec in raw_records:
         title = rec.get("title", "") or ""
         abstract = rec.get("abstract", "") or ""
         text = build_text_field(title, abstract)
-        lens_id = rec.get("lens_id", "")
+        patent_id = rec.get("patent_id", "")
 
         row = {
-            "id": lens_id or _make_id("patent", title),
+            "id": patent_id or _make_id("patent", title),
             "type": "patent",
             "title": title,
             "text": text,
             "year": rec.get("year"),
             "city": rec.get("city"),
             "country": _normalise_country(rec.get("country")),
-            "lat": None,
-            "lon": None,
+            "lat": rec.get("lat"),   # pre-geocoded by PatentsView
+            "lon": rec.get("lon"),   # pre-geocoded by PatentsView
             "theme_primary": None,
             "theme_secondary": None,
             "retrieval_reason": rec.get("retrieval_reason", "keyword"),
