@@ -20,7 +20,8 @@ pip install -r requirements.txt
 
 # 3. Configure credentials
 cp .env.example .env
-# Edit .env — add OPENALEX_EMAIL, OPENALEX_API_KEY, LENS_API_TOKEN
+# Edit .env — add OPENALEX_EMAIL and OPENALEX_API_KEY
+# No credentials needed for patent data (PatentsView is open)
 
 # 4. Place iGEM data files
 #    data/raw/projects/igem_projects.csv
@@ -64,7 +65,7 @@ python scripts/06_visualize.py
 │
 ├── scripts/                   # pipeline steps — runnable individually or via notebook
 │   ├── 01_ingest_papers.py    # fetch papers from OpenAlex (3-layer keyword strategy)
-│   ├── 02_ingest_patents.py   # fetch patents from Lens.org (IPC codes + keywords)
+│   ├── 02_ingest_patents.py   # fetch patents from PatentsView/USPTO (no key needed)
 │   ├── 03_ingest_projects.py  # load iGEM projects and parts from CSV
 │   ├── 04_embed.py            # generate sentence embeddings (cached)
 │   ├── 05_cluster.py          # UMAP projection + HDBSCAN clustering
@@ -76,7 +77,7 @@ python scripts/06_visualize.py
 ├── src/                       # reusable Python modules (imported by scripts/)
 │   ├── ingest/
 │   │   ├── openalex.py        # OpenAlex API client
-│   │   ├── lens.py            # Lens.org patent API client
+│   │   ├── patentsview.py     # PatentsView (USPTO) patent API client
 │   │   ├── igem.py            # iGEM CSV loader
 │   │   └── normalize.py       # converts raw records to shared schema
 │   ├── embed/
@@ -89,6 +90,7 @@ python scripts/06_visualize.py
 │       ├── schema.py           # shared column schema and dataclass
 │       └── config.py           # loads settings.yaml + .env
 │
+├── notes/                     # research notes and literature connections
 ├── website/                   # Quarto documentation site (GitHub Pages)
 ├── manuscript/                # LaTeX manuscript
 │   └── references.bib
@@ -100,14 +102,16 @@ python scripts/06_visualize.py
 | Source | What it provides | Access |
 |--------|-----------------|--------|
 | [OpenAlex](https://openalex.org) | Academic papers | Free REST API; optional API key for higher rate limits |
-| [Lens.org](https://www.lens.org) | Patents | Free API (token required) |
+| [PatentsView](https://patentsview.org) | US patents (USPTO, 1976–present) | Free, open-government API — no key required |
 | [iGEM Registry](https://igem.org) | Student projects and parts | CSV download |
+
+**Patent scope note:** PatentsView covers US-granted patents only. International filings (EPO, JPO, etc.) are not included. The US is the largest single jurisdiction for synthetic biology patents (Oldham & Hall, 2018), and the tradeoff in coverage is offset by the API's openness and reproducibility — no credentials, no rate-limit negotiations, stable schema.
 
 ## Corpus construction strategy
 
 **Papers** follow Shapira, Kwon & Youtie (2017, *Scientometrics*): a two-layer keyword approach where Layer 1 uses core self-identifying terms (`"synthetic biology"`, `"synthetic genomics"`) and Layer 2 uses subfield terms (`"BioBrick"`, `"repressilator"`, `"minimal genome"`, etc.). Broad terms like `"metabolic engineering"` are intentionally excluded from retrieval — they would swamp the corpus with unrelated work.
 
-**Patents** follow van Doren, Koenigstein & Reiss (2013, *Systems and Synthetic Biology*): keywords are combined with an IPC class scope filter (C12N, C12P, C12Q, C12S, C40B) using AND logic. Pure keyword search overestimates synthetic biology patent activity because the terminology overlaps heavily with general biotechnology (Oldham & Hall, 2018).
+**Patents** follow van Doren, Koenigstein & Reiss (2013, *Systems and Synthetic Biology*): the same layered keyword approach is applied to patent titles and abstracts. IPC classification codes (C12N, C12P, etc.) are returned with each patent and available for downstream analysis, but are not used as query filters — pure IPC filtering misses synbio patents filed under broad biotechnology classes.
 
 All parameters are in `config/settings.yaml`.
 
@@ -117,7 +121,7 @@ All parameters are in `config/settings.yaml`.
 |------|--------|---------------|
 | Corpus construction | Layered keyword search | `config/settings.yaml` → `corpus` |
 | Case study tagging | Keyword match on title + abstract | `carbon_capture_keywords` |
-| Embeddings | `all-MiniLM-L6-v2` (384-dim) | Reimers & Gurevych (2019) |
+| Embeddings | `allenai-specter` (384-dim) | Cohan et al. (2020) |
 | Dimensionality reduction | UMAP, cosine metric | McInnes et al. (2018) |
 | Clustering | HDBSCAN | Campello et al. (2013) |
 | Geocoding | Nominatim (OpenStreetMap), cached | `data/geo/geocoding_cache.json` |

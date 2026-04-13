@@ -137,11 +137,11 @@ def normalize_papers(raw_records: list[dict], carbon_keywords: list[str]) -> pd.
 
 def normalize_patents(raw_records: list[dict], carbon_keywords: list[str]) -> pd.DataFrame:
     """
-    Normalize a list of Lens.org patent dicts to the shared schema.
+    Normalize a list of PatentsView patent dicts to the shared schema.
 
     Parameters
     ----------
-    raw_records : output of lens.extract_fields() for each patent
+    raw_records : output of patentsview.extract_fields() for each patent
     carbon_keywords : list of carbon-capture keywords for case study tagging
     """
     rows = []
@@ -149,10 +149,10 @@ def normalize_patents(raw_records: list[dict], carbon_keywords: list[str]) -> pd
         title = rec.get("title", "") or ""
         abstract = rec.get("abstract", "") or ""
         text = build_text_field(title, abstract)
-        lens_id = rec.get("lens_id", "")
+        patent_number = rec.get("patent_number", "")
 
         row = {
-            "id": lens_id or _make_id("patent", title),
+            "id": patent_number or _make_id("patent", title),
             "type": "patent",
             "title": title,
             "text": text,

@@ -1,15 +1,21 @@
 """
-Step 2 — Ingest patents from Lens.org using a layered keyword strategy.
+Step 2 — Ingest patents from PatentsView using a layered keyword strategy.
+
+PatentsView (https://patentsview.org) is the USPTO's open-data API for US
+patents. It is free, requires no API key, and provides stable, citable access
+to US patent data. Coverage: all US-granted patents from 1976 to present.
+
+Scope note: PatentsView covers US patents only. This introduces a geographic
+bias toward US assignees, but the US is the largest single jurisdiction for
+synthetic biology patents (Oldham & Hall, 2018, doi:10.1101/483826), and the
+reproducibility benefits of a no-auth, open-government API outweigh the
+coverage trade-off for a thesis project.
 
 Synthetic biology has no dedicated IPC/CPC patent classification code.
-Keyword-only searches can overestimate activity due to overlap with
-general biotechnology (Oldham & Hall, 2018, doi:10.1101/483826).
-
-We adopt the keyword-layer strategy from van Doren, Koenigstein & Reiss
-(2013, doi:10.1007/s11693-013-9121-7), searching full patent text with
-two keyword groups. IPC filtering is not used here because the Lens.org
-standard API plan does not expose IPC classification symbols as a
-searchable field (see src/ingest/lens.py for details).
+Keyword-only searches can overestimate activity due to overlap with general
+biotechnology (Oldham & Hall, 2018). We adopt the keyword-layer strategy
+from van Doren, Koenigstein & Reiss (2013, doi:10.1007/s11693-013-9121-7),
+searching patent titles and abstracts with two keyword groups.
 
 Layer 1 — Core self-identifying keywords (high precision):
     "synthetic biology", "synthetic genomics", "synthetic genome"
@@ -17,7 +23,7 @@ Layer 1 — Core self-identifying keywords (high precision):
 Layer 2 — Subfield/enabling keywords (broader, catches adjacent work):
     "genetic circuit", "gene synthesis", "DNA assembly", "BioBrick", etc.
 
-Both layers are deduplicated on Lens ID. Each patent carries a
+Both layers are deduplicated on USPTO patent number. Each patent carries a
 `retrieval_reason` field recording which layer found it first.
 
 Checkpointing: completed layers are saved to data/raw/patents_layer*.json
@@ -27,9 +33,7 @@ Delete those files to force a full re-fetch.
 Usage:
     python scripts/02_ingest_patents.py
 
-Requires:
-    LENS_API_TOKEN set in .env
-    Get a free token at https://www.lens.org/lens/user/subscriptions
+No credentials required. PatentsView is fully open.
 """
 
 import sys
@@ -42,7 +46,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 from src.utils.config import load_config
-from src.ingest import lens, normalize
+from src.ingest import patentsview, normalize
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s  %(message)s")
 logger = logging.getLogger(__name__)
@@ -54,9 +58,8 @@ def _load_cache(layer_name: str) -> list[dict] | None:
     """
     Return cached extracted-field records for this layer, or None if not cached.
 
-    The cache stores dicts in the same shape as lens.extract_fields() output:
-    {lens_id, title, abstract, year, city, country, retrieval_reason}
-    This format can be seeded from an existing patents.csv if needed.
+    The cache stores dicts in the same shape as patentsview.extract_fields():
+    {patent_number, title, abstract, year, city, country, retrieval_reason}
     """
     path = CACHE_DIR / f"patents_{layer_name}.json"
     if path.exists():
@@ -79,19 +82,20 @@ def run():
     cfg = load_config()
     corpus_cfg = cfg["corpus"]
 
-    ipc_codes      = corpus_cfg["patent_ipc_codes"]
-    core_kws       = corpus_cfg["patent_core_keywords"]
-    subfield_kws   = corpus_cfg["patent_subfield_keywords"]
-    max_results    = corpus_cfg["lens_max_results"]
-    year_min       = corpus_cfg["year_min"]
-    year_max       = corpus_cfg.get("year_max")
+    ipc_codes     = corpus_cfg["patent_ipc_codes"]
+    core_kws      = corpus_cfg["patent_core_keywords"]
+    subfield_kws  = corpus_cfg["patent_subfield_keywords"]
+    max_results   = corpus_cfg["patentsview_max_results"]
+    year_min      = corpus_cfg["year_min"]
+    year_max      = corpus_cfg.get("year_max")
 
-    print("=== Step 2: Ingest Patents from Lens.org ===\n")
+    print("=== Step 2: Ingest Patents from PatentsView ===\n")
     print(f"Core keywords:     {core_kws}")
     print(f"Subfield keywords: {subfield_kws}")
     print(f"Max results/layer: {max_results}")
     print(f"Cache dir:         {CACHE_DIR}\n")
     print("(Delete data/raw/patents_layer*.json to force a full re-fetch.)\n")
+    print("Note: PatentsView covers US patents only (USPTO grants since 1976).\n")
 
     seen_ids: dict[str, str] = {}
     raw_records: list[dict] = []
@@ -100,13 +104,13 @@ def run():
         """Extract fields from raw API records, deduplicate, and accumulate."""
         extracted = []
         for patent in patents:
-            fields = lens.extract_fields(patent)
+            fields = patentsview.extract_fields(patent)
             fields["retrieval_reason"] = reason
-            lid = fields.get("lens_id", "")
-            if lid and lid in seen_ids:
+            pid = fields.get("patent_number", "")
+            if pid and pid in seen_ids:
                 continue
-            if lid:
-                seen_ids[lid] = reason
+            if pid:
+                seen_ids[pid] = reason
             raw_records.append(fields)
             extracted.append(fields)
         return extracted
@@ -114,11 +118,11 @@ def run():
     def _collect_extracted(extracted: list[dict]) -> None:
         """Add already-extracted field dicts (from cache), deduplicating."""
         for fields in extracted:
-            lid = fields.get("lens_id", "")
-            if lid and lid in seen_ids:
+            pid = fields.get("patent_number", "")
+            if pid and pid in seen_ids:
                 continue
-            if lid:
-                seen_ids[lid] = fields.get("retrieval_reason", "unknown")
+            if pid:
+                seen_ids[pid] = fields.get("retrieval_reason", "unknown")
             raw_records.append(fields)
 
     # ------------------------------------------------------------------
@@ -130,7 +134,7 @@ def run():
         print(f"Using cache: {len(cached_l1)} extracted records")
         _collect_extracted(cached_l1)
     else:
-        patents_l1_raw = lens.search_patents(
+        patents_l1_raw = patentsview.search_patents(
             keywords=core_kws,
             ipc_codes=ipc_codes,
             year_min=year_min,
@@ -146,11 +150,11 @@ def run():
     # ------------------------------------------------------------------
     # Layer 2: Subfield/enabling keywords
     # ------------------------------------------------------------------
-    # Wait between layers if layer 1 was freshly fetched (not cached),
-    # to give the rate limit time to reset before starting layer 2.
+    # Pause between layers if layer 1 was freshly fetched (not cached),
+    # to avoid hitting PatentsView rate limits on rapid successive queries.
     if cached_l1 is None:
-        print("Pausing 60s between layers to respect Lens.org rate limits...")
-        time.sleep(60)
+        print("Pausing 10s between layers...")
+        time.sleep(10)
 
     print("--- Layer 2: Subfield/enabling keywords ---")
     cached_l2 = _load_cache("layer2")
@@ -159,7 +163,7 @@ def run():
         before = len(raw_records)
         _collect_extracted(cached_l2)
     else:
-        patents_l2_raw = lens.search_patents(
+        patents_l2_raw = patentsview.search_patents(
             keywords=subfield_kws,
             ipc_codes=ipc_codes,
             year_min=year_min,

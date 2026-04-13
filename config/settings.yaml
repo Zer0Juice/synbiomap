@@ -116,13 +116,17 @@ corpus:
 
   # Maximum results per keyword query (across all layers)
   openalex_max_results: 5000
-  # Maximum patents to retrieve from Lens.org (per layer query)
-  lens_max_results: 2000
+  # Maximum patents to retrieve from PatentsView (per layer query).
+  # PatentsView covers US patents only; counts will be lower than a
+  # global source like Lens.org but results are more reproducible.
+  patentsview_max_results: 2000
 
   # Patent-specific configuration
-  # IPC (International Patent Classification) codes used to scope the patent search.
-  # Synthetic biology has no dedicated IPC code, so we use the relevant technical
-  # classes and combine them with keywords (AND logic) to reduce false positives.
+  # IPC (International Patent Classification) codes used for downstream
+  # analysis and reporting. These are NOT used as query filters because
+  # restricting to IPC codes AND keywords would miss synbio patents filed
+  # under broad biotechnology classes. IPC data is returned by PatentsView
+  # and attached to each record for post-hoc analysis.
   # Source: van Doren, Koenigstein & Reiss (2013, Systems and Synthetic Biology)
   #   C12N — Micro-organisms; mutation or genetic engineering (core)
   #   C12P — Fermentation or enzyme-using processes
