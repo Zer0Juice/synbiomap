@@ -11,19 +11,25 @@ Data sources:
   - iGEM project metadata: available from the iGEM API or scraped from the
     iGEM website. The community-maintained dataset at
     https://github.com/igemlabs/igem-data provides a cleaned CSV.
-  - Parts data: available from the iGEM Parts Registry API at
-    http://parts.igem.org/partsdb/
+  - Parts data: the new iGEM Registry REST API at api.registry.igem.org
+    (launched August 2025). No authentication required for read endpoints.
+
+Parts API overview:
+  - GET /v1/parts?pageSize=N&page=N  — paginated list of all parts
+  - GET /v1/parts/{uuid}/authors     — returns organisationUUID for each author
+  - GET /v1/organisations/{uuid}     — returns team name like "ABOA (2025)"
+  - GET /v1/parts/{uuid}/composition — sub-part list (composition graph)
+  Team matching chain: part → authors → organisationUUID → org name → projects.csv
 
 Methodology note:
   iGEM projects are treated as the "student innovation" layer in our model.
   Each project is geo-tagged by the team's institution city.
-  Projects are included if they mention relevant keywords in their
-  abstract or project description.
+  Parts are linked to projects via team name + year, inheriting the project's
+  geo data since parts themselves have no location metadata.
 """
 
 from __future__ import annotations
-import csv
-import io
+import json
 import logging
 import time
 from pathlib import Path
@@ -34,8 +40,8 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-PARTS_REGISTRY_BASE = "http://parts.igem.org/partsdb"
-SYNBIOHUB_SPARQL = "https://synbiohub.org/sparql"
+REGISTRY_API_BASE = "https://api.registry.igem.org/v1"
+REQUEST_DELAY = 0.6    # seconds between requests — tested safe limit is ~0.5s, 0.6s adds buffer
 
 # Expected columns in the raw iGEM projects CSV
 IGEM_PROJECT_COLUMNS = {
@@ -44,19 +50,9 @@ IGEM_PROJECT_COLUMNS = {
     "university": str,
     "city": str,
     "country": str,
-    "track": str,          # competition track, e.g. "Environment", "Foundational Advance"
+    "track": str,     # competition track, e.g. "Environment", "Foundational Advance"
     "abstract": str,
     "wiki_url": str,
-}
-
-# Expected columns in the raw iGEM parts CSV
-IGEM_PARTS_COLUMNS = {
-    "part_name": str,      # BioBrick ID, e.g. "BBa_K12345"
-    "part_type": str,      # e.g. "Coding", "Promoter", "RBS"
-    "short_desc": str,
-    "long_desc": str,
-    "team_name": str,
-    "year": "Int64",
 }
 
 
@@ -87,24 +83,18 @@ def load_projects(filepath: str | Path) -> pd.DataFrame:
 
 def load_parts(filepath: str | Path) -> pd.DataFrame:
     """
-    Load iGEM parts registry data from a CSV file.
+    Load processed iGEM parts from a CSV file.
 
     Parameters
     ----------
-    filepath : path to the raw iGEM parts CSV
-
-    Returns
-    -------
-    DataFrame with columns matching IGEM_PARTS_COLUMNS (best effort)
+    filepath : path to the processed parts CSV (data/processed/parts.csv)
     """
     filepath = Path(filepath)
     if not filepath.exists():
         raise FileNotFoundError(
             f"iGEM parts file not found at {filepath}.\n"
-            "Download it from http://parts.igem.org/partsdb/ "
-            "and place it at data/raw/parts/igem_parts.csv"
+            "Run scripts/03b_fetch_parts.py to fetch parts from the Registry API."
         )
-
     df = pd.read_csv(filepath, dtype=str, encoding="utf-8")
     logger.info(f"Loaded {len(df)} iGEM parts from {filepath}")
     return df
@@ -124,6 +114,7 @@ def extract_project_fields(row: pd.Series) -> dict:
     univ      = str(row.get("university") or row.get("institution") or "")
     track     = str(row.get("track") or row.get("section") or row.get("village") or "")
     wiki_url  = str(row.get("wiki_url") or row.get("wikiURL") or "")
+
     def _safe_float(v):
         try:
             f = float(v)
@@ -146,234 +137,255 @@ def extract_project_fields(row: pd.Series) -> dict:
     }
 
 
-def extract_part_fields(row: pd.Series) -> dict:
+def extract_part_fields(part: dict) -> dict:
     """
-    Extract and clean fields from a single iGEM part row.
-
-    Returns a flat dict ready to be passed to normalize.py.
-    """
-    description = " ".join(filter(None, [
-        str(row.get("short_desc", "") or ""),
-        str(row.get("long_desc", "") or ""),
-    ]))
-    return {
-        "part_name": str(row.get("part_name", "") or ""),
-        "title": str(row.get("part_name", "") or ""),
-        "abstract": description,
-        "year": _safe_int(row.get("year")),
-        "team_name": str(row.get("team_name", "") or ""),
-        "part_type": str(row.get("part_type", "") or ""),
-    }
-
-
-def fetch_parts_from_registry(
-    max_results: int = 100_000,
-    per_page: int = 10_000,
-    delay: float = 1.0,
-) -> Iterator[dict]:
-    """
-    Fetch all parts from the iGEM Parts Registry CSV export API.
-
-    The Registry exposes a search interface at parts.igem.org/partsdb/search.cgi.
-    We request all parts (q=type:all) in CSV format with pagination.
-
-    Each yielded dict has keys matching IGEM_PARTS_COLUMNS plus:
-      - "uses"       : semicolon-separated sub-part names (for composite parts)
-      - "group_name" : the submitting team (may differ from "team_name" in older data)
-      - "author"     : part author(s)
+    Extract and clean fields from a raw part object returned by the Registry API.
 
     Parameters
     ----------
-    max_results : stop after this many parts (safety cap)
-    per_page    : results per request (Registry default is 10,000)
-    delay       : seconds between requests (be polite)
+    part : dict from GET /v1/parts or GET /v1/parts/{uuid}
 
-    Note: The Registry API is lightly documented. If the response format
-    changes or the endpoint is unavailable, check parts.igem.org for
-    current export options. The column names below reflect the format
-    observed as of 2024; the "uses" column may be absent in some exports.
+    Returns a flat dict. team_name, city, lat, lon are not in the API response
+    and must be joined from projects.csv after fetching.
     """
-    start = 0
-    yielded = 0
+    import re
 
-    while yielded < max_results:
-        params = {
-            "q": "type:all",
-            "return": "csv",
-            "start": start,
-            "limit": per_page,
-        }
-
+    # Year is not a direct field — derive it from the submission timestamp.
+    # audit.created is an ISO 8601 string like "2025-12-09T21:50:38.273Z".
+    year = None
+    audit_created = (part.get("audit") or {}).get("created", "")
+    if audit_created:
         try:
-            response = requests.get(
-                f"{PARTS_REGISTRY_BASE}/search.cgi",
-                params=params,
-                timeout=60,
-            )
-            response.raise_for_status()
-        except requests.RequestException as e:
-            logger.error(f"Parts Registry request failed (start={start}): {e}")
-            break
+            year = int(audit_created[:4])
+        except (ValueError, IndexError):
+            pass
 
-        text = response.text.strip()
-        if not text:
-            break
+    # The source field is free text like:
+    #   "Source of the amino acid sequence: A. Dixon et al., doi: https://doi.org/10.1021/..."
+    # Extract all DOIs using a regex. Some parts cite multiple papers.
+    source_text = part.get("source") or ""
+    dois = re.findall(
+        r"10\.\d{4,9}/[^\s,;\]\)\">]+",
+        source_text,
+    )
+    # Normalise: strip trailing punctuation that sometimes gets captured
+    dois = [d.rstrip(".,;)>\"'") for d in dois]
 
-        reader = csv.DictReader(io.StringIO(text))
-        rows_this_page = 0
-
-        for row in reader:
-            if yielded >= max_results:
-                return
-
-            # Normalize field names — the Registry sometimes uses "group_name"
-            # instead of "team_name" and "part_name" vs "name"
-            part = {
-                "part_name": row.get("part_name") or row.get("name", ""),
-                "part_type": row.get("part_type") or row.get("type", ""),
-                "short_desc": row.get("short_desc") or row.get("short_description", ""),
-                "long_desc": row.get("long_desc") or row.get("description", ""),
-                "team_name": row.get("group_name") or row.get("team_name", ""),
-                "author": row.get("author", ""),
-                "year": row.get("year", ""),
-                # "uses" is a semicolon-separated list of sub-part names.
-                # Present for composite parts, empty for basic parts.
-                "uses": row.get("uses", ""),
-            }
-
-            if not part["part_name"]:
-                continue  # skip malformed rows
-
-            yield part
-            yielded += 1
-            rows_this_page += 1
-
-        logger.info(f"Fetched {rows_this_page} parts (total: {yielded})")
-
-        if rows_this_page < per_page:
-            break  # last page
-
-        start += per_page
-        time.sleep(delay)
+    return {
+        "part_name": part.get("name", ""),          # BioBrick ID, e.g. BBa_K12345
+        "part_uuid": part.get("uuid", ""),
+        "title": part.get("title") or part.get("name", ""),
+        "description": part.get("description", "") or "",
+        "part_type": (part.get("type") or {}).get("label", ""),
+        "part_role": (part.get("role") or {}).get("label", ""),
+        "year": year,
+        "source_text": source_text,
+        "source_dois": ";".join(dois),              # semicolon-separated DOIs, empty if none
+        # team_name, org_uuid filled in by 03b_fetch_parts.py after author lookup
+        "team_name": None,
+        "org_uuid": None,
+    }
 
 
-def fetch_composition_edges_from_synbiohub(
-    limit: int = 10_000,
-    max_edges: int = 500_000,
-    delay: float = 0.5,
+def extract_source_dois(source_text: str) -> list[str]:
+    """
+    Extract DOIs from a free-text source field.
+
+    The Registry stores source citations as unstructured text, e.g.:
+      "Source of the amino acid sequence: A. Dixon et al., doi: https://doi.org/10.1021/acschembio.5b00753."
+
+    Returns a list of normalised DOI strings (without https://doi.org/ prefix).
+    """
+    import re
+    raw = re.findall(r"10\.\d{4,9}/[^\s,;\]\)\">]+", source_text)
+    return [d.rstrip(".,;)>\"'") for d in raw]
+
+
+# ---------------------------------------------------------------------------
+# API fetch helpers — used by scripts/03b_fetch_parts.py
+# ---------------------------------------------------------------------------
+
+def fetch_all_parts(
+    cache_file: str | Path,
+    page_size: int = 100,
+    delay: float = REQUEST_DELAY,
 ) -> list[dict]:
     """
-    Fetch composite-part → sub-part relationships from SynBioHub via SPARQL.
+    Page through all parts in the Registry API and return them as a list.
 
-    SynBioHub (synbiohub.org) mirrors the iGEM Parts Registry in SBOL2 format.
-    SBOL2 stores part composition explicitly:
-      - ComponentDefinition = a part (basic or composite)
-      - sbol:component      = links a composite to a Component instance
-      - sbol:definition     = links that instance to the sub-part's definition
+    Results are cached to cache_file (newline-delimited JSON) so that
+    re-runs skip the fetch entirely. Delete the cache file to re-fetch.
 
-    We query for all such relationships within the iGEM collection, then strip
-    SynBioHub URIs to bare part names (e.g. "BBa_K12345").
+    Parameters
+    ----------
+    cache_file : path to cache file (data/raw/parts/parts_cache.jsonl)
+    page_size  : parts per API request (100 is a safe default)
+    delay      : seconds between requests
 
-    Returns a list of dicts: {"parent": "BBa_K12345", "child": "BBa_B0034"}
-
-    This graph directly encodes which parts depend on (i.e. "cite") which others.
-    A composite part that uses a sub-part is analogous to a paper citing a prior
-    work — it is a formal dependency on a prior knowledge artifact.
-
-    Reference:
-      Madsen et al. (2019) "The SBOL Stack: A Platform for Storing, Publishing,
-      and Sharing Synthetic Biology Designs." ACS Synthetic Biology 8(7).
+    Returns
+    -------
+    list of raw part dicts from the API
     """
-    edges = []
-    offset = 0
+    cache_file = Path(cache_file)
+    cache_file.parent.mkdir(parents=True, exist_ok=True)
 
-    # SBOL2 prefixes used by SynBioHub
-    query_template = """
-PREFIX sbol: <http://sbols.org/v2#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
+    if cache_file.exists():
+        logger.info(f"Loading parts from cache: {cache_file}")
+        parts = []
+        with open(cache_file) as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    parts.append(json.loads(line))
+        logger.info(f"Loaded {len(parts)} parts from cache")
+        return parts
 
-SELECT ?parent ?child
-WHERE {{
-  ?parent a sbol:ComponentDefinition .
-  ?parent sbol:component ?comp_instance .
-  ?comp_instance sbol:definition ?child .
-  FILTER(CONTAINS(STR(?parent), "/public/igem/"))
-  FILTER(CONTAINS(STR(?child), "/public/igem/"))
-  FILTER(CONTAINS(STR(?parent), "BBa_"))
-  FILTER(CONTAINS(STR(?child), "BBa_"))
-}}
-LIMIT {limit}
-OFFSET {offset}
-"""
+    logger.info("Fetching all parts from Registry API (this may take several minutes)…")
+    parts = []
+    page = 1
 
-    while len(edges) < max_edges:
-        query = query_template.format(limit=limit, offset=offset)
+    with open(cache_file, "w") as f:
+        while True:
+            try:
+                resp = requests.get(
+                    f"{REGISTRY_API_BASE}/parts",
+                    params={"pageSize": page_size, "page": page},
+                    timeout=30,
+                )
+                resp.raise_for_status()
+                data = resp.json()
+            except requests.RequestException as e:
+                logger.error(f"Parts fetch failed at page {page}: {e}")
+                break
 
+            batch = data.get("data", [])
+            if not batch:
+                break
+
+            for part in batch:
+                f.write(json.dumps(part) + "\n")
+                parts.append(part)
+
+            logger.info(f"Page {page}: fetched {len(batch)} parts (total: {len(parts)})")
+            page += 1
+            time.sleep(delay)
+
+    logger.info(f"Done. Cached {len(parts)} parts to {cache_file}")
+    return parts
+
+
+def _get_with_retry(
+    session: requests.Session,
+    url: str,
+    delay: float = REQUEST_DELAY,
+    max_retries: int = 5,
+) -> requests.Response | None:
+    """
+    GET a URL with exponential backoff on 429 (rate limit) responses.
+
+    Waits `delay` seconds before every request, then doubles the wait
+    on each 429 up to `max_retries` attempts. Returns None if all retries
+    are exhausted or a non-429 error occurs.
+    """
+    wait = delay
+    for attempt in range(max_retries):
+        time.sleep(wait)
         try:
-            response = requests.get(
-                SYNBIOHUB_SPARQL,
-                params={"query": query, "format": "json"},
-                headers={"Accept": "application/sparql-results+json"},
-                timeout=60,
-            )
-            response.raise_for_status()
-            data = response.json()
+            resp = session.get(url, timeout=30)
+            if resp.status_code == 429:
+                wait = min(wait * 2, 60)  # double backoff, cap at 60s
+                logger.debug(f"429 on {url} — retrying in {wait:.1f}s (attempt {attempt+1}/{max_retries})")
+                continue
+            resp.raise_for_status()
+            return resp
         except requests.RequestException as e:
-            logger.error(f"SynBioHub SPARQL request failed (offset={offset}): {e}")
-            break
-        except ValueError as e:
-            logger.error(f"SynBioHub SPARQL response could not be parsed: {e}")
-            break
-
-        bindings = data.get("results", {}).get("bindings", [])
-        if not bindings:
-            break
-
-        for binding in bindings:
-            parent_uri = binding.get("parent", {}).get("value", "")
-            child_uri = binding.get("child", {}).get("value", "")
-
-            # Extract bare part name from URI:
-            # "https://synbiohub.org/public/igem/BBa_K12345/1" → "BBa_K12345"
-            parent_name = _extract_part_name_from_uri(parent_uri)
-            child_name = _extract_part_name_from_uri(child_uri)
-
-            if parent_name and child_name and parent_name != child_name:
-                edges.append({"parent": parent_name, "child": child_name})
-
-        logger.info(f"SynBioHub: fetched {len(bindings)} edges (total: {len(edges)})")
-
-        if len(bindings) < limit:
-            break  # last page
-
-        offset += limit
-        time.sleep(delay)
-
-    return edges
+            logger.warning(f"Request failed for {url}: {e}")
+            return None
+    logger.warning(f"Gave up after {max_retries} retries: {url}")
+    return None
 
 
-def build_part_team_edges(parts_df: pd.DataFrame) -> pd.DataFrame:
+def fetch_part_authors(
+    part_uuid: str,
+    session: requests.Session,
+    delay: float = REQUEST_DELAY,
+) -> list[dict]:
     """
-    Build a part → team edge list from the parts DataFrame.
+    Fetch the authors for a single part.
 
-    Returns a DataFrame with columns: part_name, team_name, year.
-    Rows where team_name is missing are dropped.
+    Returns a list of author dicts, each containing:
+      - organisationUUID : UUID of the submitting team's organisation
+      - firstName, lastName, roles
     """
-    edges = parts_df[["part_name", "team_name", "year"]].copy()
-    edges = edges[edges["team_name"].notna() & (edges["team_name"] != "")]
-    edges = edges.drop_duplicates(subset=["part_name", "team_name"])
-    return edges.reset_index(drop=True)
+    resp = _get_with_retry(session, f"{REGISTRY_API_BASE}/parts/{part_uuid}/authors", delay)
+    if resp is None:
+        logger.warning(f"Could not fetch authors for part {part_uuid}")
+        return []
+    return resp.json().get("data", [])
 
 
-def _extract_part_name_from_uri(uri: str) -> str:
+def fetch_organisation(
+    org_uuid: str,
+    session: requests.Session,
+    delay: float = REQUEST_DELAY,
+) -> dict | None:
     """
-    Extract a bare BioBrick ID from a SynBioHub URI.
+    Fetch a single organisation object.
 
-    Example:
-      "https://synbiohub.org/public/igem/BBa_K12345/1" → "BBa_K12345"
+    Returns a dict with keys: uuid, name (e.g. "ABOA (2025)"), type, link.
+    Returns None on failure.
     """
-    parts = [p for p in uri.rstrip("/").split("/") if p.startswith("BBa_")]
-    return parts[0] if parts else ""
+    resp = _get_with_retry(session, f"{REGISTRY_API_BASE}/organisations/{org_uuid}", delay)
+    if resp is None:
+        logger.warning(f"Could not fetch organisation {org_uuid}")
+        return None
+    return resp.json()
+
+
+def fetch_part_composition(
+    part_uuid: str,
+    session: requests.Session,
+    delay: float = REQUEST_DELAY,
+) -> list[dict]:
+    """
+    Fetch the sub-part composition for a composite part.
+
+    Returns a list of component dicts, each containing:
+      - componentName : BioBrick ID of the sub-part (e.g. "BBa_J32015")
+      - start, end    : position within the composite sequence
+      - strand        : "forward" or "reverse"
+
+    An empty list means the part is not composite, or the fetch failed.
+
+    Methodological note:
+      Composite → sub-part relationships are analogous to citations: the
+      composite part formally depends on and builds upon the sub-part.
+      This graph can reveal which foundational parts underpin student work.
+    """
+    resp = _get_with_retry(session, f"{REGISTRY_API_BASE}/parts/{part_uuid}/composition", delay)
+    if resp is None:
+        logger.warning(f"Could not fetch composition for part {part_uuid}")
+        return []
+    return resp.json().get("data", [])
+
+
+def parse_org_name(org_name: str) -> tuple[str, int | None]:
+    """
+    Parse an organisation name like "ABOA (2025)" into (team_name, year).
+
+    The Registry stores team names with the competition year in parentheses.
+    This function separates them for matching against projects.csv.
+
+    Examples:
+      "ABOA (2025)"     → ("ABOA", 2025)
+      "MIT (2019)"      → ("MIT", 2019)
+      "OldTeamNoYear"   → ("OldTeamNoYear", None)
+    """
+    import re
+    m = re.match(r"^(.+?)\s*\((\d{4})\)\s*$", org_name.strip())
+    if m:
+        return m.group(1).strip(), int(m.group(2))
+    return org_name.strip(), None
 
 
 def _safe_int(value) -> int | None:

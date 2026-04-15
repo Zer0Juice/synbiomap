@@ -1,0 +1,1252 @@
+swagger: '2.0'
+info:
+  description: <p>This service provides access to the full corpus of Lens scholarly works and Patent documents using the flexibility and convenience of a REST API. The versioned API allows you to combine and perform several search operations to programmatically retrieve results. The <a href="https://docs.api.lens.org">API documentation</a> provides guidelines for getting you started with the API and details the request/response schema with examples.</p>
+    <p>The Lens uses token-based API authentication. You can request access to the Lens Scholarly API, Lens Patent API or PatSeq Bulk Downloads and manage your access tokens from your <a href="https://www.lens.org/lens/user/subscriptions"> Lens user profile</a>.</p>
+  version: ""
+  title: Lens API
+  license:
+    name: Terms of Use
+    url: 'https://about.lens.org/lens-api-terms-of-use/'
+externalDocs:
+  description: "Privacy Policy"
+  url: 'https://about.lens.org/policies/#privacypolicy'
+tags:
+  - name: patents
+    description: Patent Operations
+  - name: scholarly
+    description: Scholarly Operations
+  - name: collections
+    description: Collection Operations
+  - name: bulk
+    description: Bulk files Operations
+securityDefinitions:
+  Authorisation:
+    type: apiKey
+    name: Authorization
+    description: Your access token created from your Lens user profile page
+    in: header
+paths:
+  /patent/search:
+    post:
+      security:
+        - Authorisation: []
+      tags:
+        - patents
+      summary: Search Patent Documents
+      operationId: search_patent
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: request
+          in: body
+          description: Search Request Object
+          required: true
+          schema:
+            $ref: '#/definitions/PatentSearchRequest'
+      responses:
+        '200':
+          description: Valid response from the server
+          schema:
+            $ref: '#/definitions/PatentApiResponse'
+        '204':
+          description: No Content
+        '400':
+          description: Malformed request or incorrect fields/values provided
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
+        '429':
+          description: You have exceeded the number of allowed calls
+    get:
+      tags:
+        - patents
+      summary: Get Patent Documents
+      operationId: search_get_patents
+      produces:
+        - application/json
+      parameters:
+        - name: token
+          in: query
+          type: string
+          required: true
+        - name: query
+          in: query
+          type: string
+          description: Search Query (e.g. Fidget Spinner)
+          required: true
+        - name: size
+          in: query
+          type: integer
+          description: Result size
+          required: false
+        - name: from
+          in: query
+          type: integer
+          description: Offset from the first result
+          required: false
+        - name: include
+          in: query
+          type: string
+          description: Fields to include in response(e.g. biblio,legal_status)
+          required: false
+        - name: exclude
+          in: query
+          type: string
+          description: Fields to exclude in response (e.g. families,biblio.application_reference)
+          required: false
+        - name: sort
+          in: query
+          type: string
+          description: Sort fields (e.g. desc(date_published),asc(created))
+          required: false
+      responses:
+        '200':
+          description: Valid response from the server
+          schema:
+            $ref: '#/definitions/PatentApiResponse'
+        '204':
+          description: No Content
+        '400':
+          description: Malformed request or incorrect fields/values provided
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
+        '429':
+          description: You have exceeded the number of allowed calls
+  /patent/aggregate:
+    post:
+      security:
+        - Authorisation: [ ]
+      tags:
+        - patents
+      summary: Patent aggregations search
+      operationId: aggregate_patent
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: request
+          in: body
+          description: Search and Aggregation Request Object
+          required: true
+          schema:
+            $ref: '#/definitions/AggregationRequestPatent'
+      responses:
+        '200':
+          description: Valid response from the server
+        '400':
+          description: Malformed request or incorrect fields/values provided
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
+        '429':
+          description: You have exceeded the number of allowed calls
+  /schema/patent:
+    get:
+      security:
+        - Authorisation: [ ]
+      tags:
+        - patents
+      summary: Get patent response schema
+      operationId: schema_patent
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Valid response from the server
+        '401':
+          description: Authentication credentials might be incorrect or missing
+  /scholarly/search:
+    post:
+      security:
+        - Authorisation: []
+      tags:
+        - scholarly
+      summary: Search scholarly result
+      operationId: search
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: request
+          in: body
+          description: Search Request Object
+          required: true
+          schema:
+            $ref: '#/definitions/ScholarlySearchRequest'
+      responses:
+        '200':
+          description: Valid response from the server
+          schema:
+            $ref: '#/definitions/ScholarApiResponse'
+        '204':
+          description: No Content
+        '400':
+          description: Malformed request or incorrect fields/values provided
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
+        '429':
+          description: You have exceeded the number of allowed calls
+    get:
+      tags:
+        - scholarly
+      summary: Get scholarly result
+      operationId: search_get
+      produces:
+        - application/json
+      parameters:
+        - name: token
+          in: query
+          type: string
+          required: true
+        - name: query
+          in: query
+          type: string
+          description: Search Query (e.g. Malaria)
+          required: true
+        - name: size
+          in: query
+          type: integer
+          description: Result size
+          required: false
+        - name: from
+          in: query
+          type: integer
+          description: Offset from the first result
+          required: false
+        - name: include
+          in: query
+          type: string
+          description: Fields to include in response(e.g. title,date_published)
+          required: false
+        - name: exclude
+          in: query
+          type: string
+          description: Fields to exclude in response (e.g. title,date_published)
+          required: false
+        - name: sort
+          in: query
+          type: string
+          description: Sort fields (e.g. desc(date_published),asc(created))
+          required: false
+      responses:
+        '200':
+          description: Valid response from the server
+          schema:
+            $ref: '#/definitions/ScholarApiResponse'
+        '204':
+          description: No Content
+        '400':
+          description: Malformed request or incorrect fields/values provided
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
+        '429':
+          description: You have exceeded the number of allowed calls
+  /scholarly/aggregate:
+    post:
+      security:
+        - Authorisation: [ ]
+      tags:
+        - scholarly
+      summary: Scholarly aggregations search
+      operationId: aggregate_scholarly
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: request
+          in: body
+          description: Search and Aggregation Request Object
+          required: true
+          schema:
+            $ref: '#/definitions/AggregationRequestScholarly'
+      responses:
+        '200':
+          description: Valid response from the server
+        '400':
+          description: Malformed request or incorrect fields/values provided
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
+        '429':
+          description: You have exceeded the number of allowed calls
+  /schema/scholarly:
+    get:
+      security:
+        - Authorisation: [ ]
+      tags:
+        - scholarly
+      summary: Get scholarly response schema
+      operationId: schema_scholarly
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Valid response from the server
+        '401':
+          description: Authentication credentials might be incorrect or missing
+  /collections/{collection_id}:
+    post:
+      security:
+        - Authorisation: []
+      tags:
+        - collections
+      summary: Search into a collection
+      operationId: collections
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: collection_id
+          in: path
+          required: true
+          description: Collection Id
+          type: integer
+        - name: request
+          in: body
+          description: Search Request Object
+          required: true
+          schema:
+            $ref: '#/definitions/ScholarlySearchRequest'
+      responses:
+        '200':
+          description: Valid response from the server
+        '204':
+          description: No Content
+        '400':
+          description: Malformed request or incorrect fields/values provided
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
+        '429':
+          description: You have exceeded the number of allowed calls
+    get:
+      tags:
+        - collections
+      summary: Get collection result
+      operationId: collection_get
+      produces:
+        - application/json
+      parameters:
+        - name: collection_id
+          in: path
+          required: true
+          description: Collection Id
+          type: integer
+        - name: token
+          in: query
+          type: string
+          required: true
+        - name: query
+          in: query
+          type: string
+          description: Search Query (e.g. Malaria)
+          required: false
+        - name: size
+          in: query
+          type: integer
+          description: Result size
+          required: false
+        - name: from
+          in: query
+          type: integer
+          description: Offset from the first result
+          required: false
+        - name: include
+          in: query
+          type: string
+          description: Fields to include in response(e.g. title,date_published)
+          required: false
+        - name: exclude
+          in: query
+          type: string
+          description: Fields to exclude in response (e.g. title,date_published)
+          required: false
+        - name: sort
+          in: query
+          type: string
+          description: Sort fields (e.g. desc(date_published),asc(created))
+          required: false
+      responses:
+        '200':
+          description: Valid response from the server
+        '204':
+          description: No Content
+        '400':
+          description: Malformed request or incorrect fields/values provided
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '415':
+          description: Request body is not json or Content Type is not application/json
+        '404':
+          description: Incorrect Resource URL / Empty Result for supplied queries / Expired scroll_id
+        '429':
+          description: You have exceeded the number of allowed calls
+  /bulk/scholarly/releases:
+    get:
+      security:
+        - Authorisation: [ ]
+      tags:
+        - bulk
+      summary: Get scholar bulk releases
+      operationId: bulk_get_scholar_releases
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Valid response from the server
+          schema:
+            $ref: '#/definitions/ScholarlyPublicBulkInfoFiles'
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '429':
+          description: You have exceeded the number of allowed calls
+  /bulk/patent/releases:
+    get:
+      security:
+        - Authorisation: [ ]
+      tags:
+        - bulk
+      summary: Get patent bulk releases
+      operationId: bulk_get_patent_releases
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Valid response from the server
+          schema:
+            $ref: '#/definitions/PatentPublicBulkInfoFiles'
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '429':
+          description: You have exceeded the number of allowed calls
+  /bulk/scholarly/release:
+    get:
+      security:
+        - Authorisation: [ ]
+      tags:
+        - bulk
+      summary: Get scholar bulk release
+      operationId: bulk_get_scholar_release
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Valid response from the server
+          schema:
+            $ref: '#/definitions/ScholarlyPublicBulkFile'
+        '204':
+          description: No Content
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '429':
+          description: You have exceeded the number of allowed calls
+  /bulk/patent/release:
+    get:
+      security:
+        - Authorisation: [ ]
+      tags:
+        - bulk
+      summary: Get patent bulk release
+      operationId: bulk_get_patent_release
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Valid response from the server
+          schema:
+            $ref: '#/definitions/PatentPublicBulkFile'
+        '204':
+          description: No Content
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '429':
+          description: You have exceeded the number of allowed calls
+  /bulk/download/{downloadAccessKey}:
+    get:
+      security:
+        - Authorisation: [ ]
+      tags:
+        - bulk
+      summary: Download release file
+      operationId: bulk_download_file
+      parameters:
+        - in: path
+          name: downloadAccessKey
+          required: true
+          type: string
+          description: downloadAccessKey acquired from the release endpoint
+      produces:
+        - application/x-gzip
+      responses:
+        '200':
+          description: Data bytes
+        '401':
+          description: Authentication credentials might be incorrect or missing
+        '429':
+          description: You have exceeded the number of allowed calls
+definitions:
+  ScholarlySearchRequest:
+    type: object
+    properties:
+      query:
+        type: object
+        example:
+          match:
+            title: Malaria
+        description: Json query object
+      size:
+        type: integer
+        example: 5
+        description: Number of items per page
+      from:
+        type: integer
+        example: 0
+        description: Offset from the first result
+      include:
+        type: array
+        example:
+          - title
+          - lens_id
+          - patent_citations_count
+        description: Fields to be included in result
+        items:
+          type: string
+      sort:
+        type: array
+        example:
+          - created: desc
+          - year_published: asc
+        description: Array of object mappings to specify field sorting
+        items:
+          type: object
+      exclude:
+        type: array
+        example: null
+        description: Fields to be excluded from result
+        items:
+          type: string
+      scroll:
+        type: string
+        example: null
+        description: Scroll context time in minute (e.g. 1m)
+      scroll_id:
+        type: string
+        description: For scroll based pagination, provide scroll_id from previous response body.
+        example: null
+    title: ScholarlySearchRequest
+  PatentSearchRequest:
+    type: object
+    properties:
+      query:
+        type: object
+        example:
+          match:
+            title: Fidget Spinner
+        description: Json query object
+      size:
+        type: integer
+        example: 5
+        description: Number of items per page
+      from:
+        type: integer
+        example: 0
+        description: Offset from the first result
+      include:
+        type: array
+        example:
+          - biblio.invention_title
+          - legal_status
+          - biblio.priority_claims
+        description: Fields to be included in result
+        items:
+          type: string
+      sort:
+        type: array
+        example:
+          - created: desc
+          - year_published: asc
+        description: Array of object mappings to specify field sorting
+        items:
+          type: object
+      exclude:
+        type: array
+        example: null
+        description: Fields to be excluded from result
+        items:
+          type: string
+      scroll:
+        type: string
+        example: null
+        description: Scroll context time in minute (e.g. 1m)
+      scroll_id:
+        type: string
+        description: For scroll based pagination, provide scroll_id from previous response body.
+        example: null
+    title: PatentSearchRequest
+  ScholarApiResponse:
+    type: object
+    properties:
+      total:
+        type: integer
+        description: Total number of search results exists.
+      results:
+        type: integer
+        description: Number of results in this response.
+      data:
+        type: array
+        description: List of scholarly records
+        items:
+          type: object
+          properties:
+            patent_citations:
+              type: array
+              items:
+                type: object
+                properties:
+                  lens_id:
+                    type: string
+            patent_citations_count:
+              type: integer
+            lens_id:
+              type: string
+            alias_lens_ids:
+              type: array
+              items:
+                type: string
+            created:
+              type: string
+            open_access:
+              type: object
+              properties:
+                license:
+                  type: string
+                colour:
+                  type: string
+            publication_type:
+              type: string
+            publication_supplementary_type:
+              type: array
+              items:
+                type: string
+            authors:
+              type: array
+              items:
+                type: object
+                properties:
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  initials:
+                    type: string
+                  affiliations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        grid_id:
+                          type: string
+                        country_code:
+                          type: string
+                  ids:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        value:
+                          type: string
+            title:
+              type: string
+            volume:
+              type: string
+            issue:
+              type: string
+            languages:
+              type: array
+              items:
+                type: string
+            references:
+              type: array
+              items:
+                type: object
+                properties:
+                  lens_id:
+                    type: string
+            keywords:
+              type: array
+              items:
+                type: string
+            mesh_terms:
+              type: array
+              items:
+                type: object
+                properties:
+                  mesh_heading:
+                    type: string
+                  qualifier_name:
+                    type: string
+                  mesh_id:
+                    type: string
+                  qualifier_id:
+                    type: string
+            chemicals:
+              type: array
+              items:
+                type: object
+                properties:
+                  substance_name:
+                    type: string
+                  registry_number:
+                    type: string
+                  mesh_id:
+                    type: string
+            clinical_trials:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  registry:
+                    type: string
+            fields_of_study:
+              type: array
+              items:
+                type: string
+            funding:
+              type: array
+              items:
+                type: object
+                properties:
+                  org:
+                    type: string
+                  funding_id:
+                    type: string
+                  country:
+                    type: string
+            source_urls:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  url:
+                    type: string
+            abstract:
+              type: string
+            year_published:
+              type: integer
+            references_count:
+              type: integer
+            scholarly_citations_count:
+              type: integer
+            external_ids:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  value:
+                    type: string
+            start_page:
+              type: string
+            end_page:
+              type: string
+            source:
+              type: object
+              properties:
+                title:
+                  type: string
+                type:
+                  type: string
+                publisher:
+                  type: string
+                issn:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      value:
+                        type: string
+                country:
+                  type: string
+                asjc_codes:
+                  type: array
+                  items:
+                    type: string
+                asjc_subjects:
+                  type: array
+                  items:
+                    type: string
+            scholarly_citations:
+              type: array
+              items:
+                type: string
+            author_count:
+              type: integer
+            date_published:
+              type: string
+  PatentApiResponse:
+    type: object
+    properties:
+      total:
+        type: integer
+        description: Total number of search results exists.
+      results:
+        type: integer
+        description: Number of results in this response.
+      data:
+        type: array
+        description: List of Patent Documents
+        items:
+          type: object
+          properties:
+            lens_id:
+              type: string
+            jurisdiction:
+              type: string
+            doc_number:
+              type: number
+            kind:
+              type: string
+            date_published:
+              type: string
+            doc_key:
+              type: string
+            docdb_id:
+              type: number
+            lang:
+              type: string
+            biblio:
+              type: object
+              properties:
+                publication_reference:
+                  type: object
+                  properties:
+                    jurisdiction:
+                      type: string
+                    doc_number:
+                      type: number
+                    kind:
+                      type: string
+                    date:
+                      type: string
+                application_reference:
+                  type: object
+                  properties:
+                    jurisdiction:
+                      type: string
+                    doc_number:
+                      type: number
+                    kind:
+                      type: string
+                    date:
+                      type: string
+                    application_reference:
+                      type: string
+                priority_claims:
+                  type: object
+                  properties:
+                    claims:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          jurisdiction:
+                            type: string
+                          doc_number:
+                            type: number
+                          kind:
+                            type: string
+                          date:
+                            type: string
+                          sequence:
+                            type: integer
+                invention_title:
+                  type: object
+                  properties:
+                    text:
+                      type: string
+                    lang:
+                      type: string
+                parties:
+                  type: object
+                  properties:
+                    applicants:
+                      type: object
+                      properties:
+                        residence:
+                          type: string
+                        extracted_name.value:
+                          type: string
+                        extracted_address:
+                          type: string
+                    inventors:
+                      type: object
+                      properties:
+                        residence:
+                          type: string
+                        sequence:
+                          type: string
+                        extracted_name.value:
+                          type: string
+                        extracted_address:
+                          type: string
+                    agents:
+                      type: object
+                      properties:
+                        extracted_name.value:
+                          type: string
+                        extracted_address:
+                          type: string
+                        extracted_country:
+                          type: string
+                    owners_all:
+                      type: object
+                      properties:
+                        recorded_date:
+                          type: string
+                        execution_date:
+                          type: string
+                        extracted_name.value:
+                          type: string
+                        extracted_address:
+                          type: string
+                        extracted_country:
+                          type: string
+                classifications_ipcr.classifications.symbol:
+                  type: string
+                classifications_cpc.classifications.symbol:
+                  type: string
+                classifications_national.classifications.symbol:
+                  type: string
+                references_cited:
+                  type: object
+                  properties:
+                    citations:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          sequence:
+                            type: string
+                          patcit:
+                            type: object
+                            properties:
+                              document_id:
+                                type: object
+                                properties:
+                                  jurisdiction:
+                                    type: string
+                                  doc_number:
+                                    type: number
+                                  kind:
+                                    type: string
+                                  date:
+                                    type: string
+                              patcit.lens_id:
+                                type: string
+                    nplcit:
+                      type: object
+                      properties:
+                        text:
+                          type: string
+                        lens_id:
+                          type: string
+                        external_ids:
+                          type: array
+                          items:
+                            type: string
+                    npl_resolved_count:
+                      type: string
+                    npl_count:
+                      type: string
+                cited_by:
+                  type: object
+                  properties:
+                    patents:
+                      type: object
+                      properties:
+                        document_id:
+                          type: object
+                          properties:
+                            jurisdiction:
+                              type: string
+                            doc_number:
+                              type: number
+                            kind:
+                              type: string
+                            date:
+                              type: string
+                        lens_id:
+                          type: string
+            families:
+              type: object
+              properties:
+                simple_family:
+                  type: object
+                  properties:
+                    members:
+                      type: object
+                      properties:
+                        document_id:
+                          type: object
+                          properties:
+                            jurisdiction:
+                              type: string
+                            doc_number:
+                              type: number
+                            kind:
+                              type: string
+                            date:
+                              type: string
+                        lens_id:
+                          type: string
+                extended_family:
+                  type: object
+                  properties:
+                    members:
+                      type: object
+                      properties:
+                        document_id:
+                          type: object
+                          properties:
+                            jurisdiction:
+                              type: string
+                            doc_number:
+                              type: number
+                            kind:
+                              type: string
+                            date:
+                              type: string
+                        lens_id:
+                          type: string
+            legal_status:
+              type: object
+              properties:
+                granted:
+                  type: boolean
+                grant_date:
+                  type: string
+                application_expiry_date:
+                  type: string
+                anticipated_term_date:
+                  type: string
+                has_disclaimer:
+                  type: boolean
+                patent_status:
+                  type: string
+                publication_count:
+                  type: number
+                has_spc:
+                  type: string
+                discontinuation_date:
+                  type: string
+                calculation_log:
+                  type: array
+                  items:
+                    type: string
+            abstract:
+              type: object
+              properties:
+                text:
+                  type: string
+                lang:
+                  type: string
+            claims:
+              type: object
+              properties:
+                claim_text:
+                  type: string
+                claims:
+                  type: string
+                lang:
+                  type: string
+            description:
+              type: object
+              properties:
+                text:
+                  type: string
+                lang:
+                  type: string
+            publication_type:
+              type: string
+  AggregationRequestPatent:
+    type: object
+    properties:
+      query:
+        type: object
+        example:
+          match:
+            title: Malaria
+      aggregations:
+        type: object
+        example:
+          publication_types:
+            cardinality:
+              field: publication_type
+      size:
+        type: integer
+        example: 0
+        description: Number of items per page
+  AggregationRequestScholarly:
+    type: object
+    properties:
+      query:
+        type: object
+        example:
+          match:
+            title: Malaria
+      aggregations:
+        type: object
+        example:
+          publication_types:
+            cardinality:
+              field: publication_type
+      size:
+        type: integer
+        example: 0
+        description: Number of items per page
+  PublicBulkInfoFile:
+    type: object
+    properties:
+      bulkDataProduct:
+        type: string
+        description: data product
+      dataVersion:
+        type: string
+        example: 202424
+        description: data release version
+      precursorDataVersion:
+        type: string
+        example: 202424
+        description: previous data release version in case of delta
+      records:
+        type: integer
+        example: 100000
+        description: Number of records in this file release
+      checksums:
+        type: object
+        properties:
+          crc32c:
+            example: taq1GQ==
+            type: string
+          crc32:
+            example: iYSjTg==
+            type: string
+          md5:
+            example: 765e80bd2e6ba51dbd0eef58389a086c
+            type: string
+          sha1:
+            example: c10ae676cb00308b3c1548f09a9cfc1fcc6a1129
+            type: string
+          sha512:
+            example: bfb60e01ac146a8b18e090ac183b294af5f14bfff9fffb479d2f2b40323cd686
+            type: string
+        description: Checksum to validate integrity of the downloaded file
+      fileName:
+        type: string
+      firstRecordId:
+        type: string
+        example: 000-200-000-994-866
+        description: First record Lens Id
+      lastRecordId:
+        type: string
+        example: 199-999-999-270-421
+        description: Last record Lens Id
+      dateProcessed:
+        type: string
+        format: date
+        example: '2024-07-03'
+        description: Date this release was processed
+      downloadAccessKey:
+        type: string
+        example: Xw_eu9fFQ0_2ffj6IimtRWSaG_...
+        description: Key to download this bulk using endpoint /bulk/download/{downloadAccessKey}
+      size:
+        type: string
+        example: 299611493018
+        description: Compressed size
+      rawSize:
+        type: string
+        example: 965612327943
+        description: Uncompressed size
+    discriminator: bulkDataProduct
+  PatentPublicBulkInfoFiles:
+    type: object
+    properties:
+      snapshot:
+        type: object
+        $ref: '#/definitions/PatentPublicBulkFile'
+      delta:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/PatentPublicBulkFile'
+  ScholarlyPublicBulkInfoFiles:
+    type: object
+    properties:
+      snapshot:
+        type: object
+        $ref: '#/definitions/ScholarlyPublicBulkFile'
+      delta:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/ScholarlyPublicBulkFile'
+  PatentPublicBulkFile:
+    allOf:
+      - $ref: '#/definitions/PublicBulkInfoFile'
+      - type: object
+        properties:
+          bulkDataProduct:
+            example: PATENT
+          fileName:
+            example: 'patent-202426-e7ba7cf3-9ecc-4277-a2b9-9bf75eba1c6d.jsonl.gz'
+  ScholarlyPublicBulkFile:
+    allOf:
+      - $ref: '#/definitions/PublicBulkInfoFile'
+      - type: object
+        properties:
+          bulkDataProduct:
+            example: SCHOLARLY
+          fileName:
+            example: 'scholarly-202426-e7ba7cf3-9ecc-4277-a2b9-9bf75eba1c6d.jsonl.gz'
