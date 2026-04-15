@@ -116,27 +116,27 @@ corpus:
 
   # Maximum results per keyword query (across all layers)
   openalex_max_results: 5000
-  # Maximum patents to retrieve from Lens.org (per layer query)
-  lens_max_results: 2000
+  # Maximum patents to retrieve from PatentsView (per layer query)
+  patentsview_max_results: 2000
 
   # Patent-specific configuration
-  # IPC (International Patent Classification) codes used to scope the patent search.
-  # Synthetic biology has no dedicated IPC code, so we use the relevant technical
-  # classes and combine them with keywords (AND logic) to reduce false positives.
+  # CPC (Cooperative Patent Classification) codes used to optionally scope the
+  # patent search. Synthetic biology has no dedicated CPC code, so we use the
+  # relevant technical classes and combine them with keywords (AND logic) to
+  # reduce false positives. CPC and IPC codes are equivalent for these classes.
   # Source: van Doren, Koenigstein & Reiss (2013, Systems and Synthetic Biology)
   #   C12N — Micro-organisms; mutation or genetic engineering (core)
   #   C12P — Fermentation or enzyme-using processes
   #   C12Q — Measuring/testing processes involving enzymes or nucleic acids
-  #   C12S — Processes using enzymes or micro-organisms (older code, now merged)
   #   C40B — Combinatorial chemistry; gene/peptide libraries
-  patent_ipc_codes:
+  # Set to null to disable CPC filtering and run keyword-only (broader corpus).
+  patent_cpc_codes:
     - "C12N"
     - "C12P"
     - "C12Q"
-    - "C12S"
     - "C40B"
 
-  # Layer 1 patent keywords — core self-identifying terms (AND with IPC codes)
+  # Layer 1 patent keywords — core self-identifying terms (AND with CPC codes if set)
   patent_core_keywords:
     - "synthetic biology"
     - "synthetic genomics"
@@ -144,7 +144,6 @@ corpus:
 
   # Layer 2 patent keywords — engineering and enabling technology terms
   # Based on van Doren et al. (2013) three-part keyword strategy.
-  # Applied WITH the IPC filter to stay within the technical scope.
   patent_subfield_keywords:
     - "genetic circuit"
     - "synthetic gene circuit"
