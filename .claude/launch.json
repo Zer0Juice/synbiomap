@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Quarto Website",
+      "runtimeExecutable": "quarto",
+      "runtimeArgs": ["preview", "website", "--no-browser", "--port", "4321"],
+      "port": 4321
+    }
+  ]
+}
