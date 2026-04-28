@@ -83,8 +83,8 @@ sys.path.insert(0, str(REPO_ROOT))
 
 from src.ingest.igem import (
     fetch_all_parts,
-    fetch_part_authors,
-    fetch_organisation,
+    fetch_all_orgs,
+    fetch_org_parts,
     fetch_part_composition,
     extract_part_fields,
     parse_org_name,
@@ -99,8 +99,8 @@ PROCESSED_DIR = REPO_ROOT / "data" / "processed"
 PROJECTS_PATH = PROCESSED_DIR / "projects.csv"
 
 PARTS_CACHE   = RAW_DIR / "parts_cache.jsonl"
-AUTHORS_CACHE = RAW_DIR / "authors_cache.json"
 ORGS_CACHE    = RAW_DIR / "orgs_cache.json"
+TEAM_PARTS_CACHE = RAW_DIR / "team_parts_cache.json"  # org_uuid → [part_uuids]
 
 PAPERS_PATH     = PROCESSED_DIR / "papers.csv"
 PARTS_OUT       = PROCESSED_DIR / "parts.csv"
@@ -127,97 +127,71 @@ def save_json_cache(cache: dict, path: Path) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Phase 2: fetch authors for all parts
+# Phase 2: build part → team mapping via org-first sweep
 # ---------------------------------------------------------------------------
 
-def fetch_all_authors(parts: list[dict], max_parts: int | None) -> dict:
+def build_part_team_map(orgs: list[dict]) -> dict:
     """
-    Fetch authors for each part and cache results.
+    Fetch all parts for every organisation and return a part_uuid → team_info map.
 
-    Returns a dict: part_uuid → list of author objects.
-    Each author object contains organisationUUID (the submitting team).
+    Instead of calling /parts/{uuid}/authors once per part (88,000+ calls),
+    we call /organisations/{uuid}/parts once per org (~5,900 calls) — a 15x
+    reduction. Each org response includes the full part objects, and we already
+    know the team info from the orgs list fetched in Phase 1.
 
-    This is the slowest phase (~1 API call per part). The cache is updated
-    after each part so the script can be safely interrupted and resumed.
+    The result is cached to TEAM_PARTS_CACHE. The cache stores the full map
+    so re-runs are instant. Progress is saved every 100 orgs so the script
+    can be safely interrupted and resumed.
+
+    Returns
+    -------
+    dict : part_uuid → {team_id, team_name, year, org_uuid, org_link}
     """
-    cache = load_json_cache(AUTHORS_CACHE)
+    # Load existing cache if present
+    cache: dict = load_json_cache(TEAM_PARTS_CACHE)
 
-    # Filter to only the UUIDs we still need
-    to_fetch = [
-        p for p in parts
-        if p.get("uuid") and p["uuid"] not in cache
-    ]
+    # Track which org UUIDs we've already processed
+    done_orgs: set[str] = set(cache.get("_done_orgs", []))
+    part_map: dict = {k: v for k, v in cache.items() if k != "_done_orgs"}
 
-    if max_parts:
-        to_fetch = to_fetch[:max_parts]
+    to_fetch = [o for o in orgs if o["uuid"] not in done_orgs]
 
     if not to_fetch:
-        print(f"  Authors cache complete ({len(cache)} parts cached).")
-        return cache
+        print(f"  Team-parts cache complete ({len(part_map)} parts mapped).")
+        return part_map
 
-    print(f"  Fetching authors for {len(to_fetch)} parts "
-          f"({len(cache)} already cached)…")
-    print("  This phase takes ~2 hours for the full corpus. Safe to interrupt.")
+    print(f"  Fetching parts for {len(to_fetch)} orgs "
+          f"({len(done_orgs)} already done, {len(part_map)} parts mapped so far)…")
+    print("  Safe to interrupt — progress is saved every 100 orgs.")
 
     session = requests.Session()
-    save_interval = 200   # flush cache to disk every N parts
+    save_interval = 100
 
-    for i, part in enumerate(to_fetch):
-        uuid = part["uuid"]
-        authors = fetch_part_authors(uuid, session)
-        cache[uuid] = authors
+    for i, org in enumerate(to_fetch):
+        org_uuid  = org["uuid"]
+        team_info = {
+            "team_id":   org["team_id"],
+            "team_name": org["team_name"],
+            "year":      org["year"],
+            "org_uuid":  org_uuid,
+            "org_link":  org.get("link", ""),
+        }
+
+        org_parts = fetch_org_parts(org_uuid, session)
+        for part in org_parts:
+            part_uuid = part.get("uuid")
+            if part_uuid:
+                part_map[part_uuid] = team_info
+
+        done_orgs.add(org_uuid)
 
         if (i + 1) % save_interval == 0:
-            save_json_cache(cache, AUTHORS_CACHE)
-            print(f"  {i+1}/{len(to_fetch)} done (saved)", flush=True)
+            save_json_cache({**part_map, "_done_orgs": list(done_orgs)}, TEAM_PARTS_CACHE)
+            print(f"  {i+1}/{len(to_fetch)} orgs done, {len(part_map)} parts mapped (saved)", flush=True)
 
-    save_json_cache(cache, AUTHORS_CACHE)
-    print(f"  Done. Authors cached for {len(cache)} parts.")
-    return cache
-
-
-# ---------------------------------------------------------------------------
-# Phase 3: fetch organisations for unique org UUIDs
-# ---------------------------------------------------------------------------
-
-def fetch_all_orgs(authors_cache: dict) -> dict:
-    """
-    Fetch organisation objects for all unique org UUIDs found in authors.
-
-    Returns a dict: org_uuid → organisation object.
-    Each org object has a name like "ABOA (2025)" and a type ("igem-team").
-    """
-    cache = load_json_cache(ORGS_CACHE)
-
-    # Collect unique org UUIDs from all author lists
-    all_org_uuids: set[str] = set()
-    for authors in authors_cache.values():
-        for author in authors:
-            uuid = author.get("organisationUUID")
-            if uuid:
-                all_org_uuids.add(uuid)
-
-    to_fetch = [u for u in all_org_uuids if u not in cache]
-
-    if not to_fetch:
-        print(f"  Orgs cache complete ({len(cache)} orgs cached).")
-        return cache
-
-    print(f"  Fetching {len(to_fetch)} organisations "
-          f"({len(cache)} already cached)…")
-
-    session = requests.Session()
-    for i, org_uuid in enumerate(to_fetch):
-        org = fetch_organisation(org_uuid, session)
-        cache[org_uuid] = org  # None if fetch failed
-
-        if (i + 1) % 100 == 0:
-            save_json_cache(cache, ORGS_CACHE)
-            print(f"  {i+1}/{len(to_fetch)} done", flush=True)
-
-    save_json_cache(cache, ORGS_CACHE)
-    print(f"  Done. {len(cache)} orgs cached.")
-    return cache
+    save_json_cache({**part_map, "_done_orgs": list(done_orgs)}, TEAM_PARTS_CACHE)
+    print(f"  Done. {len(part_map)} parts mapped across {len(done_orgs)} orgs.")
+    return part_map
 
 
 # ---------------------------------------------------------------------------
@@ -226,37 +200,28 @@ def fetch_all_orgs(authors_cache: dict) -> dict:
 
 def build_parts_df(
     parts: list[dict],
-    authors_cache: dict,
-    orgs_cache: dict,
+    part_map: dict,
     projects_df: pd.DataFrame,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Build parts.csv and part_team_edges.csv.
 
     Matching logic:
-      1. For each part, find the first author with an organisationUUID.
-      2. Look up that UUID in orgs_cache to get the org name, e.g. "MIT (2019)".
-      3. Parse the name into (team_name, year) using parse_org_name().
-      4. Match against projects_df on team_name (case-insensitive) + year
-         to get city/lat/lon.
+      part_map is a dict of part_uuid → team_info built by build_part_team_map().
+      team_info contains a numeric team_id matching the `id` column in projects.csv.
+      This is a direct integer join — no fuzzy name matching needed.
 
-    Parts that don't match any project team still appear in parts.csv
-    but without location data.
+    Parts without a team match still appear in parts.csv but without
+    team_id or team_name.
     """
-    # Build a lookup: (team_name_lower, year) → project row
-    # projects.csv uses id like "igem_ABOA_2025" — extract team name from id.
-    # Format: "igem_{team_name}_{year}", where team_name may contain underscores.
-    import re
-    proj_lookup: dict[tuple[str, int], pd.Series] = {}
+    # Build a lookup: team_id (int) → project row
+    proj_lookup: dict[int, pd.Series] = {}
     for _, row in projects_df.iterrows():
-        raw_id = str(row.get("id", ""))
-        # Strip leading "igem_" and trailing "_YYYY"
-        m = re.match(r"^igem_(.+)_(\d{4})$", raw_id)
-        if not m:
+        try:
+            tid = int(row["id"])
+            proj_lookup[tid] = row
+        except (ValueError, TypeError):
             continue
-        team = m.group(1).strip().lower()   # e.g. "aboa", "jgu-mainz"
-        year = int(m.group(2))
-        proj_lookup[(team, year)] = row
 
     rows = []
     team_edge_rows = []
@@ -266,28 +231,13 @@ def build_parts_df(
         uuid = part.get("uuid", "")
         fields = extract_part_fields(part)
 
-        # Find org UUID from authors
-        org_uuid = None
-        for author in authors_cache.get(uuid, []):
-            org_uuid = author.get("organisationUUID")
-            if org_uuid:
-                break
+        team_info = part_map.get(uuid) or {}
+        team_id   = team_info.get("team_id")
+        team_name = team_info.get("team_name")
+        org_uuid  = team_info.get("org_uuid")
+        year      = team_info.get("year") or fields["year"]
 
-        # Resolve org → team name + year
-        team_name = None
-        year_from_org = None
-        if org_uuid and orgs_cache.get(org_uuid):
-            org = orgs_cache[org_uuid]
-            raw_name = org.get("name", "")
-            team_name, year_from_org = parse_org_name(raw_name)
-
-        # Use year from org name if available, otherwise fall back to audit timestamp
-        year = year_from_org or fields["year"]
-
-        # Try to match to a project for location data
-        proj_row = None
-        if team_name and year:
-            proj_row = proj_lookup.get((team_name.lower(), year))
+        proj_row = proj_lookup.get(team_id) if team_id else None
 
         city = country = lat = lon = None
         if proj_row is not None:
@@ -297,6 +247,7 @@ def build_parts_df(
             lon     = proj_row.get("lon")
             team_edge_rows.append({
                 "part_name": fields["part_name"],
+                "team_id":   team_id,
                 "team_name": team_name,
                 "year":      year,
                 "org_uuid":  org_uuid,
@@ -319,9 +270,9 @@ def build_parts_df(
             "part_type":   fields["part_type"],
             "part_role":   fields["part_role"],
             "source_dois": fields["source_dois"],
+            "team_id":     team_id,
             "team_name":   team_name,
             "org_uuid":    org_uuid,
-            # Theme fields left blank here; filled by downstream tagging step
             "theme_primary":         None,
             "theme_secondary":       None,
             "case_study_flag":       False,
@@ -334,7 +285,7 @@ def build_parts_df(
 
     parts_df      = pd.DataFrame(rows)
     team_edges_df = pd.DataFrame(team_edge_rows) if team_edge_rows else pd.DataFrame(
-        columns=["part_name", "team_name", "year", "org_uuid"]
+        columns=["part_name", "team_id", "team_name", "year", "org_uuid"]
     )
     return parts_df, team_edges_df
 
@@ -440,7 +391,8 @@ def run(skip_authors: bool = False, max_parts: int | None = None):
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     RAW_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Load projects for team matching
+    # Load projects for team matching.
+    # The projects CSV must have a numeric `id` column matching teams.igem.org IDs.
     if not PROJECTS_PATH.exists():
         print("ERROR: projects.csv not found. Run 03_ingest_projects.py first.")
         return
@@ -464,33 +416,25 @@ def run(skip_authors: bool = False, max_parts: int | None = None):
         print(f"  Limiting to {max_parts} parts (--max-parts flag).")
     print(f"  {len(parts)} parts loaded.\n")
 
-    # --- Phase 2: Fetch authors ---
+    # --- Phase 2: Fetch all orgs, then sweep org → parts for team linkage ---
     if skip_authors:
-        print("Phase 2: Skipping author fetch (--skip-authors). No team matching.\n")
-        authors_cache = {}
+        print("Phase 2: Skipping team lookup (--skip-authors). No team matching.\n")
+        part_map = {}
     else:
-        print("Phase 2: Fetch authors (part → org UUID)")
-        authors_cache = fetch_all_authors(parts, max_parts)
+        print("Phase 2a: Fetch all organisations (~60 API calls)")
+        orgs = fetch_all_orgs(ORGS_CACHE)
+        print(f"  {len(orgs)} orgs loaded.\n")
+
+        print("Phase 2b: Fetch parts per org to build part → team map (~5,900 API calls)")
+        part_map = build_part_team_map(orgs)
         print()
 
-    # --- Phase 3: Fetch organisations ---
-    print("Phase 3: Fetch organisations (org UUID → team name)")
-    orgs_cache = fetch_all_orgs(authors_cache)
-    print()
-
-    # --- Phase 4: Build outputs ---
-    print("Phase 4: Build outputs")
+    # --- Phase 3: Build outputs ---
+    print("Phase 3: Build outputs")
 
     parts_df, team_edges_df = build_parts_df(
-        parts, authors_cache, orgs_cache, projects_df
+        parts, part_map, projects_df
     )
-
-    # Composition edges — only for parts that matched a team
-    matched_uuids = parts_df.loc[
-        parts_df["team_name"].notna(), "part_uuid"
-    ].dropna().tolist()
-
-    comp_edges_df = build_composition_edges(parts_df, matched_uuids)
 
     # Part → paper edges via DOI
     print("\nBuilding part → paper edges via DOI matching…")
@@ -500,7 +444,6 @@ def run(skip_authors: bool = False, max_parts: int | None = None):
     # Save
     parts_df.to_csv(PARTS_OUT, index=False)
     team_edges_df.to_csv(TEAM_EDGES_OUT, index=False)
-    comp_edges_df.to_csv(COMP_EDGES_OUT, index=False)
     paper_edges_df.to_csv(PAPER_EDGES_OUT, index=False)
 
     print(f"\nResults:")
@@ -508,13 +451,11 @@ def run(skip_authors: bool = False, max_parts: int | None = None):
     print(f"  Parts with location:       {parts_df['lat'].notna().sum()}")
     print(f"  Parts with source DOIs:    {(parts_df['source_dois'].notna() & (parts_df['source_dois'] != '')).sum()}")
     print(f"  Team edges:                {len(team_edges_df)}")
-    print(f"  Composition edges:         {len(comp_edges_df)}")
     print(f"  Part→paper DOI edges:      {len(paper_edges_df)} ({matched_paper_edges.sum()} matched to corpus)")
 
     print(f"\nSaved:")
     print(f"  {PARTS_OUT.relative_to(REPO_ROOT)}")
     print(f"  {TEAM_EDGES_OUT.relative_to(REPO_ROOT)}")
-    print(f"  {COMP_EDGES_OUT.relative_to(REPO_ROOT)}")
     print(f"  {PAPER_EDGES_OUT.relative_to(REPO_ROOT)}")
     print("\nDone.")
 

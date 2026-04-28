@@ -86,6 +86,43 @@ def run():
         json.dump(abstracts, f)
     print(f"Wrote abstracts.json ({len(abstracts)} entries)")
 
+    # --- 2c. Inject cluster labels into artifact records ---
+    # cluster_labels.json is written by scripts/05b_label_clusters.py.
+    # We inject cluster_name (and subcluster_name if present) as extra fields
+    # in artifacts.json so the website JS can display them without a separate
+    # fetch. Skipped gracefully if the file doesn't exist yet.
+    label_src = embeddings_dir / 'cluster_labels.json'
+    sub_label_src = embeddings_dir / 'subcluster_labels.json'
+
+    cluster_labels    = {}
+    subcluster_labels = {}
+    if label_src.exists():
+        with open(label_src) as f:
+            cluster_labels = json.load(f)
+        shutil.copy(label_src, web_data_dir / 'cluster_labels.json')
+        print(f"Loaded {len(cluster_labels)} cluster labels")
+    else:
+        print("NOTE: cluster_labels.json not found — run step 05b to generate labels.")
+
+    if sub_label_src.exists():
+        with open(sub_label_src) as f:
+            subcluster_labels = json.load(f)
+        shutil.copy(sub_label_src, web_data_dir / 'subcluster_labels.json')
+        print(f"Loaded sub-cluster labels")
+
+    if cluster_labels:
+        for art in artifacts:
+            cid = art.get('cluster_label')
+            try:
+                art['cluster_name'] = cluster_labels.get(str(int(cid)), '') \
+                    if cid is not None and int(cid) >= 0 else ''
+            except (TypeError, ValueError):
+                art['cluster_name'] = ''
+        # Re-write artifacts.json with labels injected
+        with open(web_data_dir / 'artifacts.json', 'w') as f:
+            json.dump(artifacts, f)
+        print("Injected cluster_name into artifacts.json")
+
     # --- 3. Copy projections.json to website ---
     proj_src = embeddings_dir / 'projections.json'
     if proj_src.exists():

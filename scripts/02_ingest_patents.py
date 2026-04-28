@@ -11,6 +11,17 @@ two keyword groups. IPC filtering is not used here because the Lens.org
 standard API plan does not expose IPC classification symbols as a
 searchable field (see src/ingest/lens.py for details).
 
+DATA SOURCE NOTE:
+  We use the Lens.org API rather than PatentsView/USPTO directly.
+  Lens.org aggregates USPTO data (plus EP, WO, and other jurisdictions)
+  and provides it through a free REST API. The PatentsView API (the
+  previous standard for programmatic USPTO access) was discontinued in
+  2024. The new USPTO Open Data Portal (data.uspto.gov) is a browser-only
+  application with no accessible REST API at time of writing.
+
+  To scope the corpus to US patents specifically, set the `lens_us_only`
+  flag in config/settings.yaml to add a jurisdiction filter.
+
 Layer 1 — Core self-identifying keywords (high precision):
     "synthetic biology", "synthetic genomics", "synthetic genome"
 

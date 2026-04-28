@@ -33,8 +33,10 @@ def run():
 
     # --- 1. Load all artifacts and embedding cache ---
     processed_dir = REPO_ROOT / 'data' / 'processed'
+    # Parts are excluded: they are short registry entries without proper abstracts
+    # and are not embedded. The iGEM projects that contain them are embedded instead.
     dfs = []
-    for name in ['papers', 'patents', 'projects', 'parts']:
+    for name in ['papers', 'patents', 'projects']:
         path = processed_dir / f'{name}.csv'
         if path.exists() and path.stat().st_size > 0:
             try:
@@ -58,15 +60,34 @@ def run():
     matrix, valid_ids = embeddings_to_matrix(combined, cache)
     print(f"Embedding matrix: {matrix.shape}")
 
-    # --- 3. UMAP dimensionality reduction ---
-    # UMAP preserves both local and global structure while reducing to 2D.
-    # Cosine metric suits text embeddings; random_state ensures reproducibility.
-    # See: McInnes et al. (2018), https://arxiv.org/abs/1802.03426
+    # --- 3. Two-stage UMAP reduction ---
+    # Stage 1: reduce to n_components_cluster dimensions for clustering.
+    # Clustering directly on 2D UMAP distorts cluster structure because too much
+    # information is lost in the final squeeze. Reducing to 5–20D first preserves
+    # local neighbourhood relationships that HDBSCAN relies on.
+    # Stage 2: reduce to 2D separately for visualization only.
+    # Following: Grootendorst (2022) "BERTopic" arXiv:2203.05794
+    # See also: McInnes et al. (2018), https://arxiv.org/abs/1802.03426
     umap_cfg = cfg['umap']
-    print(f"\nRunning UMAP (n_neighbors={umap_cfg['n_neighbors']}, min_dist={umap_cfg['min_dist']})...")
+    n_cluster_dims = umap_cfg.get('n_components_cluster', 10)
+    n_viz_dims     = umap_cfg.get('n_components_viz', 2)
+
+    print(f"\nStage 1 — UMAP to {n_cluster_dims}D for clustering "
+          f"(n_neighbors={umap_cfg['n_neighbors']}, min_dist={umap_cfg['min_dist']})...")
+    coords_nd = reduce_dimensions(
+        matrix,
+        n_components=n_cluster_dims,
+        n_neighbors=umap_cfg['n_neighbors'],
+        min_dist=umap_cfg['min_dist'],
+        metric=umap_cfg['metric'],
+        random_state=umap_cfg['random_state'],
+    )
+    print(f"UMAP output: {coords_nd.shape}")
+
+    print(f"\nStage 2 — UMAP to {n_viz_dims}D for visualization...")
     coords_2d = reduce_dimensions(
         matrix,
-        n_components=umap_cfg['n_components'],
+        n_components=n_viz_dims,
         n_neighbors=umap_cfg['n_neighbors'],
         min_dist=umap_cfg['min_dist'],
         metric=umap_cfg['metric'],
@@ -74,13 +95,15 @@ def run():
     )
     print(f"UMAP output: {coords_2d.shape}")
 
-    # --- 4. HDBSCAN clustering ---
+    # --- 4. HDBSCAN clustering (on high-D coords, not 2D) ---
     # HDBSCAN finds clusters of varying density and marks outliers as -1.
+    # Running on the high-D output gives better cluster quality than on 2D.
     # See: Campello et al. (2013), https://doi.org/10.1007/978-3-642-37456-2_14
     cl_cfg = cfg['clustering']
-    print(f"\nRunning HDBSCAN (min_cluster_size={cl_cfg['min_cluster_size']})...")
+    print(f"\nRunning HDBSCAN on {n_cluster_dims}D coords "
+          f"(min_cluster_size={cl_cfg['min_cluster_size']})...")
     labels = cluster_hdbscan(
-        coords_2d,
+        coords_nd,
         min_cluster_size=cl_cfg['min_cluster_size'],
         min_samples=cl_cfg['min_samples'],
     )
@@ -99,7 +122,20 @@ def run():
     all_artifacts_path = processed_dir / 'all_artifacts.csv'
     combined_with_clusters.to_csv(all_artifacts_path, index=False)
 
+    # Save high-D coords and valid_ids for step 5b (cluster labeling + sub-clustering).
+    # coords_nd is the n_components_cluster-dimensional UMAP output used for HDBSCAN.
+    # It is needed to compute cluster centroids for representative title selection.
+    # NOTE: if you re-run step 5, delete cluster_labels.json so labels are refreshed
+    # for the new clustering (HDBSCAN cluster integers can renumber on each run).
+    import numpy as np, json as _json
+    nd_path = REPO_ROOT / 'data' / 'embeddings' / 'coords_nd.npy'
+    ids_path = REPO_ROOT / 'data' / 'embeddings' / 'valid_ids.json'
+    np.save(str(nd_path), coords_nd.astype('float32'))
+    with open(ids_path, 'w') as _f:
+        _json.dump(valid_ids, _f)
+
     print(f"\nSaved projections.json and all_artifacts.csv")
+    print(f"Saved coords_nd.npy {coords_nd.shape} and valid_ids.json ({len(valid_ids)} ids)")
 
     return combined_with_clusters
 

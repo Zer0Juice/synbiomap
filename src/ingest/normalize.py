@@ -171,6 +171,65 @@ def normalize_patents(raw_records: list[dict], carbon_keywords: list[str]) -> pd
     return pd.DataFrame(rows, columns=REQUIRED_COLUMNS)
 
 
+def normalize_patents_patentsview(
+    raw_records: list[dict], carbon_keywords: list[str]
+) -> pd.DataFrame:
+    """
+    Normalize a list of PatentsView (USPTO) patent dicts to the shared schema.
+
+    Parameters
+    ----------
+    raw_records : output of patentsview.extract_fields() for each patent
+    carbon_keywords : list of carbon-capture keywords for case study tagging
+
+    Location fields:
+      city    — inventor city, filled from extract_fields()
+      state   — US state abbreviation (e.g. "CA"), stored in all_cities
+                so the geocoding script can construct "City, State, US"
+      country — inventor country code (almost always "US" for USPTO patents)
+      lat/lon — filled later by scripts/geocode_patents.py
+
+    The `state` field is not part of the shared schema, but is stored in the
+    `all_cities` column (as "city|state") so that geocode_patents.py can
+    reconstruct it without needing an extra column.
+    """
+    rows = []
+    for rec in raw_records:
+        title = rec.get("title", "") or ""
+        abstract = rec.get("abstract", "") or ""
+        text = build_text_field(title, abstract)
+        patent_id = rec.get("patent_id", "")
+
+        city    = rec.get("city", "")    or ""
+        state   = rec.get("state", "")   or ""
+        country = rec.get("country", "") or ""
+
+        # Store "city|state" in all_cities so geocode_patents.py can read it.
+        # This avoids adding a non-standard column to the shared schema.
+        all_cities = f"{city}|{state}" if city else ""
+
+        row = {
+            "id": patent_id or _make_id("patent", title),
+            "type": "patent",
+            "title": title,
+            "text": text,
+            "year": rec.get("year"),
+            "city": city,
+            "country": _normalise_country(country) if country else "",
+            "lat": None,
+            "lon": None,
+            "all_cities": all_cities,
+            "all_coords": None,
+            "theme_primary": None,
+            "theme_secondary": None,
+            "retrieval_reason": rec.get("retrieval_reason", "keyword"),
+        }
+        row.update(_tag_case_study(text, carbon_keywords))
+        rows.append(row)
+
+    return pd.DataFrame(rows, columns=REQUIRED_COLUMNS)
+
+
 def normalize_projects(raw_records: list[dict], carbon_keywords: list[str]) -> pd.DataFrame:
     """
     Normalize a list of iGEM project dicts to the shared schema.

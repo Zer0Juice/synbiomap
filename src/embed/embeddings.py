@@ -2,18 +2,31 @@
 embeddings.py — generate and cache text embeddings for all artifacts.
 
 Model choice:
-  We use SPECTER ("allenai-specter"), a transformer model trained specifically
-  on scientific papers using citation-informed contrastive learning. It
-  produces 768-dimensional embeddings well-suited to measuring semantic
-  relatedness across patents, papers, and research projects in scientific
-  domains like synthetic biology.
+  We use SPECTER2 ("allenai/specter2_base" + proximity adapter), the 2022
+  successor to the original SPECTER model. Like its predecessor, SPECTER2 was
+  trained on scientific papers using citation-informed contrastive learning and
+  produces 768-dimensional embeddings suited to measuring semantic relatedness
+  across patents, papers, and research projects in scientific domains.
 
-  SPECTER loads via the sentence-transformers library, which means no extra
-  dependencies and no compatibility issues.
+  SPECTER2 improves on SPECTER in two ways:
+    1. It uses adapter layers — small task-specific modules — so one base model
+       can be fine-tuned for different tasks (proximity search, classification,
+       etc.) without retraining from scratch.
+    2. The proximity adapter is explicitly trained for document-level similarity
+       retrieval, which matches our use case: finding how close two documents
+       are in semantic space.
 
-  Reference: Cohan et al. (2020) "SPECTER: Document-level Representation
+  Loading requires the `adapters` library (pip install adapters) in addition
+  to HuggingFace `transformers`.
+
+  Reference: Specter2 — https://huggingface.co/allenai/specter2
+  Original SPECTER: Cohan et al. (2020) "SPECTER: Document-level Representation
   Learning using Citation-informed Transformers." ACL 2020.
   https://arxiv.org/abs/2004.13313
+
+  ⚠️  Cache compatibility: embeddings from SPECTER and SPECTER2 are NOT
+  interchangeable — they live in different vector spaces. If you switch models,
+  delete data/embeddings/ so the cache is rebuilt from scratch.
 
 Caching:
   Embeddings are expensive to compute. We cache them as small binary files so
@@ -53,25 +66,147 @@ from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
+# ---------------------------------------------------------------------------
+# SPECTER2 wrapper
+# ---------------------------------------------------------------------------
 
-def load_model(model_name: str = "allenai-specter"):
+class Specter2Model:
     """
-    Load an embedding model by name via sentence-transformers.
+    Thin wrapper around the SPECTER2 base model + proximity adapter.
 
-    The model is downloaded on first use and cached by HuggingFace in
-    ~/.cache/huggingface/.
+    SPECTER2 is not distributed as a SentenceTransformer, so we wrap the raw
+    HuggingFace model to give it the same .encode() interface that the rest of
+    this module expects.
+
+    The proximity adapter is the right choice for semantic similarity tasks
+    (as opposed to the classification or adhoc_query adapters).
+
+    Reference: https://huggingface.co/allenai/specter2
+    """
+
+    BASE_MODEL = "allenai/specter2_base"
+    ADAPTER    = "allenai/specter2"
+    ADAPTER_NAME = "specter2_proximity"
+
+    def __init__(self, device: str = "cpu"):
+        import torch
+        from transformers import AutoTokenizer
+        from adapters import AutoAdapterModel
+
+        self.device = device
+        logger.info(f"Loading SPECTER2 base model: {self.BASE_MODEL} (device={device})")
+        self.tokenizer = AutoTokenizer.from_pretrained(self.BASE_MODEL)
+        self.model = AutoAdapterModel.from_pretrained(self.BASE_MODEL)
+
+        # Load the proximity adapter — trained for symmetric document-to-document
+        # similarity retrieval. This is the right adapter for our task (cosine
+        # similarity between two document centroids).
+        #
+        # SPECTER2 ships with three adapters; the others are NOT appropriate here:
+        #   - specter2_classification  → assigns documents to fixed categories
+        #   - specter2_adhoc_query     → asymmetric query→document search
+        #
+        # set_active=True activates the adapter immediately (equivalent to calling
+        # model.set_active_adapters("specter2_proximity") separately).
+        logger.info(f"Loading adapter: {self.ADAPTER} (proximity / document similarity)")
+        self.model.load_adapter(
+            self.ADAPTER,
+            source="hf",
+            load_as=self.ADAPTER_NAME,
+            set_active=True,
+        )
+        self.model.to(device)
+        self.model.eval()
+
+    def encode(self, texts: list[str], batch_size: int = 32, show_progress_bar: bool = False) -> np.ndarray:
+        """
+        Encode a list of texts into 768-dimensional vectors.
+
+        Extraction strategy: we take the embedding of the [CLS] token from the
+        last hidden state. This is the standard approach for SPECTER-family
+        models and produces one vector per document regardless of length.
+
+        Speed notes:
+          - max_length=256: abstracts and project descriptions almost never
+            exceed 256 tokens (~190 words). BERT-family attention is O(n²) in
+            sequence length, so halving from 512→256 gives roughly 4x speedup
+            on the attention layers. Content beyond 256 tokens is truncated,
+            but the most informative content in abstracts is frontloaded.
+          - torch.inference_mode: faster than no_grad — also disables view
+            tracking in addition to gradient computation.
+          - Length-sorted batching: within each batch, texts are sorted by
+            length so that padding (which wastes computation) is minimised.
+            A batch with mixed-length texts pads everything to the longest one;
+            sorting by length keeps padding overhead small.
+          - batch_size=32: on Apple Silicon (MPS), 32 typically runs faster
+            than 64 due to memory transfer overhead between CPU and GPU.
+        """
+        import torch
+
+        # Sort texts by length so each mini-batch has similar-length texts,
+        # minimising wasted computation from padding shorter texts to the max.
+        # We record the original order so we can restore it before returning.
+        order = sorted(range(len(texts)), key=lambda i: len(texts[i]))
+        sorted_texts = [texts[i] for i in order]
+        inverse = [0] * len(order)
+        for new_i, orig_i in enumerate(order):
+            inverse[orig_i] = new_i
+
+        all_vectors = [None] * len(texts)
+        iterator = range(0, len(sorted_texts), batch_size)
+        if show_progress_bar:
+            iterator = tqdm(iterator, desc="Encoding", unit="batch")
+
+        with torch.inference_mode():
+            for start in iterator:
+                chunk = sorted_texts[start : start + batch_size]
+                inputs = self.tokenizer(
+                    chunk,
+                    padding=True,       # pad to the longest in THIS batch only
+                    truncation=True,
+                    max_length=256,     # abstracts rarely exceed ~190 words
+                    return_tensors="pt",
+                ).to(self.device)
+
+                outputs = self.model(**inputs)
+                # CLS token is the first token; shape: (batch, hidden_size)
+                cls_vecs = outputs.last_hidden_state[:, 0, :].cpu().numpy()
+
+                for batch_i, sorted_i in enumerate(range(start, start + len(chunk))):
+                    all_vectors[order[sorted_i]] = cls_vecs[batch_i]
+
+                # Free GPU/MPS memory after each mini-batch
+                if self.device == "mps":
+                    torch.mps.empty_cache()
+                elif self.device == "cuda":
+                    torch.cuda.empty_cache()
+
+        return np.array(all_vectors, dtype=np.float32)
+
+
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
+
+def load_model(model_name: str = "specter2"):
+    """
+    Load an embedding model by name.
+
+    Supported values for model_name:
+      "specter2"       — SPECTER2 with proximity adapter (default, recommended)
+      "allenai-specter" — original SPECTER via sentence-transformers (legacy)
+      any HuggingFace SentenceTransformer model name — loaded via sentence-transformers
 
     Device selection (in priority order):
-      1. CUDA  — NVIDIA GPU (not present on most Macs)
-      2. MPS   — Apple Silicon GPU (M1/M2/M3 Mac); typically 5–10x faster than CPU
+      1. CUDA  — NVIDIA GPU
+      2. MPS   — Apple Silicon GPU (M1/M2/M3/M4); typically 5–10x faster than CPU
       3. CPU   — fallback
 
     Parameters
     ----------
-    model_name : HuggingFace model name or local path
+    model_name : model identifier string (see above)
     """
     import torch
-    from sentence_transformers import SentenceTransformer
 
     if torch.cuda.is_available():
         device = "cuda"
@@ -80,7 +215,12 @@ def load_model(model_name: str = "allenai-specter"):
     else:
         device = "cpu"
 
-    logger.info(f"Loading embedding model: {model_name} (device={device})")
+    if model_name == "specter2":
+        return Specter2Model(device=device)
+
+    # Fallback: treat as a sentence-transformers model name
+    from sentence_transformers import SentenceTransformer
+    logger.info(f"Loading SentenceTransformer model: {model_name} (device={device})")
     return SentenceTransformer(model_name, device=device)
 
 
@@ -90,33 +230,37 @@ def generate_embeddings(
     text_col: str = "text",
     id_col: str = "id",
     cache_file: Optional[str | Path] = None,
-    batch_size: int = 64,
+    batch_size: int = 32,
+    checkpoint_every: int = 256,
 ) -> dict[str, list[float]]:
     """
-    Generate embeddings for all rows in df, saving progress after every batch.
+    Generate embeddings for all rows in df, saving checkpoints to disk regularly.
 
-    Each batch is written to disk immediately so that a crash or kernel restart
-    only loses the work from the current batch (~64 items), not the entire run.
+    Checkpoints are written every `checkpoint_every` documents (default 256).
+    This means a crash or keyboard interrupt loses at most ~256 items of work,
+    regardless of how large the dataset is.
 
     Parameters
     ----------
     df : DataFrame with at least `id_col` and `text_col` columns
-    model : loaded SentenceTransformer model
+    model : loaded model (Specter2Model or SentenceTransformer)
     text_col : column containing text to embed
     id_col : column containing unique artifact IDs
-    cache_file : path used as the base for the cache directory
-                 (e.g. data/embeddings/embeddings.json →
-                       data/embeddings/embeddings_batches/)
-    batch_size : number of texts to encode at once
+    cache_file : path for the embedding cache (batch files live alongside it)
+    batch_size : number of texts per encoding call; 32 is a good default for
+                 Apple Silicon (MPS). Increase to 64 if you have a fast GPU.
+    checkpoint_every : save a batch file to disk after this many documents.
+                       Lower = safer against crashes, higher = fewer file I/O ops.
 
     Returns
     -------
     dict mapping artifact id → embedding vector (list of floats)
     """
+    import time
+
     cache = _load_cache(cache_file)
 
-    # Find rows not yet in the cache
-    ids = df[id_col].tolist()
+    ids   = df[id_col].tolist()
     texts = df[text_col].tolist()
     to_embed = [(i, t) for i, t in zip(ids, texts) if i not in cache]
 
@@ -124,37 +268,52 @@ def generate_embeddings(
         logger.info("All embeddings found in cache. Nothing to compute.")
         return cache
 
-    logger.info(f"Computing embeddings for {len(to_embed)} items (batch_size={batch_size})")
+    n_todo = len(to_embed)
+    logger.info(f"Computing embeddings for {n_todo:,} items "
+                f"(batch_size={batch_size}, checkpoint_every={checkpoint_every})")
 
-    batch_ids = [i for i, _ in to_embed]
-    batch_texts = [t for _, t in to_embed]
+    # Buffers that accumulate between checkpoints
+    pending_ids  = []
+    pending_vecs = []
 
-    import torch
+    pbar = tqdm(total=n_todo, desc="Embedding", unit="doc", dynamic_ncols=True)
+    t0   = time.time()
 
-    for start in tqdm(range(0, len(batch_texts), batch_size), desc="Embedding"):
-        chunk_ids = batch_ids[start : start + batch_size]
-        chunk_texts = batch_texts[start : start + batch_size]
+    for start in range(0, n_todo, batch_size):
+        chunk = to_embed[start : start + batch_size]
+        chunk_ids   = [i for i, _ in chunk]
+        chunk_texts = [t for _, t in chunk]
 
-        # Encode this chunk of texts into vectors
-        vectors = model.encode(chunk_texts, show_progress_bar=False)  # shape: (n, 768)
+        # encode() handles its own internal batching, length-sorting, and
+        # memory management — we just pass the chunk and get vectors back.
+        vectors = model.encode(chunk_texts, show_progress_bar=False)
 
-        # Update the in-memory cache
         for artifact_id, vector in zip(chunk_ids, vectors):
             cache[artifact_id] = vector.tolist()
 
-        # Save this batch to disk immediately — only a tiny binary file is
-        # written, not the entire cache. Progress is safe after every batch.
-        _save_batch(chunk_ids, vectors, cache_file)
+        pending_ids.extend(chunk_ids)
+        pending_vecs.append(vectors)
 
-        # Release the MPS (Apple Silicon GPU) memory allocator cache after
-        # each batch. Without this, PyTorch's MPS backend accumulates residual
-        # allocations across batches, which fragments GPU memory and causes
-        # batch speed to degrade progressively over a long run.
-        # The CUDA equivalent is torch.cuda.empty_cache().
-        if torch.backends.mps.is_available():
-            torch.mps.empty_cache()
+        pbar.update(len(chunk))
 
-    logger.info(f"Embeddings complete. Cache now has {len(cache)} entries.")
+        # Write a checkpoint once we have accumulated enough documents.
+        # Flushing regularly means we never lose more than `checkpoint_every`
+        # items of work, even if the process is killed mid-run.
+        if len(pending_ids) >= checkpoint_every:
+            _save_batch(pending_ids, np.vstack(pending_vecs), cache_file)
+            elapsed = time.time() - t0
+            rate    = len(pending_ids) / elapsed if elapsed > 0 else 0
+            pbar.set_postfix({"docs/s": f"{rate:.1f}", "saved": len(cache)})
+            pending_ids  = []
+            pending_vecs = []
+            t0 = time.time()
+
+    # Flush any remaining documents that didn't fill a full checkpoint window
+    if pending_ids:
+        _save_batch(pending_ids, np.vstack(pending_vecs), cache_file)
+
+    pbar.close()
+    logger.info(f"Embeddings complete. Cache now has {len(cache):,} entries.")
     return cache
 
 
@@ -172,7 +331,7 @@ def embeddings_to_matrix(
     valid_ids : list of IDs that had embeddings (rows without embeddings are skipped)
     """
     valid_rows = []
-    valid_ids = []
+    valid_ids  = []
 
     for _, row in df.iterrows():
         artifact_id = row[id_col]
@@ -204,8 +363,6 @@ def _load_cache(cache_file: Optional[str | Path]) -> dict:
        with any work done before this caching format was introduced.
     2. Batch files in embeddings_batches/ — the fast, incremental format.
        These override the JSON if the same ID appears in both.
-
-    This means you never lose prior work when upgrading the cache format.
     """
     if cache_file is None:
         return {}
@@ -213,14 +370,12 @@ def _load_cache(cache_file: Optional[str | Path]) -> dict:
     cache_file = Path(cache_file)
     cache = {}
 
-    # --- 1. Load legacy JSON if present ---
     if cache_file.exists():
         logger.info(f"Loading legacy JSON cache from {cache_file.name}...")
         with open(cache_file, "r") as f:
             cache.update(json.load(f))
         logger.info(f"  Loaded {len(cache)} entries from JSON.")
 
-    # --- 2. Load binary batch files (override JSON entries if same ID) ---
     batch_dir = _batch_dir(cache_file)
     if batch_dir.exists():
         batch_files = sorted(batch_dir.glob("*.txt"))
@@ -232,8 +387,8 @@ def _load_cache(cache_file: Optional[str | Path]) -> dict:
                 if not vecs_file.exists():
                     logger.warning(f"  Missing .npy for {ids_file.name}, skipping.")
                     continue
-                ids = ids_file.read_text().splitlines()
-                vecs = np.load(vecs_file)  # shape: (n, 768)
+                ids  = ids_file.read_text().splitlines()
+                vecs = np.load(vecs_file)
                 for artifact_id, vec in zip(ids, vecs):
                     cache[artifact_id] = vec.tolist()
             logger.info(f"  Added {len(cache) - before} entries from batch files.")
@@ -250,10 +405,6 @@ def _save_batch(
     Save one batch of embeddings as a pair of files:
       - <batch_dir>/batch_NNNNNN.txt  — one artifact ID per line
       - <batch_dir>/batch_NNNNNN.npy  — float32 matrix, shape (n, 768)
-
-    Writing binary .npy files (~200 KB per batch) is much faster than
-    rewriting a growing JSON file. Total disk I/O per run stays roughly
-    constant regardless of how large the cache gets.
     """
     if cache_file is None:
         return
@@ -261,11 +412,9 @@ def _save_batch(
     batch_dir = _batch_dir(Path(cache_file))
     batch_dir.mkdir(parents=True, exist_ok=True)
 
-    # Number the batch file after the existing ones
     existing = sorted(batch_dir.glob("*.npy"))
-    batch_n = len(existing)
-    stem = f"batch_{batch_n:06d}"
+    batch_n  = len(existing)
+    stem     = f"batch_{batch_n:06d}"
 
-    # Save IDs as plain text (one per line) and vectors as binary numpy array
     (batch_dir / f"{stem}.txt").write_text("\n".join(chunk_ids))
     np.save(batch_dir / f"{stem}.npy", np.array(chunk_vecs, dtype=np.float32))

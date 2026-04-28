@@ -41,7 +41,8 @@ import requests
 logger = logging.getLogger(__name__)
 
 REGISTRY_API_BASE = "https://api.registry.igem.org/v1"
-REQUEST_DELAY = 0.6    # seconds between requests — tested safe limit is ~0.5s, 0.6s adds buffer
+REQUEST_DELAY = 3.0    # seconds between requests — the iGEM API allows 200 req/600s (large window),
+                       # which works out to 1 request every 3 seconds sustained.
 
 # Expected columns in the raw iGEM projects CSV
 IGEM_PROJECT_COLUMNS = {
@@ -274,18 +275,51 @@ def fetch_all_parts(
     return parts
 
 
+def _check_rate_limit_headers(headers: dict) -> None:
+    """
+    Read x-ratelimit-remaining-large and sleep proactively if the large
+    bucket is nearly exhausted.
+
+    The iGEM Registry API exposes three rate limit tiers via response headers:
+      x-ratelimit-limit-large    : 200 requests
+      x-ratelimit-remaining-large: requests left in the current window
+      x-ratelimit-reset-large    : seconds until the window resets
+
+    If fewer than 10 requests remain in the large window, we sleep until
+    the window resets rather than hammering the API and triggering a 429.
+    """
+    try:
+        remaining = int(headers.get("x-ratelimit-remaining-large", 999))
+        reset_in  = int(headers.get("x-ratelimit-reset-large", 0))
+    except (ValueError, TypeError):
+        return
+
+    if remaining < 10 and reset_in > 0:
+        logger.info(
+            f"Large rate-limit bucket nearly exhausted "
+            f"({remaining} remaining, resets in {reset_in}s) — pausing."
+        )
+        time.sleep(reset_in + 1)
+
+
 def _get_with_retry(
     session: requests.Session,
     url: str,
     delay: float = REQUEST_DELAY,
-    max_retries: int = 5,
+    max_retries: int = 10,
 ) -> requests.Response | None:
     """
     GET a URL with exponential backoff on 429 (rate limit) responses.
 
-    Waits `delay` seconds before every request, then doubles the wait
-    on each 429 up to `max_retries` attempts. Returns None if all retries
-    are exhausted or a non-429 error occurs.
+    Waits `delay` seconds before every request. On a 429, checks the
+    Retry-After header first (the API sometimes provides this). If absent,
+    doubles the wait time up to a 120-second cap. Retries up to max_retries
+    times before giving up.
+
+    The iGEM Registry API (NestJS throttler) imposes per-window request
+    limits. A 429 means we hit the window limit; the correct response is
+    to wait a full window (typically 60s) before resuming, not just a
+    few seconds.
     """
     wait = delay
     for attempt in range(max_retries):
@@ -293,9 +327,21 @@ def _get_with_retry(
         try:
             resp = session.get(url, timeout=30)
             if resp.status_code == 429:
-                wait = min(wait * 2, 60)  # double backoff, cap at 60s
-                logger.debug(f"429 on {url} — retrying in {wait:.1f}s (attempt {attempt+1}/{max_retries})")
+                retry_after = resp.headers.get("Retry-After")
+                reset_in    = resp.headers.get("x-ratelimit-reset-large")
+                if retry_after:
+                    wait = float(retry_after) + 1.0
+                elif reset_in:
+                    wait = float(reset_in) + 1.0
+                else:
+                    wait = min(wait * 2, 120)
+                logger.warning(
+                    f"429 rate limit on {url} — "
+                    f"waiting {wait:.0f}s (attempt {attempt+1}/{max_retries})"
+                )
+                time.sleep(wait)
                 continue
+            _check_rate_limit_headers(resp.headers)
             resp.raise_for_status()
             return resp
         except requests.RequestException as e:
@@ -305,41 +351,145 @@ def _get_with_retry(
     return None
 
 
-def fetch_part_authors(
-    part_uuid: str,
-    session: requests.Session,
+def fetch_all_orgs(
+    cache_file: str | Path,
+    page_size: int = 100,
     delay: float = REQUEST_DELAY,
 ) -> list[dict]:
     """
-    Fetch the authors for a single part.
+    Page through all organisations in the Registry and return them as a list.
 
-    Returns a list of author dicts, each containing:
-      - organisationUUID : UUID of the submitting team's organisation
-      - firstName, lastName, roles
+    Each org object contains:
+      - uuid     : org UUID (used to fetch that org's parts)
+      - name     : e.g. "NYU-Abu-Dhabi (2025)"
+      - link     : e.g. "https://teams.igem.org/5671"
+      - team_id  : int extracted from the link (added by this function)
+      - team_name: str parsed from name (added by this function)
+      - year     : int parsed from name (added by this function)
+
+    There are ~5,900 orgs total, so this takes ~60 API calls — very fast.
+    Results are cached so re-runs are instant.
     """
-    resp = _get_with_retry(session, f"{REGISTRY_API_BASE}/parts/{part_uuid}/authors", delay)
-    if resp is None:
-        logger.warning(f"Could not fetch authors for part {part_uuid}")
-        return []
-    return resp.json().get("data", [])
+    import re
+    cache_file = Path(cache_file)
+    cache_file.parent.mkdir(parents=True, exist_ok=True)
+
+    if cache_file.exists():
+        logger.info(f"Loading orgs from cache: {cache_file}")
+        with open(cache_file) as f:
+            orgs = json.load(f)
+        # Guard against old cache format (dict keyed by org UUID).
+        # The new format is a list of org objects.
+        if isinstance(orgs, dict):
+            logger.warning(
+                f"orgs_cache.json is in the old dict format — deleting and re-fetching. "
+                f"({cache_file})"
+            )
+            cache_file.unlink()
+            orgs = None
+        if orgs is not None:
+            logger.info(f"Loaded {len(orgs)} orgs from cache")
+            return orgs
+
+    logger.info("Fetching all organisations from Registry API…")
+    session = requests.Session()
+    orgs = []
+    page = 1
+
+    while True:
+        time.sleep(delay)
+        try:
+            r = session.get(
+                f"{REGISTRY_API_BASE}/organisations",
+                params={"pageSize": page_size, "page": page},
+                timeout=30,
+            )
+            if r.status_code == 429:
+                reset_in = r.headers.get("x-ratelimit-reset-large",
+                           r.headers.get("Retry-After", 60))
+                wait = float(reset_in) + 1.0
+                logger.warning(f"429 fetching orgs page {page} — waiting {wait:.0f}s")
+                time.sleep(wait)
+                continue
+            _check_rate_limit_headers(r.headers)
+            r.raise_for_status()
+            data = r.json()
+        except requests.RequestException as e:
+            logger.error(f"Orgs fetch failed at page {page}: {e}")
+            break
+
+        batch = data.get("data", [])
+        if not batch:
+            break
+
+        for org in batch:
+            link = org.get("link", "")
+            m = re.search(r"/(\d+)$", link)
+            team_id = int(m.group(1)) if m else None
+            team_name, year = parse_org_name(org.get("name", ""))
+            org["team_id"]   = team_id
+            org["team_name"] = team_name
+            org["year"]      = year
+            orgs.append(org)
+
+        total = data.get("total", "?")
+        logger.info(f"Page {page}: fetched {len(batch)} orgs (total so far: {len(orgs)} / {total})")
+        page += 1
+
+        if len(orgs) >= (data.get("total") or 0):
+            break
+
+    with open(cache_file, "w") as f:
+        json.dump(orgs, f)
+    logger.info(f"Done. Cached {len(orgs)} orgs to {cache_file}")
+    return orgs
 
 
-def fetch_organisation(
+def fetch_org_parts(
     org_uuid: str,
     session: requests.Session,
+    page_size: int = 100,
     delay: float = REQUEST_DELAY,
-) -> dict | None:
+) -> list[dict]:
     """
-    Fetch a single organisation object.
+    Fetch all parts submitted by a single organisation.
 
-    Returns a dict with keys: uuid, name (e.g. "ABOA (2025)"), type, link.
-    Returns None on failure.
+    Returns a list of raw part dicts (same schema as the /parts list endpoint).
+    Handles pagination automatically — some teams have more than 100 parts.
     """
-    resp = _get_with_retry(session, f"{REGISTRY_API_BASE}/organisations/{org_uuid}", delay)
-    if resp is None:
-        logger.warning(f"Could not fetch organisation {org_uuid}")
-        return None
-    return resp.json()
+    parts = []
+    page = 1
+
+    while True:
+        time.sleep(delay)
+        try:
+            resp = session.get(
+                f"{REGISTRY_API_BASE}/organisations/{org_uuid}/parts",
+                params={"pageSize": page_size, "page": page},
+                timeout=30,
+            )
+            if resp.status_code == 429:
+                reset_in = resp.headers.get("x-ratelimit-reset-large",
+                           resp.headers.get("Retry-After", 60))
+                wait = float(reset_in) + 1.0
+                logger.warning(f"429 on org {org_uuid} parts — waiting {wait:.0f}s")
+                time.sleep(wait)
+                continue
+            _check_rate_limit_headers(resp.headers)
+            resp.raise_for_status()
+            data = resp.json()
+        except requests.RequestException as e:
+            logger.warning(f"Could not fetch parts for org {org_uuid}: {e}")
+            break
+
+        batch = data.get("data", [])
+        parts.extend(batch)
+
+        if len(parts) >= (data.get("total") or 0) or not batch:
+            break
+        page += 1
+
+    return parts
 
 
 def fetch_part_composition(
