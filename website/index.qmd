@@ -16,7 +16,7 @@ We measure this using **SPECTER2 embeddings** (scientific text vectors) and **UM
 then test city-level semantic overlap with a regression framework.
 
 The primary case study is **carbon capture in synthetic biology** — a subfield large enough to
-find examples across both artifact types, and directly relevant to climate change.
+find examples across both artifact types.
 
 ::: {.callout-important}
 ## Language note

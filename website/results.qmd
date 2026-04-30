@@ -22,9 +22,9 @@ Use the legend to toggle artifact types on and off. Hover over any point to see 
 ```
 
 **What the projection shows.** Papers and iGEM projects interleave across the semantic
-space rather than separating into two distinct blobs. This suggests that the vocabulary
-and topics of student projects overlap substantially with those of academic papers —
-consistent with the idea that both draw on the same scientific tradition.
+space rather than splitting into two distinct blobs. The topics of student projects and
+academic papers aren't that far apart — which makes sense, given that students are building
+from the same scientific literature their advisors write.
 
 ---
 
@@ -94,26 +94,21 @@ Standard errors are HC3 heteroskedasticity-robust.
 
 *\*\*\* p < 0.01; \*\* p < 0.05; \* p < 0.1. Robust standard errors in parentheses.*
 
-**Key findings:**
+**What the regression says:**
 
-1. **More papers and more projects → higher overlap** (Models 1–3). Cities with larger
-   synthetic biology footprints show more topical alignment between their papers and projects.
-   This likely reflects specialisation: larger research communities tend to focus on a narrower
-   set of topics rather than spreading across the whole field.
+Cities with more papers *and* more projects have higher overlap (Models 1–3). Bigger
+synthetic biology footprints tend to be more focused ones — scale and specialisation go
+together.
 
-2. **Longer iGEM engagement → higher overlap** (Models 2–3). Cities where iGEM teams have
-   been active over more years show significantly higher overlap, even after controlling for
-   project count. This is consistent with the idea that sustained student engagement tracks
-   a city's research specialisation rather than being a one-off event.
+Longer iGEM engagement also predicts higher overlap (Models 2–3), even after controlling
+for total project count. Cities where teams keep coming back year after year are also the
+cities with deep, focused research programmes — the two seem to track each other.
 
-3. **Carbon-capture shares are not significant** (Model 3). Once size and temporal scope are
-   controlled, the share of carbon-capture artifacts does not independently predict higher
-   overlap. This may reflect the small size of the carbon-capture subset or the broad semantic
-   similarity of all synthetic biology content.
+The carbon-capture shares (Model 3) add nothing once size and time are in the model. This
+isn't surprising given how small the CC subset is (375 artifacts, 7 qualifying cities).
 
-4. **Size explains most variation** (R² ≈ 0.62). The two size variables alone account for
-   62% of the variance in city-level overlap, suggesting the primary driver is specialisation
-   that comes with scale, not anything specific to iGEM activity patterns.
+Size alone (log papers + log projects) accounts for about 62% of the variance in
+city-level overlap. That's the main story.
 
 ::: {.callout-warning}
 ## Causal interpretation

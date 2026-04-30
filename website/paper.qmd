@@ -12,7 +12,7 @@ This paper examines whether iGEM student projects and academic publications in s
 
 ## 1. Introduction
 
-Synthetic biology is an emergent engineering discipline that treats cells as programmable systems. Using standardized genetic parts, researchers design and build novel biological functions — sensors, metabolic pathways, therapeutic circuits, and more. The field has grown rapidly since the mid-2000s, producing a rich literature across academic publications, commercial patents, and a unique artifact class: the iGEM project.
+Synthetic biology is a young engineering discipline that treats cells as programmable systems. Using standardized genetic parts, researchers design and build novel biological functions — sensors, metabolic pathways, therapeutic circuits, and more. The field has grown rapidly since the mid-2000s, generating academic publications, commercial patents, and a distinctive artifact that is hard to classify as either: the iGEM project.
 
 The International Genetically Engineered Machine (iGEM) competition is a global student competition in synthetic biology, founded at MIT in 2004. Competing teams design and build biological projects over the course of a year, document their methods on a public wiki, and deposit their genetic parts ("BioBricks") into an open registry. The result is a growing, well-documented dataset of student innovation that sits at the intersection of academic research and open science practice.
 
@@ -88,7 +88,7 @@ across three specifications adding temporal and carbon-capture controls. Count v
 
 The UMAP projection shows papers and iGEM projects interleaved across semantic space rather than clustering into two distinct regions. This is consistent with the two artifact types drawing on shared scientific vocabulary and thematic content. Carbon-capture artifacts (green diamonds in Figure 1) appear distributed across several adjacent regions — reflecting the cross-cutting nature of carbon capture as a synthetic biology application.
 
-The 25 named thematic clusters span interpretable subfields of synthetic biology: bacteriophage engineering, CRISPR tools, biofuel production, engineered cancer therapies, minimal genome design, and DNA assembly standards. This demonstrates that the embedding-clustering pipeline produces semantically coherent groupings — a necessary prerequisite for the city-level analysis.
+The 25 named thematic clusters span interpretable subfields of synthetic biology: bacteriophage engineering, CRISPR tools, biofuel production, engineered cancer therapies, minimal genome design, and DNA assembly standards. The labels are legible — a basic sanity check that the embedding-clustering pipeline is working as intended before moving to the city-level analysis.
 
 ### 4.2 City-Level Semantic Overlap
 
@@ -112,7 +112,7 @@ Top cities by overlap include Cambridge (US, 0.99), Shanghai (0.99), Tianjin (0.
 
 Cities with more papers and more projects show significantly higher semantic overlap. A doubling of papers is associated with a 0.012 increase in overlap (0.0168 × log 2 ≈ 0.012), and a doubling of projects with a 0.013 increase. These effects are modest in absolute terms — the scale is compressed because all values are near 1 — but they are precise and robust.
 
-Temporal engagement (iGEM year span) is significantly positive: cities where iGEM teams have been active over more years show higher overlap, even controlling for total project count. A 10-year span of iGEM activity is associated with approximately 0.016 higher overlap. This is consistent with the interpretation that sustained iGEM engagement tracks a city's evolving research specialisation rather than reflecting a one-off event.
+Temporal engagement (iGEM year span) is significantly positive: cities where iGEM teams have been active over more years show higher overlap, even controlling for total project count. A 10-year span of iGEM activity is associated with approximately 0.016 higher overlap. Cities where teams keep returning tend to be the same cities with deep, focused research programmes — the sustained engagement and the academic specialisation seem to track each other.
 
 Carbon-capture shares are not significant in Model 3, suggesting that after controlling for city size and temporal engagement, the share of carbon-capture content does not independently predict higher overlap. This may reflect the small size of the carbon-capture subset or the breadth of the keyword filter.
 
@@ -122,7 +122,7 @@ Carbon-capture shares are not significant in Model 3, suggesting that after cont
 
 Seven cities have at least two carbon-capture papers and two carbon-capture projects, meeting the minimum threshold for a reliable centroid estimate. These are: San Diego (CC overlap: 0.963), Wuhan (0.959), Beijing (0.956), Shanghai (0.948), Guangzhou (0.935), Madison (0.929), and Austin (0.923). The sample is small — interpretations should be cautious — but the cities are plausible: San Diego and Madison are established biotechnology hubs; Beijing and Shanghai are the largest synthetic biology centres in China with prominent iGEM programmes.
 
-Carbon-capture iGEM activity has grown steadily since 2015, tracking the broader rise of climate-focused synthetic biology. Academic papers in the subfield were present earlier (from 2005) and show a sharper uptick post-2018, coinciding with increased policy attention to net-zero targets and the rapid growth of the biofuel and carbon utilization industries.
+Carbon-capture iGEM activity has grown steadily since 2015. Academic papers in the subfield were present earlier (from 2005) and show a sharper uptick post-2018 — around the same time net-zero targets became mainstream policy, though whether that connection is causal or coincidental is outside the scope of this analysis.
 
 The carbon-capture case study cannot support causal claims: we cannot determine from this cross-sectional data whether student projects preceded or followed academic output. Both likely reflect the same city-level specialisation in bioenergy and climate biotechnology.
 

@@ -4,9 +4,9 @@ title: "Case Study: Carbon Capture in Synthetic Biology"
 
 Carbon capture is the primary worked example for this project. It refers to using engineered
 microorganisms to fix atmospheric CO₂ — for example, by optimising RuBisCO activity,
-engineering the Calvin cycle, or producing carbon-neutral biofuels. This subfield is
-large enough to find examples in both iGEM projects and academic papers, and is directly
-relevant to climate policy.
+engineering the Calvin cycle, or producing carbon-neutral biofuels. This subfield is large
+enough to find examples in both iGEM projects and academic papers, and the keyword list
+below is specific enough to be meaningful.
 
 ::: {.callout-note}
 ## What counts as "carbon capture" here?
@@ -46,9 +46,9 @@ carbon-capture research.
 ```
 
 Carbon-capture artifacts do **not** form a single isolated region in semantic space.
-Instead they appear across several clusters that are geographically adjacent in the
-UMAP projection. This is expected: carbon capture intersects many synthetic biology
-subfields (metabolic engineering, cell-free systems, genetic circuits for biosensing).
+Instead they appear across several clusters that are adjacent in the UMAP projection.
+Carbon capture cuts across subfields — metabolic engineering, cell-free systems, biosensing
+— so a scattered distribution makes sense.
 
 ---
 
@@ -64,10 +64,10 @@ aggregated across all cities. Use the dropdown to zoom in on individual cities.
 </iframe>
 ```
 
-Carbon-capture activity in iGEM has grown steadily since around 2015, tracking the
-broader rise of climate-focused synthetic biology. Academic papers in the carbon-capture
-subfield were present earlier (from 2005) and show a sharper uptick post-2018,
-coinciding with increased policy attention to net-zero targets.
+Carbon-capture activity in iGEM has grown steadily since around 2015. Academic papers in
+the subfield were present earlier (from 2005) and show a sharper uptick post-2018 — around
+the same time net-zero targets became mainstream policy conversation, though whether that
+drove the papers or just coincided with them is hard to say.
 
 ---
 
@@ -106,16 +106,16 @@ cities, any statistical test would be severely underpowered. The results above a
 
 Three observations from the carbon-capture case study:
 
-**1. Geographic concentration.** The 7 cities with sufficient carbon-capture activity in
-both papers and projects are split between the US and China — the two largest synthetic
-biology research ecosystems. This reflects the broader corpus, not anything specific to
-carbon capture.
+**1. Geographic concentration.** The 7 cities are split between the US and China — the same
+split you see across the full corpus. Nothing specific to carbon capture here, just the
+underlying geography of synthetic biology research.
 
 **2. High semantic overlap.** Carbon-capture papers and projects in these cities are
-topically close (0.92–0.96), comparable to or slightly above the corpus-wide mean (0.94).
-This is consistent with the idea that cities engaging in carbon capture iGEM work tend
-to also produce academic research in the same specific area.
+topically close (0.92–0.96), in line with the corpus-wide mean (0.94). In these cities,
+students working on carbon capture and academic researchers working on the same area seem
+to be drawing from the same pool of ideas — though that's exactly what you'd expect if
+both groups are embedded in the same local research environment.
 
-**3. No temporal precedence claim.** We cannot determine from this cross-sectional data
-whether student projects preceded academic output, or vice versa. Both could reflect a
-city's pre-existing specialisation in bioenergy or climate biotechnology.
+**3. No temporal precedence claim.** This is cross-sectional data. We cannot tell whether
+the student projects came first, or the papers did, or whether both just reflect a city's
+existing specialisation in bioenergy research.
