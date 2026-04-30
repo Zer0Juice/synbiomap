@@ -1,88 +1,203 @@
 ---
-title: "Methods"
+title: "Methods & Data"
 ---
-
-This page describes how the corpus was built, how artifacts were embedded and
-clustered, and how the carbon-capture case study was identified.
-
-## Data sources
-
-| Artifact type | Source | Access method |
-|---------------|--------|---------------|
-| Academic papers | [OpenAlex](https://openalex.org) | Free REST API |
-| Patents | [Lens.org](https://www.lens.org) | Free API (token required) |
-| iGEM projects | iGEM community data | CSV download |
-| iGEM parts | iGEM Parts Registry | CSV download / API |
-
-All artifacts are normalized to a **shared schema** before processing.
-See `src/utils/schema.py` for field definitions.
 
 ## Corpus construction
 
-Papers and patents were retrieved by searching for synthetic biology keywords
-in titles and abstracts. The seed keywords were:
+### Papers
 
-- `synthetic biology`
-- `metabolic engineering`
-- `genetic engineering`
+Academic papers were retrieved from [OpenAlex](https://openalex.org) using a two-layer keyword strategy:
 
-Citation expansion was applied to papers: we also retrieved works that cite
-highly-cited seed papers, to capture related work that uses different
-terminology.
+**Layer 1 — core keywords** retrieve papers explicitly about the field:
+> *synthetic biology · synthetic genomics · synthetic genome · BioBrick*
 
-The keyword list and year range can be adjusted in `config/settings.yaml`.
+**Layer 2 — subfield keywords** extend coverage to technical papers that may not use "synthetic biology" explicitly:
+> *synthetic gene network · synthetic gene circuit · synthetic cell · minimal genome · minimal cell ·
+> standard biological parts · repressilator · xenobiology · cell-free synthetic biology*
 
-## Case study identification
+This approach follows Shapira et al. (2017), who used a similar multi-keyword strategy
+to delineate the synthetic biology literature.
 
-Artifacts were tagged as belonging to the **carbon capture case study** if
-their title or abstract contained at least one of these keywords:
+All papers were filtered to years 2000–2026. The final corpus contains **8,720 papers**.
 
-- carbon capture, carbon sequestration, CO2 fixation,
-  carbon dioxide reduction, carbon neutral, biofuel,
-  carbon cycle, autotrophic, RuBisCO, Calvin cycle, carboxylase
+### iGEM Projects
 
-A **confidence score** (0–1) measures the fraction of keywords matched.
-Any keyword match sets `case_study_flag = True`.
+iGEM project data were retrieved from the [iGEM Registry API](https://parts.igem.org).
+Each project entry includes team name, institution, year, wiki description, and (where
+available) a list of BioBrick parts used. Projects were normalized to a shared schema with
+`id`, `title`, `text`, `year`, `city`, `country`, `lat`, `lon`, and `case_study_flag`.
 
-## Embeddings
+The final corpus contains **4,615 projects** spanning 2009–2025.
 
-Each artifact's title and abstract were concatenated and encoded with a
-pre-trained sentence-transformer model
-([`all-MiniLM-L6-v2`](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)).
-This model encodes text into a 384-dimensional vector that captures
-semantic meaning.
+### Patents
 
-> Reimers & Gurevych (2019). *Sentence-BERT: Sentence Embeddings using
-> Siamese BERT-Networks.* EMNLP 2019. [arXiv:1908.10084](https://arxiv.org/abs/1908.10084)
+Patent data was not included in the final analysis. An initial attempt to retrieve
+patents from Lens.org via IPC classification (C12N, C12P, C12Q) returned too few
+usable records with city-level geocoding to support city-level analysis. This is
+noted as a limitation.
 
-## Dimensionality reduction (UMAP)
-
-Embeddings were projected to 2D with **UMAP** for visualization.
-UMAP was chosen over t-SNE because it better preserves global structure
-alongside local neighborhoods.
-
-> McInnes et al. (2018). *UMAP: Uniform Manifold Approximation and
-> Projection for Dimension Reduction.* [arXiv:1802.03426](https://arxiv.org/abs/1802.03426)
-
-Key parameters (adjustable in `config/settings.yaml`):
-
-| Parameter | Value | Meaning |
-|-----------|-------|---------|
-| `n_neighbors` | 15 | Local neighborhood size |
-| `min_dist` | 0.1 | Minimum spread in projected space |
-| `metric` | cosine | Distance metric for embeddings |
-
-## Clustering (HDBSCAN)
-
-Clusters were identified with **HDBSCAN**, a density-based algorithm that
-does not require specifying the number of clusters in advance.
-Points that do not belong to any cluster are labeled as noise (label = -1).
-
-> Campello et al. (2013). *Density-Based Clustering Based on Hierarchical
-> Density Estimates.* ECML PKDD 2013.
+---
 
 ## Geocoding
 
-Institution locations from OpenAlex and Lens.org were converted to
-latitude/longitude using Nominatim (OpenStreetMap), with results cached
-locally. Analysis is at the **city level**.
+**Papers** were geocoded using the institution metadata returned by OpenAlex. Each
+paper's lead institution was mapped to a city and coordinates.
+
+**iGEM projects** were geocoded using a three-tier pipeline:
+
+1. OpenAlex institution lookup (for recognized university names)
+2. Research Organization Registry (ROR) for remaining institutions
+3. Claude Haiku (local LLM) for hard cases with unusual institution names
+
+All geocoding results were cached to disk and are reproducible without API calls on re-runs.
+Cities with no geocoding result were excluded from the city-level analysis.
+
+---
+
+## Embeddings
+
+All artifacts (papers and projects) were encoded into 768-dimensional vectors using
+**SPECTER2** ([Specter2, 2022](https://huggingface.co/allenai/specter2)), specifically
+the **proximity adapter** trained for symmetric document-similarity retrieval.
+
+**Why SPECTER2?**
+
+- Trained on scientific papers using citation-informed contrastive learning, making it
+  more domain-appropriate than general models (BERT, GPT) for scientific text.
+- The proximity adapter is explicitly optimised for measuring cosine similarity between
+  two documents, which is exactly our use case.
+- 768-dimensional output is compact enough to embed 13,000+ documents in a single session.
+
+Each document was encoded as the `[CLS]` token of the final hidden layer, truncated
+to 256 tokens (sufficient for most abstracts). Embeddings were cached incrementally
+to disk — safe to interrupt and resume.
+
+---
+
+## Dimensionality reduction and clustering
+
+### UMAP projection
+
+Embeddings were reduced from 768 to 2 dimensions using
+[UMAP](https://arxiv.org/abs/1802.03426) (McInnes et al., 2018).
+Parameters: `n_neighbors=10`, `min_dist=0.05`, `metric=cosine`.
+
+A separate 30-dimensional UMAP projection (same parameters) was computed for
+clustering, since HDBSCAN performs better on higher-dimensional UMAP output
+than on 2D (Grootendorst, 2022, *BERTopic*).
+
+### HDBSCAN clustering
+
+Clusters were identified with [HDBSCAN](https://doi.org/10.1007/978-3-642-37456-2_14)
+(Campello et al., 2013) on the 30D UMAP coordinates.
+Parameters: `min_cluster_size=10`, `min_samples=1`.
+
+This produced 347 clusters. The 25 largest were labeled using Claude Haiku: for each
+cluster, the 20 titles closest to the cluster centroid in 30D space were sent to the
+model with a prompt asking for a 3–6 word topic label. Artifacts in smaller clusters
+are grouped as "Other" in figures.
+
+---
+
+## City-level semantic overlap
+
+For each city with at least one paper and at least one project with a valid embedding,
+we computed:
+
+$$\text{semantic\_overlap}_i = \cos(\bar{e}^{\text{papers}}_i,\; \bar{e}^{\text{projects}}_i)$$
+
+where $\bar{e}$ is the L2-normalised mean embedding vector (centroid) for all
+documents of that type in city $i$.
+
+The centroid-similarity approach is equivalent to the mean pairwise cosine similarity
+when embeddings are unit-normalised (Turney & Pantel, 2010), and is computationally
+efficient for cities with many documents.
+
+A city must appear in both the papers and projects datasets to contribute to the
+city-level analysis. **379 cities** meet this criterion.
+
+---
+
+## Regression specification
+
+We regressed city-level semantic overlap on:
+
+$$\text{overlap}_i = \alpha + \beta_1 \log(n\_papers_i) + \beta_2 \log(n\_projects_i) + \beta_3 \cdot \text{year\_span}_i + \varepsilon_i$$
+
+Count variables are log-transformed to account for the skewed distribution of
+city sizes (a common practice in urban economics; Wooldridge, 2019, Ch. 6).
+Standard errors are HC3 heteroskedasticity-robust (White, 1980).
+
+---
+
+## Limitations
+
+1. **No patents.** The patent pipeline failed to produce a usable city-level dataset.
+   Claims about the "papers → patents" step in the innovation trajectory cannot be tested.
+
+2. **SPECTER2 is trained on papers, not projects.** iGEM project descriptions are shorter,
+   less formal, and structurally different from scientific abstracts. The embedding model
+   may represent papers more faithfully, potentially inflating paper-project similarity
+   for short project descriptions.
+
+3. **Cross-sectional design.** All years are pooled. We cannot observe temporal ordering
+   within cities — whether projects preceded papers, or vice versa.
+
+4. **Single-institution geocoding.** Papers with multiple author institutions are assigned
+   to the lead institution only. Multi-city collaborations are not captured.
+
+5. **Keyword inclusion rules.** The corpus definition depends on keyword lists. The choice
+   of keywords determines which papers and projects are included, and reasonable alternatives
+   would produce a different corpus.
+
+---
+
+## Reproducibility
+
+All code is on [GitHub](https://github.com/Zer0Juice/synbiomap).
+The full pipeline can be reproduced with:
+
+```bash
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Set API keys
+cp .env.example .env  # edit to add your keys
+
+# 3. Ingest papers and projects
+python scripts/01_ingest_papers.py
+python scripts/03_ingest_projects.py
+
+# 4. Embed all artifacts (~6 hours on CPU, ~1 hour on Apple Silicon)
+python scripts/04_embed.py
+
+# 5. Project and cluster
+python scripts/05_cluster.py
+
+# 6. Label top 25 clusters (requires ANTHROPIC_API_KEY)
+python scripts/05b_label_clusters.py
+
+# 7. Export website data and figures
+python scripts/06_visualize.py
+python scripts/07_export_figures.py
+
+# 8. Build the website
+quarto render website/
+```
+
+Intermediate data files are cached; the pipeline is safe to interrupt and resume.
+Pre-computed outputs (embeddings, clusters, city-level CSV) are included in the repository
+so that steps 1–6 can be skipped for a quick local render.
+
+---
+
+## References
+
+- Campello, R., Moulavi, D., & Sander, J. (2013). Density-based clustering based on hierarchical density estimates. *ECML PKDD*.
+- Cohan, A., et al. (2020). SPECTER: Document-level representation learning using citation-informed transformers. *ACL 2020*.
+- Grootendorst, M. (2022). BERTopic: Neural topic modeling with a class-based TF-IDF procedure. *arXiv:2203.05794*.
+- McInnes, L., Healy, J., & Melville, J. (2018). UMAP: Uniform manifold approximation and projection for dimension reduction. *arXiv:1802.03426*.
+- Shapira, P., et al. (2017). Mapping synthetic biology. *New Biotechnology*.
+- Turney, P. D., & Pantel, P. (2010). From frequency to meaning: Vector space models of semantics. *JAIR*.
+- White, H. (1980). A heteroskedasticity-consistent covariance matrix estimator. *Econometrica*.
+- Wooldridge, J. M. (2019). *Introductory Econometrics*. Cengage.

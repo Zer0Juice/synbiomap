@@ -1,52 +1,60 @@
 ---
 title: "Patents, Papers, Parts & Planet"
-subtitle: "Do student projects, academic research, and patents in synthetic biology form local innovation trajectories?"
+subtitle: "Do student projects and academic research in synthetic biology form semantically related local innovation trajectories?"
 ---
 
-## What this project is about
+## What this project asks
 
-This project asks whether student research projects, academic publications, and patents
-within synthetic biology cluster together meaningfully. Does a city specializing in a specific cluster of student research
-predict further specialization in academic and commercial fields?
+This project examines whether iGEM student projects and academic papers in synthetic biology
+tend to occupy **related regions of semantic space** in the same cities.
 
-The guiding idea is that innovation in a technical field may follow a local path:
+The working idea is simple: cities that produce focused iGEM activity in a synthetic biology
+subfield may also produce focused academic output in the same area — not because one causes
+the other, but because both reflect the same local knowledge infrastructure.
 
-1. **Student projects** (iGEM teams) introduce early ideas
-2. **Academic papers** develop and refine them
-3. **Patents** reflect downstream application and translation
+We measure this using **SPECTER2 embeddings** (scientific text vectors) and **UMAP projection**,
+then test city-level semantic overlap with a regression framework.
 
-We look at each artifact as a different expression of innovation and knowledge creation in a local region.
-Each artifact represents a unique expression of innovation, and the relatedness between them can show novel insights
-into innovation in an emergent field.
+The primary case study is **carbon capture in synthetic biology** — a subfield large enough to
+find examples across both artifact types, and directly relevant to climate change.
 
-We test whether these three artifact types occupy **related regions of semantic
-space**, share **thematic clusters**, and show **plausible city-level temporal
-continuity** in the same subfield.
-
-**We do not claim to show causation.** The language we use is:
-semantic relatedness, association, cluster overlap, plausible temporal sequence,
-and local innovation trajectory.
-
-## Primary case study: carbon capture in synthetic biology
-
-The main worked example throughout this project is **carbon capture in synthetic
-biology** : engineering microorganisms to fix CO₂ or produce carbon-neutral fuels.
-This subfield is large enough to find examples across all three artifact types,
-and is directly relevant to planetary sustainability.
-
-::: {.callout-note}
-All visualizations and results pages support filtering to the carbon-capture
-case study. Look for the **"Carbon Capture"** toggle.
+::: {.callout-important}
+## Language note
+This project uses *descriptive* language throughout: *semantically related*, *co-located*,
+*associated with*. We do not claim that iGEM projects cause related papers, or vice versa.
 :::
+
+---
+
+## The corpus in numbers
+
+| Artifact type | Count | Year range | Geocoded cities |
+|---------------|------:|:----------:|----------------:|
+| Academic papers | 8,720 | 2000–2026 | 1,146 |
+| iGEM projects | 4,615 | 2009–2025 | 626 |
+| **Total** | **13,335** | **2000–2026** | **379 shared** |
+| Carbon-capture papers | 234 | 2005–2026 | — |
+| Carbon-capture projects | 141 | 2011–2025 | — |
+
+Papers were retrieved from OpenAlex using core synthetic biology keywords.
+iGEM projects come from the iGEM Registry API.
+All artifacts were geocoded to the city of their lead institution.
+
+---
 
 ## Navigate the site
 
 | Page | What you will find |
 |------|-------------------|
-| [Paper](paper.qmd) | The full manuscript |
-| [Methods](methods.qmd) | How we built the corpus, embeddings, and clusters |
-| [Results](results.qmd) | Main findings across all artifact types |
-| [Case Study: Carbon Capture](case-study.qmd) | Deep dive into the carbon capture subfield |
-| [Explorer](explorer.qmd) | Interactive semantic space and geographic views |
-| [Reproducibility](reproducibility.qmd) | How to re-run the pipeline |
+| [Results](results.qmd) | UMAP semantic space · city-level overlap scores · regression table |
+| [Carbon Capture](case-study.qmd) | Deep dive into the carbon capture subfield · 7 focal cities |
+| [Methods & Data](methods.qmd) | Corpus construction · SPECTER2 embeddings · clustering · reproducibility |
+| [Paper](paper.qmd) | Full manuscript |
 | [Slides](slides.qmd) | Presentation slides |
+
+---
+
+## Source code
+
+All code is available on [GitHub](https://github.com/Zer0Juice/synbiomap).
+The pipeline is fully reproducible: see [Methods & Data](methods.qmd) for step-by-step commands.

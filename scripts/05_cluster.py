@@ -106,6 +106,8 @@ def run():
         coords_nd,
         min_cluster_size=cl_cfg['min_cluster_size'],
         min_samples=cl_cfg['min_samples'],
+        cluster_selection_method=cl_cfg.get('cluster_selection_method', 'eom'),
+        cluster_selection_epsilon=cl_cfg.get('cluster_selection_epsilon', 0.0),
     )
 
     label_counts = pd.Series(labels).value_counts().sort_index()

@@ -3,6 +3,7 @@ project:
   output-dir: _site
   resources:
     - assets/data/**
+    - assets/figures/**
 
 website:
   title: "Patents, Papers, Parts & Planet"
@@ -15,18 +16,14 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - href: paper.qmd
-        text: Paper
-      - href: methods.qmd
-        text: Methods
       - href: results.qmd
         text: Results
       - href: case-study.qmd
-        text: "Case Study: Carbon Capture"
-      - href: explorer.qmd
-        text: Explorer
-      - href: reproducibility.qmd
-        text: Reproducibility
+        text: "Carbon Capture"
+      - href: methods.qmd
+        text: "Methods & Data"
+      - href: paper.qmd
+        text: Paper
       - href: slides.qmd
         text: Slides
 

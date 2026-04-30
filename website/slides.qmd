@@ -1,24 +1,196 @@
 ---
-title: "Slides"
+title: "Patents, Papers, Parts & Planet"
+subtitle: "Mapping Local Innovation Trajectories in Synthetic Biology"
+author: "CSH Thesis · Supervised by Frank Neffke & Claudia Doblinger"
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    controls: true
+    progress: true
+    history: true
+    center: false
+    width: 1200
+    height: 700
+    margin: 0.08
+    highlight-style: github
+    footer: "Patents, Papers, Parts & Planet — CSH Thesis"
 ---
 
-The presentation slides are available as a PDF download.
+## The question
 
-[Download Slides (PDF)](assets/slides.pdf){.btn .btn-primary}
+**Do iGEM student projects and academic papers in synthetic biology cluster together semantically — in the same cities?**
 
-::: {.callout-note}
-Slides are generated from `slides/main.tex` using LaTeX Beamer.
-Run `pdflatex slides/main.tex` to compile.
+::: {.columns}
+::: {.column width="60%"}
+- Synthetic biology is a rapidly growing field
+- Innovation is not evenly distributed geographically
+- Cities tend to specialize in related knowledge domains
+- **iGEM** introduces a novel artifact: open-science student competition projects
+:::
+::: {.column width="40%"}
+**Three artifact types:**
+
+🧬 iGEM projects (4,615)
+
+📄 Academic papers (8,720)
+
+📋 ~~Patents~~ *(not available)*
+:::
 :::
 
-## Slide outline
+::: {.callout-note}
+We test **semantic relatedness**, not causation. Both artifact types may reflect the same underlying city-level specialisation.
+:::
 
-1. Motivation — why study synthetic biology innovation trajectories?
-2. Research question and hypotheses
-3. Data — papers, patents, iGEM projects, and parts
-4. Methods — embeddings, UMAP, HDBSCAN
-5. Results — semantic clustering across artifact types
-6. Case study — carbon capture in synthetic biology
-7. City-level patterns
-8. Discussion and limitations
-9. Implications
+---
+
+## Why iGEM?
+
+iGEM (International Genetically Engineered Machine) is a global student competition founded at MIT in 2004.
+
+- Teams design biological systems using open-source "BioBrick" parts
+- All parts deposited in a public registry (~90,000 parts total)
+- Projects documented on public wikis
+- Hosted at universities → embedded in local academic culture
+
+> "Do cities that produce focused iGEM activity also produce focused academic output in the same synthetic biology subfield?"
+
+---
+
+## Data
+
+| Source | Records | Years | Cities |
+|--------|--------:|------:|-------:|
+| OpenAlex (papers) | 8,720 | 2000–2026 | 1,146 |
+| iGEM Registry (projects) | 4,615 | 2009–2025 | 626 |
+| **Both types** | **13,335** | | **379 shared** |
+
+**Carbon capture case study:**
+
+- 234 papers + 141 projects flagged by keyword match
+- Keywords: *carbon capture, CO₂ fixation, RuBisCO, biofuel, Calvin cycle,* …
+
+---
+
+## Method: SPECTER2 embeddings
+
+Each artifact → 768-dimensional vector using **SPECTER2** (AllenAI, 2022)
+
+- Trained on scientific papers with citation supervision
+- *Proximity adapter* optimised for document-to-document similarity
+- More domain-appropriate than BERT or GPT for scientific text
+
+Then: **UMAP** to 30D (clustering) and 2D (visualization)
+
+Then: **HDBSCAN** → 347 clusters; top 25 labeled with Claude Haiku
+
+---
+
+## The semantic space
+
+*Papers (blue) and iGEM projects (orange) interleave across semantic space*
+
+*Carbon-capture artifacts (green ◆) span several adjacent subfield clusters*
+
+→ See [interactive figure](results.qmd) on the Results page
+
+---
+
+## Thematic clusters (top 10 by size)
+
+| Cluster | Size |
+|---------|-----:|
+| Plastic degradation and biodegradation | 191 |
+| Antimicrobial peptides for crop protection | 189 |
+| Bacteriophage therapy and engineering | 115 |
+| Microbial chassis and metabolic engineering | 114 |
+| Engineered bacteria for cancer therapy | 110 |
+| CRISPR-Cas genome editing systems | 90 |
+| Biofuel and fine chemical production | 79 |
+| Minimal genome design and essentiality | 75 |
+| DNA assembly automation standards | 73 |
+| Biosensor / point-of-care detection | 55 |
+
+---
+
+## City-level semantic overlap
+
+For each city with papers **and** projects:
+
+$$\text{overlap}_i = \cos\left(\bar{e}^{\text{papers}}_i,\; \bar{e}^{\text{projects}}_i\right)$$
+
+**379 cities** · Range: 0.80 – 0.99 · Mean: 0.94
+
+Top cities: Cambridge, Shanghai, Tianjin, Berkeley, Boston
+
+→ High-overlap cities are large, focused synthetic biology centres
+
+---
+
+## Regression results
+
+| Variable | (1) | (2) | (3) |
+|---|:---:|:---:|:---:|
+| log(papers) | 0.017\*\*\* | 0.017\*\*\* | 0.017\*\*\* |
+| log(projects) | 0.019\*\*\* | 0.010\*\*\* | 0.010\*\*\* |
+| iGEM year span | — | 0.002\*\*\* | 0.002\*\*\* |
+| CC paper share | — | — | 0.019 |
+| CC project share | — | — | −0.009 |
+| **R²** | **0.62** | **0.63** | **0.64** |
+
+*\*\*\* p < 0.01, HC3 robust SE, N = 379*
+
+**Key finding:** More papers + more projects + longer iGEM engagement → higher semantic alignment
+
+---
+
+## Case study: Carbon capture
+
+7 cities with ≥2 CC papers and ≥2 CC projects:
+
+| City | CC Papers | CC Projects | CC Overlap |
+|------|----------:|------------:|-----------:|
+| San Diego | 3 | 3 | 0.963 |
+| Wuhan | 2 | 5 | 0.959 |
+| Beijing | 10 | 2 | 0.956 |
+| Shanghai | 2 | 6 | 0.948 |
+| Madison | 3 | 2 | 0.929 |
+| Austin | 2 | 2 | 0.923 |
+
+→ Small sample, but expected hubs. Consistently high overlap (0.92–0.96).
+
+---
+
+## Limitations
+
+1. **No patents** — the downstream translation step cannot be tested
+2. **SPECTER2 domain mismatch** — trained on papers, not project descriptions
+3. **Cross-sectional** — cannot determine temporal ordering within cities
+4. **Single-institution geocoding** — multi-city collaborations not captured
+5. **Carbon-capture sample is small** — 7 cities limits statistical power
+
+---
+
+## Conclusion
+
+**Cities with larger, more sustained synthetic biology footprints show higher semantic alignment between their iGEM projects and academic papers.**
+
+- R² ≈ 0.62 from size alone; temporal engagement adds further explanatory power
+- Carbon capture case study identifies the expected geographic hubs
+- Results are *descriptive*: both artifact types likely reflect the same underlying city-level specialisation
+
+**Next steps:**
+- Add patent data (PatentsView, better geocoding)
+- Longitudinal analysis: does project activity in year $t$ predict paper activity in $t+k$?
+- Extend to other synthetic biology subfields beyond carbon capture
+
+---
+
+## Thank you
+
+**Full website:** [zer0juice.github.io/synbiomap](https://zer0juice.github.io/synbiomap)
+
+**Code:** [github.com/Zer0Juice/synbiomap](https://github.com/Zer0Juice/synbiomap)
+
+**Supervisors:** Frank Neffke (CSH) · Claudia Doblinger (TU Munich)

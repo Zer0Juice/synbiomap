@@ -81,6 +81,8 @@ def cluster_hdbscan(
     min_cluster_size: int = 10,
     min_samples: int = 5,
     metric: str = "euclidean",
+    cluster_selection_method: str = "eom",
+    cluster_selection_epsilon: float = 0.0,
 ) -> np.ndarray:
     """
     Cluster a reduced embedding matrix with HDBSCAN.
@@ -93,6 +95,12 @@ def cluster_hdbscan(
     min_samples : controls how conservative clustering is.
                   Higher = more points labeled as noise (label = -1).
     metric : distance metric; "euclidean" is standard for UMAP-reduced data
+    cluster_selection_method : 'eom' (default, Excess of Mass — fewer large clusters)
+                               or 'leaf' (selects finest-grained clusters in the hierarchy,
+                               giving more but smaller clusters). Use 'leaf' when 'eom'
+                               collapses everything into one large cluster.
+    cluster_selection_epsilon : merge clusters closer than this threshold (0 = disabled).
+                                Useful for merging very fine-grained 'leaf' clusters.
 
     Returns
     -------
@@ -103,12 +111,14 @@ def cluster_hdbscan(
 
     logger.info(
         f"Running HDBSCAN: min_cluster_size={min_cluster_size}, "
-        f"min_samples={min_samples}"
+        f"min_samples={min_samples}, method={cluster_selection_method}"
     )
     clusterer = hdbscan.HDBSCAN(
         min_cluster_size=min_cluster_size,
         min_samples=min_samples,
         metric=metric,
+        cluster_selection_method=cluster_selection_method,
+        cluster_selection_epsilon=cluster_selection_epsilon,
         prediction_data=True,
     )
     labels = clusterer.fit_predict(reduced)

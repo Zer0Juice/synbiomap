@@ -304,9 +304,15 @@ def merge_labels(
                         vid = valid_ids[idx]
                         sub_key_by_id[vid] = f"{parent_id}.{sub_id}"
 
+    labeled_ids = set(cluster_labels.keys())
     for entry in proj:
         cid = entry.get('cluster', -1)
-        entry['label'] = cluster_labels.get(str(cid), '') if cid >= 0 else ''
+        if cid < 0:
+            entry['label'] = ''
+        elif str(cid) in labeled_ids:
+            entry['label'] = cluster_labels[str(cid)]
+        else:
+            entry['label'] = 'Other'
         if subclustering_enabled:
             sub_key = sub_key_by_id.get(entry['id'], '')
             entry['sublabel'] = subcluster_labels.get(sub_key, '') if sub_key else ''
@@ -318,8 +324,15 @@ def merge_labels(
     # --- all_artifacts.csv ---
     df = pd.read_csv(artifacts_path)
 
+    # Named clusters get their label; unlabeled non-noise clusters → "Other";
+    # noise points (cluster_label = -1) → empty string.
+    labeled_ids = set(cluster_labels.keys())
     df['cluster_name'] = df['cluster_label'].apply(
-        lambda c: cluster_labels.get(str(int(c)), '') if pd.notnull(c) and int(c) >= 0 else ''
+        lambda c: (
+            cluster_labels.get(str(int(c)), '')
+            if pd.notnull(c) and int(c) >= 0 and str(int(c)) in labeled_ids
+            else ('Other' if pd.notnull(c) and int(c) >= 0 else '')
+        )
     )
 
     if subclustering_enabled:
@@ -375,8 +388,21 @@ def run(force: bool = False):
     id_to_cluster = dict(zip(df['id'], df['cluster_label']))
     labels_array = np.array([int(id_to_cluster.get(vid, -1)) for vid in valid_ids])
 
-    cluster_ids = sorted(set(labels_array[labels_array >= 0].tolist()))
-    print(f"Loaded {len(valid_ids)} artifacts, {len(cluster_ids)} clusters, "
+    all_cluster_ids = sorted(set(labels_array[labels_array >= 0].tolist()))
+
+    # Restrict labeling to the top_n_clusters largest clusters.
+    # With fine-grained HDBSCAN settings we get hundreds of small clusters;
+    # for interpretation and figures we only need the top ~25 by size.
+    # Artifacts in smaller clusters will get cluster_name = "Other".
+    top_n = cfg.get('clustering', {}).get('top_n_clusters', len(all_cluster_ids))
+    cluster_sizes = {cid: int((labels_array == cid).sum()) for cid in all_cluster_ids}
+    cluster_ids = sorted(
+        all_cluster_ids,
+        key=lambda c: cluster_sizes[c],
+        reverse=True,
+    )[:top_n]
+    print(f"Loaded {len(valid_ids)} artifacts, {len(all_cluster_ids)} clusters total, "
+          f"labeling top {len(cluster_ids)} by size, "
           f"coords_nd shape {coords_nd.shape}")
 
     # --- Load or initialise caches ---

@@ -2,79 +2,122 @@
 title: "Results"
 ---
 
-## Corpus overview
-
-The pipeline currently covers papers and iGEM projects.
-Patents and parts will be added in a later pipeline run.
-
-| Artifact type | Count | Year range | Cities geocoded |
-|---------------|------:|------------|----------------:|
-| Papers | 9,449 | 2000–2026 | 8,720 (92%) |
-| iGEM projects | 4,615 | 2009–2025 | 4,615 (100%) |
-| Patents | — | — | — |
-| iGEM parts | — | — | — |
-| **Total** | **14,064** | **2000–2026** | **13,335 (95%)** |
-
-Papers were retrieved from OpenAlex using core synthetic biology keywords
-("synthetic biology", "synthetic genomics", "BioBrick") and subfield keywords
-("repressilator", "minimal genome", "xenobiology", etc.).
-iGEM projects were geocoded using a three-tier pipeline:
-OpenAlex institution lookup → Claude Haiku city extraction → Nominatim coordinates.
-Paper coordinates were obtained by fetching full institution objects from
-OpenAlex (which include city and lat/lon) using institution IDs stored during ingestion.
-
 ## Semantic space
 
-All artifacts were embedded using SPECTER (Lo et al., 2020), a transformer
-model pre-trained on scientific text to produce 768-dimensional vectors from
-title and abstract. Embeddings were reduced to 2D with UMAP for visualization.
+All 13,335 artifacts — 8,720 papers and 4,615 iGEM projects — were embedded with
+[SPECTER2](https://huggingface.co/allenai/specter2) and projected to two dimensions
+using UMAP. The figure below shows the full projection. Blue points are papers;
+orange points are iGEM projects; green diamonds are carbon-capture flagged artifacts
+from either type.
 
-The shared projection shows papers and iGEM projects occupying overlapping but
-distinguishable regions of semantic space, consistent with the hypothesis that
-student projects and academic research share the same knowledge domain.
+::: {.callout-note}
+Use the legend to toggle artifact types on and off. Hover over any point to see the title, city, and year.
+:::
 
-See the [Explorer](explorer.qmd) for the interactive version.
+```{=html}
+<iframe src="assets/figures/fig1_umap_all.html"
+        width="100%" height="620px" frameborder="0"
+        style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
+</iframe>
+```
 
-## Clustering
+**What the projection shows.** Papers and iGEM projects interleave across the semantic
+space rather than separating into two distinct blobs. This suggests that the vocabulary
+and topics of student projects overlap substantially with those of academic papers —
+consistent with the idea that both draw on the same scientific tradition.
 
-HDBSCAN was applied to the full 768-dimensional embedding space.
+---
 
-| | Count |
-|---|---:|
-| Total artifacts | 14,064 |
-| Clusters found | 256 |
-| Artifacts assigned to a cluster | 9,169 (65%) |
-| Noise (unassigned) | 4,895 (35%) |
+## Thematic clusters
 
-The 35% noise rate is typical for HDBSCAN on heterogeneous text corpora — it
-reflects genuine semantic diversity within the synthetic biology literature
-rather than a pipeline failure.
+HDBSCAN identified 347 local clusters in the embedding space. The 25 largest
+named clusters (covering about 2,200 artifacts) include:
 
-## City-level patterns
+| Cluster | Size | Example topics |
+|---------|-----:|----------------|
+| Plastic degradation and biodegradation | 191 | PET, polyhydroxyalkanoates |
+| Antimicrobial peptides for crop protection | 189 | bacteriocins, plant immunity |
+| Bacteriophage therapy and engineering | 115 | phage display, lytic cycles |
+| Microbial chassis and metabolic engineering | 114 | *E. coli*, *B. subtilis* chassis |
+| Engineered bacteria for cancer therapy | 110 | tumor-targeting microbes |
+| Engineered living materials and assembly | 105 | biofilms, curli fibres |
+| CRISPR-Cas genome editing systems | 90 | Cas9, base editing |
+| Biofuel and fine chemical production | 79 | ethanol, terpenes, fatty acids |
+| Minimal genome design and essentiality | 75 | JCVI-syn3, essential genes |
+| DNA assembly automation standards | 73 | Golden Gate, BioBricks, MoClo |
 
-Top 10 cities by total artifact count (papers + projects):
+The remaining ~11,000 artifacts fall into smaller thematic clusters (each ≤ 54 artifacts)
+collectively labelled "Other".
 
-| Rank | City | Papers | Projects | Total |
-|------|------|-------:|---------:|------:|
-| 1 | Beijing | 290 | 258 | 548 |
-| 2 | Cambridge | 294 | 40 | 334 |
-| 3 | Shanghai | 108 | 216 | 324 |
-| 4 | London | 236 | 29 | 265 |
-| 5 | Tokyo | 103 | 56 | 159 |
-| 6 | Wuhan | 22 | 134 | 156 |
-| 7 | Shenzhen | 10 | 145 | 155 |
-| 8 | Paris | 117 | 37 | 154 |
-| 9 | New York | 98 | 35 | 133 |
-| 10 | San Diego | 127 | 0 | 127 |
+---
 
-Beijing and Shanghai reflect the rapid growth of Chinese synthetic biology
-research and iGEM participation since 2012. Cambridge (MA/UK) leads for
-academic papers, anchored by MIT, Harvard, and the Wellcome Sanger Institute.
+## City-level semantic overlap
 
-## Carbon capture subset
+For each of the 379 cities with both papers and iGEM projects, we computed the
+**cosine similarity** between the average (centroid) SPECTER2 embedding of that city's
+papers and the average embedding of its projects. Higher values mean the city's papers
+and projects are topically closer.
 
-267 papers (2.8% of corpus) and 141 iGEM projects (3.1% of corpus) were
-tagged as carbon-capture related. 30 cities have at least one carbon-capture
-artifact of both types, providing the basis for city-level cross-type analysis.
+```{=html}
+<iframe src="assets/figures/fig3_city_overlap.html"
+        width="100%" height="720px" frameborder="0"
+        style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
+</iframe>
+```
 
-Full analysis on the [Case Study: Carbon Capture](case-study.qmd) page.
+Overlap scores range from **0.80 to 0.99** (mean 0.94). The range is narrow because
+all artifacts are drawn from a single field (synthetic biology), so SPECTER2 places
+even diverse documents fairly close together. Variation within this range is nonetheless
+real and interpretable: cities at the high end have papers and projects that are
+genuinely more co-topical than cities at the low end.
+
+**Top cities** include Cambridge (US), Shanghai, Tianjin, Berkeley, and Boston — all
+major synthetic biology research centres with large, focused iGEM programmes.
+
+---
+
+## Regression: what predicts higher overlap?
+
+We regressed city-level semantic overlap on city size (log papers, log projects),
+temporal engagement (year span of iGEM activity), and carbon-capture shares.
+Standard errors are HC3 heteroskedasticity-robust.
+
+| Variable | (1) Size only | (2) + Temporal | (3) + Carbon |
+|---|:---:|:---:|:---:|
+| log(papers) | 0.0168\*\*\* (0.0015) | 0.0165\*\*\* (0.0015) | 0.0167\*\*\* (0.0015) |
+| log(projects) | 0.0187\*\*\* (0.0018) | 0.0102\*\*\* (0.0030) | 0.0102\*\*\* (0.0030) |
+| iGEM year span | — | 0.0016\*\*\* (0.0004) | 0.0016\*\*\* (0.0004) |
+| CC paper share | — | — | 0.0188 (0.0157) |
+| CC project share | — | — | −0.0086 (0.0188) |
+| R² | 0.620 | 0.634 | 0.638 |
+| N | 379 | 379 | 379 |
+
+*\*\*\* p < 0.01; \*\* p < 0.05; \* p < 0.1. Robust standard errors in parentheses.*
+
+**Key findings:**
+
+1. **More papers and more projects → higher overlap** (Models 1–3). Cities with larger
+   synthetic biology footprints show more topical alignment between their papers and projects.
+   This likely reflects specialisation: larger research communities tend to focus on a narrower
+   set of topics rather than spreading across the whole field.
+
+2. **Longer iGEM engagement → higher overlap** (Models 2–3). Cities where iGEM teams have
+   been active over more years show significantly higher overlap, even after controlling for
+   project count. This is consistent with the idea that sustained student engagement tracks
+   a city's research specialisation rather than being a one-off event.
+
+3. **Carbon-capture shares are not significant** (Model 3). Once size and temporal scope are
+   controlled, the share of carbon-capture artifacts does not independently predict higher
+   overlap. This may reflect the small size of the carbon-capture subset or the broad semantic
+   similarity of all synthetic biology content.
+
+4. **Size explains most variation** (R² ≈ 0.62). The two size variables alone account for
+   62% of the variance in city-level overlap, suggesting the primary driver is specialisation
+   that comes with scale, not anything specific to iGEM activity patterns.
+
+::: {.callout-warning}
+## Causal interpretation
+These associations cannot be interpreted causally. Cities with more papers and more projects
+are likely the same cities with stronger research infrastructure, more specialised universities,
+and larger synthetic biology communities — all factors that independently drive both outcomes.
+:::

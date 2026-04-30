@@ -2,78 +2,120 @@
 title: "Case Study: Carbon Capture in Synthetic Biology"
 ---
 
-This page is the dedicated case study for **carbon capture in synthetic biology**.
-It uses the carbon-capture slice of the corpus — artifacts tagged with
-`case_study_flag = True` — to show how student projects, papers, and patents
-relate to each other within a specific subfield.
+Carbon capture is the primary worked example for this project. It refers to using engineered
+microorganisms to fix atmospheric CO₂ — for example, by optimising RuBisCO activity,
+engineering the Calvin cycle, or producing carbon-neutral biofuels. This subfield is
+large enough to find examples in both iGEM projects and academic papers, and is directly
+relevant to climate policy.
 
-::: {.callout-tip}
-## Why carbon capture?
-Carbon capture in synthetic biology (engineering microbes to fix CO₂ or
-produce carbon-neutral fuels) is a subfield large enough to find examples
-across all three artifact types, with clear real-world relevance.
+::: {.callout-note}
+## What counts as "carbon capture" here?
+An artifact is flagged as carbon-capture if its title or abstract contains at least one of:
+*carbon capture · carbon sequestration · CO₂ fixation · carbon dioxide reduction ·
+carbon neutral · biofuel · carbon cycle · autotrophic · RuBisCO · Calvin cycle · carboxylase ·
+carbon concentrating mechanism · photorespiration.*
+
+The keyword list was designed conservatively to avoid over-inclusion of tangential content.
 :::
 
-## What counts as "carbon capture" here?
+## Carbon-capture corpus snapshot
 
-Artifacts are included if their title or abstract contains at least one of:
+| Artifact type | Count | Year range |
+|---------------|------:|:----------:|
+| Papers | 234 | 2005–2026 |
+| iGEM projects | 141 | 2011–2025 |
+| **Total** | **375** | **2005–2026** |
 
-> carbon capture · carbon sequestration · CO₂ fixation · carbon dioxide reduction ·
-> carbon neutral · biofuel · carbon cycle · autotrophic · RuBisCO · Calvin cycle · carboxylase
+Carbon-capture artifacts make up **2.7%** of papers and **3.1%** of projects in the full corpus.
 
-A `case_study_confidence` score records how many keywords matched.
+---
 
-## Corpus snapshot
+## Where carbon-capture artifacts sit in semantic space
 
-| Type | Count | Earliest year | Most active city |
-|------|------:|:-------------:|:----------------:|
-| Papers | 267 | 2005 | Berkeley / Beijing (10 each) |
-| Patents | — | — | — |
-| iGEM projects | 141 | 2009 | Shanghai (6) |
+The figure below shows only the 375 carbon-capture flagged artifacts, coloured by the
+cluster they belong to. Most fall into clusters related to metabolic engineering, biofuels,
+and photosynthesis — consistent with the keyword filter. A small number appear in adjacent
+clusters (e.g. biosensors, DNA assembly), reflecting the interdisciplinary nature of
+carbon-capture research.
 
-## Cities with cross-type activity
+```{=html}
+<iframe src="assets/figures/fig2_umap_cc.html"
+        width="100%" height="620px" frameborder="0"
+        style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
+</iframe>
+```
 
-30 cities have at least one carbon-capture paper **and** at least one
-carbon-capture iGEM project, making them candidates for local innovation
-trajectory analysis.
+Carbon-capture artifacts do **not** form a single isolated region in semantic space.
+Instead they appear across several clusters that are geographically adjacent in the
+UMAP projection. This is expected: carbon capture intersects many synthetic biology
+subfields (metabolic engineering, cell-free systems, genetic circuits for biosensing).
 
-| City | CC Papers | CC Projects |
-|------|----------:|------------:|
-| Beijing | 10 | 2 |
-| Berkeley | 10 | 1 |
-| Shanghai | 2 | 6 |
-| Urbana | 6 | 1 |
-| Wuhan | 2 | 5 |
-| San Diego | 3 | 3 |
-| Paris | 4 | 1 |
-| Madison | 3 | 2 |
+---
 
-These cities show the co-presence of academic research and student
-innovation in the same carbon-capture theme — a necessary (though not
-sufficient) condition for a local innovation trajectory.
+## Activity over time
 
-## Semantic map (carbon capture only)
+The figure below shows the number of carbon-capture papers and iGEM projects per year,
+aggregated across all cities. Use the dropdown to zoom in on individual cities.
 
-The [Explorer](explorer.qmd) supports filtering to carbon-capture artifacts.
-In the full semantic space, carbon-capture papers and projects appear in
-partially overlapping clusters, particularly around themes of CO₂ fixation,
-microbial metabolism, and biofuel synthesis.
+```{=html}
+<iframe src="assets/figures/fig4_cc_timeline.html"
+        width="100%" height="520px" frameborder="0"
+        style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
+</iframe>
+```
 
-## Timeline
+Carbon-capture activity in iGEM has grown steadily since around 2015, tracking the
+broader rise of climate-focused synthetic biology. Academic papers in the carbon-capture
+subfield were present earlier (from 2005) and show a sharper uptick post-2018,
+coinciding with increased policy attention to net-zero targets.
 
-Carbon-capture papers appear from 2005, with project activity following
-from 2009 (the first year of the iGEM dataset). Both streams show growth
-through the 2010s, with papers peaking around 2019–2022.
+---
+
+## City-level carbon-capture overlap
+
+For cities with at least 2 carbon-capture papers **and** at least 2 carbon-capture projects,
+we computed a carbon-capture specific semantic overlap score — the cosine similarity between
+the centroid of CC papers and the centroid of CC projects in that city.
+
+Only 7 cities meet the minimum document threshold (2 of each type):
+
+| City | Country | CC Papers | CC Projects | CC Semantic Overlap |
+|------|---------|----------:|------------:|--------------------:|
+| San Diego | US | 3 | 3 | 0.963 |
+| Wuhan | CN | 2 | 5 | 0.959 |
+| Beijing | CN | 10 | 2 | 0.956 |
+| Shanghai | CN | 2 | 6 | 0.948 |
+| Guangzhou | CN | 2 | 2 | 0.935 |
+| Madison | US | 3 | 2 | 0.929 |
+| Austin | US | 2 | 2 | 0.923 |
+
+The small sample (7 cities) means these results should be interpreted with caution.
+That said, the overlap scores for these cities are consistently high (0.92–0.96), and
+they include expected hubs: Beijing and Shanghai are major synthetic biology centres;
+San Diego and Madison host strong biotechnology research communities.
+
+::: {.callout-warning}
+## Limitation: small CC sample
+The carbon-capture subset is too small for a meaningful regression. With only 7 qualifying
+cities, any statistical test would be severely underpowered. The results above are descriptive only.
+:::
+
+---
 
 ## Interpretation
 
-The 30 cities with both carbon-capture papers and projects provide evidence
-that this subfield has both academic and student-level representation in the
-same places. Whether the temporal ordering is consistent with the idea that
-student projects follow academic work — or precede applied/patent activity —
-will be examined once patents are added to the corpus.
+Three observations from the carbon-capture case study:
 
-The keyword-based tagging used here is deliberately conservative: it flags
-artifacts that explicitly mention carbon-capture terminology rather than
-attempting to infer thematic relevance. This means the 267 papers and 141
-projects are a lower bound on the true carbon-capture subset.
+**1. Geographic concentration.** The 7 cities with sufficient carbon-capture activity in
+both papers and projects are split between the US and China — the two largest synthetic
+biology research ecosystems. This reflects the broader corpus, not anything specific to
+carbon capture.
+
+**2. High semantic overlap.** Carbon-capture papers and projects in these cities are
+topically close (0.92–0.96), comparable to or slightly above the corpus-wide mean (0.94).
+This is consistent with the idea that cities engaging in carbon capture iGEM work tend
+to also produce academic research in the same specific area.
+
+**3. No temporal precedence claim.** We cannot determine from this cross-sectional data
+whether student projects preceded academic output, or vice versa. Both could reflect a
+city's pre-existing specialisation in bioenergy or climate biotechnology.
