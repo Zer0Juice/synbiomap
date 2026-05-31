@@ -125,6 +125,7 @@ def extract_project_fields(row: pd.Series) -> dict:
 
     return {
         "igem_team": team_name,
+        "team_id": _safe_int(row.get("id")),  # numeric ID used in teams.igem.org/{id}
         "title": title if title else team_name,
         "abstract": abstract,
         "year": _safe_int(row.get("year")),
