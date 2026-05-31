@@ -24,7 +24,9 @@ iGEM is a global, integrated, open knowledge base, but that doesn’t mean that 
 
 However, this conclusion is nontrivial, because the teams are operating under a different incentive structure, and with a different knowledge base, than an academic research group. Some teams are a result of collaborations between multiple institutions or research groups in a city; for example, the Munich team is a collaboration between TUM and LMU students. Some teams have strong existing networks of collaboration between other teams, with students competing multiple years in a row and establishing long-term cooperative bonds. Team collaboration is outside the focus of this inquiry but has been studied more in depth by Marc Santolini’s research group at the learning planet institute in Paris.
 
-An overarching goal of the iGEM organization in maintaining a registry of open-source tools and standards for synthetic biology. The impact of the organization extends far beyond the boundaries of the organized competition; alumni have gone on to form 
+An overarching goal of the iGEM organization in maintaining a registry of open-source tools and standards for synthetic biology. The impact of the organization extends far beyond the boundaries of the organized competition; alumni have gone on to form companies, start research labs of their own, and place meaningfully in this developing industry. iGEM styles itself as "the heart of synthetic biology", and it's not just hype.
+
+The biobrick registry is a fascinating example of a public resource that extends past its original 
 
 We want to understand if regional specialization in igem research is correlated with regional specialization in academic research and patents. 
 
@@ -40,6 +42,16 @@ More background literature that forms a methodological basis for comparing paten
 To better understand this space, it could be helpful to focus on a specific example. We will do a deep-dive into one iGEM project, looking at its biobricks, the literature that those biobricks cite, the literature that cites them, and the patents that contain their genetic sequences.
 ## Data
 
+The iGEM organization provides a wealth of open-access data that can offer novel insights into the structure of the industry. Teams organize their projects into "wikis", the main form of publication; these are open-source webpages in a specific format, and can be compared to research papers through their abstracts. They also all contribute a set of biobricks to the iGEM registry. These biobricks are either basic or composite; basic parts are new pieces of genetic code (often sourced directly from literature) translated into the biobrick format, while composite parts are comprised of existing biobricks.
+
+Each part contains genetic code, in the form of an amino acid sequence, that plays a specific role in a genetic circuit. They're designed to be modular, interchangeable, and snap together in a way analogous to LEGO bricks. Thus, biobricks can be easily combined in different ways to form genetic sequences with different functions, similar to components in a circuit or functions in a piece of software.
+
+Biobricks can be grouped by these functions:
+* **Promoters** are switches that tell a cell's machinery where to start reading a gene. Some are *constitutive*, or always on, like a hardwired light, while others are *inducible*, reacting to a signal, like as the presence of a certain chemical or a temperature shift.
+* **Ribosome Binding Sites** sit between promoters and 
+
+
+``
 ### iGEM Projects data
 built from https://teams.igem.org/
 Teams were geocoded in a few different ways. First by directly passing the institutions to OpenAlex API for exact, very accurate locations, then by extracting their city from their home country, institution, and team name using Haiku API and geocoding with nominatim.
@@ -66,7 +78,47 @@ Matt Marx papers-patent pairs code leads to citation-style links between patents
 
 ## Methods
 
-To do this we need some way to identify topics in patents, papers, projects, and parts, to make meaningful comparisons across these different artifacts with disparate documentation, language, and underlying causes. We’re taking advantage of the fact that patents, papers, and projects all have abstracts and titles, written using the nomenclature of synthetic biology. We make use of a bidirectional language encoding model called SPECTER2 to generate embeddings of these in high-dimensional space.
+## Regression
+
+First, we should identify the variables we will be comparing.
+
+**Relatedness of a city's papers <> Relatedness of a city's projects**
+
+Panel data, in 5 year chunks
+
+Other variables:
+* GDP per capita
+* Population
+* Institution
+
+$$
+\begin{aligned}
+H_0: \mu_1 -\mu_0 = 0
+\\
+H_1: \mu_1 -\mu_0 \neq 0
+\end{aligned}
+$$
+We use semantic distance as a measure of relatedness.
+
+Is relatedness measured by semantic distance correlated with citations between papers and projects? If it is, that provides some validation that this is a useful measure.
+
+Do cities publish papers related to their igem projects? Do they patent in clusters related to the projects?
+
+### AI Agents
+To assist with the coding, literature review, and reasoning, AI agents were widely used in this project, and an array of different techniques were experimented with. 
+
+#### Coding
+Anthropic's flagship coding agent *Claude Code* was deployed frequently to assist in writing scripts for data retrieval, processing, and cleaning. The project was organized in a GitHub repo, which allows for public availability, version control, a clear work timeline, and rollback of any unwelcome changes. The principle human inputs, besides the ongoing chat conversations, were markdown files which directed the goal and scope of the project. For instance, "write-up.md" is an entirely human-written file that has served as both a rough-draft of the final manuscript and a reference for agents. Throughout this research project, the need for high-quality human input became ever more apparent. 
+
+#### Reasoning
+However, Claude's utility did not end at agentic coding. For interdisciplinary research of this discipline, high level reasoning across an array of disciplines was necessary, and qualified experts with open calendars were at times difficult to come by. To help with this, agents were deployed in a manner inspired by James Evans' research into simulated collectives of LLMs.
+
+ A "discussion" command was written which prompted the agent to simulate a discussion between a group of several real scientists. Real researchers with extensive publication history were used to encourage the LLM to cite their associated bodies of literature.
+
+
+
+
+We need some way to identify topics in patents, papers, projects, and parts, to make meaningful comparisons across these different artifacts with disparate documentation, language, and underlying causes. We’re taking advantage of the fact that patents, papers, and projects all have abstracts and titles, written using the nomenclature of synthetic biology. We make use of a bidirectional language encoding model called SPECTER2 to generate embeddings of these in high-dimensional space.
 
 Then we project the embeddings onto a lower dimensional space so they can be clustered. 60 dimensions or so. Once the clusters are identified, they're labeled by running the 10 abstracts closest to the cluster of each centroid through an LLM (Claude Haiku API), to understand what they have in common and label the clusters.
 
@@ -88,7 +140,6 @@ The most compelling part of this data collection so far may be the papers refere
 1. Open access
 2. indexed by pubmedcentral
 3. Use a full biobrick ID in their text
-
 
 
 ## Limitations

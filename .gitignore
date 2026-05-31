@@ -23,6 +23,9 @@ data/raw/
 data/embeddings/
 data/geo/geocoding_cache.json
 
+# Fine-tuning training pairs (generated, large — rebuild with build_finetune_data.py)
+data/finetune/*.jsonl
+
 # Keep processed CSVs and small exports
 !data/processed/.gitkeep
 !data/embeddings/.gitkeep

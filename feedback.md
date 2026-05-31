@@ -9,4 +9,11 @@ Overall feedback is positive, but a bit concerned about organization and scope c
     - Focus on understanding which empirical relationships to test for the regression analysis
     - Consider dropping patents as a data type, and just looking at relationship between iGEM projects and publications. Only if patent data isn't easily integrated.
 
+## 5.5 Andrea Tacchella
+Raised idea about using different embedding models for each data type, then training a model to concatenate them...
+Papers: SPECTER2
+Patents: PAECTER
+Projects: BioBERT
+
+He seems convinced that this is fairly easy.
 
