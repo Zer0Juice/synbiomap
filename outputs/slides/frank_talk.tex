@@ -1,0 +1,462 @@
+\documentclass[10pt,aspectratio=169]{beamer}
+
+% -------------------------------------------------
+% Theme (Solarized Light)
+% -------------------------------------------------
+\usetheme{metropolis}
+\metroset{
+  progressbar=none,
+  numbering=fraction
+}
+\setbeamertemplate{navigation symbols}{}
+
+% -------------------------------------------------
+% Fonts -- LuaLaTeX required
+% -------------------------------------------------
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+\setsansfont{Latin Modern Sans}
+\setmonofont{Latin Modern Mono}
+
+% -------------------------------------------------
+% Colors: Solarized Light
+% -------------------------------------------------
+\usepackage{xcolor}
+\definecolor{SolBase3} {HTML}{fdf6e3}
+\definecolor{SolBase2} {HTML}{eee8d5}
+\definecolor{SolBase1} {HTML}{93a1a1}
+\definecolor{SolBase00}{HTML}{657b83}
+\definecolor{SolBase01}{HTML}{586e75}
+\definecolor{SolBlue}  {HTML}{268bd2}
+\definecolor{SolCyan}  {HTML}{2aa198}
+
+\setbeamercolor{background canvas}{bg=SolBase3}
+\setbeamercolor{normal text}{fg=SolBase00}
+\setbeamercolor{alerted text}{fg=SolBlue}
+\setbeamercolor{frametitle}{bg=SolBase3, fg=SolBase01}
+\setbeamercolor{title}{fg=SolBase01}
+\setbeamercolor{subtitle}{fg=SolBase00}
+\setbeamercolor{progress bar}{fg=SolBlue}
+\setbeamercolor{block title}{fg=SolBase3, bg=SolBase01}
+\setbeamercolor{block body}{bg=SolBase2, fg=SolBase00}
+\setbeamercolor{section title}{fg=SolBase01}
+\setbeamercolor{footline}{fg=SolBase1}
+\setbeamercolor{item}{fg=SolBlue}
+\setbeamercolor{subitem}{fg=SolCyan}
+
+% -------------------------------------------------
+% Packages
+% -------------------------------------------------
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=SolBlue,
+  urlcolor=SolCyan,
+  citecolor=SolBlue
+}
+
+% -------------------------------------------------
+% Typography
+% -------------------------------------------------
+\usefonttheme{professionalfonts}
+\setlength{\parskip}{0.4em}
+\linespread{1.05}
+\renewcommand{\arraystretch}{1.2}
+\setbeamerfont{caption}{size=\small}
+\setbeamercolor{caption name}{fg=SolBase01}
+
+% -------------------------------------------------
+% Macros
+% -------------------------------------------------
+\newcommand{\highlight}[1]{\textcolor{SolBlue}{\textbf{#1}}}
+\newcommand{\source}[1]{\vspace{0.4em}\hfill{\scriptsize\textcolor{SolBase1}{#1}}}
+\newcommand{\takeaway}[1]{%
+  \vspace{0.6em}
+  \begin{block}{Takeaway}#1\end{block}
+}
+
+% -------------------------------------------------
+% Title
+% -------------------------------------------------
+\title{Projects, Papers, and Proteins}
+\subtitle{Do student iGEM projects predict local academic research in synthetic biology?}
+\author{Zakh Roth}
+\institute{Complexity Science Hub}
+\date{June 2026}
+
+\begin{document}
+
+% ============================================================
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ============================================================
+\section{Motivation}
+
+\begin{frame}{iGEM is a global natural experiment in distributed student innovation}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+  \begin{itemize}
+    \item 100k+ participants; 400+ universities; 50+ countries
+    \item Teams design organisms around a local problem
+    \item Projects, parts, and wiki pages are publicly archived
+    \item iGEM runs annually -- a repeated cross-section from 2009 to 2025
+  \end{itemize}
+\end{column}
+\begin{column}{0.42\textwidth}
+  \vspace{0.5em}
+  {\small\textcolor{SolBase1}{The iGEM corpus gives us a rare window into how student-level scientific interest maps onto local research infrastructure.}}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{The question: are student projects topically embedded in local research?}
+\begin{columns}[T]
+\begin{column}{0.54\textwidth}
+  \textbf{Inspired by:}
+  \begin{itemize}
+    \item Hidalgo et al. (2007): revealed comparative advantage and product space
+    \item Neffke \& Henning (2013): skill-relatedness from labor flows
+  \end{itemize}
+  \vspace{0.5em}
+  \textbf{Applied here to text, not products or occupations.}
+  \vspace{0.5em}
+  \begin{itemize}
+    \item Unit: city
+    \item Similarity: cosine distance in embedding space
+    \item Question: do student projects and local papers occupy related regions of semantic space?
+  \end{itemize}
+\end{column}
+\begin{column}{0.43\textwidth}
+  \vspace{0.3em}
+  \begin{block}{Core hypothesis}
+    Innovation follows a local path:\\
+    student projects $\to$ papers $\to$ patents\\[0.3em]
+    If so: project topics should \emph{lead} paper topics in the same city by a few years.
+  \end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+\section{Data and Measurement}
+
+\begin{frame}{Three corpora, one embedding space}
+\centering
+\begin{tabular}{lrrrl}
+\toprule
+Corpus & Docs & Cities & Years & Source \\
+\midrule
+Synbio papers & 10{,}402 & 1{,}218 & 1964--2026 & OpenAlex \\
+iGEM projects & 4{,}614 & 626 & 2009--2025 & iGEM Registry \\
+BioBrick parts & 89{,}060 & 472 & 2009--2025 & iGEM Registry \\
+\midrule
+\textbf{Analysis sample} & -- & \textbf{387} & -- & cities with both \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.6em}
+{\small Carbon-capture tagged: 294 papers (2.8\%) and 141 projects (3.1\%).}
+\end{frame}
+
+\begin{frame}{SPECTER2 embeds scientific text into a citation-informed space}
+\begin{columns}[T]
+\begin{column}{0.54\textwidth}
+  \begin{itemize}
+    \item 768-dim vectors; contrastive learning on citation pairs
+    \item \textbf{Proximity adapter}: fine-tuned for semantic similarity, not classification
+    \item Cached for all 15{,}000 documents; fully reproducible
+  \end{itemize}
+  \vspace{0.5em}
+  \textbf{City representation:}
+  \[
+    \bar{\mathbf{a}}_c = \frac{1}{|P_c|} \sum_{p \in P_c} \mathbf{e}_p
+  \]
+  Mean embedding over all docs of type $t$ in city $c$.
+\end{column}
+\begin{column}{0.43\textwidth}
+  \vspace{0.3em}
+  \begin{block}{Why SPECTER2?}
+    Standard sentence transformers are not calibrated for scientific text. SPECTER2 is trained on 146M citation pairs; documents that co-cite tend to be nearby.
+  \end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+\section{Result 1: Local Alignment}
+
+\begin{frame}{90\% of projects are semantically closer to their own city's papers}
+  \centering
+  \includegraphics[width=0.88\textwidth]{../figures/project_level_alignment.png}
+
+  \source{n = 3{,}620 projects; cities with $\geq$ 3 papers; $\delta$ = own-city cosine $-$ mean over all other cities}
+\end{frame}
+
+\begin{frame}{Local alignment: robust across two tests}
+\centering
+\begin{tabular}{lcc}
+\toprule
+ & Statistic & $p$-value \\
+\midrule
+Mean $\delta$ (own $-$ other) & $+0.0135$ & \\
+Fraction with $\delta > 0$ & $90.6\%$ & \\
+One-sample $t$-test & $t = 78.02$ & $< 0.001$ \\
+Wilcoxon signed-rank & & $< 0.001$ \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.6em}
+\takeaway{Projects are systematically closer to local papers than to papers anywhere else. The effect is small but extremely consistent.}
+\end{frame}
+
+\begin{frame}{DiD: separating stable specialisation from temporal alignment}
+  \centering
+  \includegraphics[width=0.88\textwidth]{../figures/did_alignment.png}
+
+  \source{Annual city-year centroids ($\geq$ 2 papers); 1{,}841 projects in DiD sample}
+\end{frame}
+
+\begin{frame}{The temporal component is real but modest}
+\centering
+\begin{tabular}{lccc}
+\toprule
+ & Own city & Other cities & Local advantage \\
+\midrule
+Own year   & 0.9123 & 0.8989 & $+0.0135$ \\
+Other years & 0.9062 & 0.8953 & $+0.0109$ \\
+\midrule
+$\Delta$ (temporal) & $+0.0062$ & $+0.0036$ & \\
+\midrule
+\textbf{DiD} & \multicolumn{3}{c}{$\mathbf{+0.0026}$} \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+{\small Stable city specialisation accounts for most of the alignment. The DiD component is small but positive.}
+\end{frame}
+
+% ============================================================
+\section{Result 2: Lead-Lag Structure}
+
+\begin{frame}{Projects are semantically ahead of local papers by about 3 years}
+  \centering
+  \includegraphics[width=0.88\textwidth]{../figures/lead_lag_profile.png}
+
+  \source{Lag $k$: cosine similarity between project centroid in year $t$ and paper centroid in year $t+k$; bootstrapped 95\% CI}
+\end{frame}
+
+\begin{frame}{The lead-lag slope is not a temporal sampling artifact}
+  \centering
+  \includegraphics[width=0.88\textwidth]{../figures/lead_lag_permutation.png}
+
+  \source{500 within-city year-shuffles; observed slope = $+0.000879$; null $p_{95}$ = $+0.000246$; perm-$p < 0.05$}
+\end{frame}
+
+
+% ============================================================
+\section{A Measurement Problem}
+
+\begin{frame}{Centroid cosine similarity is dominated by document count}
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+  Spearman correlations with semantic overlap:
+  \vspace{0.5em}
+  \begin{tabular}{lc}
+  \toprule
+  Variable & $\rho$ \\
+  \midrule
+  $\log n_{\text{papers}}$ & $0.78$ \\
+  $\log n_{\text{projects}}$ & $0.83$ \\
+  \bottomrule
+  \end{tabular}
+
+  \vspace{0.6em}
+  OLS $R^2 = 0.625$ with only two log-count variables.
+\end{column}
+\begin{column}{0.45\textwidth}
+  \vspace{0.3em}
+  \begin{block}{The problem}
+    Larger cities have more stable centroids. Two stable centroids drawn from \emph{any} synthetic biology corpus will be similar -- because the field occupies a compact region of embedding space. Overlap $\approx 0.946$ everywhere.
+  \end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Cross-section permutation: centroid overlap fails}
+  \centering
+  \includegraphics[width=0.88\textwidth]{../figures/geographic_permutation_test.png}
+
+  \source{500 within-country shuffles of project city labels; OLS on shuffled data}
+\end{frame}
+
+\begin{frame}{Permutation results: centroid similarity is not locally specific}
+\centering
+\begin{tabular}{lcccr}
+\toprule
+Statistic & Observed & Null mean & Null $p_{95}$ & perm-$p$ \\
+\midrule
+$R^2$ & 0.625 & 0.630 & 0.646 & 0.684 \\
+$\beta\ \log n_{\text{papers}}$ & 0.0164 & 0.0156 & 0.0163 & 0.026 \\
+$\beta\ \log n_{\text{projects}}$ & 0.0190 & 0.0189 & 0.0198 & 0.456 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\takeaway{The centroid-cosine measure does not distinguish real local alignment from random assignment. We need a better measure of specificity.}
+\end{frame}
+
+% ============================================================
+\section{Result 3: Cluster Co-Membership}
+
+\begin{frame}{UMAP + HDBSCAN finds 83 topic clusters across all 15k documents}
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+  \begin{itemize}
+    \item UMAP: 60 dimensions, cosine metric
+    \item HDBSCAN: 83 clusters, $\sim 20\%$ noise
+    \item Cluster overlap = weighted Jaccard on cluster frequency vectors
+    \item Sample: 189 cities with $\geq 3$ clustered docs per type
+  \end{itemize}
+  \vspace{0.5em}
+  Mean cluster overlap: $0.081$; median: $0.023$; max: $0.717$
+\end{column}
+\begin{column}{0.45\textwidth}
+  \vspace{0.3em}
+  \begin{block}{Why this is better}
+    Cluster co-membership is \emph{relative}. It asks: do a city's projects and papers concentrate in the \emph{same topical niches}, not just the same broad field?
+  \end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Cluster co-membership survives the permutation test}
+  \centering
+  \includegraphics[width=0.88\textwidth]{../figures/permutation_cluster_overlap.png}
+
+  \source{500 within-country shuffles; observed $\beta\ \log n_{\text{projects}} = +0.046^{***}$; perm-$p = 0.03$}
+\end{frame}
+
+\begin{frame}{Coefficient plot: cluster co-membership is robust}
+  \centering
+  \includegraphics[width=0.88\textwidth]{../figures/coef_plot_extended.png}
+
+  \source{OLS with country FE and robust SE; dependent variable: cluster overlap score}
+\end{frame}
+
+% ============================================================
+\section{Result 4: Cross-Modal Validation}
+
+\begin{frame}{Physical part-type composition independently agrees with semantic clusters}
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+  BioBrick parts: standardised DNA sequences registered by teams
+  \begin{itemize}
+    \item Types: promoter, CDS, RBS, terminator, reporter, device, ...
+    \item City part-type profile: proportion vector over part types
+    \item Shannon entropy measures specialisation
+  \end{itemize}
+  \vspace{0.5em}
+  \textbf{Mantel test:} are part-type distances correlated with cluster-space distances?
+\end{column}
+\begin{column}{0.45\textwidth}
+  \vspace{0.3em}
+  \begin{block}{Result (179 cities, 999 permutations)}
+    \[r = 0.2207,\quad p < 0.001\]
+    Null $p_{95} = 0.073$. Part-type space and semantic cluster space agree.
+  \end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Part-type specialisation varies meaningfully across cities}
+  \centering
+  \includegraphics[width=0.88\textwidth]{../figures/part_type_composition.png}
+
+  \source{Top 30 cities by total registered parts; sorted by dominant part type}
+\end{frame}
+
+\begin{frame}{Mantel test: part-type and cluster distances are correlated}
+  \centering
+  \includegraphics[width=0.88\textwidth]{../figures/mantel_test_parts_vs_cluster.png}
+
+  \source{Spearman Mantel $r = 0.2207$; perm-$p < 0.001$; 179 cities}
+\end{frame}
+
+% ============================================================
+\section{Case Study: Carbon Capture}
+
+\begin{frame}{Carbon capture teams have a distinctive part-type signature}
+  \centering
+  \includegraphics[width=0.88\textwidth]{../figures/part_type_cc_comparison.png}
+
+  \source{71 CC cities vs.\ 277 non-CC cities; CC = at least one carbon-capture-flagged team}
+\end{frame}
+
+\begin{frame}{Carbon capture: what we see and what we cannot yet say}
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+  \textbf{Consistent with the hypothesis:}
+  \begin{itemize}
+    \item CC teams deposit more CDS parts (enzyme-encoding sequences)
+    \item CC cities have above-average cluster co-membership
+    \item CC papers and projects share semantic clusters
+  \end{itemize}
+\end{column}
+\begin{column}{0.45\textwidth}
+  \textbf{What this is not:}
+  \begin{itemize}
+    \item Not evidence of causal spillover
+    \item CC flag is based on keyword retrieval, not expert review
+    \item Small $n$ limits inference on CC-specific lead-lag
+  \end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+\section{Summary}
+
+\begin{frame}{Four results, in order of strength}
+\begin{enumerate}
+  \item \textbf{Local alignment is real and consistent} -- 90.6\% of projects are topically closer to their own city's papers ($t = 78$, $p < 0.001$).
+  \item \textbf{Projects lead papers by $\approx 3$ years} -- lead-lag peak at $k = +3$; profile shape non-random under permutation.
+  \item \textbf{Cluster co-membership is locally specific} -- survives within-country permutation where centroid similarity does not ($p = 0.03$).
+  \item \textbf{Part-type space corroborates semantic space} -- Mantel $r = 0.22$, $p < 0.001$; two independent signals agree.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Limitations and what comes next}
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+  \textbf{Current limitations:}
+  \begin{itemize}
+    \item No causal identification -- shared local environment could drive both
+    \item Geocoding errors propagate through all city-level results
+    \item HDBSCAN labels are not stable across hyperparameter choices
+    \item Patents not yet integrated
+  \end{itemize}
+\end{column}
+\begin{column}{0.45\textwidth}
+  \textbf{Next steps:}
+  \begin{itemize}
+    \item Add patent corpus (Lens.org)
+    \item Instrument for iGEM presence using competition history
+    \item Quarto site: interactive semantic space explorer + geographic view
+    \item Manuscript draft for submission
+  \end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{The main claim, stated carefully}
+\begin{block}{}
+  In cities with active iGEM participation, the topics that student teams work on are semantically related to the topics that local researchers publish on -- and this co-location in semantic space is not explained by city size alone, holds at the topic-cluster level, and is corroborated by an independent physical signal (BioBrick part-type composition). Whether this reflects knowledge spillovers, shared local opportunity, or selection of students into research-active cities remains open.
+\end{block}
+\end{frame}
+
+\end{document}
