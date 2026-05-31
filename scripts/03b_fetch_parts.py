@@ -45,11 +45,13 @@ Outputs
       Columns: parent, child
       A directed edge means the parent (composite) part contains the child.
 
-  data/processed/part_paper_edges.csv
+  data/processed/part_source_papers.csv
       Columns: part_name, doi, paper_id
-      Links parts to papers via DOIs extracted from the source field.
+      Each row: a part whose source field lists this DOI (part → paper direction).
       paper_id is filled in where the DOI matches a paper in papers.csv;
       otherwise it is blank (the paper exists but wasn't in our corpus).
+      NOTE: this is NOT "papers that cite parts" — it is "parts that credit a paper
+      as the biological source of their sequence".
 
 Usage:
     python scripts/03b_fetch_parts.py
@@ -106,7 +108,7 @@ PAPERS_PATH     = PROCESSED_DIR / "papers.csv"
 PARTS_OUT       = PROCESSED_DIR / "parts.csv"
 TEAM_EDGES_OUT  = PROCESSED_DIR / "part_team_edges.csv"
 COMP_EDGES_OUT  = PROCESSED_DIR / "part_composition_edges.csv"
-PAPER_EDGES_OUT = PROCESSED_DIR / "part_paper_edges.csv"
+PAPER_EDGES_OUT = PROCESSED_DIR / "part_source_papers.csv"
 
 
 # ---------------------------------------------------------------------------
@@ -335,11 +337,12 @@ def build_composition_edges(
 # Part → paper edges via DOI matching
 # ---------------------------------------------------------------------------
 
-def build_part_paper_edges(parts_df: pd.DataFrame, papers_df: pd.DataFrame) -> pd.DataFrame:
+def build_part_source_papers(parts_df: pd.DataFrame, papers_df: pd.DataFrame) -> pd.DataFrame:
     """
-    Match parts to papers using DOIs extracted from the source field.
+    Build part → paper edges using DOIs from each part's source field.
 
-    Many parts cite the paper that describes the sequence they encode.
+    Direction: part cites paper (NOT paper cites part).
+    Many parts list the paper that first described the sequence they encode.
     The source field contains free text like:
       "doi: https://doi.org/10.1021/acschembio.5b00753"
     We already extracted these into the source_dois column (semicolon-separated).
@@ -438,7 +441,7 @@ def run(skip_authors: bool = False, max_parts: int | None = None):
 
     # Part → paper edges via DOI
     print("\nBuilding part → paper edges via DOI matching…")
-    paper_edges_df = build_part_paper_edges(parts_df, papers_df)
+    paper_edges_df = build_part_source_papers(parts_df, papers_df)
     matched_paper_edges = paper_edges_df["paper_id"].notna() & (paper_edges_df["paper_id"] != "")
 
     # Save
