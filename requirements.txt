@@ -8,9 +8,10 @@ requests>=2.31
 httpx>=0.25
 
 # Embedding models
-# SPECTER loads via sentence-transformers with no extra dependencies.
+# SPECTER2 requires the `adapters` library for its adapter-based architecture.
+# adapters pins a compatible transformers version, so we let it manage that.
 sentence-transformers>=2.6
-transformers>=4.35
+adapters>=1.3
 torch>=2.0
 
 # Dimensionality reduction and clustering

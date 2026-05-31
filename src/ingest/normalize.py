@@ -135,30 +135,33 @@ def normalize_papers(raw_records: list[dict], carbon_keywords: list[str]) -> pd.
     return pd.DataFrame(rows, columns=REQUIRED_COLUMNS + ["cited_works", "institution_ids"])
 
 
-def normalize_patents(raw_records: list[dict], carbon_keywords: list[str]) -> pd.DataFrame:
+def normalize_patents_odp(raw_records: list[dict], carbon_keywords: list[str]) -> pd.DataFrame:
     """
-    Normalize a list of Lens.org patent dicts to the shared schema.
+    Normalize a list of USPTO ODP patent dicts to the shared schema.
 
     Parameters
     ----------
-    raw_records : output of lens.extract_fields() for each patent
+    raw_records     : output of odp.extract_fields() for each patent
     carbon_keywords : list of carbon-capture keywords for case study tagging
+
+    Note: the ODP file wrapper API does not return abstract text, so the text
+    field contains the title only. This is a known limitation vs. Lens.org.
     """
     rows = []
     for rec in raw_records:
         title = rec.get("title", "") or ""
-        abstract = rec.get("abstract", "") or ""
-        text = build_text_field(title, abstract)
-        lens_id = rec.get("lens_id", "")
+        # No abstract available from ODP; title-only text is used for embedding.
+        text = build_text_field(title, "")
+        patent_id = rec.get("patent_id", "")
 
         row = {
-            "id": lens_id or _make_id("patent", title),
+            "id": patent_id or _make_id("patent", title),
             "type": "patent",
             "title": title,
             "text": text,
             "year": rec.get("year"),
-            "city": rec.get("city"),
-            "country": _normalise_country(rec.get("country")),
+            "city": rec.get("city") or "",
+            "country": _normalise_country(rec.get("country")) or "",
             "lat": None,
             "lon": None,
             "theme_primary": None,
@@ -248,6 +251,7 @@ def normalize_projects(raw_records: list[dict], carbon_keywords: list[str]) -> p
 
         row = {
             "id": f"igem_{team}_{rec.get('year', 'unk')}" if team else _make_id("project", title),
+            "team_id": rec.get("team_id"),
             "type": "project",
             "title": title,
             "text": text,
@@ -263,7 +267,8 @@ def normalize_projects(raw_records: list[dict], carbon_keywords: list[str]) -> p
         row.update(_tag_case_study(text, carbon_keywords))
         rows.append(row)
 
-    return pd.DataFrame(rows, columns=REQUIRED_COLUMNS)
+    cols = REQUIRED_COLUMNS[:1] + ["team_id"] + REQUIRED_COLUMNS[1:]
+    return pd.DataFrame(rows, columns=cols)
 
 
 def normalize_parts(raw_records: list[dict], carbon_keywords: list[str]) -> pd.DataFrame:
