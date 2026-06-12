@@ -6,13 +6,25 @@ How to use:  Do not write in this document, this is solely a space for human-wri
 
 # Title: Patents, Papers, Parts, and Planet
 
-Subtitle: Mapping the Innovation Network of Synthetic Biology
+Subtitle: Exploration of the Innovation Space in Synthetic Biology
 Advisors:
 	Frank Neffke, Complexity Science Hub
 	Claudia Doblinger, Technical University of Munich
+
 ## Introduction
 
-Synthetic Biology is an exciting new emergent domain that uses standardized tools to engineer biological systems. Cells are treated like little computers running chunks of genetic code. This code is stored as amino acid in systematized online repositories, cheaply synthesized into real DNA, and introduced into cells. This field is rapidly developing through research happening all over the world, but innovation is not evenly distributed; it seems to cluster in specific regions. There are a lot of potential reasons for this; universities with access to fancy lab equipment and students, venture capital available for startups, existing adjacent industries (like pharma) that already have the infrastructure available for research, favorable regulatory landscapes. We already know that cities tend to specialize in specific technologies, and branch off into adjacent technologies over time, so it stands to reason that different cities will develop capabilities and specialize in different applications and research areas of synthetic biology. For example, a city with a lot of capabilites in producing software might have an easier time developing software tools. A city with a lot of agricultural capability might be better at scaling up plant modifications. A city with a big university where a lot of theoretical research happens could develop enhanced capabilities in producing foundational, theoretical innovations that require a certain knowledge base, and so on and so forth.
+### Research Question
+Do cities with student synthetic biology research also produce academic papers in related areas?
+### Motivation
+Synthetic Biology is an emergent field of research using standardized tools to engineer biological systems. Through this practice, cells are transformed into industrially productive machinery, and genetic sequences are treated as functions running in the programming language of life. These sequences are catalogued, transformed, standardized, and connected together into genetic circuits.
+
+
+
+### Unit of Analysis
+For this project, we chose the city as a unit of analysis. Most innovation happens in cities, especially in deeply technical fields such as this which require
+
+
+This code is stored as amino acid in systematized online repositories, cheaply synthesized into real DNA, and introduced into cells. This field is rapidly developing through research happening all over the world, but innovation is not evenly distributed; it seems to cluster in specific regions. There are a lot of potential reasons for this; universities with access to fancy lab equipment and students, venture capital available for startups, existing adjacent industries (like pharma) that already have the infrastructure available for research, favorable regulatory landscapes. We already know that cities tend to specialize in specific technologies, and branch off into adjacent technologies over time, so it stands to reason that different cities will develop capabilities and specialize in different applications and research areas of synthetic biology. For example, a city with a lot of capabilites in producing software might have an easier time developing software tools. A city with a lot of agricultural capability might be better at scaling up plant modifications. A city with a big university where a lot of theoretical research happens could develop enhanced capabilities in producing foundational, theoretical innovations that require a certain knowledge base, and so on and so forth.
 
 However, although these capabilities are vital to the future industrial mix of the city, they can be difficult to measure and compare quantitatively. “Capability” and “innovation” are abstract concepts, and we have to use quantifiable outputs if we hope to understand them empirically at scale. Different artifacts can reflect the creation of new knowledge in unique ways, while pointing to overlapping underlying regional capabilities. For example, an academic research paper and a patent are two different reflections of innovation with different goals. A patent shows that commercial research is occurring, and that the innovators believe an idea has value to industry. An academic paper is the fruit of scholarly research, and the authors benefit off of its publication based on how much it impacts a scientific field. An academic breakthrough could have minimal commercial use and vice versa.
 
@@ -30,6 +42,12 @@ The biobrick registry is a fascinating example of a public resource that extends
 
 We want to understand if regional specialization in igem research is correlated with regional specialization in academic research and patents. 
 
+## Fermentation Technology
+Engineering industrial fermentation processes is one of synthetic biology's most important applications. Microbes such as E.coli are modified so that they produce useful compounds under anaerobic conditions.
+
+Bacteria naturally 
+
+
 ## Background
 
 Boschma et al (2014) studied the impact of scientific relatedness on knowledge dynamics in biotechnology at the city level. This analysis provides a clean methodological base to build from.
@@ -37,10 +55,13 @@ Boschma et al (2014) studied the impact of scientific relatedness on knowledge d
 Santolini et al (2023) presents the iGEM data as a well-structured dataset for studying team dynamics and innovation.
 
 More background literature that forms a methodological basis for comparing patents, papers, and project abstracts across the same embedding space would be very useful, as would anything linking patents, papers, and genetic code.
-## Case Study: Carbon Capture
+
+Oldham & Hall's research 
+### Case Study: Carbon Capture
 
 To better understand this space, it could be helpful to focus on a specific example. We will do a deep-dive into one iGEM project, looking at its biobricks, the literature that those biobricks cite, the literature that cites them, and the patents that contain their genetic sequences.
-## Data
+## Methods 
+### Data
 
 The iGEM organization provides a wealth of open-access data that can offer novel insights into the structure of the industry. Teams organize their projects into "wikis", the main form of publication; these are open-source webpages in a specific format, and can be compared to research papers through their abstracts. They also all contribute a set of biobricks to the iGEM registry. These biobricks are either basic or composite; basic parts are new pieces of genetic code (often sourced directly from literature) translated into the biobrick format, while composite parts are comprised of existing biobricks.
 
@@ -76,9 +97,33 @@ Uses USPTO patent dataset
 
 Matt Marx papers-patent pairs code leads to citation-style links between patents and papers.
 
-## Methods
+### Semantic Embeddings
 
-## Regression
+To empirically compare text and establish a degree of relatedness between documents, we create a semantic embedding space. 
+
+This is done by generating document embeddings using a natural language processing model in the fashion of word-to-vec. 
+
+The model represents each text artifact, in this case the project abstract, as a 768-dimensional vector. These dimensions, taken together, capture the semantic "meaning" of the text, instead of relying on keyword overlap (which can be problematic when studying the field of synthetic biology due to overlap in vocabulary with descriptive molecular biology and related fields (oldham + hall)) or citations.
+
+The model we used was SPECTER2 by the Allen Institute, which was trained specifically to predict whether two documents would be connected by a citation. SPECTER2 represents each text artifact, in this case the project abstract, as a 768-dimensional vector embedding. This embedding capture the semantic "meaning" of the text, instead of relying on keyword overlap (which can be problematic when studying the field of synthetic biology due to overlap in vocabulary with descriptive molecular biology and related fields (oldham + hall)) or citations.
+
+The embeddings can be viewed as points in a 768-dimensional space, and documents that are more semantically related will have embeddings with a higher degree of similarity. Therefore, we can take the cosine distance between the two vectors as a measure of relatedness between the two artifacts.
+
+[math showing city representation]
+## Representing Cities in Semantic Space
+
+### Centroids
+To represent and compare cities at given points in time, we take the average of all its document embeddings of a certain type in a given period. These averages are also called **centroids**, the centers of a collection of points in our embedding space.
+
+This results in vectors that can be used in simple pairwise comparisons. These are course-grained, empirical representations of each city's research.
+### Topic Clusters
+For a finer-grained representation of a city's research landscape, we cluster the points in the embedding space. Since related research tends to be closer together, clusters form around topics.
+
+768 dimensions is too many to find meaningful clusters due to "The Curse of Dimensionality", as high-dimensional spaces become increasingly sparce and noisy as dimensions are added.
+
+Instead, UMAP (Uniform Manifold Approximation and Projection) was used to compress the embedding space into 60 dimensions. UMAP is a powerful technique that reduces 
+
+### Regression
 
 First, we should identify the variables we will be comparing.
 
@@ -104,7 +149,19 @@ Is relatedness measured by semantic distance correlated with citations between p
 
 Do cities publish papers related to their igem projects? Do they patent in clusters related to the projects?
 
-### AI Agents
+## Use of AI
+
+SPECTER2 is an artificial intelligence model from the BERT family of 2nd generation NLP (Natural Language Processing) models. As explained earlier, the document embeddings generated with it form the basis for much of this project's analyses.
+
+In addition to the NLP embeddings which the semantic embedding space was constructed on, Large Language Models (LLMs) were used extensively over the course of this project. The tools used were primarily from the Anthropic Claude family (Haiku, Sonnet, and Opus), with some lightweight data processing and vocabulary assistance done by a locally-hosted instance of qwen2.5:3b running in Ollama.
+### Data Processing
+Initially, we tried geocoding iGEM projects using Nominatim, an open-access geocoding service. However, this had limited success; many of the institutions were matched 
+
+Successful geocoding of the iGEM projects to their cities was done through API calls to OpenAlex, ROR (Research Organization Registry), Claude Haiku and Qwen. Many projects had team names that corresponded to their cities; an initial pass was done by Qwen, which simply extracted city names from team names and matched them to a city if they corresponded to a city and institution in the right country. However, many teams were acronyms related to the name of a school. To geocode these teams, we first made API calls to OpenAlex Institutions API, which covers over 100,000 institutions with structured geographic data, and ROR, which has broader coverage of high schools and community labs.
+
+Claude Haiku
+
+### Coding Agents
 To assist with the coding, literature review, and reasoning, AI agents were widely used in this project, and an array of different techniques were experimented with. 
 
 #### Coding
@@ -134,7 +191,7 @@ We downloaded the entire dataset of ~90,000 biobricks from the iGEM registry API
 ### Patents
 We ran a few BLAST searches on patent sequence data using Lens.org's PatSeq tool, but rate limits prevented us from executing this at scale. However, this would be a fascinating project with the right resources. Tracing the pathways of individual sequences of genetic code through the knowledge space.
 
-## Findings
+## Results
 
 The most compelling part of this data collection so far may be the papers referencing biobricks. Even though there isn't a standard for citing open-source genetic parts registries in the literature, and even with the limitations of full-text search, there were still 671 papers collected that directly cite biobricks in the registry, from PubMedCentral alone. This represents but a small fraction of their true impact, as it only returns papers that:
 1. Open access
@@ -151,6 +208,15 @@ We are assuming that the artifacts are similar enough that their linguistic embe
 
 Searching full-text papers for biobrick IDs was challenging for practical reasons; BBa_xxx strings all contain underscores, which do not play nicely with the search algorithms
 
+### Next Steps
+Scraping the iGEM wikis for citations (DOI codes) would yield an interesting network connecting the two innovation spaces. Are iGEM teams more likely to cite researchers from their home city? Their home country?
+
+Matching patent and publication authors to iGEM teams. How often do researchers co-author with old iGEM teammates?
+
+Connecting iGEM alumni lists to hiring in biotech companies (revelio dataset). Are iGEM alumni more likely to be hired by companies with iGEM-affiliated management than candidates with comparable profiles?
+
+Matching biobrick code to patents through Lens PatSeq data could be a fascinating way to connect open-access resources to commercial research. Do sequences from the biobrick registry show up in patent filings?
+
 
 ## Open Questions
 * Are publications by iGEM teams related to the papers published in their same 
@@ -158,3 +224,8 @@ Searching full-text papers for biobrick IDs was challenging for practical reason
 * Do cities produce iGEM research related to their academic publications?
 
 * Do iGEM research projects draw on local academic knowledge?
+
+
+## Relatedness
+
+Matrix of relatedness between clusters -> predict the trajectory of a city

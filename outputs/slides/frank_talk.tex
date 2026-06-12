@@ -101,7 +101,7 @@
 % -------------------------------------------------
 % Title
 % -------------------------------------------------
-\title{Projects, Papers, and Proteins}
+\title{Projects, Papers, and Parts}
 \subtitle{Do student iGEM projects predict local academic research in synthetic biology?}
 \author{Zakh Roth}
 \institute{Complexity Science Hub \\ Technical University of Munich}
@@ -115,55 +115,26 @@
 \end{frame}
 
 % ============================================================
+\begin{frame}{Why this is interesting}
 
-\begin{frame}{iGEM: a global natural experiment in distributed innovation}
 \begin{columns}[T]
 \begin{column}{0.55\textwidth}
   \begin{itemize}
+  	\item iGEM is a global natural experiment in distributed innovation
     \item 100k+ participants; 400+ universities; 50+ countries
-    \item Teams design organisms around a local problem
+
     \item Projects, parts, and wiki pages are publicly archived
     \item Runs annually -- a repeated cross-section from 2009 to 2025
   \end{itemize}
 \end{column}
 \begin{column}{0.42\textwidth}
   \vspace{0.5em}
-  {\small\textcolor{SolBase1}{The iGEM corpus gives us a rare window into how student-level scientific interest maps onto local research infrastructure.}}
+  {\large\textcolor{SolBase1}{iGEM structure presents us with unique insights into a normally hidden process of innovation}}
 \end{column}
 \end{columns}
 \end{frame}
 
 % ============================================================
-\begin{frame}{Case Study: Edinburgh 2013}
-\begin{columns}[T]
-\begin{column}{0.52\textwidth}
-  \textbf{The project: \highlight{WastED}}\\[0.3em]
-  Engineering \textit{E.\ coli} to produce bioethanol from industrial waste\\[0.3em]
-  Core result: enzyme fusion (Pdc--AdhB) raises ethanol yield $\to$
-  published in \emph{ACS Synthetic Biology}, 2014\\[0.6em]
-  \textbf{Local infrastructure:}
-  \begin{itemize}
-    \item Advised by Elfick \& French -- both already professors at Edinburgh
-    \item Edinburgh ran iGEM teams continuously 2009--2025
-  \end{itemize}
-\end{column}
-\begin{column}{0.45\textwidth}
-  \vspace{0.3em}
-  \textbf{12 students; where are they now?}
-  \begin{itemize}
-    \item \highlight{4 pursued PhDs} (Edinburgh, Cambridge, UCL)
-    \item \highlight{1 faculty} (asst.\ professor, plant biotech, Krakow)
-    \item \highlight{3 moved into biotech industry} (Novonesis, Abbott, Meridian)
-    \item \highlight{1 startup founder} (Biotangents Ltd, diagnostics)
-    \item 1 commercialisation director (Stevenage Bioscience Catalyst)
-    \item $\sim$3 no public trace
-  \end{itemize}
-\end{column}
-\end{columns}
-
-
-\end{frame}
-
 
 \begin{frame}{Are student projects topically embedded in local research?}
 \begin{columns}[T]
@@ -174,7 +145,7 @@
     \item Neffke \& Henning (2013): skill-relatedness from labor flows
   \end{itemize}
   \vspace{0.5em}
-  \textbf{Applied here to text, not products or occupations.}
+  \textbf{Applied here to project abstract texts.}
   \vspace{0.5em}
   \begin{itemize}
     \item Unit: city
@@ -195,22 +166,24 @@
 
 % ============================================================
 
+% ============================================================
+
 \begin{frame}{Data}
 \centering
 \begin{tabular}{lrrrl}
 \toprule
 Corpus & Docs & Cities & Years & Source \\
 \midrule
-Synbio papers & 10{,}402 & 1{,}218 & 1964--2026 & OpenAlex \\
-iGEM projects & 4{,}614 & 626 & 2009--2025 & iGEM Registry \\
-BioBrick parts & 89{,}060 & 472 & 2009--2025 & iGEM Registry \\
+SynBio papers & 10{,}402 & 1{,}218 & 2000--2026 & OpenAlex + PMC\\
+iGEM projects & 4{,}614 & 626 & 2009--2025 & iGEM Teams \\
+BioBrick parts & 89{,}060 & 472 & 2009--2025 & iGEM Parts Registry \\
 \midrule
 \textbf{Analysis sample} & -- & \textbf{387} & -- & cities with both \\
 \bottomrule
 \end{tabular}
 
 \vspace{0.6em}
-{\small Carbon-capture tagged: 294 papers (2.8\%) and 141 projects (3.1\%).}
+
 \end{frame}
 
 \begin{frame}{SPECTER2 embeds scientific text into a citation-informed space}
@@ -227,6 +200,9 @@ BioBrick parts & 89{,}060 & 472 & 2009--2025 & iGEM Registry \\
     \bar{\mathbf{a}}_c = \frac{1}{|P_c|} \sum_{p \in P_c} \mathbf{e}_p
   \]
   Mean embedding over all docs of type $t$ in city $c$.
+  \vspace{0.3em}
+
+  {\small\textcolor{SolBase1}{Mean embeddings assume a single topical centroid per city. Topic-cluster analysis (later) provides a complement that does not require this assumption.}}
 \end{column}
 \begin{column}{0.43\textwidth}
   \vspace{0.3em}
@@ -261,12 +237,14 @@ Wilcoxon signed-rank & & $< 0.001$ \\
 \end{tabular}
 
 \vspace{0.6em}
-\takeaway{Projects are systematically closer to local papers than to papers anywhere else. The effect is small but extremely consistent.}
+\takeaway{Projects are systematically closer to local papers than to papers anywhere else. The effect is extremely consistent.}
 \end{frame}
 
 \begin{frame}{DiD: separating stable specialisation from temporal alignment}
+  {\small To separate persistent city specialisation from year-specific alignment, each project is compared to its own city's papers in its own year vs.\ other years, and to other cities' papers in the same year vs.\ other years. The DiD extracts the interaction term.}
+  \vspace{0.3em}
   \centering
-  \includegraphics[width=0.88\textwidth]{../figures/did_alignment.png}
+  \includegraphics[width=0.78\textwidth]{../figures/did_alignment.png}
 
   \source{Annual city-year centroids ($\geq$ 2 papers); 1{,}841 projects in DiD sample}
 \end{frame}
@@ -293,7 +271,7 @@ $\Delta$ (temporal) & $+0.0062$ & $+0.0036$ & \\
 % ============================================================
 \section{Lead-Lag Structure}
 
-\begin{frame}{Projects are semantically ahead of local papers by about 3 years}
+\begin{frame}{Projects are semantically ahead of local papers}
   \centering
   \includegraphics[width=0.88\textwidth]{../figures/lead_lag_profile.png}
 
@@ -307,67 +285,77 @@ $\Delta$ (temporal) & $+0.0062$ & $+0.0036$ & \\
   \source{500 within-city year-shuffles; observed slope = $+0.000879$; null $p_{95}$ = $+0.000246$; perm-$p < 0.05$}
 \end{frame}
 
+\section{Topic Clusters}
 
-% ============================================================
-
-% ============================================================
-\section{Clusters}
-
-\begin{frame}{UMAP + HDBSCAN finds 83 topic clusters across all 15k documents}
-\begin{columns}[T]
-\begin{column}{0.52\textwidth}
+\begin{frame}{Topic clusters: mapping synthetic biology subfields}
   \begin{itemize}
-    \item UMAP: 60 dimensions, cosine metric
-    \item HDBSCAN: 83 clusters, $\sim 20\%$ noise
-    \item Cluster overlap = weighted Jaccard on cluster frequency vectors
-    \item Sample: 189 cities with $\geq 3$ clustered docs per type
+    \item UMAP reduces 768-dim embeddings to 60 dimensions (cosine metric)
+    \item HDBSCAN finds \textbf{83 clusters} across all 15{,}000 documents
+    \item $\sim$29\% of documents are labelled ``noise'' --- HDBSCAN deliberately leaves ambiguous points unassigned rather than forcing them into a cluster
+
   \end{itemize}
-  \vspace{0.5em}
-  Mean cluster overlap: $0.081$; median: $0.023$; max: $0.717$
-\end{column}
-\begin{column}{0.45\textwidth}
-  \vspace{0.3em}
-  \begin{block}{Why this is better}
-    Cluster co-membership is \emph{relative}. It asks: do a city's projects and papers concentrate in the \emph{same topical niches}, not just the same broad field?
-  \end{block}
-\end{column}
-\end{columns}
 \end{frame}
 
-\begin{frame}{Cluster co-membership survives the permutation test}
-  \centering
-  \includegraphics[width=0.88\textwidth]{../figures/permutation_cluster_overlap.png}
+%===============================
 
-  \source{500 within-country shuffles; observed $\beta\ \log n_{\text{projects}} = +0.046^{***}$; perm-$p = 0.03$}
+\begin{frame}{Project-level test: projects enter clusters already known to their city}
+	\begin{columns}[T]
+		\begin{column}{0.54\textwidth}
+			For each non-noise project in cluster $k$, city $c$, year $y$:\\[0.4em]
+			$\texttt{in\_known} = \mathbf{1}[\text{city } c \text{ has a paper in cluster } k \text{ before year } y]$\\[0.5em]
+			\begin{tabular}{lc}
+				\toprule
+				& Value \\
+				\midrule
+				Projects in analysis & 3{,}004 \\
+				Own-city known rate  & $3.1\%$ \\
+				Mean baseline (random city) & $0.6\%$ \\
+				Mean $\delta$ (own $-$ baseline) & $+0.025$ \\
+				\midrule
+				$t$-test ($H_0{:}\ \delta = 0$) & $t = 7.99$ \\
+				$p$-value & $< 0.001$ \\
+				\bottomrule
+			\end{tabular}
+		\end{column}
+		\begin{column}{0.43\textwidth}
+			\vspace{0.3em}
+			\begin{block}{Takeaway}
+				Projects are $\approx 5\times$ more likely to enter a cluster their city already publishes in than a randomly assigned city would be. The signal survives because the test is project-level with a temporal direction, not an aggregate city-level score.
+			\end{block}
+		\end{column}
+	\end{columns}
 \end{frame}
 
-\begin{frame}{Coefficient plot: cluster co-membership is robust}
-  \centering
-  \includegraphics[width=0.88\textwidth]{../figures/coef_plot_extended.png}
+%===========================
 
-  \source{OLS with country FE and robust SE; dependent variable: cluster overlap score}
-\end{frame}
+\section{Two Measurement Lenses}
 
-% ============================================================
-\section{Biobricks: Cross-Modal Validation}
-
-\begin{frame}{Physical part-type composition independently agrees with semantic clusters}
+\begin{frame}{iGEM gives us two independent windows on what a city's teams care about}
 \begin{columns}[T]
 \begin{column}{0.52\textwidth}
-  BioBrick parts: standardised DNA sequences registered by teams
+  \textbf{Lens 1 --- text (wiki pages):}
   \begin{itemize}
-    \item Types: promoter, CDS, RBS, terminator, reporter, device, ...
+    \item What did teams write about?
+    \item Captured by SPECTER2 embeddings and topic clusters
+  \end{itemize}
+  \vspace{0.6em}
+  \textbf{Lens 2 --- physical parts (BioBricks):}
+  \begin{itemize}
+    \item What DNA components did teams actually build and register?
+    \item Types: promoter, CDS, RBS, terminator, reporter, device, \ldots
     \item City part-type profile: proportion vector over part types
-    \item Shannon entropy measures specialisation
   \end{itemize}
-  \vspace{0.5em}
-  \textbf{Mantel test:} are part-type distances correlated with cluster-space distances?
+  \vspace{0.4em}
+  These are \emph{independent} measurement systems. If they agree, that is evidence of a coherent underlying signal.
 \end{column}
 \begin{column}{0.45\textwidth}
   \vspace{0.3em}
-  \begin{block}{Result (179 cities, 999 permutations)}
+  \begin{block}{Mantel test (179 cities, 999 permutations)}
+  	
     \[r = 0.2207,\quad p < 0.001\]
-    Null $p_{95} = 0.073$. Part-type space and semantic cluster space agree.
+    Null $p_{95} = 0.073$.\\[0.3em]
+  
+    Part-type distance and semantic cluster distance are correlated. Teams that write about similar things also build similar biological tools.
   \end{block}
 \end{column}
 \end{columns}
@@ -380,6 +368,23 @@ $\Delta$ (temporal) & $+0.0062$ & $+0.0036$ & \\
   \source{Top 30 cities by total registered parts; sorted by dominant part type}
 \end{frame}
 
+\begin{frame}{Mantel test: comparing two pairwise similarity matrices}
+ Standard method from ecology for asking whether two similarity structures agree.
+  \begin{enumerate}
+    \item For every pair of cities $(i, j)$, compute:
+      \begin{itemize}
+        \item $\texttt{sim\_parts}(i,j)$: cosine similarity between their part-type vectors
+        \item $\texttt{sim\_cluster}(i,j)$: cosine similarity between their cluster-frequency vectors
+      \end{itemize}
+    \item Collect all $N \times (N-1)/2$ such pairs (upper triangle of each matrix).
+    \item Compute the \highlight{Spearman rank correlation} between the two sets of similarities.
+      A positive correlation means: cities similar in part-type space are also similar in cluster space.
+    \item \highlight{Permutation null}: shuffle the rows and columns of one matrix randomly many times.
+      This destroys the city labels while preserving the matrix structure.
+      The $p$-value is the fraction of shuffles that produce a correlation as high as observed.
+  \end{enumerate}
+\end{frame}
+
 \begin{frame}{Mantel test: part-type and cluster distances are correlated}
   \centering
   \includegraphics[width=0.88\textwidth]{../figures/mantel_test_parts_vs_cluster.png}
@@ -388,13 +393,18 @@ $\Delta$ (temporal) & $+0.0062$ & $+0.0036$ & \\
 \end{frame}
 
 % ============================================================
+
+
+% ============================================================
+
+% ============================================================
 \section{Summary}
 
 \begin{frame}{Results}
 \begin{enumerate}
   \item \textbf{Local alignment is real and consistent} -- 90.6\% of projects are topically closer to their own city's papers ($t = 78$, $p < 0.001$).
   \item \textbf{Projects lead papers by $\approx 3$ years} -- lead-lag peak at $k = +3$; profile shape non-random under permutation.
-  \item \textbf{Cluster co-membership is locally specific} -- survives within-country permutation where centroid similarity does not ($p = 0.03$).
+  \item \textbf{Projects enter clusters their city already knows} -- own-city cluster entry rate $5\times$ baseline; $t = 7.99$, $p < 0.001$; holds with temporal direction.
   \item \textbf{Part-type space corroborates semantic space} -- Mantel $r = 0.22$, $p < 0.001$; two independent signals agree.
 \end{enumerate}
 \end{frame}
@@ -424,9 +434,12 @@ $\Delta$ (temporal) & $+0.0062$ & $+0.0036$ & \\
 
 \begin{frame}{Takeaway}
 \begin{block}{}
-  In cities with active iGEM participation, the topics that student teams work on are semantically related to the topics that local researchers publish on -- and this co-location in semantic space is not explained by city size alone, holds at the topic-cluster level, and is corroborated by an independent physical signal (BioBrick part-type composition). iGEM projects also tend to share the most similarity with regional research 3 years in the *future*. Causal relationships are not proven; whether this reflects knowledge spillovers, shared local opportunity, or selection of students into research-active cities remains open.
+  \begin{itemize}
+    \item Student iGEM projects are semantically correlated with local research, and projects are \textbf{approx 5 times} more likely to enter a topic cluster their city already publishes in.
+    \item Text embeddings and BioBrick composition point to the same city-level topical structure.
+    \item Projects share maximum similarity with local papers roughly 3 years later. Causal interpretation remains open.
+  \end{itemize}
 \end{block}
 \end{frame}
-
 
 \end{document}

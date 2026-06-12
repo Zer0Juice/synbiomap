@@ -88,9 +88,8 @@ clustering:
   metric: euclidean
   cluster_selection_method: eom
   cluster_selection_epsilon: 0.0
-  # We get ~346 fine-grained clusters from this. Only the top 25 by size
-  # are labelled and shown in figures; the rest are grouped as "Other".
-  top_n_clusters: 25
+  # Label the top 83 clusters by size, matching the notebook's HDBSCAN run.
+  top_n_clusters: 83
 case_study:
   confidence_threshold: 0.0
   flag_field: case_study_flag

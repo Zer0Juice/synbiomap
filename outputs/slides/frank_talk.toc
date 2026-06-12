@@ -1,0 +1,5 @@
+\beamer@sectionintoc {1}{Local Alignment}{6}{0}{1}
+\beamer@sectionintoc {2}{Lead-Lag Structure}{10}{0}{2}
+\beamer@sectionintoc {3}{Topic Clusters}{12}{0}{3}
+\beamer@sectionintoc {4}{Two Measurement Lenses}{14}{0}{4}
+\beamer@sectionintoc {5}{Summary}{18}{0}{5}
