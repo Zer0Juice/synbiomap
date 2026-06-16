@@ -45,7 +45,7 @@ We want to understand if regional specialization in igem research is correlated 
 ## Fermentation Technology
 Engineering industrial fermentation processes is one of synthetic biology's most important applications. Microbes such as E.coli are modified so that they produce useful compounds under anaerobic conditions.
 
-Bacteria naturally 
+Humanity's oldest and most vital biotechnology is control over fermentation. Before we could identify a microbe, before chemicals like lactic acid and ethanol were characterized, before 
 
 
 ## Background
