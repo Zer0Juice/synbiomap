@@ -1,26 +1,30 @@
-\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
-\contentsline {section}{\numberline {2}Background and Related Work}{2}{section.2}%
-\contentsline {subsection}{\numberline {2.1}A Field That Named Itself in a Hurry}{2}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}The Geography of Clever Ideas}{3}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}The Peculiar Case of the Student Engineer}{4}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}Measuring a Field That Keeps Moving}{4}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}A Common Tongue for Uncommon Artefacts}{5}{subsection.2.5}%
-\contentsline {section}{\numberline {3}Data}{6}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Papers (OpenAlex)}{6}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Patents (Lens.org)}{6}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}iGEM projects and parts}{6}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Shared schema}{6}{subsection.3.4}%
-\contentsline {section}{\numberline {4}Methods}{6}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Embedding}{6}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Dimensionality reduction}{6}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Clustering}{6}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Case study identification}{7}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Geocoding}{7}{subsection.4.5}%
-\contentsline {section}{\numberline {5}Results}{7}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Corpus overview}{7}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Semantic clustering}{7}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}City-level patterns}{7}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}Carbon capture case study}{7}{subsection.5.4}%
-\contentsline {section}{\numberline {6}Discussion}{7}{section.6}%
-\contentsline {section}{\numberline {7}Limitations}{7}{section.7}%
-\contentsline {section}{\numberline {8}Conclusion}{7}{section.8}%
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Research Question}{1}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Motivation}{1}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Unit of Analysis}{1}{subsection.1.3}%
+\contentsline {section}{\numberline {2}Fermentation Technology}{3}{section.2}%
+\contentsline {section}{\numberline {3}Background}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Case Study: Carbon Capture}{3}{subsection.3.1}%
+\contentsline {section}{\numberline {4}Methods}{3}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Data}{3}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}iGEM Projects data}{4}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}iGEM Parts Data}{4}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Papers Data}{4}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Patent Data}{4}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Semantic Embeddings}{4}{subsection.4.6}%
+\contentsline {section}{\numberline {5}Representing Cities in Semantic Space}{5}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Centroids}{5}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Topic Clusters}{5}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Regression}{5}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Use of AI}{6}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Data Processing}{6}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Coding Agents}{6}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}Coding}{7}{subsubsection.6.2.1}%
+\contentsline {subsubsection}{\numberline {6.2.2}Reasoning}{7}{subsubsection.6.2.2}%
+\contentsline {subsection}{\numberline {6.3}Parts}{8}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Patents}{8}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Results}{8}{section.7}%
+\contentsline {section}{\numberline {8}Limitations}{8}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Next Steps}{9}{subsection.8.1}%
+\contentsline {section}{\numberline {9}Open Questions}{9}{section.9}%
+\contentsline {section}{\numberline {10}Relatedness}{9}{section.10}%
