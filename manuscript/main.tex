@@ -33,6 +33,17 @@
 % ---- Math, graphics, links ----
 \usepackage{amsmath}
 \usepackage{graphicx}
+
+% ---- Citations and bibliography ----
+% natbib gives author-year citations that read naturally in prose:
+%   \citet{key} -> "Boschma et al. (2014)"  (author is part of the sentence)
+%   \citep{key} -> "(Boschma et al., 2014)" (whole citation in parentheses)
+% The bibliography itself (references.bib) is generated from the researcher's
+% Zotero library by scripts/export_zotero_bib.py, so the keys here match the
+% Better BibTeX keys shown in Zotero. Compile with:
+%   pdflatex main -> bibtex main -> pdflatex main -> pdflatex main
+\usepackage[round,authoryear]{natbib}
+
 \usepackage[hidelinks]{hyperref}
 
 % ============================================================
@@ -109,9 +120,9 @@ Synthetic Biology is an emergent field of research using standardized tools to e
 
 \subsection{Unit of Analysis}
 
-For this project, we chose the city as a unit of analysis. Most innovation happens in cities, especially in deeply technical fields such as this which require
+For this project, we chose the city as a unit of analysis. Cities cluster capabilites
 
-This code is stored as amino acid in systematized online repositories, cheaply synthesized into real DNA, and introduced into cells. This field is rapidly developing through research happening all over the world, but innovation is not evenly distributed; it seems to cluster in specific regions. There are a lot of potential reasons for this; universities with access to fancy lab equipment and students, venture capital available for startups, existing adjacent industries (like pharma) that already have the infrastructure available for research, favorable regulatory landscapes. We already know that cities tend to specialize in specific technologies, and branch off into adjacent technologies over time, so it stands to reason that different cities will develop capabilities and specialize in different applications and research areas of synthetic biology. For example, a city with a lot of capabilites in producing software might have an easier time developing software tools. A city with a lot of agricultural capability might be better at scaling up plant modifications. A city with a big university where a lot of theoretical research happens could develop enhanced capabilities in producing foundational, theoretical innovations that require a certain knowledge base, and so on and so forth.
+This code is stored as amino acid sequences, cheaply synthesized into physical DNA, and introduced into cells. This field is rapidly developing through research happening all over the world, but innovation is not evenly distributed; it seems to cluster in specific regions. There are a lot of potential reasons for this; universities with access to fancy lab equipment and students, venture capital available for startups, existing adjacent industries (like pharma) that already have the infrastructure available for research, favorable regulatory landscapes. We already know that cities tend to specialize in specific technologies, and branch off into adjacent technologies over time \citep{hidalgoProductSpaceConditions2007} different cities will develop capabilities and specialize in different applications and research areas of synthetic biology. For example, a city with a lot of capabilites in producing software might have an easier time developing software tools. A city with a lot of agricultural capability might be better at scaling up plant modifications. A city with a big university where a lot of theoretical research happens could develop enhanced capabilities in producing foundational, theoretical innovations that require a certain knowledge base, and so on and so forth.
 
 However, although these capabilities are vital to the future industrial mix of the city, they can be difficult to measure and compare quantitatively. ``Capability'' and ``innovation'' are abstract concepts, and we have to use quantifiable outputs if we hope to understand them empirically at scale. Different artifacts can reflect the creation of new knowledge in unique ways, while pointing to overlapping underlying regional capabilities. For example, an academic research paper and a patent are two different reflections of innovation with different goals. A patent shows that commercial research is occurring, and that the innovators believe an idea has value to industry. An academic paper is the fruit of scholarly research, and the authors benefit off of its publication based on how much it impacts a scientific field. An academic breakthrough could have minimal commercial use and vice versa.
 
@@ -121,7 +132,7 @@ Part of these norms is a dedication to principles of open science, extensive doc
 
 iGEM is a global, integrated, open knowledge base, but that doesn't mean that regional capabilities don't show up. Generally, teams are hosted by universities, and draw from a pool of advisors in their faculty or local community. This could mean that iGEM research has a high degree of relatedness to existing academic research going on at a city and university level.
 
-However, this conclusion is nontrivial, because the teams are operating under a different incentive structure, and with a different knowledge base, than an academic research group. Some teams are a result of collaborations between multiple institutions or research groups in a city; for example, the Munich team is a collaboration between TUM and LMU students. Some teams have strong existing networks of collaboration between other teams, with students competing multiple years in a row and establishing long-term cooperative bonds. Team collaboration is outside the focus of this inquiry but has been studied more in depth by Marc Santolini's research group at the learning planet institute in Paris.
+However, this conclusion is nontrivial, because the teams are operating under a different incentive structure, and with a different knowledge base, than an academic research group. Some teams are a result of collaborations between multiple institutions or research groups in a city; for example, the Munich team is a collaboration between TUM and LMU students. Some teams have strong existing networks of collaboration between other teams, with students competing multiple years in a row and establishing long-term cooperative bonds. Team collaboration is outside the focus of this inquiry but has been studied more in depth by Marc Santolini's research group at the learning planet institute in Paris \citep{santoliniIGEMModelSystem2023}.
 
 An overarching goal of the iGEM organization in maintaining a registry of open-source tools and standards for synthetic biology. The impact of the organization extends far beyond the boundaries of the organized competition; alumni have gone on to form companies, start research labs of their own, and place meaningfully in this developing industry. iGEM styles itself as ``the heart of synthetic biology'', and it's not just hype.
 
@@ -141,13 +152,13 @@ Humanity's oldest and most vital biotechnology is control over fermentation. Bef
 \section{Background}
 % ============================================================
 
-Boschma et al (2014) studied the impact of scientific relatedness on knowledge dynamics in biotechnology at the city level. This analysis provides a clean methodological base to build from.
+\citet{boschmaScientificKnowledgeDynamics2014} studied the impact of scientific relatedness on knowledge dynamics in biotechnology at the city level. This analysis provides a clean methodological base to build from.
 
-Santolini et al (2023) presents the iGEM data as a well-structured dataset for studying team dynamics and innovation.
+\citet{santoliniIGEMModelSystem2023} presents the iGEM data as a well-structured dataset for studying team dynamics and innovation.
 
 More background literature that forms a methodological basis for comparing patents, papers, and project abstracts across the same embedding space would be very useful, as would anything linking patents, papers, and genetic code.
 
-Oldham \& Hall's research
+The research of \citet{oldhamSyntheticBiologyMapping2018}
 
 \subsection{Case Study: Carbon Capture}
 
@@ -265,7 +276,7 @@ Do cities publish papers related to their igem projects? Do they patent in clust
 \section{Use of AI}
 % ============================================================
 
-SPECTER2 is an artificial intelligence model from the BERT family of 2nd generation NLP (Natural Language Processing) models. As explained earlier, the document embeddings generated with it form the basis for much of this project's analyses.
+SPECTER2 is an artificial intelligence model from the BERT \citep{devlinBERTPretrainingDeep2019} family of 2nd generation NLP (Natural Language Processing) models. As explained earlier, the document embeddings generated with it form the basis for much of this project's analyses.
 
 In addition to the NLP embeddings which the semantic embedding space was constructed on, Large Language Models (LLMs) were used extensively over the course of this project. The tools used were primarily from the Anthropic Claude family (Haiku, Sonnet, and Opus), with some lightweight data processing and vocabulary assistance done by a locally-hosted instance of qwen2.5:3b running in Ollama.
 
@@ -291,18 +302,18 @@ However, Claude's utility did not end at agentic coding. For interdisciplinary r
 
 A ``discussion'' command was written which prompted the agent to simulate a discussion between a group of several real scientists. Real researchers with extensive publication history were used to encourage the LLM to cite their associated bodies of literature.
 
+\subsubsection{Referencing}
+
+The "Zotero Connector" plugin allowed for reference directly from a database of relevant literature. This plugin, in addition to a short script, was used to easily generate a bibliography file.
+
+
+\subsection{Semantic Embeddings}
+
 We need some way to identify topics in patents, papers, projects, and parts, to make meaningful comparisons across these different artifacts with disparate documentation, language, and underlying causes. We're taking advantage of the fact that patents, papers, and projects all have abstracts and titles, written using the nomenclature of synthetic biology. We make use of a bidirectional language encoding model called SPECTER2 to generate embeddings of these in high-dimensional space.
 
 Then we project the embeddings onto a lower dimensional space so they can be clustered. 60 dimensions or so. Once the clusters are identified, they're labeled by running the 10 abstracts closest to the cluster of each centroid through an LLM (Claude Haiku API), to understand what they have in common and label the clusters.
 
 We also collect the papers cited by the iGEM biobrick registry; including these papers connects the corpus of literature to the network in a unique way. This pulls papers concerned with the methods actually used by synbio practitioners, deliberately curated by the igemers, and offering a unique link to the biobrick corpus.
-
-The methods section will be organized across three escalating claims of increasingly general nature.
-\begin{enumerate}
-  \item The semantic embedding approach is internally valid. Projects cluster close to the papers they cite
-  \item iGEM projects and papers co-specialize in cities with sufficient data depth
-  \item iGEM activity precedes or accompanies publication and patent activity. The temporal analysis is meant to be exploratory, not to make causal claims.
-\end{enumerate}
 
 \subsection{Parts}
 
@@ -315,6 +326,13 @@ We ran a few BLAST searches on patent sequence data using Lens.org's PatSeq tool
 % ============================================================
 \section{Results}
 % ============================================================
+
+The results section will be organized across three escalating claims of increasingly general nature.
+\begin{enumerate}
+	\item The semantic embedding approach is internally valid. Projects cluster close to the papers they cite
+	\item iGEM projects and papers co-specialize in cities with sufficient data depth
+	\item iGEM activity precedes or accompanies publication and patent activity. The temporal analysis is meant to be exploratory, not to make causal claims.
+\end{enumerate}
 
 The most compelling part of this data collection so far may be the papers referencing biobricks. Even though there isn't a standard for citing open-source genetic parts registries in the literature, and even with the limitations of full-text search, there were still 671 papers collected that directly cite biobricks in the registry, from PubMedCentral alone. This represents but a small fraction of their true impact, as it only returns papers that:
 \begin{enumerate}
@@ -360,6 +378,21 @@ Matching biobrick code to patents through Lens PatSeq data could be a fascinatin
 % ============================================================
 
 Matrix of relatedness between clusters -> predict the trajectory of a city
+
+% ============================================================
+% References
+% ============================================================
+% Pulled from the researcher's Zotero library via
+% scripts/export_zotero_bib.py, which writes references.bib.
+% \bibliography below emits its own unnumbered "References" heading;
+% \addcontentsline puts that heading into the table of contents.
+% \nocite{*} forces every entry in references.bib into the bibliography,
+% including curated sources not yet cited in this draft. Remove this line
+% once every reference is cited in the text above.
+\addcontentsline{toc}{section}{References}
+\nocite{*}
+\bibliographystyle{plainnat}
+\bibliography{references}
 
 % ============================================================
 \end{document}

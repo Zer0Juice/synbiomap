@@ -21,10 +21,13 @@
 \contentsline {subsection}{\numberline {6.2}Coding Agents}{6}{subsection.6.2}%
 \contentsline {subsubsection}{\numberline {6.2.1}Coding}{7}{subsubsection.6.2.1}%
 \contentsline {subsubsection}{\numberline {6.2.2}Reasoning}{7}{subsubsection.6.2.2}%
-\contentsline {subsection}{\numberline {6.3}Parts}{8}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Patents}{8}{subsection.6.4}%
+\contentsline {subsubsection}{\numberline {6.2.3}Referencing}{7}{subsubsection.6.2.3}%
+\contentsline {subsection}{\numberline {6.3}Semantic Embeddings}{7}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Parts}{8}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Patents}{8}{subsection.6.5}%
 \contentsline {section}{\numberline {7}Results}{8}{section.7}%
 \contentsline {section}{\numberline {8}Limitations}{8}{section.8}%
 \contentsline {subsection}{\numberline {8.1}Next Steps}{9}{subsection.8.1}%
 \contentsline {section}{\numberline {9}Open Questions}{9}{section.9}%
 \contentsline {section}{\numberline {10}Relatedness}{9}{section.10}%
+\contentsline {section}{References}{9}{section.10}%
