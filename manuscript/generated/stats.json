@@ -1,0 +1,176 @@
+{
+  "n_cities_analyzed": {
+    "macro": "statNCitiesAnalyzed",
+    "value": 387,
+    "formatted": "387",
+    "note": "cities with both papers and projects"
+  },
+  "overlap_mean": {
+    "macro": "statOverlapMean",
+    "value": 0.9458798176250408,
+    "formatted": "0.946",
+    "note": ""
+  },
+  "overlap_median": {
+    "macro": "statOverlapMedian",
+    "value": 0.9596533179283142,
+    "formatted": "0.960",
+    "note": ""
+  },
+  "overlap_skew": {
+    "macro": "statOverlapSkew",
+    "value": -1.328898053297391,
+    "formatted": "-1.33",
+    "note": ""
+  },
+  "overlap_kurt": {
+    "macro": "statOverlapKurt",
+    "value": 1.4627116410380783,
+    "formatted": "1.46",
+    "note": ""
+  },
+  "size_papers_r": {
+    "macro": "statSizePapersR",
+    "value": 0.705615739930399,
+    "formatted": "+0.71",
+    "note": ""
+  },
+  "size_papers_p": {
+    "macro": "statSizePapersP",
+    "value": 1.45352592756942e-59,
+    "formatted": "0.000",
+    "note": ""
+  },
+  "size_projects_r": {
+    "macro": "statSizeProjectsR",
+    "value": 0.6957511763774873,
+    "formatted": "+0.70",
+    "note": ""
+  },
+  "size_projects_p": {
+    "macro": "statSizeProjectsP",
+    "value": 2.748273366934115e-57,
+    "formatted": "0.000",
+    "note": ""
+  },
+  "n_papers_total": {
+    "macro": "statNPapersTotal",
+    "value": 10319,
+    "formatted": "10,319",
+    "note": ""
+  },
+  "n_projects_total": {
+    "macro": "statNProjectsTotal",
+    "value": 4606,
+    "formatted": "4,606",
+    "note": ""
+  },
+  "paper_year_min": {
+    "macro": "statPaperYearMin",
+    "value": 2000,
+    "formatted": "2000",
+    "note": ""
+  },
+  "paper_year_max": {
+    "macro": "statPaperYearMax",
+    "value": 2026,
+    "formatted": "2026",
+    "note": ""
+  },
+  "project_year_min": {
+    "macro": "statProjectYearMin",
+    "value": 2009,
+    "formatted": "2009",
+    "note": ""
+  },
+  "project_year_max": {
+    "macro": "statProjectYearMax",
+    "value": 2025,
+    "formatted": "2025",
+    "note": ""
+  },
+  "align_mean_delta": {
+    "macro": "statAlignMeanDelta",
+    "value": "0.013528747",
+    "formatted": "+0.0135",
+    "note": ""
+  },
+  "align_frac_pos": {
+    "macro": "statAlignFracPos",
+    "value": 0.9082313681868743,
+    "formatted": "0.908",
+    "note": ""
+  },
+  "align_t": {
+    "macro": "statAlignT",
+    "value": "77.99478",
+    "formatted": "77.99",
+    "note": ""
+  },
+  "align_p": {
+    "macro": "statAlignP",
+    "value": "0.0",
+    "formatted": "0.0000",
+    "note": ""
+  },
+  "align_n_projects": {
+    "macro": "statAlignNProjects",
+    "value": 3596,
+    "formatted": "3,596",
+    "note": ""
+  },
+  "did_estimate": {
+    "macro": "statDidEstimate",
+    "value": "0.0025836872",
+    "formatted": "+0.0026",
+    "note": ""
+  },
+  "did_t": {
+    "macro": "statDidT",
+    "value": "7.331635",
+    "formatted": "7.33",
+    "note": ""
+  },
+  "did_p": {
+    "macro": "statDidP",
+    "value": "1.6974006e-13",
+    "formatted": "0.0000",
+    "note": ""
+  },
+  "did_n": {
+    "macro": "statDidN",
+    "value": 1834,
+    "formatted": "1,834",
+    "note": ""
+  },
+  "leadlag_best_lag": {
+    "macro": "statLeadlagBestLag",
+    "value": 3,
+    "formatted": "+3",
+    "note": ""
+  },
+  "leadlag_best_sim": {
+    "macro": "statLeadlagBestSim",
+    "value": 0.9003255268522828,
+    "formatted": "0.9003",
+    "note": ""
+  },
+  "n_cities_parts": {
+    "macro": "statNCitiesParts",
+    "value": 348,
+    "formatted": "348",
+    "note": "cities with >= 10 registered parts"
+  },
+  "part_entropy_median": {
+    "macro": "statPartEntropyMedian",
+    "value": 1.5570912079426202,
+    "formatted": "1.557",
+    "note": ""
+  },
+  "part_entropy_max": {
+    "macro": "statPartEntropyMax",
+    "value": 3.58351893845611,
+    "formatted": "3.584",
+    "note": "uniform over all part types"
+  }
+}
