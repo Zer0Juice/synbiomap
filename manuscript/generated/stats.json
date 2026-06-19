@@ -119,6 +119,90 @@
     "formatted": "3,596",
     "note": ""
   },
+  "align_t_clustered": {
+    "macro": "statAlignTClustered",
+    "value": 17.69978470971945,
+    "formatted": "17.70",
+    "note": ""
+  },
+  "align_n_cities": {
+    "macro": "statAlignNCities",
+    "value": 320,
+    "formatted": "320",
+    "note": ""
+  },
+  "align_delta_city": {
+    "macro": "statAlignDeltaCity",
+    "value": "0.008442174",
+    "formatted": "+0.0084",
+    "note": ""
+  },
+  "align_t_city": {
+    "macro": "statAlignTCity",
+    "value": "12.194124",
+    "formatted": "12.19",
+    "note": ""
+  },
+  "align_frac_cities_pos": {
+    "macro": "statAlignFracCitiesPos",
+    "value": 0.790625,
+    "formatted": "0.791",
+    "note": ""
+  },
+  "align_size_r": {
+    "macro": "statAlignSizeR",
+    "value": 0.5947784891730302,
+    "formatted": "+0.59",
+    "note": ""
+  },
+  "align_size_p": {
+    "macro": "statAlignSizeP",
+    "value": 5.321690411679614e-32,
+    "formatted": "0.000",
+    "note": ""
+  },
+  "align_delta_large": {
+    "macro": "statAlignDeltaLarge",
+    "value": "0.016501091",
+    "formatted": "+0.0165",
+    "note": ""
+  },
+  "align_delta_small": {
+    "macro": "statAlignDeltaSmall",
+    "value": "0.004450868",
+    "formatted": "+0.0045",
+    "note": ""
+  },
+  "cc_align_n": {
+    "macro": "statCcAlignN",
+    "value": 111,
+    "formatted": "111",
+    "note": ""
+  },
+  "cc_align_n_cities": {
+    "macro": "statCcAlignNCities",
+    "value": 79,
+    "formatted": "79",
+    "note": ""
+  },
+  "cc_align_mean_delta": {
+    "macro": "statCcAlignMeanDelta",
+    "value": "0.014040113",
+    "formatted": "+0.0140",
+    "note": ""
+  },
+  "cc_align_frac_pos": {
+    "macro": "statCcAlignFracPos",
+    "value": 0.9009009009009009,
+    "formatted": "0.901",
+    "note": ""
+  },
+  "cc_align_t_clustered": {
+    "macro": "statCcAlignTClustered",
+    "value": 9.504063368985863,
+    "formatted": "9.50",
+    "note": ""
+  },
   "did_estimate": {
     "macro": "statDidEstimate",
     "value": "0.0025836872",
@@ -141,6 +225,18 @@
     "macro": "statDidN",
     "value": 1834,
     "formatted": "1,834",
+    "note": ""
+  },
+  "did_t_clustered": {
+    "macro": "statDidTClustered",
+    "value": 4.05954702565273,
+    "formatted": "4.06",
+    "note": ""
+  },
+  "did_n_cities": {
+    "macro": "statDidNCities",
+    "value": 161,
+    "formatted": "161",
     "note": ""
   },
   "leadlag_best_lag": {

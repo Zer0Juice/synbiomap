@@ -1,7 +1,8 @@
 % ============================================================
 %  methods_draft.tex
-%  A STANDALONE draft of the Methods, Results, and Conclusion — NOT the
+%  A STANDALONE rough AI draft (Introduction through Conclusion) — NOT the
 %  manuscript. Kept separate from main.tex so it can be revised freely.
+%  Intro/Background prose is adapted and expanded from main.tex.
 %
 %  It pulls in the auto-generated assets written by
 %  scripts/export_paper_assets.py:
@@ -31,21 +32,190 @@
 \graphicspath{{generated/figures/}}
 \input{generated/stats.tex}                  % defines \statOverlapMean, \statNCitiesAnalyzed, ...
 
-\title{Methods and Results (Draft)}
+\title{Patents, Papers, Parts, and Planet\\[0.4em]{\large\itshape Rough AI Draft}}
 \date{}
 
 \begin{document}
 \maketitle
 
+\begin{center}
+\fbox{\parbox{0.92\linewidth}{\centering\small\itshape
+This is a rough, AI-assisted working draft. Prose, structure, and emphasis are
+provisional and under active revision; numbers and figures are generated from
+the analysis pipeline but the surrounding argument has not yet been finalised.}}
+\end{center}
+\vspace{1em}
+
+% ============================================================
+\section{Introduction}
+% ============================================================
+
+% --- Research question -------------------------------------------------------
+\subsection{Research Question}
+
+This thesis asks a single question: \textbf{do cities with student synthetic
+biology research also produce academic papers in related areas?} Put more
+carefully, when a city's iGEM teams take up a theme, do that city's researchers
+publish on semantically related themes --- and can we see that relatedness in the
+text the two groups leave behind? The rest of this document builds the data, the
+measures, and the tests needed to answer it, and is careful throughout to speak
+of \textit{semantic relatedness} and \textit{co-location} rather than cause and
+effect.
+
+% --- Motivation --------------------------------------------------------------
+\subsection{Motivation}
+
+The modern industrial era has reshaped the biosphere. By tapping vast reserves of
+ancient hydrocarbons we transformed our social structures and our surroundings:
+human productive capacity skyrocketed, populations grew along exponential curves,
+industrial farming produced a historically unprecedented surplus of food, and
+advances in medicine lengthened and improved billions of lives. By many measures
+humanity lives longer, healthier, and more abundantly than ever before.
+
+That abundance carries a cost. A deep reliance on fossil hydrocarbons is neither
+stable nor sustainable: deposits of coal, oil, and natural gas are finite, and
+burning them is changing the climate. If the last two centuries were built on
+pulling carbon out of the ground, the next must be built on managing it --- and
+biology offers one of the most promising toolkits for doing so.
+
+Humanity has always sought to understand and influence the natural world.
+Biology, the study of life itself, spent most of its history describing life:
+breaking organisms into their forms and components so that we might build up an
+understanding of the principles that guide them. That descriptive work eventually
+gave rise to something new. Once we understood life's principles well enough, we
+began to \textit{create} --- to design and direct new biological systems rather
+than only catalogue existing ones. This is the age of synthetic biology.
+
+Synthetic biology is an emergent field that uses standardised tools to engineer
+biological systems. Cells become industrially productive machinery; genetic
+sequences are treated as functions written in the programming language of life,
+catalogued, standardised, and snapped together into genetic circuits. Among its
+applications, engineering industrial fermentation is one of the most important:
+microbes such as \textit{E.\,coli} are modified to produce useful compounds, often
+under anaerobic conditions, turning living cells into tiny factories. Control over
+fermentation is in fact humanity's oldest biotechnology --- we brewed and
+leavened long before we could name a microbe or characterise lactic acid and
+ethanol --- and synthetic biology is the modern, deliberate continuation of that
+very old practice.
+
+% --- Unit of analysis --------------------------------------------------------
+\subsection{Why Cities?}
+
+Innovation in synthetic biology is not spread evenly across the map; it clusters.
+There are many plausible reasons --- universities with expensive equipment and
+talented students, venture capital for startups, adjacent industries such as
+pharmaceuticals that already own the necessary infrastructure, favourable
+regulation --- and they tend to coincide in particular places. We already know
+that regions specialise in particular technologies and branch into adjacent ones
+over time \citep{hidalgoProductSpaceConditions2007}, so different cities should
+develop different capabilities \emph{within} synthetic biology: a city strong in
+software may build better computational tools, a city with agricultural strength
+may scale up plant engineering, a city built around a research university may
+specialise in foundational work. The city is where capabilities cluster, which
+makes it the natural unit at which to look for the relatedness this thesis is
+after.
+
+% --- The three artifacts -----------------------------------------------------
+\subsection{Three Artifacts, One Question}
+
+Capabilities are abstract and hard to measure directly, so we read them off the
+quantifiable things a city produces. Different artifacts reflect knowledge
+creation in different ways while pointing back to the same underlying capability.
+A patent signals that someone believes an idea has commercial value. An academic
+paper is the product of scholarly work, rewarded by its impact on a field. The
+two can diverge --- an academic breakthrough may have little commercial use, and
+a valuable patent may contain little novel science. Synthetic biology adds a third
+artifact unique to the field: the iGEM project. This thesis uses all three ---
+student projects, academic papers, and the physical genetic parts that tie them
+together --- as different but connected windows onto the same local capabilities,
+and asks whether they line up in semantic space.
+
+To be clear about scope before we begin: this draft establishes and stress-tests
+the link between \textit{projects} and \textit{papers}, corroborates it with the
+\textit{parts}, and traces it through the carbon-capture case study.
+\textit{Patents} --- the fourth ``P'' in the project's title, and the bridge from
+research to commercial application --- are motivated and set up here but left to
+future work, for the practical reasons the Conclusion makes concrete. A reader
+should finish this section knowing which promises the Results pay off and which
+are roadmap.
+
+% ============================================================
+\section{Background}
+% ============================================================
+
+% --- Methodological base -----------------------------------------------------
+\subsection{A Methodological Starting Point}
+
+\citet{boschmaScientificKnowledgeDynamics2014} studied how scientific relatedness
+shapes knowledge dynamics in biotechnology at the city level, and supplies the
+clean methodological base this project builds on: represent a place by what it
+works on, and read relatedness off how those representations line up.
+\citet{hidalgoProductSpaceConditions2007} adds the complementary intuition that
+regions move through a ``product space,'' specialising in what sits close to what
+they already do. \citet{santoliniIGEMModelSystem2023} establishes the other half
+of the foundation, presenting iGEM as a well-structured dataset for studying
+team-level innovation. Where Boschma and Hidalgo give us the geography of
+relatedness and Santolini gives us the data, this thesis joins the two: it asks
+whether a regional-relatedness lens, applied to a novel student artifact,
+recovers the same local structure.
+
+% --- iGEM --------------------------------------------------------------------
+\subsection{iGEM: A Novel Artifact}
+
+The International Genetically Engineered Machine competition --- iGEM --- is a
+worldwide student competition in synthetic biology, something like a LEGO-robots
+contest for genetic engineering. Teams of students work for a year to produce an
+innovative project using the tools of the field. They share a basic toolkit of
+genetic parts, a common set of rules, and a standard project structure, but are
+otherwise left to craft their own entry. The result sits somewhere between a
+conference paper and a startup in an accelerator, and the competition has become a
+major launching point for careers in synthetic biology, setting norms that ripple
+through the wider industry.
+
+Chief among those norms is a commitment to open science: extensive public
+documentation, and a shared, standardised registry of genetic parts built to the
+``BioBrick'' standard so that parts interoperate as pieces of genetic circuits.
+The BioBrick standard, created by Tom Knight at MIT, has grown alongside the
+competition into a remarkable, well-documented record of a field developing over
+time. Basic parts are often lifted directly from academic research and translated
+into the standard; composite parts are assembled from existing ones. Because every
+project both deposits new parts and reuses old ones, the registry forms a rich
+knowledge graph that links projects to one another --- and, through their sources,
+to the academic literature.
+
+iGEM is a global, integrated, open knowledge base, but that does not erase
+regional structure. Teams are usually hosted by universities and draw advisors
+from local faculty and community, so a team's work may be closely related to the
+research already happening in its city. That expectation is not trivial, though:
+teams operate under different incentives and with a different knowledge base than
+an academic group, some are cross-institution collaborations (the Munich team, for
+instance, joins TUM and LMU students), and many maintain their own networks of
+returning students and allied teams. Team collaboration itself is outside this
+thesis's focus and has been studied in depth elsewhere
+\citep{santoliniIGEMModelSystem2023}; our question is narrower --- whether a
+city's iGEM work is semantically related to its academic publications.
+
+% --- Case study --------------------------------------------------------------
+\subsection{Case Study: Carbon Capture}
+
+To keep the analysis grounded, the broader project carries one interpretive thread
+throughout: carbon capture in synthetic biology. Returning to the motivation
+above, managing atmospheric carbon is exactly the kind of problem synthetic
+biology is being pointed at, and it is concrete enough to trace from end to end.
+The case study follows carbon-capture work across all three artifact types --- the
+iGEM projects that take it up, the BioBricks they register and the literature
+those parts cite, and the patents that pick up related sequences --- as a worked
+example of the local innovation trajectory the broader analysis looks for at
+scale.
+
 % ============================================================
 \section{Methods}
 % ============================================================
 
-This project asks whether the student synthetic biology projects produced in a
-city sit in the same neighbourhood of meaning as that city's academic papers.
-To answer it we need three things: a corpus of artifacts tied to cities, a way
-to turn their text into something a computer can compare, and a set of measures
-that capture ``relatedness'' without overstating what it implies. This section
+To answer the question set out in the Introduction we need three things: a corpus
+of artifacts tied to cities, a way to turn their text into something a computer
+can compare, and a set of measures that capture ``relatedness'' without
+overstating what it implies. This section
 builds those three pieces in order, and shows what each one produces along the
 way. Throughout, we are careful to talk about \textit{semantic relatedness} and
 \textit{association} rather than cause and effect; the artifacts we compare are
@@ -213,16 +383,27 @@ centroid, and its average similarity to the paper centroids of all other cities
 The difference between the two, which we call $\delta$, is positive whenever a
 project looks more like home than like elsewhere. Across \statAlignNProjects{}
 projects the mean advantage is $\delta = \statAlignMeanDelta{}$, and
-\statAlignFracPos{} of projects are individually positive
-($t = \statAlignT{}$, $p < 0.001$). Figure~\ref{fig:align} shows the full
-distribution and the project-by-project comparison.
+\statAlignFracPos{} of projects are individually positive.
+Figure~\ref{fig:align} shows the full distribution and the project-by-project
+comparison.
 
-The effect is small in absolute terms --- a consequence of the same field-level
-baseline noted above --- but it is consistent: projects do sit nearer their own
-city's research than a random city's. We read this as evidence of local
-\textit{relatedness}, not of any causal pull, since a shared university faculty
-could easily produce both kinds of work on the same theme without one feeding
-the other.
+A word on how we count, because it changes the headline number. Projects from
+the same city are all compared against the \textit{same} paper centroid, so they
+are not independent observations; a naive one-sample test
+($t = \statAlignT{}$) badly overstates its confidence by treating
+\statAlignNProjects{} correlated projects as if they were that many independent
+draws. The honest unit of analysis is the city. Clustering the standard error at
+the city level --- the intercept-only case of the standard cluster-robust
+estimator (Cameron \& Miller, 2015) --- brings the statistic down to
+$t = \statAlignTClustered{}$ across \statAlignNCities{} cities, and aggregating
+to a single mean $\delta$ per city before testing tells the same story
+($\delta = \statAlignDeltaCity{}$, $t = \statAlignTCity{}$, with
+\statAlignFracCitiesPos{} of cities on the home-city side). The effect is small in
+absolute terms --- a consequence of the field-level baseline noted above --- but
+it is real and it survives being counted properly. We read it as evidence of
+local \textit{relatedness}, not of any causal pull, since a shared university
+faculty could easily produce both kinds of work on the same theme without one
+feeding the other.
 
 \begin{figure}[htbp]
   \centering
@@ -258,13 +439,15 @@ distribution of the per-project estimate.
 
 \input{generated/tables/did_cells.tex}
 
-Across \statDidN{} projects the estimate is positive and statistically
-detectable ($\text{DiD} = \statDidEstimate{}$, $t = \statDidT{}$,
-$p < 0.001$), but it is tiny next to the stable-specialisation gap that sits
-underneath it. In plain terms: most of why a project resembles its city's papers
-is that the city has a durable thematic identity, with only a sliver attributable
-to same-year alignment. This is a useful corrective to a naive reading of the
-local-alignment result.
+Across \statDidN{} projects the estimate is positive and survives the same
+city-level clustering used above ($\text{DiD} = \statDidEstimate{}$,
+$t = \statDidTClustered{}$ clustered across \statDidNCities{} cities; the naive
+$t = \statDidT{}$ again overstates the precision), but it is tiny next to the
+stable-specialisation gap that sits underneath it. In plain terms: most of why a
+project resembles its city's papers is that the city has a durable thematic
+identity, with only a sliver attributable to same-year alignment. This is a
+useful corrective to a naive reading of the local-alignment result, and we return
+to it as the analytical centrepiece of the Results.
 
 \begin{figure}[htbp]
   \centering
@@ -369,11 +552,13 @@ The Methods section reported each measure's numbers where it built the measure.
 Here we step back and read those numbers as three escalating claims, each more
 demanding than the last. The first is a sanity check: that the embedding space
 recovers a recognisable map of the field at all. The second is the thesis's
-central empirical claim: that a city's student projects and its academic papers
-occupy related regions of that map. The third is the most ambitious, and the one
-we can least support: that the two are linked in time, with projects running
-ahead of papers. We take them in turn, then ask whether anything outside the text
-agrees.
+central empirical claim, and the analytical core of the draft: that a city's
+student projects and its academic papers occupy related regions of that map ---
+and, once we ask \textit{how much} of that relatedness is live coupling rather
+than standing identity, that the honest answer is ``mostly standing identity.''
+The third is the most ambitious, and the one we can least support: that the two
+are linked in time, with projects running ahead of papers. We take them in turn,
+then ask whether anything outside the text agrees.
 
 % ------------------------------------------------------------
 \subsection{The Embedding Space Recovers a Sensible Map}
@@ -401,36 +586,70 @@ reserves its uncertainty for the cities we know least about.
 % ------------------------------------------------------------
 
 The central result is that an iGEM project sits closer to its own city's papers
-than to other cities' papers. Across \statAlignNProjects{} projects the mean
-advantage is $\delta = \statAlignMeanDelta{}$, and \statAlignFracPos{} of
-projects are individually on the home-city side of the line ($t = \statAlignT{}$,
-$p < 0.001$). The effect is small in cosine units but extraordinarily consistent
---- roughly nine projects in ten point home --- which is what we would expect if
-student work and local research draw on a shared regional base.
+than to other cities' papers. The raw advantage is small but pervasive ---
+$\delta = \statAlignMeanDelta{}$, with \statAlignFracPos{} of projects on the
+home-city side --- and, crucially, it holds up once we count cities rather than
+projects. Clustered at the city level the advantage stands at
+$t = \statAlignTClustered{}$ across \statAlignNCities{} cities, and
+\statAlignFracCitiesPos{} of cities (not just projects) lean toward home.
+Whatever else is true, a city's student work really does resemble its own
+academic work more than a stranger's.
 
-But ``closer to home'' can mean two things, and the difference-in-differences
-design separates them. Only \statDidEstimate{} of the home-city advantage is
-specific to a project's own year (Table~\ref{tab:did}; $t = \statDidT{}$,
-$p < 0.001$); the rest is a standing gap that holds in other years too. The
-honest reading is that co-specialisation is real and durable but largely
-\textit{static}: a city that works on a theme tends to produce both projects and
-papers on it across many years, and only a sliver of the alignment reflects
-projects and papers moving together year to year. This is a more modest claim
+But ``closer to home'' can mean two very different things, and separating them is
+the analytical heart of this draft. The home-city advantage might be a
+\textit{timing} signal --- this year's projects tracking this year's local
+papers, the kind of live coupling a knowledge pipeline would produce --- or it
+might be pure \textit{stable specialisation}: a city that has always done
+biosensors will show biosensor projects and biosensor papers in every year, with
+no ideas passing between them. The difference-in-differences design isolates the
+timing slice from the standing one (Table~\ref{tab:did}). The verdict is sobering
+for the pipeline story: of the whole home-city advantage, only \statDidEstimate{}
+is specific to a project's own year ($t = \statDidTClustered{}$ clustered across
+\statDidNCities{} cities --- small, but really there), while the rest is a
+durable thematic identity that holds across years. Co-specialisation is real, but
+it is mostly something a city \textit{is}, not something that \textit{happens}
+between its students and its scholars in a given year. This is a more modest claim
 than a knowledge pipeline, and it is the one the data actually support.
+
+That co-specialisation is also unevenly distributed, in a way that is itself
+informative. The home-city advantage grows with the size of a city's research
+base: across cities, mean $\delta$ rises with the (log) number of local papers
+($r = \statAlignSizeR{}$), and projects in above-median cities enjoy more than
+three times the advantage of those in the long tail ($\delta =
+\statAlignDeltaLarge{}$ versus $\statAlignDeltaSmall{}$). Local alignment, in
+other words, is largely a feature of mature clusters --- the Beijings and Bostons
+with enough of both kinds of work to have built a coherent local identity --- and
+fades, without quite vanishing, in cities with only a project or two. That is a
+more useful finding for innovation policy than a flat average would be: it
+suggests the project--paper link is something clusters \textit{grow into} as
+their research base thickens.
+
+Finally, the carbon-capture case study behaves just like the whole. Restricting
+the alignment test to the \statCcAlignN{} carbon-capture projects (across
+\statCcAlignNCities{} cities) gives essentially the same picture as the full
+corpus --- $\delta = \statCcAlignMeanDelta{}$, \statCcAlignFracPos{} of projects
+on the home-city side, $t = \statCcAlignTClustered{}$ clustered by city. The
+thread we promised to follow is not an exception: a city's carbon-capture
+students sit nearer its own carbon-relevant literature than elsewhere's, exactly
+as the general result predicts.
 
 % ------------------------------------------------------------
 \subsection{Timing Is Unresolved, but the Parts Agree}
 % ------------------------------------------------------------
 
-The most ambitious claim --- that projects lead papers --- we cannot make. The
-lead--lag profile (Table~\ref{tab:leadlag}, Figure~\ref{fig:leadlag}) rises
-gently from lag $-3$ to lag $+3$, with its nominal peak at
-$k = \statLeadlagBestLag{}$ years, the direction the early-signal hypothesis
-predicts. But the whole profile spans about a thousandth of a cosine unit and the
-confidence intervals overlap throughout, so we treat it as flat. City--year
-centroids built from a handful of documents are simply too coarse to resolve
-timing, and we report the null because it is informative about the method's
-limits, not because it settles the question.
+The most ambitious claim --- that projects lead papers --- we cannot make, and the
+reason is worth stating as a result in its own right. The lead--lag profile
+(Table~\ref{tab:leadlag}, Figure~\ref{fig:leadlag}) rises gently from lag $-3$ to
+lag $+3$, with its nominal peak at $k = \statLeadlagBestLag{}$ years, the
+direction the early-signal hypothesis predicts. But the whole profile spans about
+a thousandth of a cosine unit and the confidence intervals overlap throughout, so
+we treat it as flat. This is best read as a \textit{negative methodological
+result}: a centroid averaged over the one or two documents a small city produces
+in a given year carries almost no temporal information, so timing simply cannot be
+read off centroids at this resolution. Resolving it will take a sharper instrument
+--- the project--part--paper citation graph described in the Background, where a
+single project's parts point to dated literature directly --- which we flag as the
+natural next step rather than a finding of this draft.
 
 What does survive is an independent corroboration from outside the text. The mix
 of BioBrick part types a city registers --- measured with no reference to the
@@ -449,34 +668,40 @@ more confidence that the specialisation lives in the cities, not in the model.
 The question this draft set out to answer was whether cities that host student
 synthetic biology projects also produce academic papers in related areas. The
 answer is a qualified yes. A city's iGEM projects sit measurably nearer its own
-papers than other cities' papers, the pattern holds across roughly nine of every
-ten projects, and it is echoed by a parts-based fingerprint that never touches
-the embedding model. Cities do appear to specialise, and their student and
-academic work specialises together.
+papers than other cities' papers; the pattern holds across roughly nine of every
+ten projects and, more tellingly, across four in five \textit{cities} once the
+inference is clustered where it belongs; it is strongest in large, mature research
+hubs but still positive in the long tail; it reappears essentially unchanged in
+the carbon-capture case study; and it is echoed by a parts-based fingerprint that
+never touches the embedding model. Cities do appear to specialise, and their
+student and academic work specialises together.
 
 Two qualifications keep that finding honest. First, the alignment is mostly a
 stable feature of a city's identity rather than a year-by-year coupling: the
 difference-in-differences result shows that the same-year, ``this project tracks
-this paper'' component is real but small. We therefore describe a \textit{local
-innovation trajectory} as shared standing specialisation, not as a demonstrated
-flow of ideas from students to scholars. Second, our strongest temporal
-hypothesis --- that projects run ahead of papers --- is neither confirmed nor
-refuted; the city--year centroids are too thin to resolve it, and saying so
-plainly is part of the result. Both qualifications echo the interpretive caution
-above: with a corpus that is entirely synthetic biology, field-level similarity
-sets a high baseline, and the signal we care about lives in the small margins on
-top of it.
+this paper'' component, while statistically real even under city-level
+clustering, is small next to the standing thematic gap. We therefore describe a
+\textit{local innovation trajectory} as shared standing specialisation, not as a
+demonstrated flow of ideas from students to scholars. Second, our strongest
+temporal hypothesis --- that projects run ahead of papers --- is neither confirmed
+nor refuted; the city--year centroids are too thin to resolve it, and resolving it
+will take the finer, graph-level instrument we turn to below. Both qualifications
+echo the interpretive caution in the Methods: with a corpus that is entirely
+synthetic biology, field-level similarity sets a high baseline, and the signal we
+care about lives in the small margins on top of it.
 
-These limits also point the way forward. The clearest gains would come from finer
-links than centroids can provide: scraping the DOIs that iGEM teams cite on their
-wikis, to build a direct citation network between projects and the local
-literature; matching paper, patent, and team authors to ask whether researchers
-stay in the orbit of their old iGEM collaborators; and matching BioBrick
-sequences to patent filings through sequence databases, to trace individual
-pieces of genetic code from an open registry into commercial application. Each
-would replace a coarse, centroid-level association with a concrete, traceable
-link --- and would let a future study ask not just whether a city's projects and
-papers are related, but whether one actually grew out of the other.
+These limits also point the way forward, and mark where the project's remaining
+reach --- patents, and the planet-scale application that motivates the whole
+effort --- comes in. The clearest gains would come from finer links than centroids
+can provide: scraping the DOIs that iGEM teams cite on their wikis, to build a
+direct citation network between projects and the local literature; matching paper,
+patent, and team authors to ask whether researchers stay in the orbit of their old
+iGEM collaborators; and matching BioBrick sequences to patent filings through
+sequence databases, to trace individual pieces of genetic code from an open
+registry into commercial application. Each would replace a coarse, centroid-level
+association with a concrete, traceable link --- and would let a future study ask
+not just whether a city's projects and papers are related, but whether one
+actually grew out of the other.
 
 \bibliographystyle{plainnat}
 \bibliography{references}

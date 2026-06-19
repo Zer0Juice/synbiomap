@@ -178,6 +178,36 @@ def attach_embeddings(df: pd.DataFrame, cache: dict) -> pd.DataFrame:
     return df
 
 
+def cluster_robust_mean(values, groups):
+    """Mean of `values` with a *cluster-robust* standard error and t-stat.
+
+    Why this matters: our project-level tests treat each iGEM project as an
+    observation, but projects from the same city are compared against the *same*
+    paper centroid, so their errors are correlated. A naive t-test then acts as
+    if it has thousands of independent observations when it really has a few
+    hundred cities. Clustering the standard error at the city level fixes this:
+    it is the intercept-only case of the cluster-robust ("clustered") estimator
+    of Cameron & Miller (2015), and the resulting t-stat reflects roughly the
+    number of cities, not the number of projects.
+
+    Returns (mean, se, t, n_obs, n_clusters).
+    """
+    v = np.asarray(values, dtype=float)
+    g = np.asarray(groups)
+    n = len(v)
+    beta = v.mean()
+    resid = v - beta
+    # Meat of the sandwich: sum over clusters of (sum of residuals in cluster)^2.
+    cluster_sums = pd.DataFrame({"r": resid, "g": g}).groupby("g")["r"].sum()
+    G = len(cluster_sums)
+    meat = float((cluster_sums ** 2).sum())
+    # (X'X)^-1 = 1/n for X = a column of ones; small-sample correction G/(G-1).
+    var = (G / (G - 1)) * meat / (n * n)
+    se = float(np.sqrt(var))
+    t = beta / se if se > 0 else np.nan
+    return beta, se, t, n, G
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage A — straight from city_level.csv (no embeddings needed)
 # ──────────────────────────────────────────────────────────────────────────────
@@ -309,6 +339,44 @@ def stage_embeddings(papers: pd.DataFrame, projects: pd.DataFrame) -> None:
     record("align_p", p, ".4f")
     record("align_n_projects", len(pv), ",d")
 
+    # --- City-clustered inference (projects within a city are not independent) ---
+    city_keys = pv.city_key.to_numpy()
+    _, _, t_clu, _, n_cities = cluster_robust_mean(delta, city_keys)
+    record("align_t_clustered", t_clu, ".2f")
+    record("align_n_cities", n_cities, ",d")
+
+    # City as the unit of analysis: average delta within each city, then test.
+    city_delta = pd.Series(delta).groupby(city_keys).mean()
+    t_city, p_city = stats.ttest_1samp(city_delta, 0, alternative="greater")
+    record("align_delta_city", city_delta.mean(), "+.4f")
+    record("align_t_city", t_city, ".2f")
+    record("align_frac_cities_pos", (city_delta > 0).mean(), ".3f")
+
+    # --- Heterogeneity: is the local advantage concentrated in large cities? ---
+    # "Size" = number of embedded papers a project's home city has.
+    city_npapers = counts.reindex(city_delta.index)
+    r_sz, p_sz = stats.pearsonr(np.log1p(city_npapers.to_numpy()), city_delta.to_numpy())
+    record("align_size_r", r_sz, "+.2f")
+    record("align_size_p", p_sz, ".3f")
+    med_np = float(city_npapers.median())
+    home_np = pv.city_key.map(counts).to_numpy()
+    big = home_np >= med_np
+    record("align_delta_large", delta[big].mean(), "+.4f")
+    record("align_delta_small", delta[~big].mean(), "+.4f")
+
+    # --- Carbon-capture slice: does the case-study subset align locally too? ---
+    cc_col = pv.get("case_study_flag")
+    if cc_col is not None:
+        cc = cc_col.fillna(False).astype(bool).to_numpy()
+        if cc.sum() >= 5:
+            cc_delta = delta[cc]
+            _, _, cc_t, _, cc_ncity = cluster_robust_mean(cc_delta, city_keys[cc])
+            record("cc_align_n", int(cc.sum()), ",d")
+            record("cc_align_n_cities", cc_ncity, ",d")
+            record("cc_align_mean_delta", cc_delta.mean(), "+.4f")
+            record("cc_align_frac_pos", (cc_delta > 0).mean(), ".3f")
+            record("cc_align_t_clustered", cc_t, ".2f")
+
     # --- Difference-in-differences: is the local advantage stronger in the project's own year? ---
     MIN_ANNUAL_PAPERS = 2
     annual = {}
@@ -334,10 +402,11 @@ def stage_embeddings(papers: pd.DataFrame, projects: pd.DataFrame) -> None:
             continue
         s = sfull[i]
         AA, AB, BA, BB = s[aa].mean(), s[ab].mean(), s[ba].mean(), s[bb].mean()
-        rows.append({"sim_AA": AA, "sim_AB": AB, "sim_BA": BA, "sim_BB": BB,
+        rows.append({"city_key": r.city_key,
+                     "sim_AA": AA, "sim_AB": AB, "sim_BA": BA, "sim_BB": BB,
                      "did": (AA - BA) - (AB - BB)})
     did = pd.DataFrame(rows)
-    m = did.mean()
+    m = did[["sim_AA", "sim_AB", "sim_BA", "sim_BB", "did"]].mean()
     t_d, p_d = stats.ttest_1samp(did["did"], 0, alternative="greater")
 
     fig, axes = plt.subplots(1, 2, figsize=(11, 4))
@@ -358,6 +427,10 @@ def stage_embeddings(papers: pd.DataFrame, projects: pd.DataFrame) -> None:
     record("did_t", t_d, ".2f")
     record("did_p", p_d, ".4f")
     record("did_n", len(did), ",d")
+    # City-clustered inference for the DiD, same logic as the alignment test.
+    _, _, did_t_clu, _, did_ncity = cluster_robust_mean(did["did"], did["city_key"])
+    record("did_t_clustered", did_t_clu, ".2f")
+    record("did_n_cities", did_ncity, ",d")
     save_table(pd.DataFrame({"": ["Own year", "Other years"],
                              "Own city": [m.sim_AA, m.sim_AB],
                              "Other cities": [m.sim_BA, m.sim_BB]}),
