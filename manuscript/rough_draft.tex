@@ -355,8 +355,8 @@ Figure~\ref{fig:size} makes this concrete: semantic overlap rises with the
 number of papers ($r = \statSizePapersR{}$) and projects
 ($r = \statSizeProjectsR{}$) a city has. This is the familiar tension between
 diversity and relatedness in regional science, and it means we cannot read raw
-overlap as evidence of local idea flow on its own. The measures in the next
-three subsections are designed to look past this baseline.
+overlap as evidence of local idea flow on its own. The measures that follow are
+designed to look past this baseline.
 
 \begin{figure}[htbp]
   \centering
@@ -366,6 +366,70 @@ three subsections are designed to look past this baseline.
   positive, so part of a city's overlap reflects how much it produces rather
   than how aligned its two outputs are.}
   \label{fig:size}
+\end{figure}
+
+% ------------------------------------------------------------
+\subsection{Beyond Centroids: Do Projects and Papers Share the Same Topics?}
+% ------------------------------------------------------------
+
+The centroid measure has a ceiling we have just seen: because every document is
+synthetic biology, two city centroids start close by default, and the spread that
+survives is thin and entangled with city size. A sharper question sidesteps the
+average altogether. Instead of asking how nearly two centroids point in the same
+direction, we ask \textit{which specific topics} a city works on, and whether its
+students and its scholars work on the \textit{same} ones.
+
+To do that we first sort the documents into topics. We run HDBSCAN --- a
+density-based clustering algorithm that finds dense groups without our having to fix
+their number in advance, and sets aside documents too sparse to belong as ``noise''
+(Campello, Moulavi \& Sander, 2013) --- over the embedding space, which yields a few
+hundred coherent sub-themes (biosensors, metabolic engineering, genome assembly, and
+the like). Each city then gets two \textit{cluster-frequency vectors}: the share of
+its papers that fall in each topic, and the share of its projects. We define a
+city's \textbf{cluster co-membership} as the cosine between those two vectors. Unlike
+the centroid overlap, this number is high \textit{only} when papers and projects
+occupy the same specific topics, and near zero when they occupy different ones: the
+field-level baseline cancels, because belonging to synthetic biology is no longer
+enough to score.
+
+That sharpness costs data. With several hundred topics, a city holding only a
+handful of documents can miss its own themes by chance, leaving its two vectors
+looking unrelated for want of observations rather than for want of relatedness. We
+therefore compute the measure only for cities with at least \statClusterMinDocs{}
+clustered documents of each type --- \statClusterNCitiesDense{} of the
+\statClusterNCitiesAll{} cities that have any clustered work of both kinds. A sweep
+across thresholds confirms this is a measurement floor and not a finding: below it
+most cities score exactly zero, while above it a signal emerges and strengthens as
+the threshold rises.
+
+We then subject the measure to the test the centroid overlap could not pass. We ask
+whether a city's own papers and own projects share topics by more than chance with a
+\textbf{re-pairing permutation test}: within each country we randomly reassign which
+city's project-vector is matched against which city's paper-vector, recompute the
+average co-membership, and repeat two thousand times (Good, 2005). This null keeps
+each country's mix of work intact while destroying the local pairing, so it isolates
+exactly the quantity at issue --- whether a city's two outputs are aligned beyond
+what a same-country neighbour would supply. The observed mean co-membership is
+\statClusterPermObserved{}, against a null mean of \statClusterPermNullMean{}
+(permutation $p = \statClusterPermP{}$; an excess of \statClusterPermExcess{}, about
+half again above chance). And unlike raw overlap, it is not a size effect: regressed
+on the log counts of a city's papers and projects it leaves only
+$R^2 = \statClusterOlsRsq{}$, with neither coefficient reaching significance
+($p = \statClusterSizePapersP{}$ and $\statClusterSizeProjectsP{}$).
+Figure~\ref{fig:cluster} shows the contrast with the centroid measure alongside the
+permutation null.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{cluster_comembership}
+  \caption{Cluster co-membership. Left: the distribution of the centroid overlap
+  (pinned near 1.0 by the shared field) against cluster co-membership, which spreads
+  out because it scores only shared \textit{specific} topics. Right: the
+  within-country re-pairing permutation null for the mean co-membership across cities
+  with at least \statClusterMinDocs{} documents of each type; the observed value sits
+  far into the right tail ($p = \statClusterPermP{}$), passing the test the centroid
+  measure fails.}
+  \label{fig:cluster}
 \end{figure}
 
 % ------------------------------------------------------------
@@ -537,7 +601,11 @@ cosine similarity between city centroids is dominated by field-level similarity:
 two cities look alike mostly because they both do synthetic biology, and only
 secondarily because of any genuine local alignment. The difference-in-differences
 result makes this concrete, and it is why we lean on the sharper, within-city
-comparisons rather than on raw overlap. Second, papers are geocoded to a single
+comparisons rather than on raw overlap. The sharpest of those, cluster
+co-membership, carries its own caveat in turn: it can only be computed where a city
+has enough documents to estimate a topic distribution, so its permutation result
+speaks to the \statClusterNCitiesDense{} most active cities rather than to the long
+tail. Second, papers are geocoded to a single
 affiliation, so multi-city collaborations are flattened, and our annual centroids
 are too thin to support fine temporal claims. Accordingly we frame every result
 in this section as semantic relatedness and plausible co-location, and we leave
@@ -549,16 +617,18 @@ mentor-level data.
 % ============================================================
 
 The Methods section reported each measure's numbers where it built the measure.
-Here we step back and read those numbers as three escalating claims, each more
-demanding than the last. The first is a sanity check: that the embedding space
-recovers a recognisable map of the field at all. The second is the thesis's
-central empirical claim, and the analytical core of the draft: that a city's
-student projects and its academic papers occupy related regions of that map ---
-and, once we ask \textit{how much} of that relatedness is live coupling rather
-than standing identity, that the honest answer is ``mostly standing identity.''
-The third is the most ambitious, and the one we can least support: that the two
-are linked in time, with projects running ahead of papers. We take them in turn,
-then ask whether anything outside the text agrees.
+Here we step back and read those numbers as a sequence of escalating claims, each
+more demanding than the last. The first is a sanity check: that the embedding space
+recovers a recognisable map of the field at all. The second is the thesis's central
+empirical claim: that a city's student projects and its academic papers occupy the
+\textit{same specific topics}, not merely the same broad field --- a local
+relatedness that, measured by cluster co-membership, survives a permutation test the
+raw centroid overlap cannot. A project-level alignment test corroborates it from a
+second direction, and decomposing that alignment shows how much is live, same-year
+coupling (little) versus standing thematic identity (most). The third claim is the
+most ambitious, and the one we can least support: that the two are linked in time,
+with projects running ahead of papers. We take them in turn, then ask whether
+anything outside the text agrees.
 
 % ------------------------------------------------------------
 \subsection{The Embedding Space Recovers a Sensible Map}
@@ -582,11 +652,38 @@ reserves its uncertainty for the cities we know least about.
 \input{generated/tables/bottom15_cities.tex}
 
 % ------------------------------------------------------------
+\subsection{A City's Projects and Papers Share Its Specific Topics}
+% ------------------------------------------------------------
+
+The central finding is that a city's student projects and its academic papers
+concentrate in the \textit{same specific corners} of synthetic biology, not just the
+same broad field. Measured as cluster co-membership --- the cosine between a city's
+paper and project topic-distributions --- the average city, among the
+\statClusterNCitiesDense{} with enough documents to measure it, scores
+\statClusterPermObserved{}, well above the \statClusterPermNullMean{} expected when
+we re-pair papers and projects across same-country cities at random (permutation
+$p = \statClusterPermP{}$). In plain terms: a city's two kinds of output land in the
+same topics far more often than a comparable neighbour's would, and the gap is large
+relative to chance --- an excess of \statClusterPermExcess{}, roughly half again
+above the null.
+
+What makes this the result the draft leans on, rather than the raw centroid overlap,
+is that it clears two bars the centroid measure cannot. It is not an artifact of the
+field baseline: by scoring only shared \textit{specific} topics, it starts from zero
+for unrelated cities rather than from the near-1.0 floor every synthetic-biology
+centroid sits on. And it is not an artifact of city size: the same kind of regression
+that explains most of the centroid overlap explains almost none of this measure
+($R^2 = \statClusterOlsRsq{}$, with neither size coefficient significant), so we are
+not merely rediscovering that large cities have steadier centres. A measure built to
+survive both objections does survive them, which is why we read its permutation
+result as the thesis's strongest evidence of genuine local relatedness.
+
+% ------------------------------------------------------------
 \subsection{Projects and Papers Co-specialise Within Cities}
 % ------------------------------------------------------------
 
-The central result is that an iGEM project sits closer to its own city's papers
-than to other cities' papers. The raw advantage is small but pervasive ---
+A second line of evidence works one project at a time: an iGEM project sits closer
+to its own city's papers than to other cities' papers. The raw advantage is small but pervasive ---
 $\delta = \statAlignMeanDelta{}$, with \statAlignFracPos{} of projects on the
 home-city side --- and, crucially, it holds up once we count cities rather than
 projects. Clustered at the city level the advantage stands at
@@ -656,10 +753,15 @@ of BioBrick part types a city registers --- measured with no reference to the
 embedding space --- shows the same specialisation the text does
 (Figure~\ref{fig:parts}): the median city's part-type entropy is
 \statPartEntropyMedian{} nats against a possible \statPartEntropyMax{}, so cities
-concentrate on particular kinds of biology rather than spreading evenly. That two
-methods built on entirely different data --- abstract text on one side,
-registered parts on the other --- both point to local specialisation gives us
-more confidence that the specialisation lives in the cities, not in the model.
+concentrate on particular kinds of biology rather than spreading evenly. More
+directly, cities that look alike in part-type space also look alike in
+topic-cluster space: correlating the two sets of city-to-city similarities --- a
+Mantel test (Mantel, 1967) --- gives a clear positive association across
+\statMantelNCities{} cities ($r = \statMantelR{}$, $p = \statMantelP{}$ against a
+label-shuffling null), so the physical parts and the abstract text rank the cities
+the same way. That two methods built on entirely different data --- abstract text on
+one side, registered parts on the other --- both point to local specialisation gives
+us more confidence that the specialisation lives in the cities, not in the model.
 
 % ============================================================
 \section{Conclusion}
@@ -667,7 +769,12 @@ more confidence that the specialisation lives in the cities, not in the model.
 
 The question this draft set out to answer was whether cities that host student
 synthetic biology projects also produce academic papers in related areas. The
-answer is a qualified yes. A city's iGEM projects sit measurably nearer its own
+answer is a qualified yes. Its strongest form is topical: in cities active enough to
+measure it, a city's projects and papers fall in the \textit{same specific}
+sub-fields far more than a same-country neighbour's would (cluster co-membership,
+permutation $p = \statClusterPermP{}$), a relatedness that holds up after stripping
+out both the field-level baseline and city size. The centroid-based tests tell the
+same story from a second angle. A city's iGEM projects sit measurably nearer its own
 papers than other cities' papers; the pattern holds across roughly nine of every
 ten projects and, more tellingly, across four in five \textit{cities} once the
 inference is clustered where it belongs; it is strongest in large, mature research

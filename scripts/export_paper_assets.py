@@ -26,11 +26,12 @@ embedding model:
   - ``data/processed/parts.csv``       (BioBrick part-type composition)
   - ``data/embeddings/embeddings_batches/``  (cached SPECTER2 vectors, via _load_cache)
 
-What it does NOT cover (yet)
-----------------------------
-The semantic-cluster / Mantel / OLS analyses (notebook "Section 8") are not
-exported here because that clustering step is not currently persisted to disk.
-Restore it and those exports can be added to ``stage_parts``.
+Cluster co-membership (notebook "Section 8")
+--------------------------------------------
+``stage_cluster`` exports the cluster co-membership measure, its within-country
+re-pairing permutation test, and the cross-modal Mantel test. It reads the
+document-level HDBSCAN labels persisted in ``data/processed/all_artifacts.csv``
+(written by ``scripts/05_cluster.py``), so it also needs no embedding model.
 
 Usage
 -----
@@ -264,6 +265,145 @@ def stage_city_level() -> pd.DataFrame:
     save_table(ranked[disp].tail(15), "bottom15_cities",
                caption="Bottom 15 cities by semantic overlap.", label="tab:bottom15")
     return city
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Stage A2 — cluster co-membership: a baseline-free test of local relatedness
+# ──────────────────────────────────────────────────────────────────────────────
+def stage_cluster() -> None:
+    """City-level cluster co-membership: do a city's papers and projects fall in the
+    *same* HDBSCAN topic clusters more than a within-country re-pairing would?
+
+    This is the baseline-free counterpart to the centroid overlap (which is pinned
+    near 1.0 by the synthetic-biology field baseline). It reads the document-level
+    cluster labels persisted in all_artifacts.csv by scripts/05_cluster.py, so it
+    needs no embedding model. Closes the gap noted in this script's header.
+
+    References: HDBSCAN (Campello et al. 2013); permutation inference (Good 2005);
+    Mantel (1967) for the two-matrix correlation; MacKinnon & White (1985) for HC3.
+    """
+    print("\n[A2] Cluster co-membership (from all_artifacts.csv)")
+    art = pd.read_csv(DATA / "all_artifacts.csv", low_memory=False)
+    art["city_key"] = art["city"].astype(str).str.strip().str.lower()
+    valid = art[art["cluster_label"] >= 0]          # drop HDBSCAN noise (label -1)
+    K = int(valid["cluster_label"].max()) + 1
+
+    def freq(sub):
+        """L2-normalised length-K cluster-frequency vector (None if no clustered docs)."""
+        v = np.zeros(K)
+        for c, n in sub["cluster_label"].value_counts().items():
+            v[int(c)] = n
+        nrm = np.linalg.norm(v)
+        return v / nrm if nrm > 0 else None
+
+    city = pd.read_csv(DATA / "city_level.csv")[["city_key", "country", "semantic_overlap"]]
+    pvec, qvec, rows = {}, {}, []
+    for ck, g in valid.groupby("city_key"):
+        pg, qg = g[g.type == "paper"], g[g.type == "project"]
+        if len(pg) == 0 or len(qg) == 0:
+            continue
+        p, q = freq(pg), freq(qg)
+        if p is None or q is None:
+            continue
+        pvec[ck], qvec[ck] = p, q
+        rows.append({"city_key": ck, "n_cl_papers": len(pg), "n_cl_projects": len(qg),
+                     "cluster_overlap": float(np.dot(p, q))})  # both unit-norm -> dot = cosine
+    co = pd.DataFrame(rows).merge(city, on="city_key", how="left")
+    co["log_n_cl_papers"] = np.log1p(co["n_cl_papers"])
+    co["log_n_cl_projects"] = np.log1p(co["n_cl_projects"])
+    record("cluster_n_cities_all", len(co), ",d", "cities with >=1 clustered doc of each type")
+
+    # Primary sample: cities dense enough to estimate a topic distribution at all.
+    # Below this, the K-dim vectors are so sparse that papers and projects miss each
+    # other by chance (a measurement floor), so the signal is unmeasurable, not absent.
+    MIN = 8
+    dense = co[(co.n_cl_papers >= MIN) & (co.n_cl_projects >= MIN)].copy()
+    record("cluster_min_docs", MIN)
+    record("cluster_n_cities_dense", len(dense), ",d", f">= {MIN} clustered docs of each type")
+
+    # OLS: is the overlap just a city-size effect? (mirror of the centroid regression)
+    import statsmodels.formula.api as smf
+    ols = smf.ols("cluster_overlap ~ log_n_cl_papers + log_n_cl_projects",
+                  data=dense).fit(cov_type="HC3")
+    record("cluster_ols_rsq", ols.rsquared, ".3f")
+    record("cluster_size_papers_p", ols.pvalues["log_n_cl_papers"], ".3f")
+    record("cluster_size_projects_p", ols.pvalues["log_n_cl_projects"], ".3f")
+
+    # The decisive test: within-country re-pairing permutation. Break the link between
+    # a city's own papers and own projects (shuffle which project-vector pairs with
+    # which paper-vector, within country) and recompute the mean. Observed >> null
+    # means the own pairing is genuinely related beyond same-country chance.
+    from collections import defaultdict
+    rng = np.random.default_rng(42)
+    cities = list(dense.city_key)
+    observed = float(np.mean([np.dot(pvec[c], qvec[c]) for c in cities]))
+    country_of = dict(zip(dense.city_key, dense.country))
+    groups = defaultdict(list)
+    for c in cities:
+        groups[country_of[c]].append(c)
+    N_PERM = 2000
+    null = np.empty(N_PERM)
+    for t in range(N_PERM):
+        sims = []
+        for gc in groups.values():
+            if len(gc) == 1:                          # singletons can't be shuffled
+                sims.append(np.dot(pvec[gc[0]], qvec[gc[0]]))
+            else:
+                perm = rng.permutation(gc)
+                sims.extend(np.dot(pvec[a], qvec[b]) for a, b in zip(gc, perm))
+        null[t] = np.mean(sims)
+    p_perm = (np.sum(null >= observed) + 1) / (N_PERM + 1)
+    record("cluster_perm_observed", observed, ".4f")
+    record("cluster_perm_null_mean", null.mean(), ".4f")
+    record("cluster_perm_p", p_perm, ".4f")
+    record("cluster_perm_excess", observed - null.mean(), "+.4f")
+
+    # Figure: centroid-vs-cluster contrast (left) + permutation null (right)
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+    axes[0].hist(co.semantic_overlap.dropna(), bins=30, color=FILL, edgecolor="white",
+                 label="centroid overlap")
+    axes[0].hist(co.cluster_overlap, bins=30, color=ORANGE, alpha=0.7, edgecolor="white",
+                 label="cluster co-membership")
+    axes[0].set(xlabel="City-level overlap", ylabel="Number of cities",
+                title="Centroid overlap is pinned near 1.0;\ncluster co-membership is discriminative")
+    axes[0].legend(fontsize=8)
+    axes[1].hist(null, bins=40, color=FILL, edgecolor="white", label="re-paired null")
+    axes[1].axvline(observed, color=ORANGE, linewidth=2,
+                    label=f"observed = {observed:.3f}  (p = {p_perm:.4f})")
+    axes[1].axvline(null.mean(), color=MUTED, linestyle="--", linewidth=1)
+    axes[1].set(xlabel="Mean city cluster co-membership", ylabel="Permutations",
+                title="Survives the within-country\nre-pairing permutation test")
+    axes[1].legend(fontsize=8)
+    save_fig("cluster_comembership")
+
+    # Cross-modal Mantel test: do part-type space and cluster space agree across cities?
+    # (An independent corroboration: parts are measured with no reference to the text.)
+    try:
+        parts = pd.read_csv(DATA / "parts.csv", usecols=["team_id", "biobrick_part_type"]).dropna()
+        parts["team_id"] = parts["team_id"].astype(int)
+        proj = pd.read_csv(DATA / "projects.csv", usecols=["team_id", "city"]).dropna()
+        proj["city_key"] = proj["city"].astype(str).str.strip().str.lower()
+        proj["team_id"] = proj["team_id"].astype(int)
+        tc = proj[["team_id", "city_key"]].drop_duplicates("team_id")
+        parts = parts.merge(tc, on="team_id", how="left").dropna(subset=["city_key"])
+        pcount = parts.groupby(["city_key", "biobrick_part_type"]).size().unstack(fill_value=0)
+        pcount = pcount[pcount.sum(axis=1) >= 10]
+        pprops = pcount.div(pcount.sum(axis=1), axis=0)
+        common = [c for c in qvec if c in pprops.index]    # cities with both representations
+        from sklearn.metrics.pairwise import cosine_similarity as cossim
+        Sc = cossim(np.vstack([qvec[c] for c in common]))        # cluster-space similarity
+        Sp = cossim(np.vstack([pprops.loc[c].values for c in common]))  # part-type similarity
+        tri = np.triu_indices(len(common), k=1)
+        r_obs = float(stats.spearmanr(Sc[tri], Sp[tri]).statistic)
+        rng2 = np.random.default_rng(42)
+        perm = np.array([stats.spearmanr(Sp[tri], Sc[(o := rng2.permutation(len(common)))][:, o][tri]).statistic
+                         for _ in range(999)])
+        mp = (np.sum(np.abs(perm) >= abs(r_obs)) + 1) / (999 + 1)
+        record("mantel_r", r_obs, "+.2f")
+        record("mantel_p", mp, ".4f")
+        record("mantel_n_cities", len(common), ",d")
+    except Exception as e:
+        print(f"  mantel test skipped ({type(e).__name__}: {e})")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -560,6 +700,7 @@ def main() -> None:
         df["year"] = df["year"].astype(int)
 
     stage_city_level()
+    stage_cluster()
     stage_activity(papers, projects)
     if not args.no_embeddings:
         try:
