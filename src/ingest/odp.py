@@ -296,6 +296,43 @@ def extract_all_inventor_locations(meta: dict) -> list[dict]:
     return locations
 
 
+def extract_patent_record(patent: dict) -> dict:
+    """
+    Flatten a raw ODP search result into a record ready for enrichment.
+
+    Unlike extract_fields() (which keeps only the FIRST inventor's city and
+    drops everything else), this keeps EVERY inventor's location and the link
+    to the patent's grant XML, so the caller can do all-inventor (fractional)
+    geocoding and fetch the abstract. The default ODP search response already
+    includes inventorBag and grantDocumentMetaData, so no extra API call is
+    needed at this stage — only the later abstract download.
+
+    Returns a dict: patent_id, number, title, year, locations (list from
+    extract_all_inventor_locations), file_uri (grant XML link), abstract
+    (empty, filled later), retrieval_reason.
+    """
+    meta = patent.get("applicationMetaData", {}) or {}
+    num = str(meta.get("patentNumber") or "").strip()
+    title = meta.get("inventionTitle", "") or ""
+
+    year = None
+    grant_date = meta.get("grantDate", "") or ""
+    if grant_date[:4].isdigit():
+        year = int(grant_date[:4])
+
+    gdoc = patent.get("grantDocumentMetaData", {}) or {}
+    return {
+        "patent_id":        f"US{num}" if num else "",
+        "number":           num,
+        "title":            title,
+        "year":             year,
+        "locations":        extract_all_inventor_locations(meta),
+        "file_uri":         gdoc.get("fileLocationURI", ""),
+        "abstract":         "",
+        "retrieval_reason": patent.get("retrieval_reason", "keyword"),
+    }
+
+
 def lookup_patents_by_number(
     patent_numbers: list[str],
     batch_size: int = 20,

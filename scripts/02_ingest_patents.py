@@ -53,17 +53,27 @@ import json
 import time
 import logging
 from pathlib import Path
+from collections import Counter
+
+import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 from src.utils.config import load_config
 from src.ingest import odp, normalize
+from src.geo.geocode import geocode_dataframe
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s  %(message)s")
 logger = logging.getLogger(__name__)
 
-CACHE_DIR = REPO_ROOT / "data" / "raw"
+CACHE_DIR  = REPO_ROOT / "data" / "raw"
+ABS_CACHE  = CACHE_DIR / "patents_abstracts.json"          # number -> abstract text
+GEO_CACHE  = REPO_ROOT / "data" / "geo" / "geocoding_cache.json"   # shared city cache
+WEIGHTS_PATH = REPO_ROOT / "data" / "processed" / "patent_city_weights.csv"
+
+# Polite delay between grant-XML abstract downloads (ODP file endpoint).
+ABS_DELAY = 0.6
 
 
 def _load_cache(layer_name: str) -> list[dict] | None:
@@ -88,6 +98,109 @@ def _save_cache(layer_name: str, extracted_records: list[dict]) -> None:
     with open(path, "w") as f:
         json.dump(extracted_records, f)
     logger.info(f"Cached {len(extracted_records)} records → {path.name}")
+
+
+def _geo_key(city: str, state: str, country: str) -> tuple[str, str]:
+    """(geo_city, geo_country) for the geocoder; US cities carry the state."""
+    country = (country or "").upper()
+    if country == "US" and state:
+        return f"{city}, {state}", country
+    return city, country
+
+
+def _fetch_abstracts(records: list[dict]) -> None:
+    """
+    Fill rec['abstract'] for every record by downloading its grant XML.
+
+    The ODP bibliographic API has no abstract; each patent's grant XML (linked
+    by file_uri) does. Cached by patent number in patents_abstracts.json and
+    saved incrementally, so the run is restartable. Patents with no grant-XML
+    link (a few older grants) get an empty abstract.
+    """
+    ABS_CACHE.parent.mkdir(parents=True, exist_ok=True)
+    cache = json.loads(ABS_CACHE.read_text()) if ABS_CACHE.exists() else {}
+
+    # Patents without a grant-XML link can't be fetched: mark empty.
+    for r in records:
+        if r["number"] and not r.get("file_uri"):
+            cache.setdefault(r["number"], "")
+
+    todo = [r for r in records if r["number"] and r.get("file_uri") and r["number"] not in cache]
+    print(f"\n--- Fetching abstracts for {len(todo)} patents "
+          f"({len(records) - len(todo)} already cached or unavailable) ---")
+    for i, r in enumerate(todo, 1):
+        xml = odp.fetch_grant_xml(r["file_uri"])
+        if xml is None:
+            continue                     # transient failure: retry next run
+        cache[r["number"]] = odp.extract_abstract_from_grant_xml(xml)
+        time.sleep(ABS_DELAY)
+        if i % 25 == 0:
+            ABS_CACHE.write_text(json.dumps(cache))
+            logger.info(f"  abstracts: {i}/{len(todo)} fetched")
+    ABS_CACHE.write_text(json.dumps(cache))
+
+    for r in records:
+        r["abstract"] = cache.get(r["number"], "") or ""
+
+
+def _enrich_and_geocode(records: list[dict]) -> list[dict]:
+    """
+    Add primary city/country/lat/lon, all_cities/all_coords, and return the
+    fractional (patent, city) weight rows.
+
+    Every inventor's location is used: each patent contributes a total weight
+    of 1, split across the distinct cities of its located inventors (OECD
+    REGPAT convention). The first located inventor is the primary point for
+    single-dot map placement.
+    """
+    distinct: set[tuple[str, str]] = set()
+    for r in records:
+        located = [l for l in (r.get("locations") or []) if l.get("city")]
+        counts: Counter = Counter()
+        primary = None
+        for l in located:
+            gc = _geo_key(l["city"], l.get("state", ""), l.get("country", ""))
+            counts[gc] += 1
+            distinct.add(gc)
+            if primary is None:
+                primary = l
+        r["_counts"] = counts
+        if primary:
+            r["city"] = primary["city"]
+            r["country"] = (primary.get("country") or "").upper()
+            r["_primary_geo"] = _geo_key(primary["city"], primary.get("state", ""),
+                                         primary.get("country", ""))
+        else:
+            r["city"], r["country"], r["_primary_geo"] = "", "", None
+
+    # Geocode each distinct inventor city once (shared cache).
+    weights: list[dict] = []
+    coord: dict[tuple[str, str], tuple] = {}
+    if distinct:
+        dd = pd.DataFrame(sorted(distinct), columns=["geo_city", "country"])
+        print(f"\n--- Geocoding {len(dd)} distinct inventor cities "
+              f"(cached in {GEO_CACHE.name}) ---")
+        dd = geocode_dataframe(dd, cache_file=GEO_CACHE,
+                               city_col="geo_city", country_col="country")
+        coord = {(row.geo_city, row.country): (row.lat, row.lon)
+                 for row in dd.itertuples()}
+
+    for r in records:
+        pg = r.get("_primary_geo")
+        r["lat"], r["lon"] = coord.get(pg, (None, None)) if pg else (None, None)
+        names, coords = [], []
+        n_located = sum(r["_counts"].values())
+        for gc, k in r["_counts"].items():
+            names.append(gc[0])
+            ll = coord.get(gc)
+            if ll and ll[0] is not None:
+                coords.append([ll[0], ll[1]])
+            weights.append({"id": r["patent_id"], "geo_city": gc[0], "country": gc[1],
+                            "weight": k / n_located,
+                            "lat": ll[0] if ll else None, "lon": ll[1] if ll else None})
+        r["all_cities"], r["all_coords"] = names, coords
+
+    return weights
 
 
 def run():
@@ -115,7 +228,7 @@ def run():
         """Extract fields, deduplicate by patent_id, and accumulate."""
         extracted = []
         for patent in patents:
-            fields = odp.extract_fields(patent)
+            fields = odp.extract_patent_record(patent)
             fields["retrieval_reason"] = reason
             pid = fields.get("patent_id", "")
             if pid and pid in seen_ids:
@@ -200,6 +313,12 @@ def run():
     print(f"  {'TOTAL':<25} {len(raw_records)}\n")
 
     # ------------------------------------------------------------------
+    # Enrich: abstracts (for embedding text) + all-inventor geocoding.
+    # ------------------------------------------------------------------
+    _fetch_abstracts(raw_records)
+    weights = _enrich_and_geocode(raw_records)
+
+    # ------------------------------------------------------------------
     # Normalize and save
     # ------------------------------------------------------------------
     patents_df = normalize.normalize_patents_odp(
@@ -207,13 +326,18 @@ def run():
         carbon_keywords=corpus_cfg["carbon_capture_keywords"],
     )
 
-    print(f"Carbon capture tagged: {patents_df['case_study_flag'].sum()} patents")
-
     output_path = REPO_ROOT / "data" / "processed" / "patents.csv"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     patents_df.to_csv(output_path, index=False)
-    print(f"Saved to {output_path.relative_to(REPO_ROOT)}")
+    pd.DataFrame(weights).to_csv(WEIGHTS_PATH, index=False)
 
+    n_abs = sum(1 for r in raw_records if r.get("abstract"))
+    n_geo = patents_df["lat"].notna().sum()
+    print(f"\nSaved {len(patents_df)} patents -> {output_path.relative_to(REPO_ROOT)}")
+    print(f"Saved {len(weights)} (patent,city) rows -> {WEIGHTS_PATH.relative_to(REPO_ROOT)}")
+    print(f"  with abstract:        {n_abs}/{len(patents_df)} ({n_abs/max(len(patents_df),1):.0%})")
+    print(f"  with coordinates:     {n_geo}/{len(patents_df)} ({n_geo/max(len(patents_df),1):.0%})")
+    print(f"  carbon-capture tagged: {patents_df['case_study_flag'].sum()}")
     print("\nTop countries:")
     print(patents_df["country"].value_counts().head(10).to_string())
 

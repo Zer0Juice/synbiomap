@@ -15,6 +15,7 @@ Methodology note:
 
 from __future__ import annotations
 import hashlib
+import json
 import logging
 import re
 from typing import Sequence
@@ -137,22 +138,30 @@ def normalize_papers(raw_records: list[dict], carbon_keywords: list[str]) -> pd.
 
 def normalize_patents_odp(raw_records: list[dict], carbon_keywords: list[str]) -> pd.DataFrame:
     """
-    Normalize a list of USPTO ODP patent dicts to the shared schema.
+    Normalize enriched USPTO ODP patent records to the shared schema.
 
     Parameters
     ----------
-    raw_records     : output of odp.extract_fields() for each patent
-    carbon_keywords : list of carbon-capture keywords for case study tagging
+    raw_records     : enriched patent dicts (see scripts/02_ingest_patents.py).
+                      Each carries: patent_id, title, abstract, year, the
+                      primary inventor city/country/lat/lon, and all_cities /
+                      all_coords (lists of every distinct inventor city and its
+                      [lat, lon]) for fractional / multi-city analysis.
+    carbon_keywords : carbon-capture keywords for case-study tagging.
 
-    Note: the ODP file wrapper API does not return abstract text, so the text
-    field contains the title only. This is a known limitation vs. Lens.org.
+    The abstract is fetched separately from each patent's grant XML (the ODP
+    bibliographic API does not return it). Including it in `text` greatly
+    improves both embedding quality and carbon-capture tagging vs. titles alone.
     """
     rows = []
     for rec in raw_records:
         title = rec.get("title", "") or ""
-        # No abstract available from ODP; title-only text is used for embedding.
-        text = build_text_field(title, "")
+        abstract = rec.get("abstract", "") or ""
+        text = build_text_field(title, abstract)
         patent_id = rec.get("patent_id", "")
+
+        all_cities = rec.get("all_cities") or []
+        all_coords = rec.get("all_coords") or []
 
         row = {
             "id": patent_id or _make_id("patent", title),
@@ -162,8 +171,10 @@ def normalize_patents_odp(raw_records: list[dict], carbon_keywords: list[str]) -
             "year": rec.get("year"),
             "city": rec.get("city") or "",
             "country": _normalise_country(rec.get("country")) or "",
-            "lat": None,
-            "lon": None,
+            "lat": rec.get("lat"),
+            "lon": rec.get("lon"),
+            "all_cities": json.dumps(all_cities) if all_cities else None,
+            "all_coords": json.dumps(all_coords) if all_coords else None,
             "theme_primary": None,
             "theme_secondary": None,
             "retrieval_reason": rec.get("retrieval_reason", "keyword"),
