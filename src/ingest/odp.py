@@ -43,6 +43,7 @@ Location strategy:
 
 from __future__ import annotations
 import os
+import re
 import time
 import logging
 from urllib.parse import urlencode
@@ -406,3 +407,150 @@ def lookup_patents_by_number(
         time.sleep(delay)
 
     return resolved
+
+
+# ---------------------------------------------------------------------------
+# Abstract retrieval.
+#
+# The ODP bibliographic API does NOT return abstract text — only the title.
+# But each granted patent's record carries grantDocumentMetaData.fileLocationURI,
+# a link to the patent's individual grant XML in the USPTO bulk dataset
+# (product PTGRXML-SPLT). That XML contains the full <abstract>. We fetch and
+# parse it here so the corpus can be embedded on abstracts, not titles alone.
+#
+# Flow per patent:
+#   1. lookup_grant_documents()  -> grantDocumentMetaData.fileLocationURI
+#   2. fetch_grant_xml()         -> GET the URI; ODP 302-redirects to a signed
+#                                   data.uspto.gov URL which serves the raw XML
+#   3. extract_abstract_from_grant_xml() -> plain-text abstract
+# ---------------------------------------------------------------------------
+
+_ABSTRACT_RE = re.compile(r"<abstract\b[^>]*>(.*?)</abstract>", re.S | re.I)
+_TAG_RE = re.compile(r"<[^>]+>")
+_WS_RE = re.compile(r"\s+")
+
+
+def lookup_grant_documents(
+    patent_numbers: list[str],
+    batch_size: int = 20,
+    delay: float = 1.0,
+) -> dict[str, dict]:
+    """
+    Return {patentNumber: {"app_number", "title", "grant_date", "file_uri"}}.
+
+    `file_uri` is grantDocumentMetaData.fileLocationURI — the link to the
+    patent's grant XML, needed by fetch_grant_xml() to retrieve the abstract.
+    Patent numbers must be bare grant numbers (no "US" prefix, no kind code).
+    Same batched OR-query strategy as lookup_patents_by_number().
+    """
+    api_key = os.getenv("USPTO_ODP_KEY", "")
+    if not api_key:
+        raise EnvironmentError(
+            "USPTO_ODP_KEY is not set. Add it to .env. "
+            "Get a free key at https://data.uspto.gov/apis/getting-started"
+        )
+
+    headers = {"X-API-KEY": api_key, "Content-Type": "application/json"}
+    fields = [
+        "applicationNumberText",
+        "applicationMetaData.patentNumber",
+        "applicationMetaData.inventionTitle",
+        "applicationMetaData.grantDate",
+        "grantDocumentMetaData",
+    ]
+    unique_numbers = list(dict.fromkeys(n for n in patent_numbers if n))
+    out: dict[str, dict] = {}
+
+    for start in range(0, len(unique_numbers), batch_size):
+        batch = unique_numbers[start:start + batch_size]
+        payload = {
+            "q": f"applicationMetaData.patentNumber:({' OR '.join(batch)})",
+            "fields": fields,
+            "pagination": {"offset": 0, "limit": batch_size + 5},
+        }
+
+        max_retries, backoff, response = 5, 30, None
+        for attempt in range(max_retries):
+            try:
+                response = requests.post(
+                    ODP_SEARCH_URL, json=payload, headers=headers, timeout=30
+                )
+                if response.status_code == 429:
+                    wait = backoff * (2 ** attempt)
+                    logger.warning(f"Rate limited (429). Waiting {wait}s "
+                                   f"(retry {attempt + 1}/{max_retries})...")
+                    time.sleep(wait)
+                    continue
+                if response.status_code == 404:
+                    response = None
+                    break
+                response.raise_for_status()
+                break
+            except requests.RequestException as e:
+                logger.error(f"ODP grant-doc lookup failed: {e}")
+                response = None
+                break
+
+        if response is not None and response.ok:
+            try:
+                data = response.json()
+            except Exception as e:
+                logger.error(f"Failed to parse grant-doc response: {e}")
+                data = {}
+            for w in (data.get("patentFileWrapperDataBag") or []):
+                meta = w.get("applicationMetaData", {}) or {}
+                num = str(meta.get("patentNumber") or "").strip()
+                if not num:
+                    continue
+                gdoc = w.get("grantDocumentMetaData", {}) or {}
+                out[num] = {
+                    "app_number": w.get("applicationNumberText", ""),
+                    "title":      meta.get("inventionTitle", ""),
+                    "grant_date": meta.get("grantDate", ""),
+                    "file_uri":   gdoc.get("fileLocationURI", ""),
+                }
+
+        done = min(start + batch_size, len(unique_numbers))
+        logger.info(f"Grant-doc lookup: {done}/{len(unique_numbers)} queried, "
+                    f"{len(out)} with metadata")
+        time.sleep(delay)
+
+    return out
+
+
+def fetch_grant_xml(file_uri: str, timeout: int = 60) -> str | None:
+    """
+    Download a patent's grant XML from its fileLocationURI.
+
+    The ODP endpoint responds with a 302 redirect to a signed data.uspto.gov
+    URL; requests follows it automatically. Returns the XML text, or None if
+    the download failed or did not return XML.
+    """
+    if not file_uri:
+        return None
+    api_key = os.getenv("USPTO_ODP_KEY", "")
+    headers = {"X-API-KEY": api_key}
+    try:
+        r = requests.get(file_uri, headers=headers, allow_redirects=True, timeout=timeout)
+    except requests.RequestException as e:
+        logger.warning(f"Grant XML download failed for {file_uri}: {e}")
+        return None
+    if r.ok and r.text.lstrip()[:5].lower() == "<?xml":
+        return r.text
+    logger.warning(f"Grant XML not returned (HTTP {r.status_code}) for {file_uri}")
+    return None
+
+
+def extract_abstract_from_grant_xml(xml: str | None) -> str:
+    """
+    Return the plain-text abstract from a us-patent-grant XML document.
+
+    Strips inner markup (<p>, <sub>, formulas, etc.) and collapses whitespace.
+    Returns "" if the document has no abstract (e.g. some older grants).
+    """
+    if not xml:
+        return ""
+    m = _ABSTRACT_RE.search(xml)
+    if not m:
+        return ""
+    return _WS_RE.sub(" ", _TAG_RE.sub(" ", m.group(1))).strip()
