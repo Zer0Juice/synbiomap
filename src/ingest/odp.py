@@ -241,3 +241,168 @@ def _extract_inventor_location(meta: dict) -> tuple[str, str]:
             return city, country
 
     return "", ""
+
+
+# ---------------------------------------------------------------------------
+# Lookup-by-number helpers (used for geocoding an external patent list, e.g.
+# Oldham & Hall's synthetic-biology landscape, where we have patent numbers
+# but no inventor addresses). These complement the keyword search above.
+# ---------------------------------------------------------------------------
+
+def extract_all_inventor_locations(meta: dict) -> list[dict]:
+    """
+    Return a location record for EVERY inventor on the patent, in listed order.
+
+    Each record is {"name", "city", "state", "country"}. Inventors with no
+    usable city are still returned (with empty city) so the caller can count
+    total vs. located inventors and compute fractional weights honestly.
+
+    Why all inventors, not just the first?
+      The first-listed inventor is only a weak proxy for the "lead" — the USPTO
+      does not require inventors to be ordered by contribution. For a city-level
+      study, assigning the whole patent to the first inventor's city biases the
+      geography of multi-city collaborations (common in academic synthetic
+      biology). Capturing every inventor lets the analysis use fractional
+      counting (each patent contributes a total weight of 1, split across the
+      cities of its inventors), which is the standard in regional patent
+      statistics (OECD REGPAT methodology) and keeps city totals additive.
+
+    State (geographicRegionCode) is kept because many US city names repeat
+    across states, so "City, ST, US" geocodes far more reliably than "City, US".
+    For non-US inventors the state is usually empty and the country carries the
+    disambiguating information instead.
+    """
+    locations: list[dict] = []
+    for inv in (meta.get("inventorBag") or []):
+        name = (inv.get("inventorNameText") or "").strip()
+        city = state = country = ""
+        for addr in (inv.get("correspondenceAddressBag") or []):
+            c = (addr.get("cityName") or "").strip()
+            if not c:
+                continue
+            city = c
+            state = (addr.get("geographicRegionCode") or "").strip()
+            country = (
+                addr.get("countryCode")
+                or addr.get("country")
+                or addr.get("countryName")
+                or ""
+            ).strip()
+            break
+        locations.append({
+            "name": name, "city": city, "state": state, "country": country,
+        })
+    return locations
+
+
+def lookup_patents_by_number(
+    patent_numbers: list[str],
+    batch_size: int = 20,
+    delay: float = 1.0,
+) -> dict[str, dict]:
+    """
+    Look up USPTO patents by their grant number and return inventor metadata.
+
+    Used when we already have a list of US patent numbers (e.g. extracted from
+    another dataset's patent families) and want the inventor addresses that the
+    source dataset does not provide.
+
+    Patent numbers must be the bare grant number with no "US" prefix and no
+    kind code — e.g. "8153432", not "US8153432B2". The caller is responsible
+    for normalising them (see scripts/geocode_oldham_patents.py).
+
+    Numbers are queried in batches using an OR group on the
+    `applicationMetaData.patentNumber` field:
+        applicationMetaData.patentNumber:(8153432 OR 9121036 OR ...)
+    This keeps the number of HTTP requests low (one request per `batch_size`
+    numbers) while respecting the ODP per-request result limit.
+
+    Note: the ODP only covers applications filed on or after 2001-01-01, so
+    patents granted from older (pre-2001) filings will simply not be found and
+    are silently absent from the returned mapping.
+
+    Parameters
+    ----------
+    patent_numbers : list of bare grant numbers (strings of digits)
+    batch_size     : how many numbers to OR together per request
+    delay          : polite delay (seconds) between requests
+
+    Returns
+    -------
+    dict mapping patentNumber (str) -> applicationMetaData dict for every
+    number the ODP could resolve. Numbers not found are absent from the dict.
+    """
+    api_key = os.getenv("USPTO_ODP_KEY", "")
+    if not api_key:
+        raise EnvironmentError(
+            "USPTO_ODP_KEY is not set. Add it to .env. "
+            "Get a free key at https://data.uspto.gov/apis/getting-started"
+        )
+
+    headers = {"X-API-KEY": api_key, "Content-Type": "application/json"}
+    fields = [
+        "applicationNumberText",
+        "applicationMetaData.patentNumber",
+        "applicationMetaData.inventionTitle",
+        "applicationMetaData.grantDate",
+        "applicationMetaData.inventorBag",
+    ]
+
+    # De-duplicate while preserving order so the cache/lookup is stable.
+    unique_numbers = list(dict.fromkeys(n for n in patent_numbers if n))
+    resolved: dict[str, dict] = {}
+
+    for start in range(0, len(unique_numbers), batch_size):
+        batch = unique_numbers[start:start + batch_size]
+        or_group = " OR ".join(batch)
+        payload = {
+            "q": f"applicationMetaData.patentNumber:({or_group})",
+            "fields": fields,
+            # Allow a little headroom in case a number maps to >1 record.
+            "pagination": {"offset": 0, "limit": batch_size + 5},
+        }
+
+        max_retries = 5
+        backoff = 30
+        response = None
+        for attempt in range(max_retries):
+            try:
+                response = requests.post(
+                    ODP_SEARCH_URL, json=payload, headers=headers, timeout=30
+                )
+                if response.status_code == 429:
+                    wait = backoff * (2 ** attempt)
+                    logger.warning(
+                        f"Rate limited (429). Waiting {wait}s "
+                        f"(retry {attempt + 1}/{max_retries})..."
+                    )
+                    time.sleep(wait)
+                    continue
+                if response.status_code == 404:
+                    response = None  # no matches in this batch
+                    break
+                response.raise_for_status()
+                break
+            except requests.RequestException as e:
+                logger.error(f"ODP lookup request failed: {e}")
+                response = None
+                break
+
+        if response is not None and response.ok:
+            try:
+                data = response.json()
+            except Exception as e:
+                logger.error(f"Failed to parse ODP lookup response: {e}")
+                data = {}
+            for wrapper in (data.get("patentFileWrapperDataBag") or []):
+                meta = wrapper.get("applicationMetaData", {}) or {}
+                num = str(meta.get("patentNumber") or "").strip()
+                if num:
+                    resolved[num] = meta
+
+        done = min(start + batch_size, len(unique_numbers))
+        logger.info(f"ODP lookup: {done}/{len(unique_numbers)} numbers queried, "
+                    f"{len(resolved)} resolved")
+        time.sleep(delay)
+
+    return resolved
