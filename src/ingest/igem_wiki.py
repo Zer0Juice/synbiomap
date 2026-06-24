@@ -42,11 +42,19 @@ both the visible page text and every link's ``href``. Capturing ``href`` values
 matters because many citations render the DOI only as a hyperlink whose visible
 text is "[1]". DOIs are case-insensitive, so we lower-case them for de-duping.
 
-Politeness
-----------
-Crawling thousands of team wikis is a lot of requests, so the orchestrator
-(scripts/03d_scrape_wiki_dois.py) rate-limits, caches every team's result to
-disk, and is fully restartable. This module just does the per-team work.
+Politeness & the iGEM firewall
+------------------------------
+The old wikis (``20XX.igem.org``) sit behind AWS CloudFront + WAF. Sending too
+many requests too fast trips a rate-based rule that returns HTTP 403 and blocks
+the *whole IP* for several minutes — and every request you send while blocked
+keeps the block alive. So this module is deliberately gentle:
+
+  - A shared ``Throttle`` (passed in by the orchestrator) enforces a single
+    global request rate across all crawl threads, and acts as a circuit breaker:
+    the moment one request comes back 403/429, every thread pauses for a cooldown
+    so the firewall window can clear before we resume.
+  - Crawls are cached per team and fully restartable (see the orchestrator,
+    scripts/03d_scrape_wiki_dois.py), so an interrupted run loses no work.
 """
 
 from __future__ import annotations
@@ -54,6 +62,7 @@ from __future__ import annotations
 import html
 import logging
 import re
+import threading
 import time
 from collections import deque
 from dataclasses import dataclass, field
@@ -92,6 +101,49 @@ _SKIP_EXTENSIONS = (
     ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".ico",
     ".pdf", ".zip", ".gz", ".css", ".js", ".mp4", ".webm", ".mp3",
 )
+
+
+# ---------------------------------------------------------------------------
+# Throttle — one global rate limit + circuit breaker shared by all crawl threads
+# ---------------------------------------------------------------------------
+
+class Throttle:
+    """Keep every crawl thread under one global request rate, and back off hard
+    when the iGEM firewall blocks us.
+
+    Two jobs:
+      1. Rate limit. ``before_request()`` spaces out *all* requests (across all
+         threads) by at least ``min_interval`` seconds, so N workers don't send
+         N times the traffic and trip the WAF.
+      2. Circuit breaker. When a request comes back 403/429, the caller tells us
+         via ``note_block()``; ``before_request()`` then makes every thread wait
+         out ``block_cooldown`` seconds before sending anything else, giving the
+         firewall's rate window time to clear instead of hammering it while blocked.
+    """
+
+    def __init__(self, min_interval: float = 0.7, block_cooldown: float = 120.0):
+        self.min_interval = min_interval
+        self.block_cooldown = block_cooldown
+        self._lock = threading.Lock()
+        self._next = 0.0            # earliest monotonic time the next request may go
+        self._blocked_until = 0.0   # everyone waits until at least this time
+
+    def before_request(self) -> None:
+        """Block until this thread is allowed to send its next request."""
+        with self._lock:
+            now = time.monotonic()
+            start = max(now, self._next, self._blocked_until)
+            self._next = start + self.min_interval
+            wait = start - now
+        if wait > 0:
+            time.sleep(wait)
+
+    def note_block(self) -> None:
+        """Record that the firewall just blocked us — pause all threads."""
+        with self._lock:
+            self._blocked_until = time.monotonic() + self.block_cooldown
+        logger.warning("Firewall block (403/429) — pausing all crawls %.0fs.",
+                       self.block_cooldown)
 
 
 # ---------------------------------------------------------------------------
@@ -203,11 +255,21 @@ def _in_scope(url: str, host: str, prefix: str) -> bool:
 
 @dataclass
 class CrawlResult:
-    """Outcome of crawling one team's wiki."""
-    status: str                                  # "ok" | "empty" | "no_wiki" | "unreachable"
+    """Outcome of crawling one team's wiki.
+
+    status:
+      ok          finished cleanly, found >=1 DOI
+      empty       finished cleanly, found no DOIs (a genuinely citation-free wiki)
+      no_wiki     no usable wiki URL to crawl
+      unreachable wiki URL did not load (e.g. 404 / dead page) — not a block
+      blocked     the firewall blocked us before any page loaded — retry later
+      partial     some pages loaded but a block cut the crawl short — retry later
+    """
+    status: str
     pages_crawled: int = 0
     page_dois: dict[str, list[str]] = field(default_factory=dict)  # url -> DOIs (only pages with >=1)
     dois: list[str] = field(default_factory=list)                   # all unique DOIs, sorted
+    blocked: bool = False                                           # firewall got in the way at all
     error: str = ""
 
     def to_dict(self) -> dict:
@@ -216,31 +278,74 @@ class CrawlResult:
             "pages_crawled": self.pages_crawled,
             "page_dois": self.page_dois,
             "dois": self.dois,
+            "blocked": self.blocked,
             "error": self.error,
         }
+
+
+def _fetch(
+    session: requests.Session,
+    url: str,
+    *,
+    throttle: "Throttle | None",
+    delay: float,
+    timeout: int,
+    max_retries: int,
+) -> requests.Response | None:
+    """Fetch one URL, respecting the global throttle and retrying on a block.
+
+    Returns the final Response (which may still be a 403/429 if the firewall
+    never let go within ``max_retries``), or None on a network error. The
+    throttle's circuit breaker makes every thread wait out a cooldown after a
+    block, so the retry usually lands after the firewall window has cleared.
+    """
+    resp = None
+    for attempt in range(max_retries + 1):
+        if throttle is not None:
+            throttle.before_request()
+        elif delay:
+            time.sleep(delay)
+        try:
+            resp = session.get(url, timeout=timeout)
+        except requests.RequestException as e:
+            logger.debug("fetch error %s: %s", url, e)
+            return None
+        if resp.status_code in (403, 429):
+            if throttle is not None:
+                throttle.note_block()            # before_request() now waits out the cooldown
+            else:
+                time.sleep(min(60 * (attempt + 1), 180))
+            continue
+        return resp
+    return resp  # exhausted retries; still blocked
 
 
 def crawl_team_wiki(
     wiki_url: str,
     *,
     session: requests.Session | None = None,
+    throttle: "Throttle | None" = None,
     max_pages: int = 40,
     delay: float = 0.3,
     timeout: int = 30,
+    max_retries: int = 3,
 ) -> CrawlResult:
     """Breadth-first crawl one team's wiki and collect every DOI it cites.
 
     Parameters
     ----------
-    wiki_url  : the team's landing-page URL (the raw CSV's ``wikiURL``)
-    session   : an optional requests.Session to reuse a connection pool
-    max_pages : safety cap on pages fetched per team (a few teams have huge
-                wikis; 40 comfortably covers a normal team)
-    delay     : seconds to wait between requests to the same wiki (politeness)
-    timeout   : per-request timeout in seconds
+    wiki_url    : the team's landing-page URL (the raw CSV's ``wikiURL``)
+    session     : an optional requests.Session to reuse a connection pool
+    throttle    : a shared Throttle for global rate limiting + firewall back-off.
+                  Strongly recommended when crawling many teams in parallel.
+    max_pages   : safety cap on pages fetched per team (a few teams have huge
+                  wikis; 40 comfortably covers a normal team)
+    delay       : fallback per-request delay used only when no throttle is given
+    timeout     : per-request timeout in seconds
+    max_retries : retries per page when the firewall returns 403/429
 
-    Returns a CrawlResult. Network problems are caught and reported via
-    ``status``/``error`` rather than raised, so one bad team can't stop a run.
+    Returns a CrawlResult. Network/firewall problems are reported via
+    ``status``/``blocked`` rather than raised, so one bad team can't stop a run.
     """
     scope = derive_crawl_scope(wiki_url)
     if scope is None:
@@ -261,18 +366,20 @@ def crawl_team_wiki(
     all_dois: set[str] = set()
     pages_crawled = 0
     reachable = False
+    lost_to_block = False   # at least one page was given up on after a 403/429
 
     try:
         while queue and pages_crawled < max_pages:
             url = queue.popleft()
-            try:
-                resp = session.get(url, timeout=timeout)
-            except requests.RequestException as e:
-                logger.debug("fetch failed %s: %s", url, e)
+            resp = _fetch(session, url, throttle=throttle, delay=delay,
+                          timeout=timeout, max_retries=max_retries)
+            if resp is None:
                 continue
-
+            if resp.status_code in (403, 429):
+                lost_to_block = True            # firewall won this page even after retries
+                continue
             if resp.status_code != 200:
-                continue
+                continue                         # 404 etc. — page just isn't there
             if "html" not in resp.headers.get("content-type", "").lower():
                 continue
 
@@ -293,18 +400,18 @@ def crawl_team_wiki(
                 if _in_scope(nxt, host, prefix):
                     seen.add(nxt)
                     queue.append(nxt)
-
-            time.sleep(delay)
     finally:
         if own_session:
             session.close()
 
     if not reachable:
-        return CrawlResult(status="unreachable")
+        return CrawlResult(status="blocked" if lost_to_block else "unreachable",
+                           blocked=lost_to_block)
 
-    status = "ok" if all_dois else "empty"
+    status = "partial" if lost_to_block else ("ok" if all_dois else "empty")
     return CrawlResult(
         status=status,
+        blocked=lost_to_block,
         pages_crawled=pages_crawled,
         page_dois=page_dois,
         dois=sorted(all_dois),

@@ -23,8 +23,11 @@ wiki eras (2009–2021 MediaWiki vs 2022–2025 igem.wiki) it handles.
 Restartable & polite
 --------------------
 Every team's crawl result is cached to data/raw/igem_wiki/{team_id}.json, so an
-interrupted run resumes for free (already-cached teams are skipped). Requests are
-rate-limited and use a descriptive User-Agent. Use --refresh to re-crawl.
+interrupted run resumes for free. Teams that finished cleanly (ok/empty) are
+skipped; teams that were blocked/partial/unreachable are retried automatically on
+the next run. The old igem.org wikis are behind a firewall (CloudFront + AWS WAF)
+that 403-blocks bursts, so a single global rate cap (--rate) and a circuit-breaker
+cooldown (--cooldown) keep us under its limit. Use --refresh to force a re-crawl.
 
 Output (data/processed/igem_wiki_dois.csv), one row per (team, DOI):
     project_id, team_id, team_name, year, doi, doi_url,
@@ -42,8 +45,8 @@ Usage
     # One competition year:
     python scripts/03d_scrape_wiki_dois.py --year 2023
 
-    # The full corpus (this takes a while — run it in the background):
-    python scripts/03d_scrape_wiki_dois.py --workers 6
+    # The full corpus (slow because of the firewall — run it in the background):
+    python scripts/03d_scrape_wiki_dois.py --rate 2 --workers 4
 
     # Rebuild the CSV from existing caches without crawling:
     python scripts/03d_scrape_wiki_dois.py --aggregate-only
@@ -65,10 +68,15 @@ import requests
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
-from src.ingest.igem_wiki import crawl_team_wiki, USER_AGENT  # noqa: E402
+from src.ingest.igem_wiki import crawl_team_wiki, Throttle, USER_AGENT  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s  %(message)s")
 logger = logging.getLogger(__name__)
+
+# Cached statuses that mean "try again": the old wikis are behind a firewall that
+# returns 403 under load, so a blocked/partial/unreachable team is worth a retry
+# on the next run, whereas a clean ok/empty result is final. (See igem_wiki.py.)
+RETRYABLE_STATUSES = {"blocked", "partial", "unreachable"}
 
 # Inputs / outputs
 RAW_TEAMS = REPO_ROOT / "data" / "raw" / "projects" / "igem_teams_with_descriptions_2004_2025.csv"
@@ -142,21 +150,29 @@ def cache_path(team_id: str) -> Path:
     return CACHE_DIR / f"{team_id}.json"
 
 
-def crawl_one(row: dict, args) -> str:
-    """Crawl one team unless it's already cached. Returns the team_id."""
-    team_id = row["team_id"]
+def needs_crawl(team_id: str, refresh: bool) -> bool:
+    """True if this team should be crawled now (missing, forced, or retryable)."""
     cf = cache_path(team_id)
-    if cf.exists() and not args.refresh:
-        return team_id
+    if refresh or not cf.exists():
+        return True
+    try:
+        rec = json.loads(cf.read_text())
+    except (json.JSONDecodeError, OSError):
+        return True  # corrupt cache — redo it
+    return rec.get("status") in RETRYABLE_STATUSES
 
+
+def crawl_one(row: dict, args, throttle: Throttle) -> str:
+    """Crawl one team and write its cache file. Returns the team_id."""
+    team_id = row["team_id"]
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
     try:
         result = crawl_team_wiki(
             row["wiki_url"],
             session=session,
+            throttle=throttle,
             max_pages=args.max_pages,
-            delay=args.delay,
         )
     finally:
         session.close()
@@ -169,6 +185,7 @@ def crawl_one(row: dict, args) -> str:
         "crawled_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         **result.to_dict(),
     }
+    cf = cache_path(team_id)
     cf.parent.mkdir(parents=True, exist_ok=True)
     cf.write_text(json.dumps(record))
     return team_id
@@ -176,15 +193,22 @@ def crawl_one(row: dict, args) -> str:
 
 def run_crawl(teams: pd.DataFrame, args) -> None:
     rows = teams.to_dict("records")
-    todo = [r for r in rows if args.refresh or not cache_path(r["team_id"]).exists()]
+    todo = [r for r in rows if needs_crawl(r["team_id"], args.refresh)]
     print(f"Teams selected: {len(rows)} | to crawl now: {len(todo)} "
-          f"| already cached: {len(rows) - len(todo)}")
+          f"| already done (ok/empty): {len(rows) - len(todo)}")
     if not todo:
         return
 
+    # One throttle shared by every worker: a single global request rate plus a
+    # circuit breaker that pauses all threads when the firewall blocks us.
+    min_interval = 1.0 / args.rate if args.rate > 0 else 0.0
+    throttle = Throttle(min_interval=min_interval, block_cooldown=args.cooldown)
+    print(f"Crawling with {args.workers} workers at <= {args.rate} req/s "
+          f"(cooldown {args.cooldown:.0f}s on a firewall block)…")
+
     done = 0
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        futures = {pool.submit(crawl_one, r, args): r for r in todo}
+        futures = {pool.submit(crawl_one, r, args, throttle): r for r in todo}
         for fut in as_completed(futures):
             r = futures[fut]
             try:
@@ -269,10 +293,15 @@ def parse_args():
                    help="Only crawl these competition year(s), e.g. --year 2023 2024.")
     p.add_argument("--limit", type=int,
                    help="Only crawl the first N selected teams (handy for testing).")
-    p.add_argument("--workers", type=int, default=6,
-                   help="Parallel team crawls (default 6). Lower = gentler on iGEM servers.")
-    p.add_argument("--delay", type=float, default=0.3,
-                   help="Seconds between requests within a team crawl (default 0.3).")
+    p.add_argument("--workers", type=int, default=4,
+                   help="Parallel team crawls (default 4). The global rate cap (--rate) "
+                        "still limits total traffic; workers just hide network latency.")
+    p.add_argument("--rate", type=float, default=2.0,
+                   help="Global request-rate cap in requests/sec across ALL workers "
+                        "(default 2.0). The old igem.org wikis are behind a firewall that "
+                        "blocks bursts, so keep this modest.")
+    p.add_argument("--cooldown", type=float, default=120.0,
+                   help="Seconds all workers pause after a firewall 403/429 (default 120).")
     p.add_argument("--max-pages", type=int, default=40,
                    help="Max sub-pages to fetch per team (default 40).")
     p.add_argument("--refresh", action="store_true",
