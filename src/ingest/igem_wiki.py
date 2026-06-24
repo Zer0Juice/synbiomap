@@ -102,6 +102,21 @@ _SKIP_EXTENSIONS = (
     ".pdf", ".zip", ".gz", ".css", ".js", ".mp4", ".webm", ".mp3",
 )
 
+# Sub-pages that essentially never carry academic references, so we skip them to
+# save requests. This matters because the old wikis are behind a firewall that
+# caps us at ~2 requests/second — fetching fewer dead-weight pages is the only
+# way to shorten the crawl without compromising politeness. We checked a sample
+# of crawled wikis: none of these page types contributed any DOIs, whereas the
+# project/design/results/modeling/background/references pages did. We keep
+# human-practices and interlab pages (those sometimes do cite papers).
+#   - substring match anywhere in the sub-path (also skips their sub-trees):
+_SKIP_PAGE_SUBSTR = (
+    "notebook", "safety", "attribution", "sponsor", "acknowledg",
+    "gallery", "photo", "judging", "medal", "award", "collaborat",
+)
+#   - exact match on the final path segment (avoid over-matching common words):
+_SKIP_PAGE_EXACT = frozenset({"team", "members", "member", "roster", "contact"})
+
 
 # ---------------------------------------------------------------------------
 # Throttle — one global rate limit + circuit breaker shared by all crawl threads
@@ -246,6 +261,15 @@ def _in_scope(url: str, host: str, prefix: str) -> bool:
         return False
     if path_l.endswith(_SKIP_EXTENSIONS):
         return False
+
+    # Skip dead-weight sub-pages (the landing page itself, where tail == "", is
+    # always kept). `tail` is the part of the path below this team's prefix.
+    tail = path_l[len(prefix_l):].strip("/")
+    if tail:
+        if tail.split("/")[-1] in _SKIP_PAGE_EXACT:
+            return False
+        if any(s in tail for s in _SKIP_PAGE_SUBSTR):
+            return False
     return True
 
 
