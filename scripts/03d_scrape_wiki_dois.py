@@ -55,9 +55,11 @@ Usage
 from __future__ import annotations
 
 import argparse
+import collections
 import json
 import logging
 import sys
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
@@ -188,7 +190,7 @@ def crawl_one(row: dict, args, throttle: Throttle) -> str:
     cf = cache_path(team_id)
     cf.parent.mkdir(parents=True, exist_ok=True)
     cf.write_text(json.dumps(record))
-    return team_id
+    return result.status
 
 
 def run_crawl(teams: pd.DataFrame, args) -> None:
@@ -199,26 +201,37 @@ def run_crawl(teams: pd.DataFrame, args) -> None:
     if not todo:
         return
 
-    # One throttle shared by every worker: a single global request rate plus a
-    # circuit breaker that pauses all threads when the firewall blocks us.
+    # One throttle shared by every worker: a single global, self-tuning request
+    # rate that backs off when the firewall blocks us and creeps back up when
+    # stable, so it settles near the fastest rate the WAF actually tolerates.
     min_interval = 1.0 / args.rate if args.rate > 0 else 0.0
     throttle = Throttle(min_interval=min_interval, block_cooldown=args.cooldown)
-    print(f"Crawling with {args.workers} workers at <= {args.rate} req/s "
-          f"(cooldown {args.cooldown:.0f}s on a firewall block)…")
+    print(f"Crawling with {args.workers} workers, target <= {args.rate} req/s "
+          f"(auto-slows on firewall blocks; cooldown {args.cooldown:.0f}s).")
 
     done = 0
+    t0 = time.monotonic()
+    counts = collections.Counter()
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {pool.submit(crawl_one, r, args, throttle): r for r in todo}
         for fut in as_completed(futures):
             r = futures[fut]
             try:
-                fut.result()
+                counts[fut.result() or "?"] += 1   # crawl_one returns the status
             except Exception as e:  # one team failing must not stop the run
                 logger.warning("crawl failed for team %s (%s): %s",
                                r["team_id"], r.get("team_name"), e)
+                counts["error"] += 1
             done += 1
-            if done % 25 == 0 or done == len(todo):
-                print(f"  crawled {done}/{len(todo)} teams")
+            if done % 10 == 0 or done == len(todo):
+                elapsed = time.monotonic() - t0
+                rate = done / elapsed * 60 if elapsed else 0           # teams/min
+                eta_h = (len(todo) - done) / (rate / 60) / 3600 if rate else 0
+                cur_rps = 1.0 / throttle.interval if throttle.interval else 0
+                summary = " ".join(f"{k}={v}" for k, v in sorted(counts.items()))
+                print(f"  {done}/{len(todo)} teams | {rate:.1f}/min | "
+                      f"~{cur_rps:.2f} req/s now | ETA ~{eta_h:.1f}h | {summary}",
+                      flush=True)
 
 
 # ---------------------------------------------------------------------------
@@ -296,10 +309,11 @@ def parse_args():
     p.add_argument("--workers", type=int, default=4,
                    help="Parallel team crawls (default 4). The global rate cap (--rate) "
                         "still limits total traffic; workers just hide network latency.")
-    p.add_argument("--rate", type=float, default=2.0,
-                   help="Global request-rate cap in requests/sec across ALL workers "
-                        "(default 2.0). The old igem.org wikis are behind a firewall that "
-                        "blocks bursts, so keep this modest.")
+    p.add_argument("--rate", type=float, default=1.0,
+                   help="Target global request rate in req/s across ALL workers "
+                        "(default 1.0). This is the *fastest* the crawler will go; it "
+                        "auto-slows below this whenever the igem.org firewall blocks us, "
+                        "then creeps back up when stable.")
     p.add_argument("--cooldown", type=float, default=120.0,
                    help="Seconds all workers pause after a firewall 403/429 (default 120).")
     p.add_argument("--max-pages", type=int, default=40,

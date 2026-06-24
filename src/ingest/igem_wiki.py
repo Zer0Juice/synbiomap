@@ -123,42 +123,73 @@ _SKIP_PAGE_EXACT = frozenset({"team", "members", "member", "roster", "contact"})
 # ---------------------------------------------------------------------------
 
 class Throttle:
-    """Keep every crawl thread under one global request rate, and back off hard
-    when the iGEM firewall blocks us.
+    """Keep every crawl thread under one global, *self-tuning* request rate.
 
-    Two jobs:
+    We don't know the firewall's exact threshold, and a fixed rate either crawls
+    too slowly or keeps tripping the WAF (which then pauses everything for a
+    cooldown and tanks throughput). So this throttle adapts:
+
       1. Rate limit. ``before_request()`` spaces out *all* requests (across all
-         threads) by at least ``min_interval`` seconds, so N workers don't send
-         N times the traffic and trip the WAF.
-      2. Circuit breaker. When a request comes back 403/429, the caller tells us
-         via ``note_block()``; ``before_request()`` then makes every thread wait
-         out ``block_cooldown`` seconds before sending anything else, giving the
-         firewall's rate window time to clear instead of hammering it while blocked.
+         threads) by at least the current ``_interval`` seconds.
+      2. Circuit breaker + slow-down. On a 403/429 the caller calls
+         ``note_block()``: every thread pauses for ``block_cooldown`` seconds AND
+         the spacing is widened (we back off the rate), so when we resume we send
+         more slowly than the rate that just got us blocked.
+      3. Cautious recovery. After many requests succeed in a row, ``note_ok()``
+         narrows the spacing a little, creeping the rate back up. The result
+         settles near the fastest rate the firewall actually tolerates.
+
+    Spacing is clamped to ``[base_interval, max_interval]`` — i.e. between the
+    requested rate and a slow floor.
     """
 
-    def __init__(self, min_interval: float = 0.7, block_cooldown: float = 120.0):
-        self.min_interval = min_interval
+    def __init__(self, min_interval: float = 0.5, block_cooldown: float = 120.0,
+                 max_interval: float = 5.0, backoff: float = 1.5,
+                 recover_after: int = 40, recover_factor: float = 0.9):
+        self.base_interval = min_interval        # fastest we'll ever go (the --rate)
+        self.max_interval = max(min_interval, max_interval)
         self.block_cooldown = block_cooldown
+        self._backoff = backoff
+        self._recover_after = recover_after
+        self._recover_factor = recover_factor
+
+        self._interval = min_interval            # current spacing (adapts)
         self._lock = threading.Lock()
-        self._next = 0.0            # earliest monotonic time the next request may go
-        self._blocked_until = 0.0   # everyone waits until at least this time
+        self._next = 0.0                          # earliest monotonic time for the next request
+        self._blocked_until = 0.0                 # everyone waits until at least this time
+        self._ok_streak = 0
+
+    @property
+    def interval(self) -> float:
+        return self._interval
 
     def before_request(self) -> None:
         """Block until this thread is allowed to send its next request."""
         with self._lock:
             now = time.monotonic()
             start = max(now, self._next, self._blocked_until)
-            self._next = start + self.min_interval
+            self._next = start + self._interval
             wait = start - now
         if wait > 0:
             time.sleep(wait)
 
     def note_block(self) -> None:
-        """Record that the firewall just blocked us — pause all threads."""
+        """A request was firewall-blocked: pause everyone and slow down."""
         with self._lock:
             self._blocked_until = time.monotonic() + self.block_cooldown
-        logger.warning("Firewall block (403/429) — pausing all crawls %.0fs.",
-                       self.block_cooldown)
+            self._ok_streak = 0
+            self._interval = min(self.max_interval, self._interval * self._backoff)
+            new_rate = 1.0 / self._interval
+        logger.warning("Firewall block — pausing %.0fs and slowing to ~%.2f req/s.",
+                       self.block_cooldown, new_rate)
+
+    def note_ok(self) -> None:
+        """A request succeeded: after a long clean streak, speed up a little."""
+        with self._lock:
+            self._ok_streak += 1
+            if self._ok_streak >= self._recover_after and self._interval > self.base_interval:
+                self._ok_streak = 0
+                self._interval = max(self.base_interval, self._interval * self._recover_factor)
 
 
 # ---------------------------------------------------------------------------
@@ -336,10 +367,12 @@ def _fetch(
             return None
         if resp.status_code in (403, 429):
             if throttle is not None:
-                throttle.note_block()            # before_request() now waits out the cooldown
+                throttle.note_block()            # pause everyone + slow the rate down
             else:
                 time.sleep(min(60 * (attempt + 1), 180))
             continue
+        if throttle is not None:
+            throttle.note_ok()                   # clean response — creep the rate back up
         return resp
     return resp  # exhausted retries; still blocked
 
