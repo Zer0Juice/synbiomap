@@ -9,8 +9,15 @@ Constructs (anchor, positive) text pairs from the heterogeneous citation graph:
   part  → paper    part_source_papers.csv            ~4 100
   paper → part     paper_mentions_part.csv           ~1 800
   project → part   projects.csv + parts.csv (join)  ~65 000
+  paper ↔ patent   Marx & Fuegi PPP × Oldham corpus  ~2 900
 
-All four edge types encode the same "built upon / used" signal.
+The paper↔patent edge is the ONLY one that brings the patent genre into
+training, so it is what teaches the adapter to place patents in the same
+semantic space as papers, parts and projects. Its patent side is matched to
+our Oldham corpus via representative grant number; its paper side is taken
+from papers.csv when present and otherwise fetched from OpenAlex (cached).
+
+All edge types encode the same "built upon / used" signal.
 SPECTER2's training objective (InfoNCE) treats same-edge pairs as positives
 and all other items in the batch as negatives.
 
@@ -33,8 +40,10 @@ Usage
   python scripts/build_finetune_data.py
 """
 
+import argparse
 import json
 import random
+import re
 import sys
 from pathlib import Path
 
@@ -45,6 +54,14 @@ sys.path.insert(0, str(REPO_ROOT))
 
 PROCESSED = REPO_ROOT / "data" / "processed"
 OUT_DIR   = REPO_ROOT / "data" / "finetune"
+
+# Marx & Fuegi Patent–Paper Pairs (paper → citing patent links) and the Oldham
+# synthetic-biology patent corpus that our patents.csv is built from.
+PPP_CSV          = REPO_ROOT / "data" / "raw" / "ppp" / "patent_paper_pairs.csv"
+OLDHAM_ABSTRACTS = PROCESSED / "oldham_patent_abstracts.csv"
+# Cache of OpenAlex-fetched abstracts for PPP-linked papers not in our corpus.
+# Keyed by bare OpenAlex work id; empty string means "fetched, no abstract".
+PPP_PAPER_CACHE  = OUT_DIR / "ppp_paper_text_cache.json"
 
 # Minimum text length (characters) to include an artifact as anchor or positive.
 # Very short texts don't carry enough signal to be useful supervision.
@@ -311,6 +328,183 @@ def build_project_part_pairs(project_text: dict, part_text_by_id: dict) -> list:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Edge type 5: paper ↔ patent (a USPTO patent cites this paper)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _bare_patent_number(value) -> str:
+    """
+    Reduce a USPTO grant number to a comparable bare digit string.
+
+    Our corpus stores grants as 'US9121036' (oldham rep_patent) while the PPP
+    dataset stores them as 'US-10000036'. Stripping to the digit run lets the
+    two be joined. Returns "" when no number is present.
+    """
+    if not value:
+        return ""
+    m = re.search(r"(\d{5,})", str(value))
+    return m.group(1) if m else ""
+
+
+def build_patent_text_lookup() -> dict:
+    """
+    Map bare USPTO grant number → (patent_id, patent_text) for our corpus.
+
+    patents.csv uses opaque family ids, but oldham_patent_abstracts.csv carries
+    both that family id (`id`) and the representative grant number (`rep_patent`),
+    plus a ready-made title+abstract `text` field. We key on the representative
+    grant so PPP's citing-patent numbers can be matched back to a patent we hold,
+    and we emit the family id so pairs stay traceable to patents.csv.
+    """
+    df = pd.read_csv(OLDHAM_ABSTRACTS)
+    lookup = {}
+    for _, row in df.iterrows():
+        bare = _bare_patent_number(row.get("rep_patent"))
+        pid  = clean_text(row.get("id"))
+        text = clean_text(row.get("text"))
+        if bare and pid and len(text) >= MIN_TEXT_LEN:
+            lookup[bare] = (pid, text)
+    return lookup
+
+
+def _match_ppp_to_corpus(patent_lookup: dict) -> pd.DataFrame:
+    """
+    Stream the ~548k-row PPP file and keep only rows whose citing patent is one
+    of ours. PPP is large, so we read it in chunks (usecols keeps it light).
+
+    Returns a DataFrame with columns: paperid (bare W-id), bare_patent.
+    """
+    wanted = set(patent_lookup)
+    kept = []
+    for chunk in pd.read_csv(PPP_CSV, usecols=["paperid", "patent"], chunksize=100_000):
+        chunk = chunk.copy()
+        chunk["bare_patent"] = chunk["patent"].map(_bare_patent_number)
+        hit = chunk[chunk["bare_patent"].isin(wanted)]
+        if len(hit):
+            kept.append(hit[["paperid", "bare_patent"]])
+    if not kept:
+        return pd.DataFrame(columns=["paperid", "bare_patent"])
+    return pd.concat(kept, ignore_index=True)
+
+
+def _fetch_ppp_paper_text(work_ids: list, cache_path: Path) -> dict:
+    """
+    Fetch title+abstract for PPP-linked papers that are not already in our
+    corpus, returning {bare W-id → text}.
+
+    Cache-aware and restartable: results are stored to JSON, so re-runs don't
+    re-hit the API. Ids that come back without an abstract are cached as ""
+    so they are not retried. Requires OPENALEX_EMAIL/API_KEY in .env for the
+    polite pool (optional but faster).
+    """
+    cache = {}
+    if cache_path.exists():
+        cache = json.loads(cache_path.read_text())
+
+    missing = [w for w in work_ids if w not in cache]
+    if not missing:
+        return cache
+
+    # Lazy imports: only needed when we actually fetch.
+    from src.ingest.openalex import fetch_works_by_ids, extract_fields
+    from src.utils.schema import build_text_field
+    from dotenv import load_dotenv
+    load_dotenv(REPO_ROOT / ".env")
+
+    print(f"    fetching {len(missing)} PPP-linked papers from OpenAlex "
+          f"(already cached: {len(cache)})...")
+    got = 0
+    for work in fetch_works_by_ids(missing, retrieval_reason="ppp_patent_link"):
+        fields = extract_fields(work)
+        wid    = fields["openalex_id"].split("/")[-1]
+        text   = build_text_field(fields["title"], fields["abstract"])
+        if wid and len(text) >= MIN_TEXT_LEN:
+            cache[wid] = text
+            got += 1
+
+    # Record ids that returned nothing (no abstract → filtered out) so a re-run
+    # doesn't keep asking OpenAlex for them.
+    for w in missing:
+        cache.setdefault(w, "")
+
+    cache_path.write_text(json.dumps(cache))
+    print(f"    fetched {got} new abstracts  (cache now {len(cache)})")
+    return cache
+
+
+def build_paper_patent_pairs(paper_text: dict, fetch_missing: bool = True) -> list:
+    """
+    Build paper ↔ patent positive pairs from Marx & Fuegi's Patent–Paper Pairs.
+
+    PPP links an OpenAlex paper to a USPTO patent that cites it — a documented
+    'science → technology' knowledge-use edge, the same 'built upon' signal the
+    other edge types encode. This is the only edge type that introduces the
+    patent genre, so it is what aligns patents with papers/parts/projects in the
+    shared space.
+
+    Patent side: matched to our corpus by representative grant number, text from
+    oldham_patent_abstracts.csv. Paper side: from papers.csv when present, else
+    fetched from OpenAlex (cached). Emitted in both orientations, matching the
+    part↔paper convention above.
+
+    Reference: Marx & Fuegi (2020), "Reliance on Science in Patenting",
+      J. Economics & Management Strategy 29(1):72-93.
+      Data: https://doi.org/10.7910/DVN/6RFQ7F
+    """
+    patent_lookup = build_patent_text_lookup()   # bare grant → (family id, text)
+    print(f"  paper↔patent:   corpus patents with usable text: {len(patent_lookup)}")
+
+    matched = _match_ppp_to_corpus(patent_lookup)
+    print(f"                  PPP links to our patents: {len(matched)} rows "
+          f"({matched['paperid'].nunique()} papers, "
+          f"{matched['bare_patent'].nunique()} patents)")
+
+    # papers.csv ids are full URLs; PPP paperids are bare (W...). Index by bare id.
+    corpus_by_wid = {full.split("/")[-1]: full for full in paper_text}
+    need_fetch = sorted({w for w in matched["paperid"].unique() if w not in corpus_by_wid})
+
+    ppp_paper_text = {}
+    if fetch_missing and need_fetch:
+        ppp_paper_text = _fetch_ppp_paper_text(need_fetch, PPP_PAPER_CACHE)
+    elif need_fetch:
+        print(f"                  --no-fetch: skipping {len(need_fetch)} out-of-corpus papers")
+
+    pairs = []
+    missing = 0
+    for _, row in matched.iterrows():
+        wid = row["paperid"]
+        pid, patent_txt = patent_lookup[row["bare_patent"]]
+
+        if wid in corpus_by_wid:
+            paper_id  = corpus_by_wid[wid]
+            paper_txt = paper_text[paper_id]
+        else:
+            paper_id  = f"https://openalex.org/{wid}"
+            paper_txt = ppp_paper_text.get(wid, "")
+
+        if not paper_txt or not patent_txt:
+            missing += 1
+            continue
+
+        pairs.append({
+            "anchor_id":    paper_id,
+            "anchor_text":  paper_txt,
+            "positive_id":  pid,
+            "positive_text": patent_txt,
+            "edge_type":    "paper_patent",
+        })
+        pairs.append({
+            "anchor_id":    pid,
+            "anchor_text":  patent_txt,
+            "positive_id":  paper_id,
+            "positive_text": paper_txt,
+            "edge_type":    "patent_paper",
+        })
+
+    print(f"                  {len(pairs):>6} pairs  ({missing} missing text)")
+    return pairs
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Combine, deduplicate, split, write
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -320,7 +514,7 @@ def write_jsonl(path: Path, records: list):
             f.write(json.dumps(rec) + "\n")
 
 
-def run():
+def run(fetch_missing: bool = True):
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     (
@@ -336,6 +530,7 @@ def run():
     all_pairs.extend(build_part_paper_pairs(part_text_by_name, paper_text))
     all_pairs.extend(build_paper_mentions_pairs(part_text_by_name, paper_text, doi_to_paper_id))
     all_pairs.extend(build_project_part_pairs(project_text, part_text_by_id))
+    all_pairs.extend(build_paper_patent_pairs(paper_text, fetch_missing=fetch_missing))
 
     print(f"\nTotal before dedup: {len(all_pairs):,}")
 
@@ -380,5 +575,20 @@ def run():
     print(f"  {OUT_DIR / 'pairs_val.jsonl'}")
 
 
+def parse_args():
+    p = argparse.ArgumentParser(
+        description="Build (anchor, positive) fine-tuning pairs across papers, "
+                    "parts, projects and patents."
+    )
+    p.add_argument(
+        "--no-fetch",
+        action="store_true",
+        help="Do not call OpenAlex for PPP-linked papers missing from the corpus. "
+             "Only paper↔patent pairs whose paper is already in papers.csv are kept.",
+    )
+    return p.parse_args()
+
+
 if __name__ == "__main__":
-    run()
+    args = parse_args()
+    run(fetch_missing=not args.no_fetch)
