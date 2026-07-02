@@ -10,12 +10,18 @@ Constructs (anchor, positive) text pairs from the heterogeneous citation graph:
   paper → part     paper_mentions_part.csv           ~1 800
   project → part   projects.csv + parts.csv (join)  ~65 000
   paper ↔ patent   Marx & Fuegi PPP × Oldham corpus  ~2 900
+  project ↔ paper  iGEM wiki DOIs × papers.csv        ~1 200
 
 The paper↔patent edge is the ONLY one that brings the patent genre into
 training, so it is what teaches the adapter to place patents in the same
 semantic space as papers, parts and projects. Its patent side is matched to
 our Oldham corpus via representative grant number; its paper side is taken
 from papers.csv when present and otherwise fetched from OpenAlex (cached).
+
+The project↔paper edge links each iGEM team to papers it cited on its wiki —
+the most direct 'student project → literature' signal. Scoped in-corpus: a
+pair is kept only when the cited DOI resolves to a paper already in papers.csv
+(DOI→OpenAlex-id lookup is cached; no external abstracts are fetched).
 
 All edge types encode the same "built upon / used" signal.
 SPECTER2's training objective (InfoNCE) treats same-edge pairs as positives
@@ -45,6 +51,7 @@ import json
 import random
 import re
 import sys
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -62,6 +69,12 @@ OLDHAM_ABSTRACTS = PROCESSED / "oldham_patent_abstracts.csv"
 # Cache of OpenAlex-fetched abstracts for PPP-linked papers not in our corpus.
 # Keyed by bare OpenAlex work id; empty string means "fetched, no abstract".
 PPP_PAPER_CACHE  = OUT_DIR / "ppp_paper_text_cache.json"
+
+# iGEM wiki-cited DOIs (project → paper), and a cache mapping each DOI to its
+# OpenAlex work id. Keyed by normalised DOI; empty string means "resolved, not
+# found in OpenAlex". Only a DOI→id lookup — no abstract text is fetched here.
+WIKI_DOIS_CSV    = PROCESSED / "igem_wiki_dois.csv"
+WIKI_DOI_CACHE   = OUT_DIR / "wiki_doi_openalex_cache.json"
 
 # Minimum text length (characters) to include an artifact as anchor or positive.
 # Very short texts don't carry enough signal to be useful supervision.
@@ -505,6 +518,159 @@ def build_paper_patent_pairs(paper_text: dict, fetch_missing: bool = True) -> li
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Edge type 6: project ↔ paper (an iGEM team cited this paper on its wiki)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _normalise_doi(value) -> str:
+    """Lowercase, strip, and drop any doi.org URL prefix."""
+    if not value:
+        return ""
+    return (
+        str(value).strip().lower()
+        .replace("https://doi.org/", "")
+        .replace("http://doi.org/", "")
+    )
+
+
+def _resolve_dois_to_wids(dois: list, cache_path: Path, fetch_missing: bool = True) -> dict:
+    """
+    Resolve DOIs to bare OpenAlex work ids, returning {normalised DOI → W-id}.
+
+    This is a lightweight id lookup (select=id,doi) — no abstracts are fetched.
+    Cache-aware and restartable: results are stored to JSON so re-runs don't
+    re-hit the API. DOIs OpenAlex can't find are cached as "" so they are not
+    retried. When fetch_missing is False, only already-cached DOIs are used
+    (fully offline).
+    """
+    cache = {}
+    if cache_path.exists():
+        cache = json.loads(cache_path.read_text())
+
+    missing = [d for d in dois if d not in cache]
+    if not missing:
+        return cache
+    if not fetch_missing:
+        print(f"                  --no-fetch: {len(missing)} DOIs unresolved (using {len(cache)} cached)")
+        return cache
+
+    import requests
+    import os
+    from dotenv import load_dotenv
+    load_dotenv(REPO_ROOT / ".env")
+    email = os.getenv("OPENALEX_EMAIL", "")
+    base_params = {"mailto": email} if email else {}
+
+    def query(chunk: list) -> dict:
+        """Resolve a list of DOIs in one request. Raises on HTTP error."""
+        doi_filter = "|".join(f"https://doi.org/{d}" for d in chunk)
+        resp = requests.get(
+            "https://api.openalex.org/works",
+            params={"filter": f"doi:{doi_filter}", "per-page": len(chunk),
+                    "select": "id,doi", **base_params},
+            timeout=30,
+        )
+        resp.raise_for_status()
+        out = {}
+        for work in resp.json().get("results", []):
+            got_doi = _normalise_doi(work.get("doi"))
+            wid = work.get("id", "").split("/")[-1]
+            if got_doi and wid:
+                out[got_doi] = wid
+        return out
+
+    print(f"                  resolving {len(missing)} wiki DOIs via OpenAlex "
+          f"(already cached: {len(cache)})...")
+    batch = 50
+    for i in range(0, len(missing), batch):
+        chunk = missing[i : i + batch]
+        try:
+            cache.update(query(chunk))
+        except requests.RequestException:
+            # The scrape contains a few malformed DOIs (e.g. an appended
+            # "pmid:..."), and one bad DOI 400s the whole batch. Fall back to
+            # resolving this chunk one DOI at a time so the good ones still land.
+            for d in chunk:
+                try:
+                    cache.update(query([d]))
+                except requests.RequestException:
+                    pass  # genuinely unresolvable DOI — left to cache as "" below
+                time.sleep(0.05)
+        time.sleep(0.15)  # polite pool
+
+    # DOIs still unresolved after the call → cache as "" so we don't retry them.
+    for d in missing:
+        cache.setdefault(d, "")
+    cache_path.write_text(json.dumps(cache))
+    print(f"                  resolved {sum(1 for d in missing if cache.get(d))} "
+          f"of {len(missing)} new DOIs")
+    return cache
+
+
+def build_project_paper_pairs(project_text: dict, paper_text: dict, fetch_missing: bool = True) -> list:
+    """
+    Build project ↔ paper positive pairs from the iGEM wiki DOI scrape.
+
+    Each row of igem_wiki_dois.csv records a paper (by DOI) that a team cited on
+    its project wiki — a direct 'the student project drew on this paper' signal,
+    the most thesis-central of all the edge types (student project → literature).
+
+    Scope: IN-CORPUS ONLY. We keep a pair only when the cited DOI resolves to a
+    paper already in papers.csv, so the paper side stays inside the curated
+    synthetic-biology corpus (no external text fetched). Resolving DOIs to
+    OpenAlex ids is required because papers.csv is keyed by OpenAlex id, not DOI.
+
+    Emitted in both orientations, matching the part↔paper convention above.
+    """
+    if not WIKI_DOIS_CSV.exists():
+        print("  project↔paper:  igem_wiki_dois.csv not found — skipping")
+        return []
+
+    wiki = pd.read_csv(WIKI_DOIS_CSV)
+    wiki = wiki[wiki["doi"].notna()].copy()
+    wiki["doi"] = wiki["doi"].map(_normalise_doi)
+    print(f"  project↔paper:  {len(wiki)} wiki (project, DOI) rows, "
+          f"{wiki['doi'].nunique()} distinct DOIs")
+
+    # Resolve DOIs → OpenAlex ids (cached), then keep only in-corpus papers.
+    doi_to_wid = _resolve_dois_to_wids(
+        sorted(wiki["doi"].unique()), WIKI_DOI_CACHE, fetch_missing=fetch_missing
+    )
+    corpus_by_wid = {full.split("/")[-1]: full for full in paper_text}
+
+    pairs = []
+    skipped = 0
+    for _, row in wiki.iterrows():
+        project_id = clean_text(row.get("project_id"))
+        wid        = doi_to_wid.get(row["doi"], "")
+        paper_id   = corpus_by_wid.get(wid, "")
+
+        proj_txt  = project_text.get(project_id, "")
+        paper_txt = paper_text.get(paper_id, "")
+        if not proj_txt or not paper_txt:
+            skipped += 1
+            continue
+
+        pairs.append({
+            "anchor_id":    project_id,
+            "anchor_text":  proj_txt,
+            "positive_id":  paper_id,
+            "positive_text": paper_txt,
+            "edge_type":    "project_paper",
+        })
+        pairs.append({
+            "anchor_id":    paper_id,
+            "anchor_text":  paper_txt,
+            "positive_id":  project_id,
+            "positive_text": proj_txt,
+            "edge_type":    "paper_project",
+        })
+
+    print(f"                  {len(pairs):>6} pairs  "
+          f"({skipped} rows out-of-corpus or missing text)")
+    return pairs
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Combine, deduplicate, split, write
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -531,6 +697,7 @@ def run(fetch_missing: bool = True):
     all_pairs.extend(build_paper_mentions_pairs(part_text_by_name, paper_text, doi_to_paper_id))
     all_pairs.extend(build_project_part_pairs(project_text, part_text_by_id))
     all_pairs.extend(build_paper_patent_pairs(paper_text, fetch_missing=fetch_missing))
+    all_pairs.extend(build_project_paper_pairs(project_text, paper_text, fetch_missing=fetch_missing))
 
     print(f"\nTotal before dedup: {len(all_pairs):,}")
 
