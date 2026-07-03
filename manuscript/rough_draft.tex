@@ -303,9 +303,12 @@ corpus is where we start.
 
 The boundary also moves. Names for the same idea come and go as the field matures,
 so a keyword list drawn up today mislabels the work of five years ago and misses
-the work of five years from now. This is why building a corpus in a young field is
-a running problem, revisited as the vocabulary shifts, and why the choices about
-seed terms and citation expansion deserve the space this thesis gives them.
+the work of five years from now. Scientometric studies of synthetic biology have
+wrestled with exactly this, mapping the field's emergence through shifting keywords
+and citation patterns \citep{shapiraTrackingEmergenceSynthetic2017,
+raimbaultMappingEmergenceSynthetic2016}. It is why building a corpus in a young
+field is a running problem, revisited as the vocabulary shifts, and why the choices
+about seed terms and citation expansion deserve the space this thesis gives them.
 
 % --- Economic geography ------------------------------------------------------
 \subsection{The economic geography of relatedness}
@@ -313,9 +316,15 @@ seed terms and citation expansion deserve the space this thesis gives them.
 Start with the geography. Innovation concentrates in space, and it has done so for
 as long as anyone has measured it. Firms in the same industry gather in the same
 regions to share labour, suppliers, and the loose talk that carries ideas from one
-bench to the next. Economists call these agglomeration economies, and they matter
-most in the knowledge-heavy work synthetic biology depends on. A city is more than
-where the work happens. It is part of why the work happens.
+bench to the next. Economists call these agglomeration economies, and they bite
+hardest on complex work. Studying scientific fields, patents, industries, and
+occupations across 353 US metropolitan areas,
+\citet{ballandComplexEconomicActivities2020} find that the more complex an activity,
+the more tightly it concentrates in a few large cities: complexity alone explains
+between 40 and 80 percent of how unevenly an activity is spread. Synthetic biology,
+which stitches together molecular biology, engineering, and software, is about as
+complex as activities get. A city is more than where such work happens. It is part
+of why it happens there at all.
 
 Places do not diversify at random. A region is far likelier to move into an
 activity that draws on what it already does than into one that starts from nothing.
@@ -327,16 +336,19 @@ a short step from the last.
 space. They could not observe a country's capabilities directly, so they inferred
 relatedness from behaviour: two products count as related if the same countries
 tend to export both. The resulting network predicts how economies grow and which
-products a country is likely to add next. Relatedness, in this tradition, is
-measured from what actually co-occurs.
+products a country is likely to add next, and the same co-occurrence data yield a
+measure of how complex an economy is \citep{hidalgoBuildingBlocksEconomic2009}.
+Relatedness, in this tradition, is measured from what actually co-occurs.
 
 The same logic runs through other proxies. Where products are related by the
 countries that export both, industries can be related by the workers who move
-between them: if people flow easily from one industry to another, the two must
-draw on similar skills \citep{liEvaluatingPrincipleRelatedness2023}. Software work
-has been mapped the same way, through the tasks and languages that careers pass
-through \citep{fengBuildingBlocksSoftware}. Each proxy trades a different
-observable behaviour for the same thing underneath, the capability itself.
+between them: people who change jobs tend to stay where their skills still count,
+so heavy labour flows between two industries reveal that they draw on the same
+skills \citep{neffkeSkillRelatednessFirm2013, liEvaluatingPrincipleRelatedness2023}.
+Software work has been mapped the same way, through the tasks and programming
+languages that careers pass through \citep{fengBuildingBlocksSoftware}. Each proxy
+trades a different observable behaviour, trade, mobility, or task overlap, for the
+same thing underneath, the capability itself.
 
 % --- Relatedness in text -----------------------------------------------------
 \subsection{From products to text}
@@ -380,7 +392,9 @@ have barely been used.
 \citet{santoliniIGEMModelSystem2023} were among the first to treat this seriously,
 presenting the iGEM record as a structured dataset for studying how teams
 innovate. Their interest is the team: who joins, and what makes a group
-productive. Ours is the place. Team dynamics sit outside this thesis, though they
+productive. Small teams like iGEM's matter to that literature in particular, as the
+ones it links to more disruptive science and technology
+\citep{wuLargeTeamsDevelop2019}. Ours is the place. Team dynamics sit outside this thesis, though they
 plainly matter, and we ask instead whether a city's iGEM work lines up with the
 research around it. Santolini's work establishes that the data can bear this kind
 of weight.
@@ -397,9 +411,13 @@ legible as a dataset.
 \subsection{BioBrick parts as a knowledge graph}
 
 The parts follow a standard. A BioBrick is a fragment of DNA packaged so that any
-two fragments join the same way, a convention introduced by Tom Knight at MIT so
-that genetic parts could snap together like LEGO. Parts come in two kinds. A basic
-part is a single piece of genetic code, often lifted straight from a published
+two fragments join the same way, an assembly convention introduced by Tom Knight at
+MIT and worked into reusable vectors soon after
+\citep{shettyEngineeringBioBrickVectors2008}. It is one piece of a larger
+programme, argued most influentially by \citet{endyFoundationsEngineeringBiology2005},
+to give biology the standardisation and abstraction that let other engineering
+disciplines build reliably from interchangeable parts. Parts come in two kinds. A
+basic part is a single piece of genetic code, often lifted straight from a published
 result and translated into the format. A composite part is built from basic ones,
 wired together into something that does more. Each part is meant to be reused and
 recombined by teams that had no hand in making it.
@@ -441,10 +459,14 @@ To compare them we need a common representation that ignores the register and
 keeps the meaning. A document embedding does this. It turns each title and
 abstract into a point in a high-dimensional space, positioned so that documents
 about similar things land near each other, whatever words they happen to use.
+Turning sentences and whole documents into comparable vectors this way is by now
+standard practice, established by models like Sentence-BERT
+\citep{reimersSentenceBERT2019}.
 
-We build these points with SPECTER2, a language model from the Allen Institute
-trained on scientific papers and their citations
-\citep{cohanDocumentlevelRepresentation2020}. Its training objective is the one
+We build these points with SPECTER2 \citep{singhSciRepEvalMultiFormat2023}, the
+Allen Institute's successor to the original SPECTER
+\citep{cohanDocumentlevelRepresentation2020}, trained on scientific papers and
+their citations. Its training objective is the one
 that matters here: it learns to place two papers close together when one is likely
 to cite the other. Relatedness is exactly what we are trying to measure, so a
 model taught to predict citations is taught to do most of our work. SPECTER2
@@ -455,7 +477,7 @@ apart from a general-purpose one.
 Putting different artifact types in one embedding space is not a stretch we
 invented. Recent work embeds papers and patents together to measure how research
 turns into invention, adapting the same scientific-text models to the patent
-register (Pat-SPECTER and PatentSBERTa are two examples). We lean on that
+register \citep{bekamiriPatentSBERTa2024}. We lean on that
 precedent when we place projects, papers, and parts side by side, and we inherit
 its central assumption: that the artifacts are close enough in language for their
 embeddings to be compared at all. Where that assumption strains, we say so.
@@ -1482,6 +1504,6 @@ concrete, traceable link, and let a future study move past whether a city's proj
 and papers are related to whether one actually grew out of the other.
 
 \bibliographystyle{plainnat}
-\bibliography{references}
+\bibliography{references,references_extra}
 
 \end{document}
