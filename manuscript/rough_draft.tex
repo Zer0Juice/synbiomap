@@ -477,66 +477,217 @@ a novel artifact and a shared registry of parts to check it against. The next
 chapter assembles these into a corpus, and the one after that into a measure.
 
 % ============================================================
-\section{Methods}
+\section{Data and corpus construction}
 % ============================================================
 
-To answer the question set out in the Introduction we need three things: a corpus
-of artifacts tied to cities, a way to turn their text into something a computer
-can compare, and a set of measures that capture ``relatedness'' without
-overstating what it implies. This section
-builds those three pieces in order, and shows what each one produces along the
-way. Throughout, we are careful to talk about \textit{semantic relatedness} and
-\textit{association} rather than cause and effect; the artifacts we compare are
-shaped by many shared local factors, and our measures cannot separate a genuine
-flow of ideas from a university simply hosting both kinds of work at once.
+Before anything can be compared, it has to be made comparable. Projects, papers,
+and parts arrive in different formats from different sources, so the first job is
+to force them into one shape. Every artifact in this thesis carries the same
+handful of fields: an identifier, a type, a title, a block of abstract-like text,
+a year, and a place. Once the artifacts share a schema, the differences that
+remain between them are differences of content, which is what we want to measure.
 
 % ------------------------------------------------------------
-\subsection{Data}
+\subsection{A shared schema}
+
+The schema is deliberately small. Text is the part that matters, so each artifact
+contributes a title and an abstract-like passage: a paper's abstract, a project's
+wiki, a patent's summary. Alongside the text sit the fields we need to place and
+date each document, a year and a city, with country and coordinates carried along
+for mapping. A few extra fields tag the carbon-capture case that later chapters
+lean on. Anything a single source offers that the others cannot is dropped, so no
+measure can secretly depend on it.
+
+The schema lives in code, in a single module every ingest script imports, so a
+field means the same thing whether it came from OpenAlex or the iGEM registry.
+This is dull discipline, and it is what makes the pipeline reproducible: one
+definition of a record, one place to change it, and no room for a stray column to
+drift in from one source and not another.
+
 % ------------------------------------------------------------
+\subsection{Papers}
 
-We assemble three kinds of artifact, all carrying a title, an abstract-like
-block of text, a year, and a city.
+The papers come from OpenAlex, a free index of the world's scholarship that
+publishes its metadata openly and without a paywall. We keep each paper's title
+and abstract as its text, its publication year, and the institution of its first
+author, which we later turn into a city. Openness is the reason for the choice: a
+closed database might index more, but it could not be redistributed with the rest
+of this project, and reproducibility is worth more here than a few percent of
+coverage.
 
-\textbf{iGEM projects.} Every iGEM team documents its project on a public
-``wiki'', a webpage that functions much like the abstract of a research paper.
-We collected \statNProjectsTotal{} of these projects, spanning
-\statProjectYearMin{}--\statProjectYearMax{}, and treat each project's text as
-one document. iGEM has been described elsewhere as a well-structured dataset for
-studying team-level innovation \citep{santoliniIGEMModelSystem2023}.
+Finding the synthetic-biology papers is the hard part, for the reason the
+Background gave: the field has no clean keyword boundary. We retrieve in three
+layers, each covering the last one's blind spot. The first casts a narrow,
+high-precision net. The second widens it to named subfields. The third follows
+citations out of the core to catch what no keyword would.
 
-\textbf{Academic papers.} We drew synthetic biology papers from OpenAlex, an
-open bibliographic database, keeping \statNPapersTotal{} papers from
-\statPaperYearMin{}--\statPaperYearMax{}. Each paper contributes its title and
-abstract.
+The first layer is a short list of core terms, the phrases a paper can hardly
+avoid if it is really about the field: \textit{synthetic biology} itself, along
+with \textit{synthetic genomics} and a few close cousins. These queries are
+precise. Almost everything they return belongs, but they return only the papers
+that name the field outright, and miss the foundational work written before the
+name settled.
 
-\textbf{BioBrick parts.} Every team registers the standardised genetic parts it
-used or built. These ``biobricks'' snap together like LEGO bricks, each one
-performing a single function in a genetic circuit (a promoter that switches a
-gene on, a reporter that produces a measurable signal, and so on). Parts do not
-carry a city of their own, but every part was registered by a team, and every
-team has a city, so we recover each part's city through its team.
+The second layer adds the vocabulary of specific subfields, terms like
+\textit{BioBrick}, \textit{repressilator}, and \textit{minimal genome} that mark
+synthetic-biology work without using the field's name. These catch the applied and
+technical papers the core terms miss, at some cost in precision, since a few
+belong to neighbouring fields.
 
-\textbf{Geocoding.} Placing a team in a city is the hardest part of the
-pipeline. Team names are often acronyms, and institutions move and rename. We
-geocoded in stages: an exact match against the OpenAlex and ROR institution
-registries where possible, falling back to lightweight name extraction with a
-language model and a final lookup against OpenStreetMap's Nominatim service.
+The third layer leaves keywords behind. Starting from the core set, we follow
+citations in both directions, gathering the papers those core papers cite and the
+papers that cite them. Seminal methods often carry none of the field's vocabulary
+in their titles, and this is the only layer that reaches them, because influence,
+not wording, is what pulls them in.
 
-A city only enters our analysis once it has both papers and projects, since the
-whole question is about how the two relate. After this filter we are left with
-\statNCitiesAnalyzed{} cities. Figure~\ref{fig:activity} shows how the two
-corpora grow over time: papers accumulate steadily across the whole period,
-while iGEM projects appear only from 2009 onward, when the competition's
-documentation became consistent.
+Citation expansion carries an obvious risk, and it is worth naming. Pull in enough
+neighbours and you can inflate almost any pattern, so an expansion aimed at the
+result would be a kind of quiet p-hacking. Ours is not. The seed set is fixed by
+the core keywords before any analysis, the expansion follows citations
+mechanically, and the layer each paper entered by is recorded, so a sceptical
+reader can drop the expanded papers and check what survives.
+
+After the three layers and de-duplication, the corpus holds \statNPapersTotal{}
+papers spanning \statPaperYearMin{}--\statPaperYearMax{}. Papers before 2000 were
+dropped: coverage that far back is thin and uneven, and the earliest iGEM projects
+are a decade newer still, so old papers add noise to a comparison they can never
+take part in.
+
+% ------------------------------------------------------------
+\subsection{iGEM projects}
+
+The projects come from iGEM's own registry, through its public team API. A first
+pass pulls every team's identifier, name, institution, and competition year; a
+second visits each team's wiki and lifts the project description into the text
+field. Teams with no usable wiki, no title, or no description are dropped, since a
+document with no text cannot be embedded.
+
+This yields \statNProjectsTotal{} projects spanning
+\statProjectYearMin{}--\statProjectYearMax{}. The record effectively begins in
+2009, the point at which iGEM's documentation became consistent enough to scrape
+at scale; before that, wikis are patchy and their formats vary too much to trust.
+
+Each project's wiki is treated exactly like a paper's abstract: one block of text,
+embedded the same way, compared on the same footing. We also collect each team's
+roster where it is listed, a by-product we do not use in the analysis here but
+leave in the corpus for the author-matching work the Conclusion sketches.
+
+% ------------------------------------------------------------
+\subsection{BioBrick parts}
+
+Every registered part was downloaded from the registry API, roughly 89{,}000
+BioBricks in all. Parts are the one artifact with no text worth embedding; a part
+is a sequence and a short functional label, not a document. We keep them for what
+they are: a physical record of what each team built.
+
+The registry sorts parts by function, and that taxonomy is what we use. A part is
+a coding sequence, a promoter or other regulatory element, a ribosome binding
+site, a terminator, a reporter, a composite device, and so on. Each label says
+what job the part does in a genetic circuit, and the mix of labels a city
+registers is the fingerprint the Background promised.
+
+Where the Background described these links in principle, here is the number that
+makes them usable: a little over half of all parts name a source publication, the
+paper the sequence was taken from. That single field is the bridge between the
+parts and the literature. We store it as an explicit set of link tables joining
+parts to papers, composite parts to their components, and teams to the parts they
+registered.
+
+The last link matters most for geography. A part has no city of its own, but every
+part was registered by a team, and every team, once geocoded, has one. So a part
+inherits its team's city, and a project can be read as the bundle of parts it
+registered, sitting in a place.
+
+% ------------------------------------------------------------
+\subsection{Geocoding}
+
+Placing each artifact in a city is the hardest step in the whole pipeline, and the
+one most likely to introduce error. Institutions hide behind acronyms, share names
+across countries, move, merge, and rename. A team called \textit{iGEM Munich} is
+easy; a team named for an obscure school abbreviation, in a language none of us
+reads, is not.
+
+Our first attempt used Nominatim, OpenStreetMap's free geocoder, on the raw
+institution names. It failed more often than it worked. Many names matched
+nothing, and some matched the wrong place confidently, which is worse. So
+Nominatim moved to the end of the pipeline, a last resort instead of a first pass.
+
+What worked was matching against structured institution registries. OpenAlex's
+institutions API covers more than a hundred thousand organisations with clean
+geographic data, and ROR adds the smaller players it misses, the high schools and
+community labs where iGEM teams often sit. An exact match here is trustworthy in a
+way a fuzzy text search never is.
+
+For the teams that no registry resolved, we brought in language models. A first,
+cheap pass with a small local model extracted a plausible city from each team's
+name, country, and institution; the hard remainder went to a stronger model,
+Claude Haiku. Every answer was cached, so the expensive calls run once and the
+pipeline stays cheap to re-run.
+
+Because a language model can invent a confident wrong answer, we did not take its
+word on faith. We ran the same hard cases through several models and compared them
+against the registry matches we trusted, keeping the approach only where the
+models agreed with the ground truth often enough to rely on.
+
+One limit is baked in and worth stating early. We geocode each artifact to a
+single place, the first affiliation listed, so a genuinely multi-city
+collaboration is flattened to one dot. The Munich team, which joins students from
+two universities, becomes simply Munich. For a study that pools to the city this
+is a real but bounded cost, and we return to it in the limitations.
+
+% ------------------------------------------------------------
+\subsection{Carbon-capture tagging}
+
+The carbon-capture case study needs its own label, and we apply it by a documented
+rule so it can be checked. Each project and paper is tagged for relevance to
+microbial carbon capture, with a confidence score and a recorded reason attached.
+The slice is therefore traceable: anyone can see why a given document was included
+and drop the borderline ones. The result is a case study one can audit down to the
+document.
+
+The tagging flags 294 papers and 141 projects as carbon-capture work, spread
+across a handful of cities. That is a small slice, and its size sets hard limits on
+what the case study can claim, a point we keep in view when we get there. It cannot
+carry statistical weight. Its value is focus: a single, legible corner of the field
+in which to watch the method work.
+
+% ------------------------------------------------------------
+\subsection{Normalisation and the final corpus}
+
+A last, unglamorous step makes the joins work. City names arrive messy,
+capitalised and spelled inconsistently and padded with stray whitespace, so before
+anything is grouped by city we strip and lowercase every name to a common key.
+Without it, \textit{Cambridge} and \textit{cambridge} would count as two different
+cities, and half the point of pooling would quietly break.
+
+What comes out the other end is one corpus with three kinds of artifact, a shared
+schema, a city on every record, and a web of links tying projects to parts and
+parts to papers. A city enters the analysis only once it has both papers and
+projects, since the whole question is how the two relate; \statNCitiesAnalyzed{}
+cities clear that bar. Figure~\ref{fig:activity} shows the two corpora growing over
+time: papers accumulate across the whole period, while projects appear only from
+2009, and that offset shapes every temporal comparison that follows.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\linewidth]{activity_by_year}
   \caption{Yearly volume of papers (left) and iGEM projects (right). The two
-  artifact types cover overlapping but not identical periods, which constrains
-  the temporal analysis later in this section.}
+  corpora cover overlapping but not identical periods, which constrains the
+  temporal analysis in the Methods and Results.}
   \label{fig:activity}
 \end{figure}
+
+% ============================================================
+\section{Methods}
+% ============================================================
+
+With the corpus in hand, the Methods turn text into numbers and numbers into
+tests. Two pieces remain: a way to turn each document into something a computer can
+compare, and a set of measures that capture relatedness without overstating it. We
+build them in order, and show what each produces. Throughout we speak of
+\textit{semantic relatedness} and \textit{association}, never cause, because the
+artifacts we compare share so many local roots that no measure here could separate
+a genuine flow of ideas from a university that simply houses both kinds of work.
 
 % ------------------------------------------------------------
 \subsection{Semantic Embeddings}
