@@ -1181,43 +1181,42 @@ synthetic biology projects also produce academic papers in related areas. The
 answer is a qualified yes. Its strongest form is topical: in cities active enough to
 measure it, a city's projects and papers fall in the \textit{same specific}
 sub-fields far more than a same-country neighbour's would (cluster co-membership,
-permutation $p = \statClusterPermP{}$), a relatedness that holds up after stripping
-out both the field-level baseline and city size. The centroid-based tests tell the
-same story from a second angle. A city's iGEM projects sit measurably nearer its own
-papers than other cities' papers; the pattern holds across roughly nine of every
-ten projects and, more tellingly, across four in five \textit{cities} once the
-inference is clustered where it belongs; it is strongest in large, mature research
-hubs but still positive in the long tail; it reappears essentially unchanged in
-the carbon-capture case study; and it is echoed by a parts-based fingerprint that
-never touches the embedding model. Cities do appear to specialise, and their
-student and academic work specialises together.
+permutation $p = \statClusterPermP{}$), and that relatedness holds up after
+stripping out both the field-level baseline and city size. The centroid-based tests
+tell the same story from a second angle. A city's iGEM projects sit measurably
+nearer its own papers than other cities' papers. The pattern holds across roughly
+nine in ten projects and, more tellingly, across four in five \textit{cities} once
+the inference is clustered where it belongs. It is strongest in large, mature hubs
+but stays positive in the long tail, it reappears essentially unchanged in the
+carbon-capture case, and it is echoed by a parts-based fingerprint that never
+touches the embedding model. Cities do appear to specialise, and their student and
+academic work specialises together.
 
 Two qualifications keep that finding honest. First, the alignment is mostly a
-stable feature of a city's identity rather than a year-by-year coupling: the
+stable feature of a city's identity, not a year-by-year coupling. The
 difference-in-differences result shows that the same-year, ``this project tracks
-this paper'' component, while statistically real even under city-level
-clustering, is small next to the standing thematic gap. We therefore describe a
-\textit{local innovation trajectory} as shared standing specialisation, not as a
-demonstrated flow of ideas from students to scholars. Second, our strongest
-temporal hypothesis --- that projects run ahead of papers --- is neither confirmed
-nor refuted; the city--year centroids are too thin to resolve it, and resolving it
-will take the finer, graph-level instrument we turn to below. Both qualifications
-echo the interpretive caution in the Methods: with a corpus that is entirely
-synthetic biology, field-level similarity sets a high baseline, and the signal we
-care about lives in the small margins on top of it.
+this paper'' component, though statistically real even under city-level clustering,
+is small next to the standing thematic gap. So we describe a \textit{local
+innovation trajectory} as shared standing specialisation, not a demonstrated flow
+of ideas from students to scholars. Second, our strongest temporal hypothesis, that
+projects run ahead of papers, is neither confirmed nor refuted. The city--year
+centroids are too thin to resolve it, and resolving it will take the finer,
+graph-level instrument we turn to below. Both qualifications echo the caution in the
+Methods: with a corpus that is entirely synthetic biology, field-level similarity
+sets a high baseline, and the signal we care about lives in the small margins on top
+of it.
 
 These limits also point the way forward, and mark where the project's remaining
-reach --- patents, and the planet-scale application that motivates the whole
-effort --- comes in. The clearest gains would come from finer links than centroids
-can provide: scraping the DOIs that iGEM teams cite on their wikis, to build a
-direct citation network between projects and the local literature; matching paper,
-patent, and team authors to ask whether researchers stay in the orbit of their old
-iGEM collaborators; and matching BioBrick sequences to patent filings through
-sequence databases, to trace individual pieces of genetic code from an open
-registry into commercial application. Each would replace a coarse, centroid-level
-association with a concrete, traceable link --- and would let a future study ask
-not just whether a city's projects and papers are related, but whether one
-actually grew out of the other.
+reach comes in: patents, and the planet-scale application that motivates the whole
+effort. The clearest gains would come from finer links than centroids can provide.
+We could scrape the DOIs that iGEM teams cite on their wikis, building a direct
+citation network between projects and the local literature. We could match paper,
+patent, and team authors, and ask whether researchers stay in the orbit of their
+old iGEM collaborators. We could match BioBrick sequences to patent filings through
+sequence databases, tracing individual pieces of genetic code from an open registry
+into commercial use. Each would replace a coarse, centroid-level association with a
+concrete, traceable link, and let a future study move past whether a city's projects
+and papers are related to whether one actually grew out of the other.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
