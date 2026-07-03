@@ -51,93 +51,230 @@ the analysis pipeline but the surrounding argument has not yet been finalised.}}
 % ============================================================
 
 % --- Research question -------------------------------------------------------
-\subsection{Research Question}
+\subsection{Research question}
 
 This thesis asks a single question: \textbf{do cities with student synthetic
 biology research also produce academic papers in related areas?} Put more
-carefully, when a city's iGEM teams take up a theme, do that city's researchers
-publish on semantically related themes --- and can we see that relatedness in the
-text the two groups leave behind? The rest of this document builds the data, the
-measures, and the tests needed to answer it, and is careful throughout to speak
-of \textit{semantic relatedness} and \textit{co-location} rather than cause and
-effect.
+carefully: when a city's iGEM teams take up a theme, do that city's researchers
+publish on related themes, and can we see the relatedness in the text both groups
+leave behind? The chapters that follow build the data and the measures to answer
+it, then test that answer to breaking point. Throughout, we speak of
+\textit{semantic relatedness} and \textit{co-location}, and we avoid the language
+of cause and effect.
 
-% --- Motivation --------------------------------------------------------------
-\subsection{Motivation}
+\subsection{Synthetic Biology}
 
-The modern industrial era has reshaped the biosphere. By tapping vast reserves of
-ancient hydrocarbons we transformed our social structures and our surroundings:
-human productive capacity skyrocketed, populations grew along exponential curves,
-industrial farming produced a historically unprecedented surplus of food, and
-advances in medicine lengthened and improved billions of lives. By many measures
-humanity lives longer, healthier, and more abundantly than ever before.
+Humanity has always sought to understand and influence the natural world. Biology,
+the study of life itself, spent most of its history describing it, breaking
+organisms into their parts to work out the principles that hold them together.
+That descriptive work gave rise to something new. Once we understood life's
+principles well enough, we began to \textit{write} with them, designing and
+directing new biological systems of our own. This is the age of Synthetic Biology:
+a field that treats genetic sequences as functions in the programming language of
+life, standardises them, and snaps them together into genetic circuits
+\citep{wayIntegratingBiologicalRedesign2014}. A living cell becomes a kind of
+programmable factory. A single sequence might switch a gene on, report a signal,
+or drive a metabolic pathway. The parts compose much like software, and the living
+machinery that results is a tool we can aim at problems of our own choosing.
 
-That abundance carries a cost. A deep reliance on fossil hydrocarbons is neither
-stable nor sustainable: deposits of coal, oil, and natural gas are finite, and
-burning them is changing the climate. If the last two centuries were built on
-pulling carbon out of the ground, the next must be built on managing it --- and
-biology offers one of the most promising toolkits for doing so.
+That shift from describing life to engineering it is recent, and it is moving
+fast. In a couple of decades Synthetic Biology has grown from a handful of
+proof-of-concept circuits into a field with real stakes in medicine, materials,
+agriculture, and energy
+\citep{shapiraTrackingEmergenceSynthetic2017, raimbaultMappingEmergenceSynthetic2016}.
+It is also hard to pin down. Its boundaries keep moving, and its vocabulary
+overlaps heavily with the descriptive molecular biology it grew out of. A young
+field this consequential is worth watching closely, and worth asking where its
+innovation happens and who is doing it.
 
-Humanity has always sought to understand and influence the natural world.
-Biology, the study of life itself, spent most of its history describing life:
-breaking organisms into their forms and components so that we might build up an
-understanding of the principles that guide them. That descriptive work eventually
-gave rise to something new. Once we understood life's principles well enough, we
-began to \textit{create} --- to design and direct new biological systems rather
-than only catalogue existing ones. This is the age of synthetic biology.
+\subsection{iGEM}
 
-Synthetic biology is an emergent field that uses standardised tools to engineer
-biological systems. Cells become industrially productive machinery; genetic
-sequences are treated as functions written in the programming language of life,
-catalogued, standardised, and snapped together into genetic circuits. Among its
-applications, engineering industrial fermentation is one of the most important:
-microbes such as \textit{E.\,coli} are modified to produce useful compounds, often
-under anaerobic conditions, turning living cells into tiny factories. Control over
-fermentation is in fact humanity's oldest biotechnology --- we brewed and
-leavened long before we could name a microbe or characterise lactic acid and
-ethanol --- and synthetic biology is the modern, deliberate continuation of that
-very old practice.
+One arena where that innovation takes shape early is iGEM. The International
+Genetically Engineered Machine competition is a worldwide student contest in
+Synthetic Biology, a sort of LEGO-robotics contest for genetic engineering. Teams
+of students, usually hosted by a university, spend most of a year designing and
+building an original project with the tools of the field. Every team starts from
+the same kit of standardised parts and the same basic rules, then is left to
+invent its own entry. They document that entry in public on a project ``wiki'', a
+page that reads much like an extended research abstract
+\citep{santoliniIGEMModelSystem2023}.
+
+iGEM matters here for more than its scale. For many researchers it is a first
+serious project in Synthetic Biology, and a launching point for a career in
+academia or industry. Its alumni have founded companies and started labs of their
+own. iGEM styles itself as ``the heart of synthetic biology,'' and it isn't only
+hype. The competition also sets norms that reach well beyond it: open science,
+thorough public documentation, and a shared registry of standardised,
+interoperable parts. Those norms are what make iGEM legible to a study like this
+one. Thousands of projects, each documented the same way and each tied to a place
+and a year, add up to a detailed record of a field as it grows.
+
+% --- Argument and central claim ---------------------------------------------
+\subsection{From iGEM to a testable claim}
+
+That record is what makes iGEM worth studying, because it sits near the base of a
+larger chain. Innovation rests on research: new products grow out of people
+investigating what is possible. Synthetic Biology is one of the most active
+frontiers of that work, and iGEM is where a large share of its practitioners first
+learn to do it. If we want to know how innovation in the field takes root, and how
+its ideas travel, the student projects at the entry point are a natural place to
+start.
+
+This thesis makes one central, testable claim. When a city's student teams take up
+a theme, say biosensors or carbon capture, that city's published papers should
+concentrate in related areas, more than they would in a city that produced the
+same amount of work on unrelated themes. The claim is about \textit{relatedness}:
+whether student and academic work sit in the same corners of the field in the same
+places. It is not a claim about cause. Everything that follows is built to state
+it precisely, then try hard to knock it down.
+
+% --- The artifacts -----------------------------------------------------------
+\subsection{Reading capabilities off artifacts}
+
+Capabilities are abstract, so we read them off the concrete things a place
+produces. Each kind of artifact records the creation of new knowledge in its own
+way, while pointing back to the same underlying capability. An academic paper is
+the currency of scholarship, rewarded by its influence on a field. A patent is a
+claim on commercial value, filed because someone expects an idea to pay. The two
+often diverge. A landmark result can have no obvious market, and a lucrative
+patent can hold little that is scientifically new. Synthetic Biology adds a third
+kind of record that few fields keep so openly: the student project, published in
+full by teams still learning the craft. Different as these artifacts are in
+audience and incentive, they grow out of the same local pool of people and
+equipment, which is why comparing them can tell us something about a place.
+
+This thesis works with four such artifacts, though unevenly. Its spine is the
+pairing of student \textit{projects} with academic \textit{papers}, the two we can
+line up most directly. The physical \textit{parts} that teams register,
+standardised fragments of DNA, give a text-independent check on whether the story
+the text tells holds up. \textit{Patents}, the bridge from research to commercial
+application and one of the P's the project is named for, are set up here but left
+largely to future work, for practical reasons the Conclusion makes concrete.
+Table~\ref{tab:artifacts} summarises what each artifact is and the role it plays.
+A reader should leave this section knowing which promises the Results pay off, and
+which are still roadmap.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}l p{3.3cm} p{4.1cm} p{3.6cm}@{}}
+    \toprule
+    Artifact & What it is & What it signals & Role in this thesis \\
+    \midrule
+    iGEM projects & Year-long student projects, documented on public wikis &
+      Where new practitioners take up themes & Primary (paired with papers) \\
+    Academic papers & Peer-reviewed publications (from OpenAlex) &
+      Scholarly work and its impact on a field & Primary (paired with projects) \\
+    BioBrick parts & Standardised DNA fragments teams register &
+      What a city's teams physically built & Corroboration (independent of text) \\
+    Patents & Filings claiming commercial rights &
+      Belief in an idea's commercial value & Motivated; left to future work \\
+    \bottomrule
+  \end{tabular}
+  \caption{The four artifact types this thesis considers, what each one records,
+  and the role it plays in the analysis. Projects and papers are the primary
+  pairing; parts corroborate the text from outside it; patents are set up but
+  deferred.}
+  \label{tab:artifacts}
+\end{table}
+
+% --- The ``Planet'' lens ------------------------------------------------------
+\subsection{The ``Planet'' lens: carbon capture}
+
+The modern industrial era reshaped the planet. We burned through vast reserves of
+ancient carbon, and in doing so we lived longer, fed more people, and grew past
+every earlier limit. We also changed the climate. The change is large enough that
+scientists have proposed a new geological epoch to mark it, the Anthropocene
+\citep{crutzen2006anthropocene}, an age in which human activity is a dominant
+force on the Earth system. We are terraforming our own planet, mostly by accident.
+
+There is a hopeful reading of that same fact. If we can knock a planet's climate
+off balance without trying, then the same power, aimed on purpose, might help set
+it right. Biology is one of the best tools for the job, and carbon capture is
+where this thesis watches it work. Humanity's oldest biotechnology is control over
+fermentation: we brewed and baked with microbes long before we could name one.
+Synthetic Biology turns that old craft to a new end, engineering microbes such as
+\textit{E.\,coli} to pull carbon from industrial exhaust and build it into fuels
+and materials \citep{delisiRoleSyntheticBiology2020, gleizerConversionEscherichiaColi2019}.
+
+Carbon capture runs through the whole project as a single thread. It's concrete,
+and we can trace it from a student's bench to a patent filing. We tag projects,
+papers, and parts for their relevance to it, and follow the theme across all of
+them. Late in the analysis it does a second job. Every artifact we study is
+already synthetic biology, so any two of them look somewhat alike. Narrowing to
+one sub-topic strips that shared baseline away, so we can ask whether local
+relatedness still holds inside it.
 
 % --- Unit of analysis --------------------------------------------------------
-\subsection{Why Cities?}
+\subsection{Why cities?}
 
-Innovation in synthetic biology is not spread evenly across the map; it clusters.
-There are many plausible reasons --- universities with expensive equipment and
-talented students, venture capital for startups, adjacent industries such as
-pharmaceuticals that already own the necessary infrastructure, favourable
-regulation --- and they tend to coincide in particular places. We already know
-that regions specialise in particular technologies and branch into adjacent ones
-over time \citep{hidalgoProductSpaceConditions2007}, so different cities should
-develop different capabilities \emph{within} synthetic biology: a city strong in
-software may build better computational tools, a city with agricultural strength
-may scale up plant engineering, a city built around a research university may
-specialise in foundational work. The city is where capabilities cluster, which
-makes it the natural unit at which to look for the relatedness this thesis is
-after.
+Innovation in synthetic biology is not spread evenly across the map. It clusters,
+and it clusters in cities. The reasons pile up in the same places: universities
+with expensive equipment and talented students, venture capital for startups,
+established industries like pharma that already own the infrastructure, and
+regulators willing to permit the work. Deep-tech research needs all of these at
+once, and cities are where they coincide.
 
-% --- The three artifacts -----------------------------------------------------
-\subsection{Three Artifacts, One Question}
+Cities also specialise. Regions build capability in particular technologies, then
+branch into adjacent ones over time \citep{hidalgoProductSpaceConditions2007}, so
+different cities should develop different strengths \emph{within} synthetic
+biology. A city with a strong software sector may build better computational
+tools. One with deep agricultural roots may scale engineered crops more easily.
+Where a research university dominates, the local edge may be foundational science
+instead. This is the structure the thesis is after, and the reason the city is our
+unit.
 
-Capabilities are abstract and hard to measure directly, so we read them off the
-quantifiable things a city produces. Different artifacts reflect knowledge
-creation in different ways while pointing back to the same underlying capability.
-A patent signals that someone believes an idea has commercial value. An academic
-paper is the product of scholarly work, rewarded by its impact on a field. The
-two can diverge --- an academic breakthrough may have little commercial use, and
-a valuable patent may contain little novel science. Synthetic biology adds a third
-artifact unique to the field: the iGEM project. This thesis uses all three ---
-student projects, academic papers, and the physical genetic parts that tie them
-together --- as different but connected windows onto the same local capabilities,
-and asks whether they line up in semantic space.
+To read a city's strengths we pool its documents instead of judging them one at a
+time. A single project or paper is a noisy signal, shaped as much by one team's
+quirks as by the place around it. Pooled together, a city's output settles into
+something steadier: a coarse-grained picture of what that place works on. We
+aggregate across years as well, treating each city as one accumulated body of
+work, since most cities produce too little in any single year to characterise on
+their own. What we compare, in the end, is one city's body of work against
+another's.
 
-To be clear about scope before we begin: this draft establishes and stress-tests
-the link between \textit{projects} and \textit{papers}, corroborates it with the
-\textit{parts}, and traces it through the carbon-capture case study.
-\textit{Patents} --- the fourth ``P'' in the project's title, and the bridge from
-research to commercial application --- are motivated and set up here but left to
-future work, for the practical reasons the Conclusion makes concrete. A reader
-should finish this section knowing which promises the Results pay off and which
-are roadmap.
+% --- Worked example ----------------------------------------------------------
+\subsection{A worked example}
+
+The case study is where this stops being abstract. Near the end we pick one
+carbon-capture project and follow its threads outward: the BioBricks it
+registered, the papers those parts were built from, the later papers that cite
+them, and the patents that carry the same sequences. One project, traced through
+every artifact type at once, shows in miniature the local trajectory the rest of
+the thesis can only measure in aggregate.
+
+% --- Scope and contributions -------------------------------------------------
+\subsection{Scope and contributions}
+
+A caution belongs here, at the front. This thesis shows relatedness. It does not
+show causation. When a city's projects and papers sit close in meaning, many
+shared causes could put them there: the same university, the same funding, the
+same handful of advisors who mentor students by day and publish by night. We
+cannot separate a real flow of ideas from a lab that simply houses both kinds of
+work, and we do not try to. Every result that follows is a statement about
+association and co-location, and we say so plainly wherever it matters.
+
+The thesis makes four contributions, all concrete. The first is a corpus that puts
+iGEM projects, academic papers, and BioBrick parts under one shared schema, each
+geocoded to a city. The second is an embedding-based measure of how related a
+city's student and academic work are. To keep that measure honest, the third is a
+battery of permutation and placebo tests that a positive result has to survive.
+The last is the pipeline itself, released as reproducible code and a public
+website, so anyone can rerun the analysis or aim it at a different subfield.
+
+% --- What to expect ----------------------------------------------------------
+\subsection{A preview of the answer}
+
+A brief word on where this lands, so the shape of the answer is clear before the
+machinery arrives. Measured the obvious way, by the average position of a city's
+work, projects and papers look almost identical everywhere. That similarity turns
+out to be mostly the field talking: every document here is synthetic biology, so
+every city starts out looking alike, and a permutation test strips the effect
+away. The signal survives at a finer grain. When we ask whether a city's projects
+and papers fall into the same specific topics, the answer is yes, well beyond
+chance, and it holds up against the physical parts those teams built. The answer
+to the question is a qualified yes, and earning that qualification is most of the
+work.
 
 % ============================================================
 \section{Background}
