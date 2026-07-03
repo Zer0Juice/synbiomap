@@ -1241,6 +1241,52 @@ exists, in a theme concrete enough that a reader can check the pieces against th
 biology they already know.
 
 % ============================================================
+\section{Reproducibility and deliverables}
+% ============================================================
+
+A result is only as trustworthy as the path to it, so the whole analysis is built
+to be re-run. The pipeline is a single notebook, one cell per step: ingest the
+papers, projects, and parts; embed them; reduce and cluster the space; label the
+clusters; and export the tables and figures this manuscript reads. Each step caches
+its output, so a run that stops halfway resumes where it left off, and an expensive
+stage never repeats without reason. Anyone with the repository and an API key can
+rebuild every number in this draft from the raw sources.
+
+The reusable logic lives in a small set of Python modules, one for each job:
+ingesting each source, embedding, clustering, geocoding, and enforcing the shared
+schema. The notebooks call these modules and hide no logic of their own. Keeping
+the machinery in modules and the narrative in notebooks lets a reader follow the
+story in one place and audit the implementation in another.
+
+Configuration is explicit, and secrets stay out of the repository. The parameters
+that shape the analysis, the embedding model, the clustering thresholds, the
+retrieval terms, sit in a single settings file, so changing the study never means
+hunting through code. API keys live in a local environment file that is never
+committed, with an example file showing what a collaborator needs to supply.
+
+The public-facing home for all of this is a documentation website, built with
+Quarto and hosted on GitHub Pages. It gathers the background, the methods, the
+results, the case study, and the reproducibility materials into one navigable
+place, and offers the manuscript and slides for download. The site is the top-level
+product; this manuscript is one of the things it points to.
+
+Two interactive views do what a static page cannot. A semantic-space explorer plots
+every artifact in the shared embedding, coloured by type and filterable down to the
+carbon-capture subset, so a reader can pan through the field and see where projects,
+papers, and parts fall. A geographic view puts the same data on a map, letting a
+reader pick a city and read off its topical mix. Because GitHub Pages serves static
+files, both are precomputed into small JSON exports and drawn in the browser, with
+no server behind them.
+
+Everything is public. The code, the notebooks, the manuscript source, and the
+export scripts live in one repository at
+\url{https://github.com/Zer0Juice/synbiomap}, and the rendered site sits at
+\url{https://zer0juice.github.io/synbiomap}. The visualisation step writes the small
+JSON files the site reads, the same files that back the two interactive views, so
+the website and this manuscript draw from one set of exported artifacts, not two
+diverging copies.
+
+% ============================================================
 \section{Conclusion}
 % ============================================================
 
