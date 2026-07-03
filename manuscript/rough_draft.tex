@@ -1029,152 +1029,148 @@ with finer, author- and mentor-level data.
 \section{Results}
 % ============================================================
 
-The Methods section reported each measure's numbers where it built the measure.
-Here we step back and read those numbers as a sequence of escalating claims, each
-more demanding than the last. The first is a sanity check: that the embedding space
-recovers a recognisable map of the field at all. The second is the thesis's central
-empirical claim: that a city's student projects and its academic papers occupy the
-\textit{same specific topics}, not merely the same broad field --- a local
-relatedness that, measured by cluster co-membership, survives a permutation test the
-raw centroid overlap cannot. A project-level alignment test corroborates it from a
-second direction, and decomposing that alignment shows how much is live, same-year
-coupling (little) versus standing thematic identity (most). The third claim is the
-most ambitious, and the one we can least support: that the two are linked in time,
-with projects running ahead of papers. We take them in turn, then ask whether
-anything outside the text agrees.
+The Methods reported each measure's numbers where it built the measure. Here we
+step back and read them as a sequence of escalating claims, each more demanding
+than the last. The first is a sanity check: that the embedding space recovers a
+recognisable map of the field. The second is the thesis's central claim: that a
+city's student projects and its academic papers occupy the \textit{same specific
+topics}, not just the same broad field. Measured by cluster co-membership, that
+local relatedness survives a permutation test the raw centroid overlap cannot. A
+project-level alignment test backs it from a second direction, and decomposing that
+alignment shows how much is live same-year coupling (little) and how much is
+standing thematic identity (most). The third claim is the most ambitious and the
+least supported: that the two are linked in time, with projects running ahead of
+papers. We take them in turn, then ask whether anything outside the text agrees.
 
 % ------------------------------------------------------------
-\subsection{The Embedding Space Recovers a Sensible Map}
+\subsection{The embedding space recovers a sensible map}
 % ------------------------------------------------------------
 
 Before asking whether projects and papers align, we should check that the space
-they live in is meaningful. Two features suggest it is. The cities with the
-highest project--paper overlap (Table~\ref{tab:top15}) are precisely the places
-one would name without any model in hand: Cambridge, Boston and Berkeley in the
-United States; Beijing, Shanghai, Tianjin and Wuhan in China; Munich and Marburg
-in Germany; Paris in France --- large, long-running synthetic biology hubs with
-deep iGEM histories. The cities at the other end (Table~\ref{tab:bottom15}) are
-almost all places with a single paper and a single project, where a centroid is
-just one document and overlap is whatever that lone pairing happens to be. Low
-overlap, in other words, tracks thin data rather than genuine thematic
-divergence, exactly as the size relationship ($r = \statSizePapersR{}$ for
-papers, $r = \statSizeProjectsR{}$ for projects) leads us to expect. The map
-behaves the way a sensible map should: it puts the well-known hubs at the top and
-reserves its uncertainty for the cities we know least about.
+they live in is meaningful. Two things suggest it is. The cities with the highest
+project--paper overlap (Table~\ref{tab:top15}) are the ones anyone would name
+without a model in hand: Cambridge, Boston, and Berkeley in the United States;
+Beijing, Shanghai, Tianjin, and Wuhan in China; Munich and Marburg in Germany;
+Paris in France. These are the large, long-running synthetic biology hubs with deep
+iGEM histories. The cities at the other end (Table~\ref{tab:bottom15}) are almost
+all places with a single paper and a single project, where a centroid is just one
+document and overlap is whatever that lone pairing happens to be. Low overlap
+tracks thin data, not real thematic divergence, exactly as the size relationship
+($r = \statSizePapersR{}$ for papers, $r = \statSizeProjectsR{}$ for projects)
+leads us to expect. The map behaves the way a sensible map should: the well-known
+hubs on top, and its uncertainty reserved for the cities we know least.
 
 \input{generated/tables/bottom15_cities.tex}
 
 % ------------------------------------------------------------
-\subsection{A City's Projects and Papers Share Its Specific Topics}
+\subsection{A city's projects and papers share its specific topics}
 % ------------------------------------------------------------
 
 The central finding is that a city's student projects and its academic papers
-concentrate in the \textit{same specific corners} of synthetic biology, not just the
-same broad field. Measured as cluster co-membership --- the cosine between a city's
-paper and project topic-distributions --- the average city, among the
-\statClusterNCitiesDense{} with enough documents to measure it, scores
-\statClusterPermObserved{}, well above the \statClusterPermNullMean{} expected when
-we re-pair papers and projects across same-country cities at random (permutation
-$p = \statClusterPermP{}$). In plain terms: a city's two kinds of output land in the
-same topics far more often than a comparable neighbour's would, and the gap is large
-relative to chance --- an excess of \statClusterPermExcess{}, roughly half again
-above the null.
+concentrate in the \textit{same specific corners} of synthetic biology, not just
+the same broad field. Cluster co-membership, the cosine between a city's paper and
+project topic-distributions, averages \statClusterPermObserved{} across the
+\statClusterNCitiesDense{} cities with enough documents to measure it. That sits
+well above the \statClusterPermNullMean{} expected when we re-pair papers and
+projects across same-country cities at random (permutation $p = \statClusterPermP{}$).
+In plain terms, a city's two kinds of output land in the same topics far more often
+than a comparable neighbour's would. The gap is large relative to chance: an excess
+of \statClusterPermExcess{}, roughly half again above the null.
 
-What makes this the result the draft leans on, rather than the raw centroid overlap,
-is that it clears two bars the centroid measure cannot. It is not an artifact of the
-field baseline: by scoring only shared \textit{specific} topics, it starts from zero
-for unrelated cities rather than from the near-1.0 floor every synthetic-biology
-centroid sits on. And it is not an artifact of city size: the same kind of regression
-that explains most of the centroid overlap explains almost none of this measure
-($R^2 = \statClusterOlsRsq{}$, with neither size coefficient significant), so we are
-not merely rediscovering that large cities have steadier centres. A measure built to
-survive both objections does survive them, which is why we read its permutation
-result as the thesis's strongest evidence of genuine local relatedness.
+This is the result the draft leans on, ahead of the raw centroid overlap, because
+it clears two bars the centroid measure cannot. It is not an artifact of the field
+baseline: by scoring only shared \textit{specific} topics, it starts from zero for
+unrelated cities, not from the near-1.0 floor every synthetic-biology centroid sits
+on. It is not an artifact of city size: the regression that explains most of the
+centroid overlap explains almost none of this measure ($R^2 = \statClusterOlsRsq{}$,
+with neither size coefficient significant), so we are not just rediscovering that
+large cities have steadier centres. A measure built to survive both objections does
+survive them, and that is why its permutation result is the thesis's strongest
+evidence of genuine local relatedness.
 
 % ------------------------------------------------------------
-\subsection{Projects and Papers Co-specialise Within Cities}
+\subsection{Projects and papers co-specialise within cities}
 % ------------------------------------------------------------
 
 A second line of evidence works one project at a time: an iGEM project sits closer
-to its own city's papers than to other cities' papers. The raw advantage is small but pervasive ---
-$\delta = \statAlignMeanDelta{}$, with \statAlignFracPos{} of projects on the
-home-city side --- and, crucially, it holds up once we count cities rather than
+to its own city's papers than to other cities' papers. The raw advantage is small
+but pervasive ($\delta = \statAlignMeanDelta{}$, with \statAlignFracPos{} of
+projects on the home-city side), and it holds up once we count cities instead of
 projects. Clustered at the city level the advantage stands at
 $t = \statAlignTClustered{}$ across \statAlignNCities{} cities, and
-\statAlignFracCitiesPos{} of cities (not just projects) lean toward home.
-Whatever else is true, a city's student work really does resemble its own
-academic work more than a stranger's.
+\statAlignFracCitiesPos{} of cities lean toward home. Whatever else is true, a
+city's student work really does resemble its own academic work more than a
+stranger's.
 
 But ``closer to home'' can mean two very different things, and separating them is
 the analytical heart of this draft. The home-city advantage might be a
-\textit{timing} signal --- this year's projects tracking this year's local
-papers, the kind of live coupling a knowledge pipeline would produce --- or it
-might be pure \textit{stable specialisation}: a city that has always done
-biosensors will show biosensor projects and biosensor papers in every year, with
-no ideas passing between them. The difference-in-differences design isolates the
-timing slice from the standing one (Table~\ref{tab:did}). The verdict is sobering
-for the pipeline story: of the whole home-city advantage, only \statDidEstimate{}
-is specific to a project's own year ($t = \statDidTClustered{}$ clustered across
-\statDidNCities{} cities --- small, but really there), while the rest is a
-durable thematic identity that holds across years. Co-specialisation is real, but
-it is mostly something a city \textit{is}, not something that \textit{happens}
-between its students and its scholars in a given year. This is a more modest claim
-than a knowledge pipeline, and it is the one the data actually support.
+\textit{timing} signal: this year's projects tracking this year's local papers, the
+live coupling a knowledge pipeline would produce. Or it might be pure
+\textit{stable specialisation}: a city that has always done biosensors shows
+biosensor projects and biosensor papers every year, with no ideas passing between
+them. The difference-in-differences design isolates the timing slice from the
+standing one (Table~\ref{tab:did}). The verdict is sobering for the pipeline story:
+of the whole home-city advantage, only \statDidEstimate{} is specific to a
+project's own year ($t = \statDidTClustered{}$ clustered across \statDidNCities{}
+cities, small but really there), while the rest is a durable thematic identity that
+holds across years. Co-specialisation is real, but it is mostly something a city
+\textit{is}, not something that \textit{happens} between its students and its
+scholars in a given year. That is a more modest claim than a knowledge pipeline,
+and it is the one the data support.
 
-That co-specialisation is also unevenly distributed, in a way that is itself
+That co-specialisation is unevenly distributed, in a way that is itself
 informative. The home-city advantage grows with the size of a city's research
-base: across cities, mean $\delta$ rises with the (log) number of local papers
+base. Across cities, mean $\delta$ rises with the log number of local papers
 ($r = \statAlignSizeR{}$), and projects in above-median cities enjoy more than
 three times the advantage of those in the long tail ($\delta =
-\statAlignDeltaLarge{}$ versus $\statAlignDeltaSmall{}$). Local alignment, in
-other words, is largely a feature of mature clusters --- the Beijings and Bostons
-with enough of both kinds of work to have built a coherent local identity --- and
-fades, without quite vanishing, in cities with only a project or two. That is a
-more useful finding for innovation policy than a flat average would be: it
-suggests the project--paper link is something clusters \textit{grow into} as
-their research base thickens.
+\statAlignDeltaLarge{}$ against $\statAlignDeltaSmall{}$). Local alignment is
+largely a feature of mature clusters, the Beijings and Bostons with enough of both
+kinds of work to have built a coherent identity, and it fades, without quite
+vanishing, in cities with only a project or two. That is more useful for innovation
+policy than a flat average: it suggests the project--paper link is something
+clusters \textit{grow into} as their research base thickens.
 
-Finally, the carbon-capture case study behaves just like the whole. Restricting
-the alignment test to the \statCcAlignN{} carbon-capture projects (across
-\statCcAlignNCities{} cities) gives essentially the same picture as the full
-corpus --- $\delta = \statCcAlignMeanDelta{}$, \statCcAlignFracPos{} of projects
-on the home-city side, $t = \statCcAlignTClustered{}$ clustered by city. The
-thread we promised to follow is not an exception: a city's carbon-capture
-students sit nearer its own carbon-relevant literature than elsewhere's, exactly
-as the general result predicts.
+Finally, the carbon-capture case behaves just like the whole. Restricting the
+alignment test to the \statCcAlignN{} carbon-capture projects, across
+\statCcAlignNCities{} cities, gives essentially the same picture as the full
+corpus: $\delta = \statCcAlignMeanDelta{}$, \statCcAlignFracPos{} of projects on
+the home-city side, $t = \statCcAlignTClustered{}$ clustered by city. The thread we
+promised to follow is no exception. A city's carbon-capture students sit nearer its
+own carbon-relevant literature than elsewhere's, exactly as the general result
+predicts.
 
 % ------------------------------------------------------------
-\subsection{Timing Is Unresolved, but the Parts Agree}
+\subsection{Timing is unresolved, but the parts agree}
 % ------------------------------------------------------------
 
-The most ambitious claim --- that projects lead papers --- we cannot make, and the
-reason is worth stating as a result in its own right. The lead--lag profile
+The most ambitious claim, that projects lead papers, we cannot make, and the reason
+is worth stating as a result in its own right. The lead--lag profile
 (Table~\ref{tab:leadlag}, Figure~\ref{fig:leadlag}) rises gently from lag $-3$ to
-lag $+3$, with its nominal peak at $k = \statLeadlagBestLag{}$ years, the
-direction the early-signal hypothesis predicts. But the whole profile spans about
-a thousandth of a cosine unit and the confidence intervals overlap throughout, so
-we treat it as flat. This is best read as a \textit{negative methodological
-result}: a centroid averaged over the one or two documents a small city produces
-in a given year carries almost no temporal information, so timing simply cannot be
-read off centroids at this resolution. Resolving it will take a sharper instrument
---- the project--part--paper citation graph described in the Background, where a
-single project's parts point to dated literature directly --- which we flag as the
-natural next step rather than a finding of this draft.
+lag $+3$, peaking at $k = \statLeadlagBestLag{}$ years, the direction the
+early-signal hypothesis predicts. But the whole profile spans about a thousandth of
+a cosine unit and the confidence intervals overlap throughout, so we treat it as
+flat. This is best read as a \textit{negative methodological result}. A centroid
+averaged over the one or two documents a small city produces in a year carries
+almost no temporal information, so timing cannot be read off centroids at this
+resolution. Resolving it will take a sharper instrument: the project--part--paper
+citation graph described in the Background, where a single project's parts point to
+dated literature directly. We flag that as the natural next step, not a finding of
+this draft.
 
-What does survive is an independent corroboration from outside the text. The mix
-of BioBrick part types a city registers --- measured with no reference to the
-embedding space --- shows the same specialisation the text does
-(Figure~\ref{fig:parts}): the median city's part-type entropy is
-\statPartEntropyMedian{} nats against a possible \statPartEntropyMax{}, so cities
-concentrate on particular kinds of biology rather than spreading evenly. More
-directly, cities that look alike in part-type space also look alike in
-topic-cluster space: correlating the two sets of city-to-city similarities --- a
-Mantel test (Mantel, 1967) --- gives a clear positive association across
-\statMantelNCities{} cities ($r = \statMantelR{}$, $p = \statMantelP{}$ against a
-label-shuffling null), so the physical parts and the abstract text rank the cities
-the same way. That two methods built on entirely different data --- abstract text on
-one side, registered parts on the other --- both point to local specialisation gives
-us more confidence that the specialisation lives in the cities, not in the model.
+What does survive is an independent corroboration from outside the text. The mix of
+BioBrick part types a city registers, measured with no reference to the embedding
+space, shows the same specialisation the text does (Figure~\ref{fig:parts}). The
+median city's part-type entropy is \statPartEntropyMedian{} nats against a possible
+\statPartEntropyMax{}, so cities concentrate on particular kinds of biology instead
+of spreading evenly. More directly, cities that look alike in part-type space also
+look alike in topic-cluster space. Correlating the two sets of city-to-city
+similarities with a Mantel test (Mantel, 1967) gives a clear positive association
+across \statMantelNCities{} cities ($r = \statMantelR{}$, $p = \statMantelP{}$
+against a label-shuffling null), so the physical parts and the abstract text rank
+the cities the same way. Two methods built on entirely different data, abstract text
+on one side and registered parts on the other, point to the same local
+specialisation. That gives us more confidence the specialisation lives in the
+cities, not in the model.
 
 % ============================================================
 \section{Conclusion}
