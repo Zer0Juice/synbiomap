@@ -749,6 +749,43 @@ def stage_parts(projects: pd.DataFrame) -> None:
     fig.colorbar(im, ax=axes[1], fraction=0.025, pad=0.04, label="Proportion of city's parts")
     save_fig("part_type_composition")
 
+    # --- Carbon-capture part-type signature: do CC cities look different? ---
+    # A CC city has >= 1 carbon-capture-flagged team. We compare its part-type mix to
+    # the rest with a Mann-Whitney U per type, Bonferroni-corrected for the K types.
+    prj = projects.copy()
+    prj["cc"] = prj.get("case_study_flag", pd.Series(False, index=prj.index)).fillna(False).astype(bool)
+    cc_cities = set(prj.loc[prj["cc"], "city_key"].dropna())
+    ccmask = props.index.to_series().isin(cc_cities).to_numpy()
+    K = props.shape[1]
+    n_sig = 0
+    for t in props.columns:
+        a, b = props.loc[ccmask, t], props.loc[~ccmask, t]
+        if len(a) >= 3 and len(b) >= 3:
+            _, pv = stats.mannwhitneyu(a, b, alternative="two-sided")
+            if pv * K < 0.05:
+                n_sig += 1
+    record("cc_parts_n_cities", int(ccmask.sum()), ",d", "cities with >=1 carbon-capture team")
+    record("part_type_count", int(K), ",d", "distinct BioBrick part types")
+    record("cc_n_sig_types", int(n_sig), ",d",
+           "part types differing CC vs non-CC after Bonferroni")
+    for t in ["cds", "composite", "reporter"]:
+        if t in props.columns:
+            record(f"cc_share_{t}", float(props.loc[ccmask, t].mean()), ".3f")
+            record(f"noncc_share_{t}", float(props.loc[~ccmask, t].mean()), ".3f")
+
+    top = props.mean().nlargest(8).index
+    ccm, ncm = props.loc[ccmask, top].mean(), props.loc[~ccmask, top].mean()
+    fig, ax = plt.subplots(figsize=(9, 4))
+    xpos = np.arange(len(top)); w = 0.4
+    ax.bar(xpos - w / 2, ccm.values, w, color=ORANGE,
+           label=f"carbon-capture cities (n = {int(ccmask.sum())})")
+    ax.bar(xpos + w / 2, ncm.values, w, color=BLUE, label="other cities")
+    ax.set_xticks(xpos); ax.set_xticklabels(top, rotation=45, ha="right", fontsize=8)
+    ax.set(ylabel="Mean share of a city's parts",
+           title="Part-type mix: carbon-capture cities vs. the rest")
+    ax.legend(fontsize=8)
+    save_fig("part_type_cc_comparison")
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 def main() -> None:

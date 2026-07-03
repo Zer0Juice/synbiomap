@@ -1245,11 +1245,29 @@ carbon-capture students sit nearer its own carbon-relevant literature than anoth
 city's, with much the same home-city advantage as the full corpus. Here we look
 instead at what the subset is made of.
 
-The parts tell a physical story. Carbon capture is metabolic engineering, work that
-rewires a cell's chemistry, so its teams lean on the coding sequences and composite
-devices that carry and combine enzymes more than on the reporters a typical
-biosensor project is built from. The signature is faint at this sample size, and we
-report it as a direction, not a test, but it points the way the biology predicts.
+The parts were supposed to tell a physical story. Carbon capture is metabolic
+engineering, so we expected its cities to lean on coding sequences and composite
+devices, the parts that carry and combine enzymes, and away from the reporters a
+biosensor project favours. The data do not oblige. Across the \statCcPartsNCities{}
+carbon-capture cities, the coding-sequence share is level with the rest
+(\statCcShareCds{} against \statNonccShareCds{}), the composite share is if anything
+lower (\statCcShareComposite{} against \statNonccShareComposite{}), and the reporter
+gap is small (\statCcShareReporter{} against \statNonccShareReporter{}). Testing all
+\statPartTypeCount{} part types with a Mann-Whitney U and correcting for the
+multiple comparisons, \statCcNSigTypes{} minor types separate the two groups, but
+none is the machinery the mechanism points to (Figure~\ref{fig:ccparts}). The
+predicted signature is not there at this scale, and saying so is more useful than
+dressing a null in a story.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{part_type_cc_comparison}
+  \caption{Mean part-type shares of carbon-capture cities against all others, for
+  the eight most common BioBrick types. The functional categories the mechanism
+  predicts, coding sequences and composite devices, do not separate the two
+  groups.}
+  \label{fig:ccparts}
+\end{figure}
 
 The enzymes behind that chemistry recur across the subset. RuBisCO, the
 carbon-fixing workhorse of photosynthesis; carbonic anhydrase, which moves CO$_2$
@@ -1274,15 +1292,17 @@ same sequences.
 % Write the paragraph-by-paragraph walk here once the project is chosen.
 
 % ------------------------------------------------------------
-\subsection{What seven cities can and cannot show}
+\subsection{What the case study can and cannot show}
 % ------------------------------------------------------------
 
-Seven cities cannot carry a statistical argument, and the case study does not try
-to. With a sample this small, a single active city can swing any average, and the
-part-type signature is suggestive at best. What the slice offers instead is
+The carbon-capture slice is small wherever it is tightly defined. Only
+\statCcAlignNCities{} cities carry enough carbon-capture papers and projects to run
+the alignment test, too few to support a statistical argument on their own. The
+broader tagging reaches further, across \statCcPartsNCities{} cities for the
+part-type comparison, but that comparison returns a null. The slice trades power for
 legibility. It lets us name the enzymes, follow one project's parts into the
-literature, and watch the general result hold in a corner small enough to inspect
-by hand.
+literature, and watch the alignment result reappear in a corner small enough to
+inspect by hand.
 
 Read that way, the case study earns its place. It cannot prove that carbon-capture
 innovation follows a local path. It can show what such a path looks like where it

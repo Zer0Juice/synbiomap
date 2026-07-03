@@ -424,5 +424,59 @@
     "value": 3.58351893845611,
     "formatted": "3.584",
     "note": "uniform over all part types"
+  },
+  "cc_parts_n_cities": {
+    "macro": "statCcPartsNCities",
+    "value": 89,
+    "formatted": "89",
+    "note": "cities with >=1 carbon-capture team"
+  },
+  "part_type_count": {
+    "macro": "statPartTypeCount",
+    "value": 36,
+    "formatted": "36",
+    "note": "distinct BioBrick part types"
+  },
+  "cc_n_sig_types": {
+    "macro": "statCcNSigTypes",
+    "value": 5,
+    "formatted": "5",
+    "note": "part types differing CC vs non-CC after Bonferroni"
+  },
+  "cc_share_cds": {
+    "macro": "statCcShareCds",
+    "value": 0.3254788763040016,
+    "formatted": "0.325",
+    "note": ""
+  },
+  "noncc_share_cds": {
+    "macro": "statNonccShareCds",
+    "value": 0.3301213284876009,
+    "formatted": "0.330",
+    "note": ""
+  },
+  "cc_share_composite": {
+    "macro": "statCcShareComposite",
+    "value": 0.18659887893301172,
+    "formatted": "0.187",
+    "note": ""
+  },
+  "noncc_share_composite": {
+    "macro": "statNonccShareComposite",
+    "value": 0.20545753975127207,
+    "formatted": "0.205",
+    "note": ""
+  },
+  "cc_share_reporter": {
+    "macro": "statCcShareReporter",
+    "value": 0.032330353082457214,
+    "formatted": "0.032",
+    "note": ""
+  },
+  "noncc_share_reporter": {
+    "macro": "statNonccShareReporter",
+    "value": 0.03856331484004978,
+    "formatted": "0.039",
+    "note": ""
   }
 }
