@@ -11,6 +11,7 @@ Constructs (anchor, positive) text pairs from the heterogeneous citation graph:
   project → part   projects.csv + parts.csv (join)  ~65 000
   paper ↔ patent   Marx & Fuegi PPP × Oldham corpus  ~2 900
   project ↔ paper  iGEM wiki DOIs × papers.csv        ~1 200
+  project ↔ paper  project→part→paper (part bridge)   ~1 600
 
 The paper↔patent edge is the ONLY one that brings the patent genre into
 training, so it is what teaches the adapter to place patents in the same
@@ -18,10 +19,12 @@ semantic space as papers, parts and projects. Its patent side is matched to
 our Oldham corpus via representative grant number; its paper side is taken
 from papers.csv when present and otherwise fetched from OpenAlex (cached).
 
-The project↔paper edge links each iGEM team to papers it cited on its wiki —
-the most direct 'student project → literature' signal. Scoped in-corpus: a
-pair is kept only when the cited DOI resolves to a paper already in papers.csv
-(DOI→OpenAlex-id lookup is cached; no external abstracts are fetched).
+Project↔paper links come from two complementary sources: (1) papers a team
+cited on its wiki (the most direct 'student project → literature' signal), and
+(2) the part bridge project→part→paper, where a team's part is tied to the
+paper it was derived from or that mentions it. Both are scoped in-corpus (kept
+only when the paper is already in papers.csv); the wiki source needs a cached
+DOI→OpenAlex-id lookup, the part-bridge source is fully offline.
 
 All edge types encode the same "built upon / used" signal.
 SPECTER2's training objective (InfoNCE) treats same-edge pairs as positives
@@ -671,6 +674,116 @@ def build_project_paper_pairs(project_text: dict, paper_text: dict, fetch_missin
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Edge type 7: project ↔ paper via the part bridge (project → part → paper)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _norm_team(value) -> str:
+    """Normalise a team id to a plain string. parts.csv stores it as float
+    (e.g. 5794.0) while projects.csv uses int (173); coerce both to '5794'."""
+    if pd.isna(value):
+        return ""
+    try:
+        return str(int(float(value)))
+    except (ValueError, TypeError):
+        return str(value).strip()
+
+
+def build_project_paper_via_part_pairs(
+    project_text: dict,
+    paper_text: dict,
+    doi_to_paper_id: dict,
+) -> list:
+    """
+    Build project ↔ paper pairs by composing the two-hop path project → part → paper.
+
+    A team's parts are already linked to papers (part_source_papers: the paper a
+    part was derived from; paper_mentions_part: a paper that uses the part). Each
+    part belongs to the team that submitted it, and that team has an iGEM project.
+    Composing these gives a documented project ↔ paper link that is grounded in a
+    shared biological part — complementary to the wiki-citation edge above, and
+    often tighter (the project literally built on that paper's part).
+
+    Fully in-corpus and offline: the paper side is resolved to papers already in
+    papers.csv (paper_id directly from part_source_papers, or via doi_to_paper_id
+    for paper_mentions_part). No network calls.
+
+    Emitted in both orientations. A distinct edge_type keeps its provenance
+    visible in the summary; global dedup in run() collapses any pair that also
+    arises from the wiki edge.
+    """
+    projects = pd.read_csv(PROCESSED / "projects.csv", usecols=["id", "team_id"])
+    parts    = pd.read_csv(PROCESSED / "parts.csv", usecols=["part_name", "team_id"])
+
+    # team → projects (only projects we have text for)
+    team_to_projects: dict = {}
+    for _, row in projects.iterrows():
+        pid  = clean_text(row.get("id"))
+        team = _norm_team(row.get("team_id"))
+        if team and pid in project_text:
+            team_to_projects.setdefault(team, []).append(pid)
+
+    # part_name → owning team (a registry part name is created by one team;
+    # if it appears under several, we keep the first).
+    partname_to_team: dict = {}
+    for _, row in parts.iterrows():
+        name = clean_text(row.get("part_name"))
+        team = _norm_team(row.get("team_id"))
+        if name and team and name not in partname_to_team:
+            partname_to_team[name] = team
+
+    # part_name → set of in-corpus paper ids, from both part↔paper sources.
+    part_to_papers: dict = {}
+    psp = pd.read_csv(PROCESSED / "part_source_papers.csv")
+    for _, row in psp.iterrows():
+        name = clean_text(row.get("part_name"))
+        pid  = clean_text(row.get("paper_id"))
+        if name and pid in paper_text:
+            part_to_papers.setdefault(name, set()).add(pid)
+
+    pmp = pd.read_csv(PROCESSED / "paper_mentions_part.csv")
+    for _, row in pmp.iterrows():
+        name = clean_text(row.get("part_name"))
+        pid  = doi_to_paper_id.get(clean_text(row.get("doi")), "")
+        if name and pid in paper_text:
+            part_to_papers.setdefault(name, set()).add(pid)
+
+    # Compose: for each part→paper link, fan out to the part's team's project(s).
+    pairs = []
+    seen  = set()  # local dedup so a team's many parts citing one paper count once
+    for name, paper_ids in part_to_papers.items():
+        team = partname_to_team.get(name)
+        if not team:
+            continue
+        for project_id in team_to_projects.get(team, []):
+            proj_txt = project_text.get(project_id, "")
+            if not proj_txt:
+                continue
+            for paper_id in paper_ids:
+                if (project_id, paper_id) in seen:
+                    continue
+                seen.add((project_id, paper_id))
+                paper_txt = paper_text[paper_id]
+                pairs.append({
+                    "anchor_id":    project_id,
+                    "anchor_text":  proj_txt,
+                    "positive_id":  paper_id,
+                    "positive_text": paper_txt,
+                    "edge_type":    "project_paper_part",
+                })
+                pairs.append({
+                    "anchor_id":    paper_id,
+                    "anchor_text":  paper_txt,
+                    "positive_id":  project_id,
+                    "positive_text": proj_txt,
+                    "edge_type":    "paper_project_part",
+                })
+
+    print(f"  project↔paper (via part): {len(pairs):>6} pairs  "
+          f"({len(seen)} distinct project–paper links)")
+    return pairs
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Combine, deduplicate, split, write
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -698,6 +811,7 @@ def run(fetch_missing: bool = True):
     all_pairs.extend(build_project_part_pairs(project_text, part_text_by_id))
     all_pairs.extend(build_paper_patent_pairs(paper_text, fetch_missing=fetch_missing))
     all_pairs.extend(build_project_paper_pairs(project_text, paper_text, fetch_missing=fetch_missing))
+    all_pairs.extend(build_project_paper_via_part_pairs(project_text, paper_text, doi_to_paper_id))
 
     print(f"\nTotal before dedup: {len(all_pairs):,}")
 
