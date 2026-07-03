@@ -280,70 +280,201 @@ work.
 \section{Background}
 % ============================================================
 
-% --- Methodological base -----------------------------------------------------
-\subsection{A Methodological Starting Point}
+This thesis sits where three literatures meet. Its question, whether a city's
+student and academic work are related, comes from the economic geography of
+innovation and its principle of relatedness. Its method, comparing documents by
+meaning, comes from natural language processing and the embedding models built for
+scientific text. Its data, iGEM projects and the parts they register, comes from a
+young science-of-science literature that has only lately taken student work
+seriously. This section takes each in turn, and marks where this study departs from
+them.
 
-\citet{boschmaScientificKnowledgeDynamics2014} studied how scientific relatedness
-shapes knowledge dynamics in biotechnology at the city level, and supplies the
-clean methodological base this project builds on: represent a place by what it
-works on, and read relatedness off how those representations line up.
-\citet{hidalgoProductSpaceConditions2007} adds the complementary intuition that
-regions move through a ``product space,'' specialising in what sits close to what
-they already do. \citet{santoliniIGEMModelSystem2023} establishes the other half
-of the foundation, presenting iGEM as a well-structured dataset for studying
-team-level innovation. Where Boschma and Hidalgo give us the geography of
-relatedness and Santolini gives us the data, this thesis joins the two: it asks
-whether a regional-relatedness lens, applied to a novel student artifact,
-recovers the same local structure.
+% --- Measuring the field -----------------------------------------------------
+\subsection{Measuring a moving field}
 
-% --- iGEM --------------------------------------------------------------------
-\subsection{iGEM: A Novel Artifact}
+Synthetic biology is hard to measure because it is hard to bound. It shares its
+vocabulary, and often its journals, with the descriptive molecular biology it grew
+out of, so a word count cannot tell the two apart. A molecular biologist might
+study metabolic pathways in \textit{E.\,coli} with no interest in engineering
+them. A synthetic biologist might describe the same pathway in nearly the same
+words, meaning to rebuild it. \citet{oldhamSyntheticBiologyMapping2018} map the
+field's patent landscape and hit exactly this problem of delimitation. Their
+corpus is where we start.
 
-The International Genetically Engineered Machine competition --- iGEM --- is a
-worldwide student competition in synthetic biology, something like a LEGO-robots
-contest for genetic engineering. Teams of students work for a year to produce an
-innovative project using the tools of the field. They share a basic toolkit of
-genetic parts, a common set of rules, and a standard project structure, but are
-otherwise left to craft their own entry. The result sits somewhere between a
-conference paper and a startup in an accelerator, and the competition has become a
-major launching point for careers in synthetic biology, setting norms that ripple
-through the wider industry.
+The boundary also moves. Names for the same idea come and go as the field matures,
+so a keyword list drawn up today mislabels the work of five years ago and misses
+the work of five years from now. This is why building a corpus in a young field is
+a running problem, revisited as the vocabulary shifts, and why the choices about
+seed terms and citation expansion deserve the space this thesis gives them.
 
-Chief among those norms is a commitment to open science: extensive public
-documentation, and a shared, standardised registry of genetic parts built to the
-``BioBrick'' standard so that parts interoperate as pieces of genetic circuits.
-The BioBrick standard, created by Tom Knight at MIT, has grown alongside the
-competition into a remarkable, well-documented record of a field developing over
-time. Basic parts are often lifted directly from academic research and translated
-into the standard; composite parts are assembled from existing ones. Because every
-project both deposits new parts and reuses old ones, the registry forms a rich
-knowledge graph that links projects to one another --- and, through their sources,
-to the academic literature.
+% --- Economic geography ------------------------------------------------------
+\subsection{The economic geography of relatedness}
 
-iGEM is a global, integrated, open knowledge base, but that does not erase
-regional structure. Teams are usually hosted by universities and draw advisors
-from local faculty and community, so a team's work may be closely related to the
-research already happening in its city. That expectation is not trivial, though:
-teams operate under different incentives and with a different knowledge base than
-an academic group, some are cross-institution collaborations (the Munich team, for
-instance, joins TUM and LMU students), and many maintain their own networks of
-returning students and allied teams. Team collaboration itself is outside this
-thesis's focus and has been studied in depth elsewhere
-\citep{santoliniIGEMModelSystem2023}; our question is narrower --- whether a
-city's iGEM work is semantically related to its academic publications.
+Start with the geography. Innovation concentrates in space, and it has done so for
+as long as anyone has measured it. Firms in the same industry gather in the same
+regions to share labour, suppliers, and the loose talk that carries ideas from one
+bench to the next. Economists call these agglomeration economies, and they matter
+most in the knowledge-heavy work synthetic biology depends on. A city is more than
+where the work happens. It is part of why the work happens.
 
-% --- Case study --------------------------------------------------------------
-\subsection{Case Study: Carbon Capture}
+Places do not diversify at random. A region is far likelier to move into an
+activity that draws on what it already does than into one that starts from nothing.
+This is the principle of relatedness: capabilities beget nearby capabilities, and
+regional economies branch through the space of what is possible, each new activity
+a short step from the last.
 
-To keep the analysis grounded, the broader project carries one interpretive thread
-throughout: carbon capture in synthetic biology. Returning to the motivation
-above, managing atmospheric carbon is exactly the kind of problem synthetic
-biology is being pointed at, and it is concrete enough to trace from end to end.
-The case study follows carbon-capture work across all three artifact types --- the
-iGEM projects that take it up, the BioBricks they register and the literature
-those parts cite, and the patents that pick up related sequences --- as a worked
-example of the local innovation trajectory the broader analysis looks for at
-scale.
+\citet{hidalgoProductSpaceConditions2007} made this measurable with the product
+space. They could not observe a country's capabilities directly, so they inferred
+relatedness from behaviour: two products count as related if the same countries
+tend to export both. The resulting network predicts how economies grow and which
+products a country is likely to add next. Relatedness, in this tradition, is
+measured from what actually co-occurs.
+
+The same logic runs through other proxies. Where products are related by the
+countries that export both, industries can be related by the workers who move
+between them: if people flow easily from one industry to another, the two must
+draw on similar skills \citep{liEvaluatingPrincipleRelatedness2023}. Software work
+has been mapped the same way, through the tasks and languages that careers pass
+through \citep{fengBuildingBlocksSoftware}. Each proxy trades a different
+observable behaviour for the same thing underneath, the capability itself.
+
+% --- Relatedness in text -----------------------------------------------------
+\subsection{From products to text}
+
+This thesis measures relatedness a different way. Trade data and labour flows
+reveal what a place \textit{does}; they say nothing about what its work is
+\textit{about}. For that we turn to the text itself. Every artifact we study, a
+project, a paper, a patent, carries a title and an abstract written in the
+language of the field, and modern language models can place two such documents
+near each other when they mean similar things. Relatedness measured from meaning
+is the move this thesis makes, and it lets one method compare artifacts that share
+no market and cite each other rarely.
+
+\citet{boschmaScientificKnowledgeDynamics2014} show the approach can work.
+Studying biotechnology across cities, they measure how scientific relatedness
+shapes where new knowledge grows, and they work at the city level this thesis also
+adopts. Theirs is the closest precedent for what follows: represent a place by
+what it works on, and read relatedness off how those representations line up. Where
+they use publications alone, we add the student projects and the physical parts.
+
+One idea from this literature guides how we read the results: innovation is
+path-dependent. What a place can do next is shaped by what it did before, so a
+city's capabilities trace a trajectory through time, branching from year to year,
+each step close to the one before. When this thesis speaks of a local innovation
+trajectory, it means just this: a city's projects, papers, and parts moving
+together through the space of the field, related because they grow from a shared
+root. Whether that trajectory runs in a direction in time, with students leading
+and papers following, is a question we test and cannot settle.
+
+% --- iGEM as data ------------------------------------------------------------
+\subsection{iGEM as a data source}
+
+iGEM enters this thesis as data. Each team leaves behind a project wiki, an
+informal, self-published account of a year's work, written by students at the
+start of their research lives. That informality is a feature. The wikis are
+interdisciplinary and candid in ways polished papers rarely are, and they capture
+work that never reaches a journal. For a study of where synthetic biology is
+taking root, they are a rare window onto the field's newest entrants, and they
+have barely been used.
+
+\citet{santoliniIGEMModelSystem2023} were among the first to treat this seriously,
+presenting the iGEM record as a structured dataset for studying how teams
+innovate. Their interest is the team: who joins, and what makes a group
+productive. Ours is the place. Team dynamics sit outside this thesis, though they
+plainly matter, and we ask instead whether a city's iGEM work lines up with the
+research around it. Santolini's work establishes that the data can bear this kind
+of weight.
+
+What makes the data usable is iGEM's culture of openness. Teams are expected to
+document everything in public and to deposit the genetic parts they use or build
+into a shared registry, in a standard format meant to be reused. This norm, more
+than any central archive, is why the record is rich enough to study: thousands of
+comparable projects, each tied to a place and a year, each linked to the parts it
+touched. The openness that defines iGEM as a community is also what makes it
+legible as a dataset.
+
+% --- BioBrick parts ----------------------------------------------------------
+\subsection{BioBrick parts as a knowledge graph}
+
+The parts follow a standard. A BioBrick is a fragment of DNA packaged so that any
+two fragments join the same way, a convention introduced by Tom Knight at MIT so
+that genetic parts could snap together like LEGO. Parts come in two kinds. A basic
+part is a single piece of genetic code, often lifted straight from a published
+result and translated into the format. A composite part is built from basic ones,
+wired together into something that does more. Each part is meant to be reused and
+recombined by teams that had no hand in making it.
+
+Together the parts form a graph. A basic part points back to the paper it came
+from. A composite part points to the basic parts inside it. A project points to
+every part it used. Follow these links and the registry becomes a network that
+ties projects to one another, and through the sourced parts, to the academic
+literature. This structure lets a single iGEM project be read as a bundle of parts
+that cite papers and other projects, and it is what lets the parts serve as
+evidence in what follows.
+
+The parts have one more use, and it is why they earn a place beside the text. A
+team's parts are a record of what it actually built, kept entirely apart from the
+words on its wiki. The mix of part types a city registers, how many promoters
+against reporters against coding sequences, is a physical fingerprint of the kind
+of biology it does. Because it owes nothing to the embedding model, it offers an
+independent check: if the text-based picture of a city is real, the parts should
+tell the same story. This thesis uses them for exactly that.
+
+% --- Building the corpus -----------------------------------------------------
+\subsection{Building the corpus}
+
+Two strategies exist for gathering the papers, and each fails in its own
+direction. A keyword search is precise but narrow: it finds documents that use the
+field's terms and misses the foundational work those terms were built on. Citation
+expansion is broad but leaky: it follows references outward from a seed set and
+drags in neighbouring fields along the way. Coverage and precision trade off, and
+no setting buys both. This thesis uses keywords for a defensible core and citation
+expansion to reach the methods papers a keyword list would never name, and it
+keeps the two layers labelled so the reader can see where each document came from.
+
+% --- Shared semantic space ---------------------------------------------------
+\subsection{A shared semantic space}
+
+The artifacts speak different dialects. A patent is written to survive a lawyer, a
+paper to persuade a reviewer, a wiki to explain a year's work to whoever visits.
+To compare them we need a common representation that ignores the register and
+keeps the meaning. A document embedding does this. It turns each title and
+abstract into a point in a high-dimensional space, positioned so that documents
+about similar things land near each other, whatever words they happen to use.
+
+We build these points with SPECTER2, a language model from the Allen Institute
+trained on scientific papers and their citations
+\citep{cohanDocumentlevelRepresentation2020}. Its training objective is the one
+that matters here: it learns to place two papers close together when one is likely
+to cite the other. Relatedness is exactly what we are trying to measure, so a
+model taught to predict citations is taught to do most of our work. SPECTER2
+belongs to the BERT family of language models
+\citep{devlinBERTPretrainingDeep2019}, but its scientific training is what sets it
+apart from a general-purpose one.
+
+Putting different artifact types in one embedding space is not a stretch we
+invented. Recent work embeds papers and patents together to measure how research
+turns into invention, adapting the same scientific-text models to the patent
+register (Pat-SPECTER and PatentSBERTa are two examples). We lean on that
+precedent when we place projects, papers, and parts side by side, and we inherit
+its central assumption: that the artifacts are close enough in language for their
+embeddings to be compared at all. Where that assumption strains, we say so.
+
+% --- The gap -----------------------------------------------------------------
+\subsection{The gap this fills}
+
+Here is the gap this fills. Economic geography has mapped relatedness between
+products, industries, and scientific fields, and left student projects untouched.
+iGEM has been studied as a school for teams, rarely as a signal of where a city's
+science is heading. No one has placed projects, papers, and parts in one semantic
+space to ask whether a city's student and academic work occupy the same corners of
+it. That question is the contribution.
+
+The pieces are now on the table. From economic geography, a place is what it works
+on, and relatedness is read off how those representations line up. From language
+modelling, we can build those representations from text alone. From iGEM, we have
+a novel artifact and a shared registry of parts to check it against. The next
+chapter assembles these into a corpus, and the one after that into a measure.
 
 % ============================================================
 \section{Methods}
