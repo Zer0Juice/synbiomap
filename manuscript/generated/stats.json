@@ -53,6 +53,60 @@
     "formatted": "0.000",
     "note": ""
   },
+  "ols_rsq_model_one": {
+    "macro": "statOlsRsqModelOne",
+    "value": 0.6251972918876367,
+    "formatted": "0.625",
+    "note": "size only"
+  },
+  "ols_rsq_model_two": {
+    "macro": "statOlsRsqModelTwo",
+    "value": 0.6779361963453607,
+    "formatted": "0.678",
+    "note": "+ country fixed effects"
+  },
+  "ols_rsq_model_three": {
+    "macro": "statOlsRsqModelThree",
+    "value": 0.678890470718233,
+    "formatted": "0.679",
+    "note": "+ carbon-capture shares"
+  },
+  "ols_rsq_country_only": {
+    "macro": "statOlsRsqCountryOnly",
+    "value": 0.16753390971708115,
+    "formatted": "0.168",
+    "note": "country FE alone"
+  },
+  "ols_beta_papers": {
+    "macro": "statOlsBetaPapers",
+    "value": 0.016284231251915166,
+    "formatted": "+0.0163",
+    "note": ""
+  },
+  "ols_beta_projects": {
+    "macro": "statOlsBetaProjects",
+    "value": 0.01937048924166475,
+    "formatted": "+0.0194",
+    "note": ""
+  },
+  "ols_size_p_max": {
+    "macro": "statOlsSizePMax",
+    "value": 1.1121926834961264e-07,
+    "formatted": "1.1e-07",
+    "note": "max p over the two size coefficients (cluster-robust by country)"
+  },
+  "ols_cc_paper_p": {
+    "macro": "statOlsCcPaperP",
+    "value": 0.38598704874502476,
+    "formatted": "0.39",
+    "note": ""
+  },
+  "ols_cc_project_p": {
+    "macro": "statOlsCcProjectP",
+    "value": 0.6962881768161864,
+    "formatted": "0.70",
+    "note": ""
+  },
   "cluster_n_cities_all": {
     "macro": "statClusterNCitiesAll",
     "value": 323,
@@ -166,6 +220,30 @@
     "value": 2025,
     "formatted": "2025",
     "note": ""
+  },
+  "n_cities_papers_only": {
+    "macro": "statNCitiesPapersOnly",
+    "value": 829,
+    "formatted": "829",
+    "note": ""
+  },
+  "n_cities_projects_only": {
+    "macro": "statNCitiesProjectsOnly",
+    "value": 240,
+    "formatted": "240",
+    "note": ""
+  },
+  "n_cities_both": {
+    "macro": "statNCitiesBoth",
+    "value": 385,
+    "formatted": "385",
+    "note": ""
+  },
+  "n_biobrick_papers": {
+    "macro": "statNBiobrickPapers",
+    "value": 683,
+    "formatted": "683",
+    "note": "papers citing a BioBrick ID (PubMedCentral full-text)"
   },
   "align_mean_delta": {
     "macro": "statAlignMeanDelta",

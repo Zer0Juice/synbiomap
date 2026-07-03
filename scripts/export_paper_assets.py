@@ -268,6 +268,77 @@ def stage_city_level() -> pd.DataFrame:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+# Stage A1 — centroid-overlap regression + within-country permutation (the artifact)
+# ──────────────────────────────────────────────────────────────────────────────
+def stage_overlap_regression(city: pd.DataFrame) -> None:
+    """Nested OLS for centroid overlap: how much of it is just city size?
+
+    Overlap is pinned near 1.0 by the synthetic-biology field baseline, and this
+    regression shows the rest is mostly a size effect: log paper/project counts alone
+    explain R^2 ~ 0.63, country fixed effects add a little, and the carbon-capture
+    shares add essentially nothing. That is the diversity-vs-relatedness /
+    centroid-stability point made quantitative, and it is why the sharper cluster
+    co-membership test (stage_cluster) is the one that carries the local signal.
+
+    Standard errors are clustered by country: the fixed-effects design has 23
+    singleton countries that make naive and HC3 SEs degenerate. Mirrors notebook
+    01 §5.7. (The 'is the overlap itself an artifact' question is answered by the
+    re-pairing permutation of centroids, not by permuting this regression.)
+    """
+    print("\n[A1] Centroid-overlap regression (city size vs. field baseline)")
+    import statsmodels.formula.api as smf
+    df = city.copy()
+    df["log_n_papers"] = np.log1p(df["n_papers"])
+    df["log_n_projects"] = np.log1p(df["n_projects"])
+    clu = {"groups": df["country"]}
+
+    m1 = smf.ols("semantic_overlap ~ log_n_papers + log_n_projects",
+                 data=df).fit(cov_type="HC3")
+    m2 = smf.ols("semantic_overlap ~ log_n_papers + log_n_projects + C(country)",
+                 data=df).fit(cov_type="cluster", cov_kwds=clu)
+    m3 = smf.ols("semantic_overlap ~ log_n_papers + log_n_projects + C(country)"
+                 " + cs_paper_share + cs_project_share",
+                 data=df).fit(cov_type="cluster", cov_kwds=clu)
+    fe_only = smf.ols("semantic_overlap ~ C(country)", data=df).fit()
+
+    record("ols_rsq_model_one", m1.rsquared, ".3f", "size only")
+    record("ols_rsq_model_two", m2.rsquared, ".3f", "+ country fixed effects")
+    record("ols_rsq_model_three", m3.rsquared, ".3f", "+ carbon-capture shares")
+    record("ols_rsq_country_only", fe_only.rsquared, ".3f", "country FE alone")
+    record("ols_beta_papers", m2.params["log_n_papers"], "+.4f")
+    record("ols_beta_projects", m2.params["log_n_projects"], "+.4f")
+    record("ols_size_p_max", max(m2.pvalues["log_n_papers"],
+                                 m2.pvalues["log_n_projects"]), ".1e",
+           "max p over the two size coefficients (cluster-robust by country)")
+    record("ols_cc_paper_p", m3.pvalues["cs_paper_share"], ".2f")
+    record("ols_cc_project_p", m3.pvalues["cs_project_share"], ".2f")
+
+    save_table(pd.DataFrame({
+        "Model": ["(1) size only", "(2) + country fixed effects",
+                  "(3) + carbon-capture shares"],
+        "R2": [m1.rsquared, m2.rsquared, m3.rsquared]}),
+        "overlap_regression", float_format="%.3f",
+        caption="Nested OLS models for city-level semantic overlap. City size (log "
+                "paper and project counts) alone explains most of the variance; "
+                "country fixed effects add a little, and carbon-capture shares add "
+                "essentially nothing.", label="tab:overlapreg")
+
+    # Coefficient plot for the size effect (Model 2, cluster-robust 95% CI).
+    ci = m2.conf_int().loc[["log_n_papers", "log_n_projects"]]
+    est = m2.params.loc[["log_n_papers", "log_n_projects"]]
+    fig, ax = plt.subplots(figsize=(7, 3))
+    ypos = np.arange(len(est))
+    ax.errorbar(est.values, ypos,
+                xerr=[est.values - ci[0].values, ci[1].values - est.values],
+                fmt="o", color=BLUE, capsize=4)
+    ax.axvline(0, color=MUTED, linestyle="--", linewidth=1)
+    ax.set_yticks(ypos); ax.set_yticklabels(["log(1 + papers)", "log(1 + projects)"])
+    ax.set(xlabel="Coefficient on semantic overlap (cluster-robust 95% CI)",
+           title="City size predicts overlap (Model 2)")
+    save_fig("coef_plot_overlap")
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # Stage A2 — cluster co-membership: a baseline-free test of local relatedness
 # ──────────────────────────────────────────────────────────────────────────────
 def stage_cluster() -> None:
@@ -699,9 +770,22 @@ def main() -> None:
         df.dropna(subset=["year"], inplace=True)
         df["year"] = df["year"].astype(int)
 
-    stage_city_level()
+    city = stage_city_level()
+    stage_overlap_regression(city)
     stage_cluster()
     stage_activity(papers, projects)
+
+    # Coverage: which cities have papers, projects, or both (the analysis needs both).
+    pk, qk = set(papers["city_key"]), set(projects["city_key"])
+    record("n_cities_papers_only", len(pk - qk), ",d")
+    record("n_cities_projects_only", len(qk - pk), ",d")
+    record("n_cities_both", len(pk & qk), ",d")
+    try:
+        record("n_biobrick_papers", len(pd.read_csv(DATA / "biobrick_papers.csv")), ",d",
+               "papers citing a BioBrick ID (PubMedCentral full-text)")
+    except Exception as e:
+        print(f"  biobrick_papers count skipped ({e})")
+
     if not args.no_embeddings:
         try:
             stage_embeddings(papers, projects)
