@@ -40,7 +40,7 @@
 
 \begin{center}
 \fbox{\parbox{0.92\linewidth}{\centering\small\itshape
-This is a rough, AI-assisted working draft. Prose, structure, and emphasis are
+This is a AI-generated working draft generated from human-origin rough draft text, an outline, and the results notebook. Prose, structure, and emphasis are
 provisional and under active revision; numbers and figures are generated from
 the analysis pipeline but the surrounding argument has not yet been finalised.}}
 \end{center}
@@ -1042,6 +1042,12 @@ standing thematic identity (most). The third claim is the most ambitious and the
 least supported: that the two are linked in time, with projects running ahead of
 papers. We take them in turn, then ask whether anything outside the text agrees.
 
+The analysis rests on the cities that produce both kinds of work. Synthetic-biology
+papers appear in far more places than iGEM projects do: \statNCitiesPapersOnly{}
+cities have papers but no project, and \statNCitiesProjectsOnly{} have projects but
+no paper. Because the question is how the two relate, a city needs both to enter,
+which leaves the \statNCitiesAnalyzed{} cities analysed throughout.
+
 % ------------------------------------------------------------
 \subsection{The embedding space recovers a sensible map}
 % ------------------------------------------------------------
@@ -1061,6 +1067,39 @@ leads us to expect. The map behaves the way a sensible map should: the well-know
 hubs on top, and its uncertainty reserved for the cities we know least.
 
 \input{generated/tables/bottom15_cities.tex}
+
+% ------------------------------------------------------------
+\subsection{Most of the overlap is city size}
+% ------------------------------------------------------------
+
+Before trusting the overlap as a sign of local alignment, we should ask how much of
+it is simply a size effect. A regression of a city's semantic overlap on the log
+counts of its papers and projects (Table~\ref{tab:overlapreg}) explains most of the
+variance on its own: $R^2 = \statOlsRsqModelOne{}$ from size alone. Both
+coefficients are positive and strongly significant ($\beta = \statOlsBetaPapers{}$
+for papers and $\statOlsBetaProjects{}$ for projects, both $p < 0.001$ with
+standard errors clustered by country). Bigger cities have higher overlap, exactly
+as the centroid-stability argument predicts.
+
+\input{generated/tables/overlap_regression.tex}
+
+Adding country fixed effects lifts the fit only to $R^2 = \statOlsRsqModelTwo{}$,
+and country identity on its own explains just $\statOlsRsqCountryOnly{}$, so the
+work is being done by size, not by nationality. Adding the carbon-capture shares
+changes nothing ($R^2 = \statOlsRsqModelThree{}$; both shares are far from
+significant, $p = \statOlsCcPaperP{}$ and $\statOlsCcProjectP{}$). The lesson is the
+one the Methods warned of: raw overlap mostly measures how much a city produces. To
+find local relatedness we have to look past it, which is what the next measure does.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\linewidth]{coef_plot_overlap}
+  \caption{Size coefficients from Model 2 (country fixed effects, cluster-robust
+  95\% confidence intervals). Both the log paper count and the log project count
+  raise a city's semantic overlap, so part of the overlap reflects how much a city
+  produces rather than how aligned its two outputs are.}
+  \label{fig:coefoverlap}
+\end{figure}
 
 % ------------------------------------------------------------
 \subsection{A city's projects and papers share its specific topics}
@@ -1171,6 +1210,16 @@ the cities the same way. Two methods built on entirely different data, abstract 
 on one side and registered parts on the other, point to the same local
 specialisation. That gives us more confidence the specialisation lives in the
 cities, not in the model.
+
+One more link ties the parts back to the literature directly. Even without a
+citation standard for an open parts registry, and even limited to open-access,
+full-text-indexed journals, a search of PubMed Central turns up
+\statNBiobrickPapers{} papers that cite a BioBrick by its registry identifier. That
+is a floor, not a count: it misses every paywalled paper and every citation that
+does not spell out the identifier, whose underscores many search engines mishandle.
+Even so, it is direct evidence that the registry feeds back into published research,
+and it is the seam a future study could follow from a single part to the papers
+built on it.
 
 % ============================================================
 \section{Case study: carbon capture}
