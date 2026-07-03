@@ -1287,6 +1287,59 @@ the website and this manuscript draw from one set of exported artifacts, not two
 diverging copies.
 
 % ============================================================
+\section{Discussion}
+% ============================================================
+
+It is worth being precise about what these measures see. Cosine similarity between
+two city centroids is mostly a measure of field membership. Because every document
+is synthetic biology, two cities look alike first because they share a field, and
+only second because they share a local niche. That is why the raw overlap sits so
+high, near \statOverlapMean{} for most cities, and why on its own it says little: a
+number that starts near its ceiling for everyone cannot carry much about any one
+place.
+
+The permutation tests are what separate the two. When we shuffle which city's
+projects face which city's papers within a country and the centroid overlap barely
+moves, the high baseline shows itself to be a property of the field, not of local
+alignment. The same shuffle applied to cluster co-membership tells the opposite
+story: the observed value sits far out in the tail of the null. One measure fails
+the test and one passes, and that difference is the whole argument. Field-level
+similarity is real but uninformative; niche-level co-membership is what carries the
+local signal.
+
+The signal is not symmetric, and the asymmetry is a clue. A city's local alignment
+tracks its volume of papers more than its volume of projects, and the
+difference-in-differences leaves the papers looking like the fixed backdrop that
+projects move against. The natural reading is directional: the academic literature
+sets a city's niche, and the student projects settle into it, not the other way
+around.
+
+A simple mechanism would produce exactly this. iGEM teams are mentored by local
+faculty, and those same faculty publish the city's papers. A professor working on
+carbon fixation seeds a team with a carbon-fixation project and, in the same years,
+publishes carbon-fixation papers. No idea has to flow from student to scholar for
+the two to line up; a shared mentor puts them in the same niche from the start.
+This is why we read co-membership as relatedness, not as a pipeline, and why the
+mentor--student link is the first thing a follow-up study should measure.
+
+This places the work beside the relatedness literature it borrows from.
+\citet{boschmaScientificKnowledgeDynamics2014} found that biotech cities grow into
+scientifically related areas over time; we find the same relatedness holding across
+a boundary that literature has not crossed, between student projects and
+professional research in one field. The contribution is less a new principle than a
+new place to see the old one: relatedness measured from the text of what people
+write, between artifacts that do not trade, cite, or hire across the gap we measure.
+
+The methodological lesson generalises past this dataset. When a corpus is confined
+to one field, cosine similarity between aggregates is dominated by the field, and a
+naive regression on those similarities will light up with significance that means
+nothing. A conventional reading of the stars would have reported a strong result.
+Only the permutation test, which rebuilds the null from the data's own structure,
+catches that the result is a baseline in disguise. Anyone measuring relatedness
+inside a narrow domain should assume the baseline is there until a shuffle proves
+otherwise.
+
+% ============================================================
 \section{Conclusion}
 % ============================================================
 
