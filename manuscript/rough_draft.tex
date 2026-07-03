@@ -1340,6 +1340,39 @@ inside a narrow domain should assume the baseline is there until a shuffle prove
 otherwise.
 
 % ============================================================
+\section{Limitations}
+% ============================================================
+
+Several limits bound what this draft can claim, and most trace to one root: the
+corpus is a single field. That is what pins the centroid overlap near its ceiling,
+what forces us onto the sharper within-city measures, and what leaves even the
+strongest result speaking to relatedness inside synthetic biology, not to synthetic
+biology's place among other fields. A study spanning several fields would escape
+this baseline, though it would answer a different question.
+
+Two data limits compound it. Time resolution is coarse: a city-year centroid is
+often built from a single document, too thin to carry the lead--lag signal the
+temporal test went looking for. And place is flattened: each artifact is geocoded
+to one affiliation, so a team split across two universities in two cities, or a
+paper with authors in three, collapses to a single dot. Both blur exactly the fine
+structure a stronger version of this study would resolve.
+
+The associations we report are open to confounders we do not control. A city's
+research base, the prestige of its universities, the presence of an established
+biotech cluster, local funding and policy, all could raise both its student and its
+academic output together without either touching the other. We measure that they
+move together. We do not measure why, and the mentor-coupling story of the
+Discussion is a hypothesis, not a result.
+
+Finally, two tools are used past their design. SPECTER2 was trained on paper
+abstracts and their citations, not on student wikis or patents, so applying it to
+those artifacts assumes a transfer we cannot fully verify. And the cross-modal
+counts undercount: a full-text search for BioBrick identifiers finds only
+open-access, indexed papers, and the identifiers contain underscores that many
+search systems mishandle, so the true number of parts-citing papers is larger than
+the one we can see.
+
+% ============================================================
 \section{Conclusion}
 % ============================================================
 
@@ -1359,19 +1392,13 @@ carbon-capture case, and it is echoed by a parts-based fingerprint that never
 touches the embedding model. Cities do appear to specialise, and their student and
 academic work specialises together.
 
-Two qualifications keep that finding honest. First, the alignment is mostly a
-stable feature of a city's identity, not a year-by-year coupling. The
-difference-in-differences result shows that the same-year, ``this project tracks
-this paper'' component, though statistically real even under city-level clustering,
-is small next to the standing thematic gap. So we describe a \textit{local
-innovation trajectory} as shared standing specialisation, not a demonstrated flow
-of ideas from students to scholars. Second, our strongest temporal hypothesis, that
-projects run ahead of papers, is neither confirmed nor refuted. The city--year
-centroids are too thin to resolve it, and resolving it will take the finer,
-graph-level instrument we turn to below. Both qualifications echo the caution in the
-Methods: with a corpus that is entirely synthetic biology, field-level similarity
-sets a high baseline, and the signal we care about lives in the small margins on top
-of it.
+Two qualifications, developed in the Discussion and Limitations, keep that finding
+honest. The alignment is mostly a city's standing identity, not a year-by-year
+coupling, so we call the local innovation trajectory shared specialisation, not a
+demonstrated flow of ideas from students to scholars. And the strongest temporal
+claim, that projects run ahead of papers, stays unresolved: the city-year centroids
+are too thin to settle it, and settling it will take the finer instrument we turn
+to now.
 
 These limits also point the way forward, and mark where the project's remaining
 reach comes in: patents, and the planet-scale application that motivates the whole
