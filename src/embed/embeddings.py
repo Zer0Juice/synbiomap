@@ -224,6 +224,56 @@ def load_model(model_name: str = "specter2"):
     return SentenceTransformer(model_name, device=device)
 
 
+# ---------------------------------------------------------------------------
+# Fine-tuned SPECTER2 (base + our synbio adapter)
+# ---------------------------------------------------------------------------
+
+class FinetunedSpecter2Model(Specter2Model):
+    """
+    SPECTER2 base with our fine-tuned synbio adapter in place of the stock
+    proximity adapter.
+
+    The adapter is trained by scripts/finetune_specter2.py (saved under
+    models/specter2_synbio/best) to pull the three artifact types — projects,
+    papers, patents — into one comparable space. We reuse Specter2Model.encode()
+    unchanged, so documents are embedded exactly as the baseline is (CLS pooling,
+    title[SEP]abstract, max_length 256); only the adapter differs.
+
+    Cache warning: vectors from this model live in a DIFFERENT space than the
+    base/proximity ones — cache them under a separate file (e.g.
+    data/embeddings/finetuned/), never mixed with the proximity cache.
+    """
+
+    def __init__(self, adapter_path: str | Path, device: str = "cpu"):
+        from transformers import AutoTokenizer
+        from adapters import AutoAdapterModel
+
+        self.device = device
+        logger.info(f"Loading SPECTER2 base + fine-tuned adapter: {adapter_path}")
+        self.tokenizer = AutoTokenizer.from_pretrained(self.BASE_MODEL)
+        self.model = AutoAdapterModel.from_pretrained(self.BASE_MODEL)
+        name = self.model.load_adapter(str(adapter_path), set_active=True)
+        self.model.set_active_adapters(name)
+        self.model.to(device)
+        self.model.eval()
+
+
+def load_finetuned_model(adapter_path: str | Path, device: str | None = None):
+    """
+    Load the fine-tuned SPECTER2 model, auto-selecting the fastest device
+    (CUDA > MPS > CPU) unless one is given.
+    """
+    import torch
+
+    if device is None:
+        device = (
+            "cuda" if torch.cuda.is_available()
+            else "mps" if torch.backends.mps.is_available()
+            else "cpu"
+        )
+    return FinetunedSpecter2Model(adapter_path, device=device)
+
+
 def generate_embeddings(
     df: pd.DataFrame,
     model,

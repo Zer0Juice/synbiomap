@@ -72,3 +72,7 @@ slides/*.pdf
 .vscode/
 *.swp
 *.swo
+
+# Marimo editor cache/layout
+notebooks/__marimo__/
+__marimo__/
