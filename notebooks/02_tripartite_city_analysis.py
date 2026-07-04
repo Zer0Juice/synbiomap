@@ -65,6 +65,9 @@ def _():
         build_city_type_vectors, comembership_table,
         own_vs_other, pair_permutation, three_way_permutation,
     )
+    from src.analyze.robustness import (
+        size_control_ols, leave_one_city_out, downsample_power,
+    )
 
     return (
         FIGDIR,
@@ -72,6 +75,8 @@ def _():
         PROCESSED,
         build_city_type_vectors,
         comembership_table,
+        downsample_power,
+        leave_one_city_out,
         load_cache,
         mpl,
         np,
@@ -79,6 +84,7 @@ def _():
         pair_permutation,
         pd,
         plt,
+        size_control_ols,
         stats,
         three_way_permutation,
     )
@@ -367,7 +373,7 @@ def _(
                               tri_cities, country_of, n_perm=N_PERM)
         if len(tri_cities) >= 5 else None
     )
-    return MIN_DOCS, pair_results, three_way, tri_counts, tri_vecs
+    return MIN_DOCS, pair_results, pair_tables, three_way, tri_counts, tri_vecs
 
 
 @app.cell
@@ -481,7 +487,217 @@ def _(
 @app.cell
 def _(mo):
     mo.md(r"""
-    ## 4. What it shows, and what it can't
+    ## 4. Four ways to try to break it
+
+    A single small p-value is not a finding; a finding is something that
+    survives honest attempts to kill it. We run four checks, each answering one
+    plain-English objection a sceptic would raise:
+
+    1. **Size control** — is co-membership just city size again, the way the
+       centroid measure was?
+    2. **Resolution sweep** — does the signal need exactly this clustering, or
+       does it hold across many?
+    3. **Leave-one-city-out** — is one big city (Boston, say) secretly carrying
+       the whole result?
+    4. **Power check** — is the flat project–patent link truly empty, or just
+       measured on too few cities to see?
+    """)
+    return
+
+
+@app.cell
+def _(FIGDIR, SOL, centroid_size_r, pair_tables, plt, size_control_ols):
+    # ── Check 1: is co-membership just size? Regress overlap on log doc counts.
+    # If size explained it (as it did the centroid), R² is high; we want it low.
+    _pairs = [("paper", "project"), ("paper", "patent"), ("project", "patent")]
+    ols_res = {p: size_control_ols(pair_tables[p], p[0], p[1])
+               for p in _pairs if len(pair_tables[p]) >= 8}
+    centroid_r2 = float(centroid_size_r ** 2)
+
+    _labels = ["centroid\noverlap"] + [f"{a}×{b}\nco-membership" for a, b in ols_res]
+    _r2 = [centroid_r2] + [ols_res[p]["r2_size"] for p in ols_res]
+    _cols = [SOL["red"]] + [SOL["blue"], SOL["orange"], SOL["project"]][:len(ols_res)]
+
+    fig_size, ax_size = plt.subplots(figsize=(14, 7))
+    _bars = ax_size.bar(_labels, _r2, color=_cols, edgecolor="white", width=0.62)
+    for _bar, _v in zip(_bars, _r2):
+        ax_size.text(_bar.get_x() + _bar.get_width() / 2, _v + 0.012, f"{_v:.0%}",
+                     ha="center", va="bottom", fontsize=15, fontweight="bold")
+    ax_size.axhline(0.15, color=SOL["muted"], ls="--", lw=1.3, label="15% reference")
+    ax_size.set_ylim(0, max(0.72, max(_r2) + 0.1))
+    ax_size.set_ylabel("share of variance explained by city size  (R²)")
+    ax_size.set_title("Size explained the centroid measure — but barely touches co-membership")
+    ax_size.legend()
+    fig_size.tight_layout()
+    fig_size.savefig(FIGDIR / "robust_size_control.png", bbox_inches="tight")
+    fig_size
+    return centroid_r2, ols_res
+
+
+@app.cell
+def _(centroid_r2, mo, ols_res):
+    _pp = ols_res.get(("paper", "project"))
+    _px = ols_res.get(("paper", "patent"))
+    _rx = ols_res.get(("project", "patent"))
+    mo.md(f"""
+    **Read:** city size explains **{centroid_r2:.0%}** of the centroid measure — that measure
+    really was mostly size. It explains only **{_pp['r2_size']:.0%}** of paper×project and
+    **{_px['r2_size']:.0%}** of paper×patent co-membership, so the two significant links are about
+    *which* topics a city shares, not *how much* it produces. Tellingly, size explains
+    **{_rx['r2_size']:.0%}** of the (non-significant) project×patent overlap: what little there is,
+    is mostly size — the opposite of a hidden real link.
+    """)
+    return
+
+
+@app.cell
+def _(FIGDIR, PROCESSED, SOL, pd, plt):
+    # ── Check 2: re-cluster with KMeans at k = 10..120 and re-run the test at
+    # each k (see scripts/11_robustness_kcurve.py). KMeans keeps every document,
+    # so this also answers the "you dropped 30% as noise" worry.
+    kcurve = pd.read_csv(PROCESSED / "robustness_kcurve.csv")
+    _pairs = [("paper", "project", SOL["blue"]),
+              ("paper", "patent", SOL["orange"]),
+              ("project", "patent", SOL["project"])]
+
+    fig_ksweep, (axK1, axK2) = plt.subplots(1, 2, figsize=(20, 7))
+    for _a, _b, _col in _pairs:
+        _d = kcurve[(kcurve.type_a == _a) & (kcurve.type_b == _b)].sort_values("k")
+        axK1.plot(_d.k, _d.excess, "-o", lw=2.5, ms=9, color=_col, label=f"{_a}×{_b}")
+        axK2.plot(_d.k, _d.p_value, "-o", lw=2.5, ms=9, color=_col, label=f"{_a}×{_b}")
+
+    axK1.axhline(0, color=SOL["muted"], ls="--", lw=1)
+    axK1.set_xlabel("number of topics k (KMeans)")
+    axK1.set_ylabel("excess co-membership over null")
+    axK1.set_title("Excess stays positive at every resolution")
+    axK1.legend()
+
+    axK2.axhline(0.05, color=SOL["red"], ls="--", lw=1.5, label="p = 0.05")
+    axK2.set_yscale("log")
+    axK2.set_xlabel("number of topics k (KMeans)")
+    axK2.set_ylabel("permutation p-value (log scale)")
+    axK2.set_title("The two paper links stay significant; project×patent never does")
+    axK2.legend()
+
+    fig_ksweep.suptitle("Robustness to clustering resolution "
+                        "(KMeans, all documents — no noise dropped)",
+                        fontsize=19, fontweight="bold")
+    fig_ksweep.tight_layout()
+    fig_ksweep.savefig(FIGDIR / "robust_kcurve.png", bbox_inches="tight")
+    fig_ksweep
+    return (kcurve,)
+
+
+@app.cell
+def _(kcurve, mo):
+    _pp = kcurve[(kcurve.type_a == "paper") & (kcurve.type_b == "project")]
+    _px = kcurve[(kcurve.type_a == "paper") & (kcurve.type_b == "patent")]
+    mo.md(f"""
+    **Read:** across k from 10 to 120, paper×project stays significant at every resolution
+    (worst p = {_pp.p_value.max():.3f}) and paper×patent almost always (worst p = {_px.p_value.max():.3f},
+    a single borderline k), while project×patent never clears 0.05. Because KMeans assigns *every*
+    document to a topic, this doubles as proof the result did not depend on the third of documents
+    HDBSCAN set aside as noise.
+    """)
+    return
+
+
+@app.cell
+def _(FIGDIR, SOL, country_of, leave_one_city_out, np, pair_results,
+      pair_tables, plt, tri_vecs):
+    # ── Check 3: drop each city once and re-run. If no single city carries the
+    # result, every leave-one-out p-value stays below 0.05.
+    _pairs = [("paper", "project"), ("paper", "patent")]
+    jack = {}
+    _rng = np.random.default_rng(0)
+
+    fig_jack, ax_jack = plt.subplots(figsize=(14, 7))
+    for _i, (_a, _b) in enumerate(_pairs):
+        _col = SOL["blue"] if _b == "project" else SOL["orange"]
+        _cities = list(pair_tables[(_a, _b)].city_key)
+        _j = leave_one_city_out(tri_vecs, _a, _b, _cities, country_of, n_perm=1000)
+        jack[(_a, _b)] = _j
+        _y = _i + (_rng.random(len(_j)) - 0.5) * 0.32
+        ax_jack.scatter(_j.p_value, _y, s=45, alpha=0.55, color=_col)
+        ax_jack.scatter([pair_results[(_a, _b)]["p_value"]], [_i], s=240, marker="D",
+                        color=_col, edgecolor="white", linewidth=1.5, zorder=5,
+                        label=f"{_a}×{_b}: full-sample p = {pair_results[(_a, _b)]['p_value']:.3f}")
+
+    ax_jack.axvline(0.05, color=SOL["red"], ls="--", lw=1.6, label="p = 0.05")
+    ax_jack.set_yticks([0, 1]); ax_jack.set_yticklabels(["paper×project", "paper×patent"])
+    ax_jack.set_ylim(-0.5, 1.5)
+    ax_jack.set_xlabel("permutation p-value with that one city removed")
+    ax_jack.set_title("No single city carries the result: every leave-one-out stays significant")
+    ax_jack.legend(loc="lower right", fontsize=12)
+    fig_jack.tight_layout()
+    fig_jack.savefig(FIGDIR / "robust_jackknife.png", bbox_inches="tight")
+    fig_jack
+    return (jack,)
+
+
+@app.cell
+def _(city_name, jack, mo):
+    _lines = []
+    for (_a, _b), _j in jack.items():
+        _worst = _j.iloc[0]
+        _lines.append(f"- **{_a}×{_b}:** worst case is dropping "
+                      f"*{city_name.get(_worst['dropped'], _worst['dropped'])}* → p = "
+                      f"{_worst['p_value']:.3f} (still significant).")
+    mo.md("**Read:** removing any single city leaves both paper links significant.\n\n"
+          + "\n".join(_lines))
+    return
+
+
+@app.cell
+def _(FIGDIR, SOL, country_of, downsample_power, pair_results, pair_tables,
+      plt, tri_vecs):
+    # ── Check 4: squeeze a WORKING link down to 28 cities (the project-patent
+    # sample size) many times, and see how often it still looks significant.
+    _strong = [("paper", "project"), ("paper", "patent")]
+    power = {}
+
+    fig_power, ax_power = plt.subplots(figsize=(14, 7))
+    for (_a, _b), _col in zip(_strong, [SOL["blue"], SOL["orange"]]):
+        _cities = list(pair_tables[(_a, _b)].city_key)
+        _r = downsample_power(tri_vecs, _a, _b, _cities, country_of,
+                              target_n=28, n_draws=150, n_perm=500)
+        power[(_a, _b)] = _r
+        ax_power.hist(_r["p_values"], bins=28, alpha=0.55, color=_col,
+                      label=f"{_a}×{_b} at 28 cities  ({_r['share_significant']:.0%} still sig.)")
+
+    _ppx = pair_results.get(("project", "patent"))
+    if _ppx is not None:
+        ax_power.axvline(_ppx["p_value"], color=SOL["project"], lw=2.8,
+                         label=f"project×patent actual p = {_ppx['p_value']:.2f}  (28 cities)")
+    ax_power.axvline(0.05, color=SOL["red"], ls="--", lw=1.6, label="p = 0.05")
+    ax_power.set_xlabel("permutation p-value on a random 28-city subset")
+    ax_power.set_ylabel("subsampled draws")
+    ax_power.set_title("With only 28 cities, even a real link often looks non-significant")
+    ax_power.legend(fontsize=12)
+    fig_power.tight_layout()
+    fig_power.savefig(FIGDIR / "robust_power.png", bbox_inches="tight")
+    fig_power
+    return (power,)
+
+
+@app.cell
+def _(mo, pair_results, power):
+    _pp = power[("paper", "project")]
+    _ppx = pair_results.get(("project", "patent"))
+    mo.md(f"""
+    **Read:** the real paper×project link, cut to 28 random cities (matching the project×patent
+    sample), stays significant only **{_pp['share_significant']:.0%}** of the time — its median p
+    climbs to **{_pp['median_p']:.2f}**, almost exactly project×patent's actual p of
+    **{_ppx['p_value']:.2f}**. So the flat project×patent result is what "too few cities" looks like,
+    not evidence that no link exists. We report it as *not detected here*, never *absent*.
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ## 5. What it shows, and what it can't
 
     The two links that run **through papers** are significant: a city's papers
     and its projects share topics beyond chance, and so do its papers and its
