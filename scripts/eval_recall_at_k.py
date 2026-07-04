@@ -43,6 +43,7 @@ Usage
   python scripts/eval_recall_at_k.py --adapter models/specter2_synbio/final
   python scripts/eval_recall_at_k.py --edges patent_paper project_paper
   python scripts/eval_recall_at_k.py --baseline-only    # before training exists
+  python scripts/eval_recall_at_k.py --pool-size 5000   # realistic large pool
 """
 
 import argparse
@@ -57,7 +58,18 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 FINETUNE_DIR = REPO_ROOT / "data" / "finetune"
+PROCESSED = REPO_ROOT / "data" / "processed"
 DEFAULT_ADAPTER = REPO_ROOT / "models" / "specter2_synbio" / "best"
+
+# Corpus files used to draw extra "distractor" documents for the larger-pool
+# evaluation. Each maps an artifact type to the CSV holding its id + text. The
+# candidate ids in the val pairs are exactly these CSV ids, so membership tells
+# us each document's type (and lets us pull same-type distractors).
+CORPUS_FILES = {
+    "paper":   PROCESSED / "papers.csv",
+    "patent":  PROCESSED / "patents.csv",
+    "project": PROCESSED / "projects.csv",
+}
 
 # The cross-genre edges we care about — the ones that test whether different
 # artifact types share a comparable space. (paper_paper and project_part are
@@ -149,31 +161,31 @@ def load_edge_tasks(val_path: Path, edges: list) -> dict:
 # Metrics
 # ─────────────────────────────────────────────────────────────────────────────
 
-def evaluate_edge(encoder, task: dict, ks: list, batch_size: int = 32) -> dict:
+def evaluate_edge(task: dict, id2vec: dict, ks: list) -> dict:
     """
-    Compute recall@k and MRR for one edge's retrieval task with one encoder.
+    Compute recall@k and MRR for one edge's retrieval task, given precomputed,
+    L2-normalised embeddings (id → vector) for every query and candidate.
 
     Steps:
-      1. Encode all queries and all candidates.
-      2. L2-normalise, so dot product = cosine similarity.
-      3. For each query, rank candidates by similarity and find the best
+      1. Look up query and candidate vectors (both already unit-normalised, so a
+         dot product is the cosine similarity).
+      2. For each query, rank candidates by similarity and find the best
          (smallest) rank among its relevant targets.
-      4. recall@k = fraction of queries whose best rank is < k; MRR = mean 1/rank.
+      3. recall@k = fraction of queries whose best rank is < k; MRR = mean 1/rank.
+
+    Embeddings are precomputed once per model in run() and shared here, so a large
+    distractor pool (which many edges reuse) is only encoded once.
     """
-    q_ids   = [qid for qid, _ in task["queries"]]
-    q_texts = [t   for _, t   in task["queries"]]
-    c_ids   = [cid for cid, _ in task["candidates"]]
-    c_texts = [t   for _, t   in task["candidates"]]
+    q_ids = [qid for qid, _ in task["queries"]   if qid in id2vec]
+    c_ids = [cid for cid, _ in task["candidates"] if cid in id2vec]
+    if not q_ids or not c_ids:
+        return None
 
-    q_vecs = encoder.encode(q_texts, batch_size=batch_size)
-    c_vecs = encoder.encode(c_texts, batch_size=batch_size)
+    q_vecs = np.array([id2vec[i] for i in q_ids], dtype=np.float32)
+    c_vecs = np.array([id2vec[i] for i in c_ids], dtype=np.float32)
 
-    q_vecs = q_vecs / (np.linalg.norm(q_vecs, axis=1, keepdims=True) + 1e-12)
-    c_vecs = c_vecs / (np.linalg.norm(c_vecs, axis=1, keepdims=True) + 1e-12)
-
-    sims = q_vecs @ c_vecs.T                     # (n_queries, n_candidates)
-    # argsort descending → ranked candidate indices per query
-    ranked = np.argsort(-sims, axis=1)
+    sims = q_vecs @ c_vecs.T                      # (n_queries, n_candidates)
+    ranked = np.argsort(-sims, axis=1)            # ranked candidate indices per query
     c_index = {cid: i for i, cid in enumerate(c_ids)}
 
     hits = {k: 0 for k in ks}
@@ -184,7 +196,6 @@ def evaluate_edge(encoder, task: dict, ks: list, batch_size: int = 32) -> dict:
         if not rel_cols:
             continue
         n += 1
-        # position (0-based) of each candidate in this query's ranking
         order = ranked[i]
         best_rank = min(np.where(order == col)[0][0] for col in rel_cols)
         rr_sum += 1.0 / (best_rank + 1)
@@ -198,6 +209,68 @@ def evaluate_edge(encoder, task: dict, ks: list, batch_size: int = 32) -> dict:
         "recall":     {k: hits[k] / n if n else 0.0 for k in ks},
         "mrr":        rr_sum / n if n else 0.0,
     }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Larger-pool distractors
+# ─────────────────────────────────────────────────────────────────────────────
+
+def load_corpus_by_type() -> dict:
+    """
+    Load {type → {id: text}} from the processed CSVs, for drawing distractors.
+    """
+    import pandas as pd
+    corpus = {}
+    for typ, path in CORPUS_FILES.items():
+        df = pd.read_csv(path)
+        lut = {}
+        for _, row in df.iterrows():
+            cid = str(row.get("id", "")).strip()
+            txt = row.get("text", "")
+            if cid and isinstance(txt, str) and txt.strip():
+                lut[cid] = txt.strip()
+        corpus[typ] = lut
+        print(f"  corpus {typ:<8} {len(lut):>6} docs")
+    return corpus
+
+
+def add_distractors(tasks: dict, corpus: dict, pool_size: int, seed: int = 0):
+    """
+    Expand each edge's candidate pool to ~pool_size by adding random same-type
+    documents from the corpus that are NOT the answer to any query.
+
+    Why: the raw val pools are tiny (~50-200), which inflates recall. A retrieval
+    task over a realistic pool of same-type distractors (e.g. all ~10k papers)
+    gives absolute numbers that mean something. The relevant sets are untouched,
+    so a query still has exactly its true target(s) to find — just among far more
+    look-alikes. Distractor sampling is seeded for reproducibility, and shared
+    across edges of the same target type so it is embedded only once per model.
+    """
+    import random
+    rng = random.Random(seed)
+
+    # Classify every corpus id by type, and collect every id that is a true
+    # answer somewhere (so we never add a real positive as a "distractor").
+    id2type = {cid: typ for typ, lut in corpus.items() for cid in lut}
+    positives = {cid for t in tasks.values() for cid, _ in t["candidates"]}
+
+    shared_pool: dict = {}   # type → [(id, text), ...] sampled once, reused
+    for edge, t in tasks.items():
+        # Target type = the type of this edge's candidates (all one type).
+        ttype = next((id2type[c] for c, _ in t["candidates"] if c in id2type), None)
+        if ttype is None:
+            print(f"  {edge}: could not identify target type — no distractors added")
+            continue
+
+        if ttype not in shared_pool:
+            avail = [cid for cid in corpus[ttype] if cid not in positives]
+            rng.shuffle(avail)
+            shared_pool[ttype] = [(cid, corpus[ttype][cid]) for cid in avail[:pool_size]]
+
+        existing = {c for c, _ in t["candidates"]}
+        t["candidates"].extend(
+            (cid, txt) for cid, txt in shared_pool[ttype] if cid not in existing
+        )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -234,6 +307,16 @@ def run(args):
         print(f"  {edge:<20} {len(t['queries']):>5} queries, "
               f"{len(t['candidates']):>5} candidates")
 
+    # Optionally expand each candidate pool with same-type distractors so the
+    # absolute recall reflects a realistic retrieval task, not a ~100-doc pool.
+    if args.pool_size > 0:
+        print(f"\nExpanding pools with up to {args.pool_size} distractors/type "
+              f"(seed {args.seed})...")
+        corpus = load_corpus_by_type()
+        add_distractors(tasks, corpus, args.pool_size, seed=args.seed)
+        for edge, t in tasks.items():
+            print(f"  {edge:<20} pool now {len(t['candidates']):>6} candidates")
+
     # Which models to run
     model_names = []
     encoders = {}
@@ -254,12 +337,27 @@ def run(args):
             encoders["finetuned"] = load_finetuned_encoder(adapter_path, device)
             model_names.append("finetuned")
 
+    # Gather every unique document (queries + candidates, incl. distractors) so
+    # each is embedded exactly once per model — distractor pools are shared across
+    # edges of the same type, so this avoids re-encoding thousands of docs.
+    id2text = {}
+    for t in tasks.values():
+        for cid, txt in t["queries"]:
+            id2text.setdefault(cid, txt)
+        for cid, txt in t["candidates"]:
+            id2text.setdefault(cid, txt)
+    all_ids = list(id2text)
+    all_texts = [id2text[i] for i in all_ids]
+
     # Evaluate
     results = {edge: {} for edge in tasks}
     for mname in model_names:
-        print(f"\nEvaluating [{mname}]...")
+        print(f"\nEvaluating [{mname}] — encoding {len(all_ids):,} unique docs...")
+        vecs = encoders[mname].encode(all_texts, batch_size=32, show_progress_bar=True)
+        vecs = vecs / (np.linalg.norm(vecs, axis=1, keepdims=True) + 1e-12)
+        id2vec = {i: v for i, v in zip(all_ids, vecs)}
         for edge, task in tasks.items():
-            results[edge][mname] = evaluate_edge(encoders[mname], task, ks)
+            results[edge][mname] = evaluate_edge(task, id2vec, ks)
             r = results[edge][mname]
             print(f"  {edge:<20} R@{ks[0]}={r['recall'][ks[0]]:.3f}  MRR={r['mrr']:.3f}")
 
@@ -284,6 +382,13 @@ def parse_args():
                    help="Only run the off-the-shelf SPECTER2 baseline")
     p.add_argument("--finetuned-only", action="store_true",
                    help="Only run the fine-tuned adapter")
+    p.add_argument("--pool-size", type=int, default=0,
+                   help="Add up to this many same-type distractor docs to each "
+                        "candidate pool for a realistic retrieval task (0 = off, "
+                        "use only the val positives). E.g. 5000 ranks each target "
+                        "against ~5000 look-alikes. Capped at the corpus size.")
+    p.add_argument("--seed", type=int, default=0,
+                   help="Seed for reproducible distractor sampling (default: 0)")
     p.add_argument("--out", default=str(REPO_ROOT / "models" / "specter2_synbio" / "recall_at_k.json"),
                    help="Where to save the results JSON")
     return p.parse_args()

@@ -105,7 +105,7 @@ def collate_fn(batch):
 # Model loading
 # ─────────────────────────────────────────────────────────────────────────────
 
-def load_model_with_adapter(output_dir: Path):
+def load_model_with_adapter(output_dir: Path, grad_checkpointing: bool = False):
     """
     Load SPECTER2 base and attach a new LoRA adapter for domain fine-tuning.
 
@@ -113,6 +113,14 @@ def load_model_with_adapter(output_dir: Path):
     preserves SPECTER2's broad scientific knowledge while adding synbio-specific
     signal. The resulting adapter can be loaded on top of specter2_base at
     inference time alongside the original proximity adapter.
+
+    If grad_checkpointing is True, we enable gradient checkpointing: instead of
+    storing every layer's activations for the backward pass, the model keeps only
+    a few and *recomputes* the rest during backward. This cuts peak activation
+    memory ~2-4x (letting longer sequences / bigger batches fit under a tight GPU
+    memory ceiling) at the cost of ~20-30% more compute. We pass use_reentrant=
+    False because the base model is frozen, so the input embeddings don't require
+    grad — the reentrant checkpoint variant would then save no memory and warn.
     """
     from transformers import AutoTokenizer
     from adapters import AutoAdapterModel, LoRAConfig
@@ -133,6 +141,12 @@ def load_model_with_adapter(output_dir: Path):
     # remain trainable. This is the standard pattern for adapter fine-tuning.
     model.train_adapter(ADAPTER_NAME)
     model.set_active_adapters(ADAPTER_NAME)
+
+    if grad_checkpointing:
+        model.gradient_checkpointing_enable(
+            gradient_checkpointing_kwargs={"use_reentrant": False}
+        )
+        print("Gradient checkpointing: ON (lower peak memory, ~20-30% slower)")
 
     n_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     n_total     = sum(p.numel() for p in model.parameters())
@@ -253,7 +267,9 @@ def train(args):
     # Load model
     print()
     output_dir = Path(args.output_dir)
-    model, tokenizer = load_model_with_adapter(output_dir)
+    model, tokenizer = load_model_with_adapter(
+        output_dir, grad_checkpointing=args.grad_checkpointing
+    )
     model = model.to(device)
 
     # Only pass parameters that require gradients to the optimiser.
@@ -318,6 +334,16 @@ def train(args):
             optimizer.step()
             scheduler.step()
 
+            # In memory-saver mode, release the MPS/CUDA caching pool each step so
+            # fragmentation can't creep the reserved footprint up toward the ceiling.
+            # Only when checkpointing is on — it costs a little time, so we keep the
+            # default fast path untouched.
+            if args.grad_checkpointing:
+                if device == "mps":
+                    torch.mps.empty_cache()
+                elif device == "cuda":
+                    torch.cuda.empty_cache()
+
             epoch_loss += loss.item()
             n_batches  += 1
             global_step += 1
@@ -379,6 +405,12 @@ def parse_args():
                    help="Token limit per document (default: 256)")
     p.add_argument("--val-steps",   type=int,   default=500,
                    help="Validate every N steps (default: 500)")
+    p.add_argument("--grad-checkpointing", action="store_true",
+                   help="Memory-saver mode: recompute activations in the backward "
+                        "pass instead of storing them (~2-4x less activation memory, "
+                        "~20-30%% slower), and clear the GPU cache each step. Turn on "
+                        "to fit a larger --batch-size or --max-seq-len under a tight "
+                        "GPU memory ceiling (e.g. Apple MPS).")
     p.add_argument("--output-dir",  type=str,   default=str(DEFAULT_OUT),
                    help=f"Where to save the adapter (default: {DEFAULT_OUT})")
     return p.parse_args()
