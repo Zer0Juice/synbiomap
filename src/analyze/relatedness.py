@@ -42,13 +42,19 @@ def build_city_type_vectors(
     type_col: str = "type",
     city_col: str = "city_key",
     label_col: str = "cluster_label",
+    norm: str = "l2",
 ) -> tuple[dict, dict]:
     """
     Build per-city, per-type cluster-frequency vectors.
 
+    norm : "l2" (default) gives unit vectors whose dot product is the cosine used
+           by the decisive test. "l1" gives probability distributions over topics
+           whose dot product is P(a random doc of each type lands in the same
+           topic) — the interpretable co-location statistic.
+
     Returns
     -------
-    vecs : {type: {city: unit-normalised frequency vector of length k_clusters}}
+    vecs : {type: {city: normalised frequency vector of length k_clusters}}
     counts : {type: {city: number of non-noise documents}}
     """
     valid = clustered[clustered[label_col] >= 0]
@@ -60,9 +66,9 @@ def build_city_type_vectors(
             v = np.zeros(k_clusters, dtype=np.float64)
             for c, n in gg[label_col].value_counts().items():
                 v[int(c)] = n
-            nrm = np.linalg.norm(v)
-            if nrm > 0:
-                tv[city] = v / nrm
+            denom = np.linalg.norm(v) if norm == "l2" else v.sum()
+            if denom > 0:
+                tv[city] = v / denom
                 tc[city] = int(len(gg))
         vecs[typ] = tv
         counts[typ] = tc

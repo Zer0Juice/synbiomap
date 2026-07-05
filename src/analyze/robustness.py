@@ -40,7 +40,14 @@ def size_control_ols(tab: pd.DataFrame, type_a: str, type_b: str, min_country: i
     la, lb = f"log_n_{type_a}", f"log_n_{type_b}"
     formula = f"overlap ~ {la} + {lb}"
 
-    m1 = smf.ols(formula, data=df).fit(cov_type="HC3")
+    # Cluster-robust standard errors by country: cities in one country are not
+    # independent (a single country can supply a third of the sample), so plain
+    # or HC3 errors would understate uncertainty. R^2 is unaffected by the choice.
+    if df["country"].nunique() >= 2:
+        m1 = smf.ols(formula, data=df).fit(
+            cov_type="cluster", cov_kwds={"groups": df["country"]})
+    else:
+        m1 = smf.ols(formula, data=df).fit(cov_type="HC3")
     out = {
         "type_a": type_a, "type_b": type_b, "n": int(len(df)),
         "r2_size": float(m1.rsquared),
@@ -95,6 +102,42 @@ def leave_one_city_out(
         rows.append({"dropped": drop, "n_cities": r["n_cities"],
                      "excess": r["excess"], "p_value": r["p_value"]})
     return pd.DataFrame(rows).sort_values("p_value", ascending=False).reset_index(drop=True)
+
+
+def leave_one_country_out(
+    vecs: dict,
+    type_a: str,
+    type_b: str,
+    cities: list,
+    country_of: dict,
+    n_perm: int = 2000,
+    seed: int = 42,
+    min_drop: int = 2,
+) -> pd.DataFrame:
+    """
+    Drop one whole country at a time and re-run the decisive permutation on the
+    rest. This is the sharp version of the jackknife: when one country (the US)
+    supplies a third or more of the cities, "within-country re-pairing" is mostly
+    "within-US re-pairing", so the honest question is whether the signal survives
+    removing that country entirely. One row per dropped country (only countries
+    with >= min_drop cities), sorted by how many cities they contribute.
+    """
+    from collections import Counter
+
+    cnt = Counter(country_of.get(c) for c in cities)
+    rows = []
+    for country, n in sorted(cnt.items(), key=lambda kv: (-kv[1], str(kv[0]))):
+        if n < min_drop:
+            continue
+        rest = [c for c in cities if country_of.get(c) != country]
+        if len(rest) < 5:
+            continue
+        r = pair_permutation(vecs, type_a, type_b, rest, country_of,
+                             n_perm=n_perm, seed=seed)
+        rows.append({"dropped_country": country, "n_dropped": int(n),
+                     "n_cities": r["n_cities"], "excess": r["excess"],
+                     "p_value": r["p_value"]})
+    return pd.DataFrame(rows)
 
 
 def downsample_power(
