@@ -17,17 +17,11 @@ def _(mo):
     # Tripartite city-level analysis
 
     Do a city's **student projects**, **academic papers**, and **patents** in
-    synthetic biology work on the same specific topics? This notebook is the
-    core test of the thesis. It embeds all three artifact types in one
-    fine-tuned semantic space, sorts them into topics, and asks whether a
-    city's three kinds of work fall into the *same* topics more than chance —
-    and more than city size can explain.
+    synthetic biology work on the same specific topics? This notebook is the home of the project's core analysis. It sorts them into topics, and asks whether a city's artifacts are more related than chance would otherwise suggest.
 
-    The story runs in four moves:
-
-    1. a sane map of the field,
-    2. the seductive wrong answer (centroid overlap, which just measures size),
-    3. the decisive test (cluster co-membership, with a permutation null),
+    1. a map of the field,
+    2. An initial measure (with some problems) (centroid overlap, which just measures size),
+    3. A test based on cluster co-membership
     4. what it means, and what it can't.
 
     Embeddings come from SPECTER2 with our fine-tuned adapter; clusters come
@@ -123,7 +117,8 @@ def _(mpl):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ## The data
+    ## Loading the data
+    First we load up the clustered corpus and our embeddings
     """)
     return
 
@@ -185,52 +180,48 @@ def _(K, arts, cc_cluster, mo, n_noise, type_counts):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ## 1. A sane map of the field
+    ## 1. A map of the field
 
-    Before any test, the space has to be believable. Two things to see: the
-    three artifact types share the same regions (they are genuinely
-    co-embedded, not three separate islands), and the topics are coherent —
-    the carbon-capture cluster sits where carbon-capture work should.
+    Before any test, the space has to make sense. Are the
+    three artifact types sharing the same regions? Are related documents clustered together?
     """)
     return
 
 
 @app.cell
-def _(FIGDIR, SOL, arts, cc_cluster, plt):
-    # ── The map: by artifact type (left) and by topic with carbon capture (right)
-    m = arts[arts["umap_x"].notna()].copy()
+def _(FIGDIR, SOL, arts, plt):
+    # ── The map of the field: one shared projection, coloured by artifact type ──
+    _m = arts[arts["umap_x"].notna()]
 
-    fig_map, (axL, axR) = plt.subplots(1, 2, figsize=(20, 9))
+    # Draw the densest type first so the rarer ones stay visible on top; give the
+    # smaller types slightly larger, more opaque points so they read clearly.
+    _layers = [
+        ("paper",   SOL["paper"],   6, 0.28),
+        ("project", SOL["project"], 9, 0.55),
+        ("patent",  SOL["patent"],  9, 0.60),
+    ]
 
-    # Left: colour by artifact type
-    for t, col in [("paper", SOL["paper"]), ("patent", SOL["patent"]), ("project", SOL["project"])]:
-        s = m[m["type"] == t]
-        axL.scatter(s["umap_x"], s["umap_y"], s=5, alpha=0.35, color=col, label=f"{t} ({len(s):,})")
-    axL.set_title("The three artifact types share the space")
-    axL.set_xlabel("UMAP-1"); axL.set_ylabel("UMAP-2")
-    leg = axL.legend(markerscale=3, loc="upper right", framealpha=0.9)
-    for lh in leg.legend_handles:
-        lh.set_alpha(1)
+    fig_map, ax_map = plt.subplots(figsize=(13, 12))
+    for _t, _col, _sz, _al in _layers:
+        _s = _m[_m["type"] == _t]
+        ax_map.scatter(_s["umap_x"], _s["umap_y"], s=_sz, alpha=_al, color=_col,
+                       linewidths=0, rasterized=True, label=f"{_t}  ({len(_s):,})")
 
-    # Right: colour by topic, carbon capture highlighted
-    clu = m[m["cluster_label"] >= 0]
-    axR.scatter(m[m["cluster_label"] < 0]["umap_x"], m[m["cluster_label"] < 0]["umap_y"],
-                s=4, alpha=0.15, color=SOL["muted"])
-    axR.scatter(clu["umap_x"], clu["umap_y"], s=5, alpha=0.4,
-                c=clu["cluster_label"], cmap="twilight")
-    cc = m[m["cluster_label"] == cc_cluster]
-    axR.scatter(cc["umap_x"], cc["umap_y"], s=22, color=SOL["orange"],
-                edgecolor="white", linewidth=0.3, label=f"carbon capture (cluster {cc_cluster})")
-    axR.annotate("carbon capture", (cc["umap_x"].mean(), cc["umap_y"].mean()),
-                 fontsize=15, fontweight="bold", color=SOL["orange"],
-                 ha="center", va="center",
-                 bbox=dict(boxstyle="round,pad=0.3", fc=SOL["bg"], ec=SOL["orange"]))
-    axR.set_title("80 topics; the carbon-capture cluster in context")
-    axR.set_xlabel("UMAP-1"); axR.set_ylabel("UMAP-2")
-    axR.legend(markerscale=1.5, loc="upper right", framealpha=0.9)
+    ax_map.set_aspect("equal")
+    ax_map.set_xlabel("UMAP-1"); ax_map.set_ylabel("UMAP-2")
+    ax_map.set_xticks([]); ax_map.set_yticks([])          # UMAP axes carry no units
+    for _sp in ("top", "right"):
+        ax_map.spines[_sp].set_visible(False)
+    ax_map.set_title("The synthetic-biology field: projects, papers, and patents in one space")
+
+    _leg = ax_map.legend(markerscale=3.5, loc="upper right", framealpha=0.95,
+                         title="artifact type", title_fontsize=14, fontsize=14)
+    _leg.get_title().set_fontweight("bold")
+    for _lh in _leg.legend_handles:
+        _lh.set_alpha(1)
 
     fig_map.tight_layout()
-    fig_map.savefig(FIGDIR / "tripartite_map.png", bbox_inches="tight")
+    fig_map.savefig(FIGDIR / "tripartite_map.png", bbox_inches="tight", dpi=200)
     fig_map
     return
 
@@ -487,14 +478,12 @@ def _(
 @app.cell
 def _(mo):
     mo.md(r"""
-    ## 4. Four ways to try to break it
+    # Robustness Checks
+    4 ways we try to break our assertion
 
-    A single small p-value is not a finding; a finding is something that
-    survives honest attempts to kill it. We run four checks, each answering one
-    plain-English objection a sceptic would raise:
+    A single small p-value is not a finding. It must survive our honest attempts to kill it. We run four checks, each answering one  objection a sceptic would raise:
 
-    1. **Size control** — is co-membership just city size again, the way the
-       centroid measure was?
+    1. **Size control**: is co-membership just dependent on city size?
     2. **Resolution sweep** — does the signal need exactly this clustering, or
        does it hold across many?
     3. **Leave-one-city-out** — is one big city (Boston, say) secretly carrying
@@ -603,8 +592,17 @@ def _(kcurve, mo):
 
 
 @app.cell
-def _(FIGDIR, SOL, country_of, leave_one_city_out, np, pair_results,
-      pair_tables, plt, tri_vecs):
+def _(
+    FIGDIR,
+    SOL,
+    country_of,
+    leave_one_city_out,
+    np,
+    pair_results,
+    pair_tables,
+    plt,
+    tri_vecs,
+):
     # ── Check 3: drop each city once and re-run. If no single city carries the
     # result, every leave-one-out p-value stays below 0.05.
     _pairs = [("paper", "project"), ("paper", "patent")]
@@ -649,8 +647,16 @@ def _(city_name, jack, mo):
 
 
 @app.cell
-def _(FIGDIR, SOL, country_of, downsample_power, pair_results, pair_tables,
-      plt, tri_vecs):
+def _(
+    FIGDIR,
+    SOL,
+    country_of,
+    downsample_power,
+    pair_results,
+    pair_tables,
+    plt,
+    tri_vecs,
+):
     # ── Check 4: squeeze a WORKING link down to 28 cities (the project-patent
     # sample size) many times, and see how often it still looks significant.
     _strong = [("paper", "project"), ("paper", "patent")]
