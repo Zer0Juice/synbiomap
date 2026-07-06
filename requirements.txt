@@ -8,6 +8,9 @@ statsmodels>=0.14
 requests>=2.31
 httpx>=0.25
 
+# Claude API (topic-cluster labelling, scripts/12_label_clusters.py)
+anthropic>=0.116
+
 # Embedding models
 # SPECTER2 requires the `adapters` library for its adapter-based architecture.
 # adapters pins a compatible transformers version, so we let it manage that.
