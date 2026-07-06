@@ -71,16 +71,19 @@ def _():
     from src.analyze.robustness import (
         size_control_ols, leave_one_country_out, downsample_power,
     )
+    from src.analyze.crossmodal import city_part_type_props, mantel_test
 
     return (
         FIGDIR,
         FT_CACHE,
         PROCESSED,
         build_city_type_vectors,
+        city_part_type_props,
         comembership_table,
         downsample_power,
         leave_one_country_out,
         load_cache,
+        mantel_test,
         mpl,
         np,
         pair_permutation,
@@ -895,6 +898,109 @@ def _(centroid_r2, country_of, mo, pair_results, pair_tables, size_control_ols):
 
 
 @app.cell
+def _(mo):
+    mo.md(r"""
+    ## 5. Beyond the text: do the BioBrick parts agree?
+
+    Every measure so far reads text. SPECTER2 sees titles and abstracts, and a
+    fair worry is that we are testing the writing, not the work. BioBrick parts
+    let us check from another angle. Each iGEM team registers physical DNA parts,
+    and each part carries a functional type: a promoter, a coding sequence, a
+    terminator, and so on. Those type labels come from the registry, not from any
+    text the model read.
+
+    A Mantel test asks whether two ways of measuring distance between the same
+    cities agree. From the semantic side, build a city-by-city table of how far
+    apart two cities' project topic profiles are. From the parts side, build
+    another table of how far apart their part-type mixes are. The statistic is the
+    correlation between the two tables, taken over every pair of cities.
+
+    ```
+    r = correlation( topic distances, part-type distances )   over all city pairs
+    ```
+
+    City-pair distances are not independent, so a plain p-value would lie. The
+    Mantel test shuffles the city labels of one table, recomputes the correlation,
+    and repeats, to see how often chance alone reaches the real value. If the parts
+    and the topics line up beyond that shuffle, the semantic space has caught
+    something the parts confirm from outside the text.
+    """)
+    return
+
+
+@app.cell
+def _(K, PROCESSED, arts, city_part_type_props, mantel_test, np, pd):
+    # ── Part-type profiles vs project topic profiles, per city ────────────────
+    _parts = pd.read_csv(PROCESSED / "parts.csv", low_memory=False)
+    _proj = pd.read_csv(PROCESSED / "projects.csv", low_memory=False)
+    _proj["city_key"] = _proj["city"].astype(str).str.strip().str.lower()
+    _team_city = (_proj.dropna(subset=["team_id"]).drop_duplicates("team_id")
+                  .set_index("team_id")["city_key"].to_dict())
+    part_props = city_part_type_props(_parts, _team_city, min_parts=10)
+
+    # Project topic proportions per city (>= 5 project documents).
+    _pdoc = arts[(arts["type"] == "project") & (arts["cluster_label"] >= 0)]
+    topic_props = {}
+    for _c, _g in _pdoc.groupby("city_key"):
+        if len(_g) >= 5:
+            _v = np.zeros(K)
+            for _k, _n in _g["cluster_label"].value_counts().items():
+                _v[int(_k)] = _n
+            topic_props[_c] = _v / _v.sum()
+
+    mantel_cities = sorted(set(topic_props) & set(part_props.index))
+    _part_vecs = {c: part_props.loc[c].to_numpy() for c in mantel_cities}
+    mantel = mantel_test(topic_props, _part_vecs, mantel_cities, n_perm=2000)
+    return (mantel,)
+
+
+@app.cell
+def _(FIGDIR, SOL, mantel, np, plt):
+    # ── Left: the two distances rise together. Right: beats the shuffle null ──
+    fig_mantel, (axM1, axM2) = plt.subplots(1, 2, figsize=(19, 7))
+
+    axM1.hexbin(mantel["part_dist"], mantel["sem_dist"], gridsize=32,
+                cmap="YlGnBu", mincnt=1)
+    _z = np.polyfit(mantel["part_dist"], mantel["sem_dist"], 1)
+    _xr = np.linspace(mantel["part_dist"].min(), mantel["part_dist"].max(), 100)
+    axM1.plot(_xr, np.poly1d(_z)(_xr), color=SOL["orange"], lw=3,
+              label=f"r = {mantel['r']:.3f}")
+    axM1.set_xlabel("part-type distance between two cities")
+    axM1.set_ylabel("project topic distance between two cities")
+    axM1.set_title("Every dot is a pair of cities")
+    axM1.legend()
+
+    axM2.hist(mantel["null"], bins=40, color=SOL["bg2"], edgecolor=SOL["muted"])
+    axM2.axvline(mantel["r"], color=SOL["orange"], lw=2.5,
+                 label=f"observed r = {mantel['r']:.3f}\np = {mantel['p_value']:.4f}")
+    axM2.axvline(mantel["null_mean"], color=SOL["muted"], ls="--", lw=1.2, label="null mean")
+    axM2.set_xlabel("Mantel correlation under label shuffling")
+    axM2.set_ylabel("permutations")
+    axM2.set_title("The agreement beats the shuffle")
+    axM2.legend(fontsize=12)
+
+    fig_mantel.suptitle("Do the BioBrick parts agree with the semantic space?",
+                        fontsize=19, fontweight="bold")
+    fig_mantel.tight_layout()
+    fig_mantel.savefig(FIGDIR / "mantel_parts_vs_topics.png", bbox_inches="tight")
+    fig_mantel
+    return
+
+
+@app.cell
+def _(mantel, mo):
+    mo.md(f"""
+    Over {mantel['n_cities']} cities the two distance tables correlate at
+    r = {mantel['r']:.3f}, and the shuffle reaches that value only {mantel['p_value']:.4f}
+    of the time. The agreement is modest but real: cities that build similar kinds
+    of parts sit closer in the topic space too. The part types are functional
+    labels the model never read, so this is a second signal, from outside the
+    text, pointing the same way as the topics.
+    """)
+    return
+
+
+@app.cell
 def _(lift_res, loco, mo, pair_results):
     def _us_p(pair):
         df = loco[pair]
@@ -905,7 +1011,7 @@ def _(lift_res, loco, mo, pair_results):
     _px = pair_results[("paper", "patent")]["p_value"]
     _lift = lift_res[("paper", "project")]["lift"]
     mo.md(f"""
-    ## 5. What it shows, and what it can't
+    ## 6. What it shows, and what it can't
 
     A city's work is shaped like a star, not a triangle. The two links that run
     through papers are real: a city's papers share topics with its projects
