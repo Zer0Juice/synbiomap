@@ -16,25 +16,26 @@ def _(mo):
     mo.md(r"""
     # Tripartite city-level analysis
 
-    Do a city's **student projects**, **academic papers**, and **patents** in
-    synthetic biology work on the same specific topics? This notebook is the home
-    of the project's core analysis. It embeds all three artifact types in one
-    fine-tuned semantic space, sorts them into topics, and asks whether a city's
-    three kinds of work fall into the *same* topics more than chance — and more
-    than city size, country, or one dominant country can explain.
+    Synthetic biology is the point where biology stops only reading life and
+    starts writing it: students, academics, and companies now compose new
+    biology from shared, standardized parts. This notebook asks one small,
+    testable question about that shift. When a city's iGEM students, its academic
+    labs, and its patent-filing inventors all work in synthetic biology, are they
+    working on the same topics, or only in the same field?
 
-    The argument runs in five moves:
+    We place all three kinds of document in one semantic space with a fine-tuned
+    SPECTER2 model, sort them into topics, and measure how often a city's three
+    artifact types land in the same topics, against what chance alone would give.
 
-    1. **a map** of the field, so we trust the space before testing on it;
-    2. **the seductive wrong answer** — centroid overlap, which just measures size;
-    3. **the decisive test** — cluster co-membership against a permutation null;
-    4. **three honest attempts to break it** — drop a country, change the
-       clustering, starve the sample;
-    5. **what it shows, and what it can't.**
+    The argument runs in five steps:
 
-    Embeddings come from SPECTER2 with our fine-tuned adapter; clusters come from
-    `scripts/10_cluster_tripartite.py`. We speak of semantic relatedness and
-    association throughout, never cause.
+    1. a map, so we trust the space before we test on it;
+    2. the obvious measure, and why it only tracks city size;
+    3. the real test: do a city's types share topics more than chance?
+    4. three attempts to break that result;
+    5. what it shows, and what it can't.
+
+    Throughout we speak of relatedness and association, never cause.
     """)
     return
 
@@ -172,15 +173,26 @@ def _(FT_CACHE, PROCESSED, load_cache, pd):
 
 
 @app.cell
-def _(K, arts, cc_cluster, mo, n_noise, type_counts):
+def _(PROCESSED, pd):
+    # ── The human-reviewed topic labels (scripts/12_label_clusters.py) ────────
+    labels_df = pd.read_csv(PROCESSED / "cluster_labels.csv")
+    label_of = dict(zip(labels_df["cluster"].astype(int), labels_df["label"].astype(str)))
+    return label_of, labels_df
+
+
+@app.cell
+def _(K, arts, cc_cluster, label_of, mo, n_noise, type_counts):
     mo.md(f"""
-    The corpus is **{len(arts):,} documents**: {type_counts.get('paper',0):,} papers,
-    {type_counts.get('project',0):,} iGEM projects, {type_counts.get('patent',0):,} patents,
-    each geocoded to a city (patents to inventor cities, following Breschi &
-    Lissoni 2001). Clustering the fine-tuned embeddings gives **{K} topics**;
-    HDBSCAN leaves {n_noise:,} low-density documents as noise
-    ({n_noise/len(arts):.0%}), which carry no topic and drop out of the topic
-    measure. The carbon-capture topic is **cluster {cc_cluster}**.
+    The corpus is {len(arts):,} documents: {type_counts.get('paper',0):,} papers,
+    {type_counts.get('project',0):,} iGEM projects, and {type_counts.get('patent',0):,}
+    patents, each geocoded to a city. Patents go to the cities of their inventors,
+    not their owners, following Breschi and Lissoni (2001).
+
+    Clustering the fine-tuned embeddings sorts the documents into {K} topics.
+    HDBSCAN, the clustering method, leaves {n_noise:,} low-density documents
+    ({n_noise/len(arts):.0%}) unassigned; they carry no topic and sit out the topic
+    measure. The carbon-capture case study lives in cluster {cc_cluster},
+    "{label_of.get(cc_cluster, '')}".
     """)
     return
 
@@ -190,9 +202,16 @@ def _(mo):
     mo.md(r"""
     ## 1. A map of the field
 
-    Before any test, the space has to make sense. Do the three artifact types
-    share the same regions — is this genuinely *one* co-embedded space rather
-    than three islands? The map below colours every document by its type.
+    Before any test, look at the space. Every document is a point, placed by a
+    fine-tuned SPECTER2 model that reads its title and abstract and turns the text
+    into 768 numbers. Documents about similar work end up with similar numbers,
+    and so land near each other. To draw that 768-dimensional space on a page,
+    UMAP flattens it to two dimensions while trying to keep near things near. The
+    axes carry no units; only closeness means anything.
+
+    Two things to check by eye. Do the three artifact types share the same
+    regions, so this is one space and not three islands? And do the neighbourhoods
+    hold together as real topics?
     """)
     return
 
@@ -238,12 +257,11 @@ def _(FIGDIR, SOL, arts, plt):
 @app.cell
 def _(mo):
     mo.md(r"""
-    Papers spread across the whole field; projects and patents each concentrate
-    in their own regions, but **papers overlap both** while projects and patents
-    barely touch each other. That shape — papers as the shared middle ground — is
-    the whole result previewed by eye, before a single test. Note the map is a
-    2-D UMAP purely for viewing; the clustering below is done in a higher-D
-    reduction where density is better preserved.
+    Papers spread across the whole field. Projects and patents each gather in
+    their own areas, and here is the shape the rest of the notebook keeps meeting:
+    the papers sit inside both the project regions and the patent regions, while
+    projects and patents rarely touch. The papers are the shared ground. We will
+    test that impression, but you can already see it.
     """)
     return
 
@@ -251,15 +269,117 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ## 2. The seductive wrong answer: centroid overlap
+    ### The neighbourhoods have names
 
-    The obvious measure of "do a city's types align?" is to average each type's
-    document vectors into a centroid and take the cosine between two centroids.
-    It looks reasonable and it is almost useless here: every document is
-    synthetic biology, so any two centroids start close, and bigger cities
-    average to steadier centroids nearer the field-wide mean. The result is that
-    centroid overlap mostly measures **how much a city produces**, not how
-    aligned its work is. We show the trap before stepping around it.
+    The same map, now with the topics labelled. We clustered the documents into
+    topics, then named each topic from its most central papers and its most
+    distinctive words (`scripts/12_label_clusters.py`), and a human checked the
+    result. The largest topics are written at their centres; carbon capture is in
+    orange.
+    """)
+    return
+
+
+@app.cell
+def _(FIGDIR, SOL, arts, cc_cluster, label_of, plt):
+    # ── The topic map: same UMAP, coloured by cluster, largest topics named ────
+    _m = arts[arts["umap_x"].notna() & (arts["cluster_label"] >= 0)]
+    _noise = arts[arts["umap_x"].notna() & (arts["cluster_label"] < 0)]
+
+    fig_topics, ax_top = plt.subplots(figsize=(16, 14))
+    ax_top.scatter(_noise["umap_x"], _noise["umap_y"], s=4, alpha=0.05,
+                   color=SOL["muted"], rasterized=True)
+    ax_top.scatter(_m["umap_x"], _m["umap_y"], s=5, alpha=0.30,
+                   c=_m["cluster_label"], cmap="twilight", rasterized=True)
+    _cc = _m[_m["cluster_label"] == cc_cluster]
+    ax_top.scatter(_cc["umap_x"], _cc["umap_y"], s=11, alpha=0.75,
+                   color=SOL["orange"], rasterized=True)
+
+    # Name the 20 largest topics, plus carbon capture, at each topic's median point.
+    _to_label = list(_m["cluster_label"].value_counts().head(20).index)
+    if cc_cluster not in _to_label:
+        _to_label.append(cc_cluster)
+    for _c in _to_label:
+        _g = _m[_m["cluster_label"] == _c]
+        _is_cc = _c == cc_cluster
+        ax_top.annotate(
+            label_of.get(_c, str(_c)), (_g["umap_x"].median(), _g["umap_y"].median()),
+            fontsize=12 if _is_cc else 10.5, fontweight="bold", ha="center", va="center",
+            color=SOL["orange"] if _is_cc else SOL["text"],
+            bbox=dict(boxstyle="round,pad=0.25", fc=SOL["bg"],
+                      ec=SOL["orange"] if _is_cc else SOL["muted"], alpha=0.85),
+        )
+
+    ax_top.set_aspect("equal")
+    ax_top.set_xlabel("UMAP-1"); ax_top.set_ylabel("UMAP-2")
+    ax_top.set_xticks([]); ax_top.set_yticks([])
+    for _sp in ("top", "right"):
+        ax_top.spines[_sp].set_visible(False)
+    ax_top.set_title("The topics of synthetic biology (largest topics named; carbon capture in orange)")
+
+    fig_topics.tight_layout()
+    fig_topics.savefig(FIGDIR / "tripartite_topic_map.png", bbox_inches="tight", dpi=200)
+    fig_topics
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    The map reads like a field guide. Genome editing, metabolic engineering,
+    biosensors, gene circuits, and plant engineering each hold their own
+    territory. The carbon-capture patch is cyanobacterial chassis work:
+    photosynthetic microbes engineered to fix carbon. For this project that patch
+    is the point of the whole exercise, the proof that the same tools which
+    reshaped the planet by accident might be turned, on purpose, to repair it.
+    """)
+    return
+
+
+@app.cell
+def _(labels_df, mo):
+    # ── The topics as a table, largest first, split by artifact type ──────────
+    _d = labels_df.sort_values("n_docs", ascending=False).head(18)
+    _lines = ["| topic | papers | projects | patents | total |",
+              "|---|--:|--:|--:|--:|"]
+    for _, _r in _d.iterrows():
+        _star = " (cc)" if str(_r["is_carbon_capture"]).lower() in ("true", "1") else ""
+        _lines.append(f"| {_r['label']}{_star} | {int(_r['n_paper'])} | "
+                      f"{int(_r['n_project'])} | {int(_r['n_patent'])} | {int(_r['n_docs'])} |")
+    mo.md(
+        "Read down the type columns and the shape returns. Some topics are almost "
+        "all papers, the academic core of the field. Some are mostly student "
+        "projects. A few are patent-heavy. No large topic is a single type, and "
+        "the paper column is never empty. Here are the 18 largest topics; (cc) "
+        "marks carbon capture.\n\n" + "\n".join(_lines)
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ## 2. The obvious measure, and why it fails
+
+    Start with the natural idea. To ask whether a city's papers and projects are
+    alike, average each type into one vector and compare the two averages.
+
+    Take every paper in a city and average their 768-number embeddings into a
+    single centroid, the city's "average paper". Do the same for its projects.
+    Scale both to length one and take the cosine of the angle between them: near
+    1 if they point the same way, near 0 if they are unrelated.
+
+    ```
+    similarity = cosine(average paper vector, average project vector)
+    ```
+
+    It sounds reasonable. It barely works, for a reason worth seeing. Averaging
+    many vectors pulls the result toward the middle of the whole field: the more
+    documents you average, the more their differences cancel, and the closer the
+    centroid sits to the field-wide mean. A city with 500 papers has a paper
+    centroid near that global average, and its project centroid sits there too, so
+    the two look alike whatever the city actually works on. The similarity ends up
+    measuring how much a city produces, not what it produces.
     """)
     return
 
@@ -325,11 +445,13 @@ def _(FIGDIR, SOL, centroid_df, centroid_size_p, centroid_size_r, np, plt):
 @app.cell
 def _(centroid_r2, centroid_size_r, mo):
     mo.md(f"""
-    Centroid overlap rises steadily with city size (r = {centroid_size_r:.2f}):
-    size alone explains about **{centroid_r2:.0%}** of it. A measure that is mostly
-    a restatement of "how much does this city publish?" cannot be evidence of
-    local idea flow. We keep this number as a yardstick — the real test below
-    should be *far* less size-driven.
+    The plot bears it out. Across cities the centroid similarity climbs with size,
+    with a Pearson correlation of r = {centroid_size_r:.2f}, and size alone accounts
+    for about {centroid_r2:.0%} of it. (The correlation coefficient r runs from -1 to
+    1; squaring it gives the share of the up-and-down variation that a straight line
+    on size explains.) A measure that mostly restates "this city is large" cannot be
+    evidence that a city's students and academics work on the same things. We keep
+    the number as a yardstick and build a better test.
     """)
     return
 
@@ -337,25 +459,63 @@ def _(centroid_r2, centroid_size_r, mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    ## 3. The decisive test: cluster co-membership
+    ## 3. The real test: shared topics
 
-    Instead of averaging vectors, sort every document into a topic and ask a
-    sharper question: do a city's papers, projects, and patents fall into the
-    **same topics**? For each city and type we build a topic-frequency vector
-    (how many of that type's documents are in each cluster); the relatedness of
-    two types is the cosine of their vectors. This throws away magnitude and
-    keeps only the partition, so it is immune to the size artifact — and it is
-    symmetric, so it is immune to the papers-as-hub asymmetry of the embedding.
+    The fix is to throw away magnitude and keep only topic. Do not average the
+    vectors. Count the topics.
 
-    The test is a **within-country re-pairing permutation**. The null keeps each
-    country's cities and each type's document counts fixed and only breaks the
-    specific local pairing. Beating it means a city's own types are more
-    topically aligned than a random same-country city's types — which size and
-    country cannot explain.
+    Sort every document into one of the topics. For a city and an artifact type,
+    count how many of that type's documents fall in each topic. That gives a list
+    of counts, one per topic: the city's topic profile for its papers, and another
+    for its projects. Scale each list to length one, so a large city and a small
+    city are compared on the shape of their work, not its amount.
 
-    Alongside the cosine we report an **interpretable co-location lift**: how much
-    more likely a random document of each type from the *same* city is to land in
-    one topic, versus two documents drawn from different same-country cities.
+    The relatedness of two types in a city is the cosine of their two topic
+    profiles, which after scaling is just the sum, over topics, of the two shares
+    multiplied together:
+
+    ```
+    overlap = sum over topics of (paper share in topic) x (project share in topic)
+    ```
+
+    It is large when both types put their weight on the same topics and small when
+    they favour different ones. Because it uses only the profile of topics and not
+    how many documents made it, city size drops out. And because the cosine of A
+    with B equals the cosine of B with A, it treats papers and projects
+    symmetrically. That matters here, since the fine-tuning pulls patents and
+    projects toward the papers they cite, and a one-sided measure would inherit
+    that pull.
+
+    One number on its own says nothing. A city's paper and project profiles might
+    overlap simply because every document here is synthetic biology. So we compare
+    the real overlap against a null: the same world with the local pairing broken.
+
+    For every city we take its real overlap, then average across cities to get the
+    observed value. Then, inside each country, we shuffle which project profile is
+    matched to which paper profile, and average again. Shuffling within a country
+    holds every country's set of cities and every document count exactly as they
+    were; it breaks only the tie between a city's own papers and its own projects.
+    Repeat the shuffle thousands of times to trace the range of overlaps that
+    chance produces. The p-value is the share of shuffles that match or beat the
+    real average.
+
+    ```
+    observed = average over cities of overlap(city)
+    null     = the same average, after re-pairing papers and projects within each country
+    p        = fraction of nulls at least as high as observed
+    ```
+
+    Beating that null means a city's own types share topics more than a random
+    same-country city's types would, which neither size nor country can explain.
+
+    Cosine is the right statistic but a hard one to feel, so we also read it as a
+    probability. Scale each topic profile to sum to one instead of to length one,
+    and it becomes a distribution: the chance a random document of that type lands
+    in each topic. The dot product of two such distributions is then the chance
+    that a random paper and a random project from the city fall in the same topic.
+    Dividing the same-city chance by the shuffled chance gives a lift, how many
+    times more likely two artifacts from one city are to meet in a topic than two
+    drawn from different cities in the same country.
     """)
     return
 
@@ -416,10 +576,10 @@ def _(MIN_DOCS, lift_res, mo, pair_results, three_way):
     def _row(k):
         r = pair_results[k]
         lf = lift_res.get(k, {})
-        star = "**yes**" if r["p_value"] < 0.05 else "no"
-        lift = f"{lf.get('lift', float('nan')):.2f}× (p {lf.get('p', float('nan')):.3f})"
+        beats = "yes" if r["p_value"] < 0.05 else "no"
+        lift = f"{lf.get('lift', float('nan')):.2f}x (p {lf.get('p', float('nan')):.3f})"
         return (f"| {r['type_a']} × {r['type_b']} | {r['n_cities']} | "
-                f"{r['excess']:+.4f} | {r['p_value']:.4f} | {lift} | {star} |")
+                f"{r['excess']:+.4f} | {r['p_value']:.4f} | {lift} | {beats} |")
 
     _lines = [
         "| link | cities | cosine excess | p | same-topic lift | beats null? |",
@@ -431,15 +591,17 @@ def _(MIN_DOCS, lift_res, mo, pair_results, three_way):
 
     _tw = ""
     if three_way is not None:
-        _tw = (f"\n\nRestricting to the **{three_way['n_cities']} cities with all three "
-               f"types**, the average pairwise co-membership also exceeds its null "
-               f"(excess {three_way['excess']:+.3f}, p {three_way['p_value']:.3f}) — but this "
-               f"is a *consequence* of the two paper links, not independent evidence: the "
-               f"direct project–patent leg contributes almost nothing.")
+        _tw = (f"\n\nWith all three types present, on the {three_way['n_cities']} cities "
+               f"that have enough of each, the average pairwise overlap also beats its null "
+               f"(excess {three_way['excess']:+.3f}, p {three_way['p_value']:.3f}). This follows "
+               f"from the two paper links rather than adding to them: the direct project–patent "
+               f"leg carries almost none of it.")
 
     mo.md(
-        f"Cluster co-membership vs the within-country null "
-        f"(floor: {MIN_DOCS} documents per type per city).\n\n" + "\n".join(_lines) + _tw
+        f"Each row is one type pair. The excess is the observed average overlap minus "
+        f"its within-country null; the lift reads the same effect as a probability. "
+        f"A city needs at least {MIN_DOCS} documents of each type to enter a row.\n\n"
+        + "\n".join(_lines) + _tw
     )
     return
 
@@ -463,8 +625,8 @@ def _(FIGDIR, SOL, pair_results, plt):
         _ax.set_xlabel("mean city co-membership"); _ax.legend(fontsize=11)
 
     axes_perm[0].set_ylabel("permutations")
-    fig_perm.suptitle("Cluster co-membership beats the same-country null "
-                      "(orange line right of the histogram = local signal)",
+    fig_perm.suptitle("Real overlap against the same-country null "
+                      "(orange line right of the grey histogram is local signal)",
                       fontsize=19, fontweight="bold")
     fig_perm.tight_layout()
     fig_perm.savefig(FIGDIR / "tripartite_permutation.png", bbox_inches="tight")
@@ -475,11 +637,16 @@ def _(FIGDIR, SOL, pair_results, plt):
 @app.cell
 def _(mo):
     mo.md(r"""
-    *On the document floor:* we require at least 5 documents of each type per
-    city, because below that a city's topic vector is too sparse to estimate. The
-    floor is a measurement threshold, not a tuned knob — the two paper links go
-    on to survive the far more demanding leave-one-country-out and downsampling
-    tests in §4.
+    Each grey histogram is the range of overlaps the shuffle produces; the orange
+    line is what the real pairing gives. For paper–project and paper–patent the
+    real value sits to the right of almost every shuffle. For project–patent it
+    sits in the middle of the pile, indistinguishable from chance.
+
+    A note on the floor. A city enters a pair only if it has at least five
+    documents of each type, because below that its topic profile is a handful of
+    counts and too noisy to trust. This is a measurement threshold, not a dial we
+    tuned for a result; the two paper links go on to survive the harder tests in
+    section 4.
     """)
     return
 
@@ -489,17 +656,24 @@ def _(mo):
     mo.md(r"""
     ## 4. Three ways to try to break it
 
-    A single small p-value is not a finding; a finding is something that survives
-    honest attempts to kill it. We run three checks, each answering one plain
-    objection a sceptic would raise — and close with a short note on size,
-    sample, and multiple testing.
+    A small p-value is a start, not a finding. A finding survives attempts to
+    knock it down. Here are three, each aimed at a specific way the result could
+    be an artifact rather than a real pattern.
+    """)
+    return
 
-    1. **Leave-one-country-out** — with the US supplying a large share of the
-       cities, is this just an American result?
-    2. **Resolution sweep** — does the signal need exactly this clustering, or
-       does it hold from coarse to fine?
-    3. **Power check** — is the flat project–patent link truly empty, or just
-       measured on too few cities to see?
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ### Drop a whole country
+
+    The within-country null already holds country fixed. But if one country
+    supplies most of the cities, the shuffle mostly happens inside that country,
+    and the result could be a story about one place wearing a global coat. The
+    United States is the largest single source of cities here. So we remove one
+    whole country at a time and run the test again on the rest. If the signal is
+    real and spread out, no single removal should break it.
     """)
     return
 
@@ -531,7 +705,7 @@ def _(FIGDIR, SOL, country_of, leave_one_country_out, pair_tables, plt, tri_vecs
         _ax.legend(loc="lower right", fontsize=12)
 
     fig_loco.suptitle("Leave-one-country-out: is it just the United States? "
-                      "(red = dropping the US)", fontsize=19, fontweight="bold")
+                      "(red bar is dropping the US)", fontsize=19, fontweight="bold")
     fig_loco.tight_layout()
     fig_loco.savefig(FIGDIR / "robust_leave_country.png", bbox_inches="tight")
     fig_loco
@@ -547,13 +721,27 @@ def _(loco, mo):
     _pp = _us_row(loco[("paper", "project")])
     _px = _us_row(loco[("paper", "patent")])
     mo.md(f"""
-    **Read:** dropping the US is the real test, because it is the largest single
-    country in both samples. **paper × patent survives it** — still significant on
-    the {_px['n_cities']:.0f} non-US cities (p = {_px['p_value']:.3f}), so it is not a US
-    mirage. **paper × project does not** — without the US it falls to
-    p = {_pp['p_value']:.3f} on {_pp['n_cities']:.0f} cities: still positive, but no longer
-    significant, so it leans partly on the US and China. The two links are not
-    equally strong, and we say so.
+    Dropping the US is the real test, since it is the largest single country in
+    both samples. Paper–patent survives it: still significant on the {_px['n_cities']:.0f}
+    non-US cities, at p = {_px['p_value']:.3f}. So that link is not an American mirage.
+    Paper–project does not survive: without the US it falls to p = {_pp['p_value']:.3f} on
+    {_pp['n_cities']:.0f} cities. It stays positive, but it leans partly on the US and
+    China. The two links are not equally strong, and the notebook says so.
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ### Change the number of topics
+
+    The topics came from one clustering, at one setting. Maybe the result only
+    holds there. So we redo the topics with a different method, KMeans, at sizes
+    from 10 topics to 120, and run the whole test again at each size. KMeans also
+    assigns every document to a topic, with none left out as noise, so this check
+    does a second job: it shows the result does not depend on the third of
+    documents HDBSCAN set aside.
     """)
     return
 
@@ -561,8 +749,7 @@ def _(loco, mo):
 @app.cell
 def _(FIGDIR, PROCESSED, SOL, pd, plt):
     # ── Check 2: re-cluster with KMeans at k = 10..120 and re-run the test at
-    # each k (see scripts/11_robustness_kcurve.py). KMeans keeps every document,
-    # so this also answers the "you dropped 30% as noise" worry.
+    # each k (see scripts/11_robustness_kcurve.py).
     kcurve = pd.read_csv(PROCESSED / "robustness_kcurve.csv")
     _pairs = [("paper", "project", SOL["blue"]),
               ("paper", "patent", SOL["orange"]),
@@ -587,8 +774,7 @@ def _(FIGDIR, PROCESSED, SOL, pd, plt):
     axK2.set_title("The two paper links stay significant; project×patent never does")
     axK2.legend()
 
-    fig_ksweep.suptitle("Robustness to clustering resolution "
-                        "(KMeans, all documents — no noise dropped)",
+    fig_ksweep.suptitle("Robustness to the number of topics (KMeans, all documents kept)",
                         fontsize=19, fontweight="bold")
     fig_ksweep.tight_layout()
     fig_ksweep.savefig(FIGDIR / "robust_kcurve.png", bbox_inches="tight")
@@ -601,12 +787,26 @@ def _(kcurve, mo):
     _pp = kcurve[(kcurve.type_a == "paper") & (kcurve.type_b == "project")]
     _px = kcurve[(kcurve.type_a == "paper") & (kcurve.type_b == "patent")]
     mo.md(f"""
-    **Read:** across k from 10 to 120, paper×project stays significant at every
-    resolution (worst p = {_pp.p_value.max():.3f}) and paper×patent almost always
-    (worst p = {_px.p_value.max():.3f}, a single borderline k), while project×patent never
-    clears 0.05. Because KMeans assigns *every* document to a topic, this doubles
-    as proof the result did not depend on the third of documents HDBSCAN set aside
-    as noise.
+    From 10 topics to 120, paper–project stays significant at every size (its worst
+    p is {_pp.p_value.max():.3f}), and paper–patent stays significant at all but one
+    borderline size (worst p {_px.p_value.max():.3f}). Project–patent never clears 0.05.
+    The result does not hinge on the one clustering we chose, and dropping no
+    documents as noise changes nothing.
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ### Starve the sample
+
+    The direct project–patent link is measured on only 28 cities, and it came out
+    null. Is there really nothing there, or are 28 cities too few to see it? To
+    find out, take a link that does work, paper–project, and cut it down to 28
+    random cities, again and again. If the working link also goes quiet at 28
+    cities, then 28 cities simply cannot resolve an effect this size, and the
+    project–patent null means "too little data", not "no link".
     """)
     return
 
@@ -647,25 +847,26 @@ def _(mo, pair_results, power):
     _pp = power[("paper", "project")]
     _ppx = pair_results.get(("project", "patent"))
     mo.md(f"""
-    **Read:** the real paper×project link, cut to 28 random cities (matching the
-    project×patent sample), stays significant only **{_pp['share_significant']:.0%}** of the
-    time — its median p climbs to **{_pp['median_p']:.2f}**, almost exactly project×patent's
-    actual p of **{_ppx['p_value']:.2f}**. So the flat project×patent result is what "too
-    few cities" looks like, not evidence that no link exists. We report it as
-    *not detected here*, never *absent*.
+    The real paper–project link, cut to 28 random cities to match the
+    project–patent sample, stays significant only {_pp['share_significant']:.0%} of the
+    time. Its median p climbs to {_pp['median_p']:.2f}, almost exactly project–patent's
+    actual p of {_ppx['p_value']:.2f}. So the flat project–patent result is what too few
+    cities looks like, not proof that no link exists. We record it as undetected
+    here, and leave it open.
     """)
     return
 
 
 @app.cell
-def _(centroid_r2, country_of, mo, pair_tables, size_control_ols):
+def _(centroid_r2, country_of, mo, pair_results, pair_tables, size_control_ols):
     # ── Housekeeping: size regression, effective sample, multiple testing ─────
     _ols = {p: size_control_ols(pair_tables[p], p[0], p[1])
             for p in [("paper", "project"), ("paper", "patent")]}
-    _pp = _ols[("paper", "project")]["r2_size"]
-    _px = _ols[("paper", "patent")]["r2_size"]
+    _rp = _ols[("paper", "project")]["r2_size"]
+    _rx = _ols[("paper", "patent")]["r2_size"]
+    _pp = pair_results[("paper", "project")]["p_value"]
+    _px = pair_results[("paper", "patent")]["p_value"]
 
-    # Effective sample: cities that sit in a permutable (>= 2-city) country.
     _tab = pair_tables[("paper", "project")]
     _vc = _tab["country"].value_counts()
     _eff_cities = int(_vc[_vc >= 2].sum())
@@ -674,24 +875,27 @@ def _(centroid_r2, country_of, mo, pair_tables, size_control_ols):
     mo.md(f"""
     ### Size, sample, and multiple testing
 
-    - **Size control.** Regressing each city's co-membership on its two log
-      document counts (standard errors clustered by country) leaves size
-      explaining only **{_pp:.0%}** of paper×project and **{_px:.0%}** of paper×patent —
-      against **{centroid_r2:.0%}** for the centroid measure in §2. The permutation
-      already conditions on size; this is corroboration, not the control.
-    - **Effective sample.** Of the paper×project cities, {_eff_cities} sit in
-      {_eff_countries} countries with two or more cities; the rest are singleton
-      countries that contribute the same value to the statistic and its null, so
-      they add coverage but no discriminating power.
-    - **Multiple testing.** We report three pairwise tests plus a three-way; a
-      Bonferroni threshold of 0.05 / 4 = 0.0125 leaves both paper links (p ≈ 0.006)
-      comfortably significant in the full sample.
+    Three loose ends, stated plainly. First, size again. If we predict a city's
+    overlap from its two document counts with a straight-line regression, and
+    cluster the standard errors by country, size explains {_rp:.0%} of the
+    paper–project overlap and {_rx:.0%} of the paper–patent overlap, against
+    {centroid_r2:.0%} for the centroid measure in section 2. The permutation already
+    holds size fixed; this is a second check, not the main one, and it agrees.
+
+    Second, the real sample size. Of the paper–project cities, {_eff_cities} sit in
+    {_eff_countries} countries that have two or more cities. The rest are lone
+    cities in their country, which contribute the same value to the observed and
+    the null, so they add coverage but no power to tell the two apart.
+
+    Third, multiple tests. We ran three pairwise tests and a three-way one. A
+    Bonferroni threshold, 0.05 divided by 4, is 0.0125; both paper links, at
+    p = {_pp:.4f} and p = {_px:.4f}, clear it in the full sample.
     """)
     return
 
 
 @app.cell
-def _(loco, mo, pair_results):
+def _(lift_res, loco, mo, pair_results):
     def _us_p(pair):
         df = loco[pair]
         m = df[df["dropped_country"].isin(["US", "United States"])]
@@ -699,32 +903,33 @@ def _(loco, mo, pair_results):
 
     _pp = pair_results[("paper", "project")]["p_value"]
     _px = pair_results[("paper", "patent")]["p_value"]
+    _lift = lift_res[("paper", "project")]["lift"]
     mo.md(f"""
     ## 5. What it shows, and what it can't
 
-    A city's work is organised as a **star, not a triangle**. The two links that
-    run **through papers** are significant: its papers share topics with its
-    projects (p = {_pp:.3f}) and with its patents (p = {_px:.3f}), beyond what size or
-    country can explain. The **direct project–patent link is not** — students and
-    the patents filed in their city do not co-specialise once you condition on
-    country and size. That fits the shape of the embedding and of the map: papers
-    are the hub, and the science a city publishes is the common ground its
-    students and its inventors both stand on.
+    A city's work is shaped like a star, not a triangle. The two links that run
+    through papers are real: a city's papers share topics with its projects
+    (p = {_pp:.3f}) and with its patents (p = {_px:.3f}), beyond what size or country
+    can explain. The direct project–patent link is not: students and the patents
+    filed in their city do not settle on the same topics once country and size are
+    held fixed. This matches the map and the embedding. Papers are the hub, and
+    the science a city publishes is the common ground its students and its
+    inventors both stand on.
 
-    The two paper links are **not equally solid**, and the robustness checks say
-    so honestly. paper × patent is the sturdier one: it survives dropping the US
-    (p = {_us_p(("paper","patent")):.3f} on a dozen non-US cities) and holds across every
-    clustering resolution. paper × project is real in sign and interpretable in
-    size (a same-city paper and project are ~1.3× more likely to share a topic),
-    but its significance leans partly on the US and China — remove the US and it
-    softens to p = {_us_p(("paper","project")):.3f}.
+    The two paper links are not equally solid, and the checks say so. Paper–patent
+    is the sturdier one: it survives dropping the US, on a dozen non-US cities
+    (p = {_us_p(("paper","patent")):.3f}), and holds across every number of topics.
+    Paper–project is real in sign and easy to read in size, a same-city paper and
+    project are about {_lift:.1f} times more likely to share a topic than a
+    same-country pair from different cities, but its significance leans on the US
+    and China; remove the US and it softens to p = {_us_p(("paper","project")):.3f}.
 
-    **What this cannot support:** any claim that student projects *cause* local
-    papers or patents, or lead them in time. The design measures standing
-    thematic association, not flow. The project–patent null is underpowered — only
-    a couple of dozen cities have enough of both — so it is "not detected here,"
-    never "shown absent." Carbon capture is the worked slice: the same test,
-    restricted to that topic, is the next section to build.
+    What this cannot show is direction. Nothing here says student projects cause a
+    city's papers or patents, or come first in time. The test measures standing
+    thematic overlap, not flow. The project–patent link stays undetected rather
+    than shown absent, on only a couple of dozen cities. And carbon capture, the
+    cyanobacterial-chassis topic where this project's hope lives, is the worked
+    example the next section builds: the same test, narrowed to that one topic.
     """)
     return
 
