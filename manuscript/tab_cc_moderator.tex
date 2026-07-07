@@ -1,0 +1,28 @@
+\begin{table}[htbp]
+\centering
+\caption{Carbon-capture intensity as a moderator. Dependent variable: city-level cluster overlap. Carbon-capture share measures the fraction of a city's clustered papers (or projects) falling in the carbon-capture topic clusters. All continuous regressors are mean-centred; interaction rows show $\log(\text{cl.\ papers}) \times \text{CC share}$. HC3-robust standard errors. $\dagger p<0.10$, $^{*}p<0.05$, $^{**}p<0.01$, $^{***}p<0.001$.}
+\label{tab:cc_moderator}
+\begin{tabular}{lccccc}
+\toprule
+& (1) & (2) & (3) & (4) & (5) \\
+\midrule
+$\log(\text{cl.\ papers})$ (centred) & 0.0203$\dagger$ & 0.0191$\dagger$ & 0.0194$\dagger$ & 0.0193$\dagger$ & 0.0186 \\
+& (0.0108) & (0.0106) & (0.0100) & (0.0102) & (0.0116) \\[4pt]
+CC paper share (centred) & 0.1161 & 0.4790 & — & — & 0.5101 \\
+& (0.4726) & (0.3713) &  &  & (0.3646) \\[4pt]
+$\quad \times$ CC paper share & — & 0.4931 & — & — & 0.5259 \\
+&  & (0.4244) &  &  & (0.4171) \\[4pt]
+CC project share (centred) & — & — & -0.0702 & -0.0784 & -0.1606 \\
+&  &  & (0.3622) & (0.3980) & (0.3924) \\[4pt]
+$\quad \times$ CC project share & — & — & — & -0.0337 & -0.1699 \\
+&  &  &  & (0.3578) & (0.4499) \\[4pt]
+iGEM year span & -0.0042 & 0.0024 & -0.0053 & -0.0055 & 0.0015 \\
+& (0.0141) & (0.0129) & (0.0135) & (0.0144) & (0.0144) \\[4pt]
+First iGEM year & -0.0065 & -0.0001 & -0.0082 & -0.0084 & -0.0007 \\
+& (0.0150) & (0.0137) & (0.0136) & (0.0144) & (0.0153) \\[4pt]
+\midrule
+$N$ & 60 & 60 & 60 & 60 & 60 \\
+$R^2$ & 0.078 & 0.128 & 0.072 & 0.072 & 0.135 \\
+\bottomrule
+\end{tabular}
+\end{table}

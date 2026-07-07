@@ -1,0 +1,24 @@
+\begin{table}[htbp]
+\centering
+\caption{Heterogeneity by corpus size. The sample is split by tercile of $\log(\text{papers} + \text{projects})$: Small ($n=21$), Medium ($n=19$), Large ($n=20$). Column~(4) pools all 60~cities. Column~(5) adds $\log(\text{cl.\ papers})^2$ to test for a non-linear depth--alignment relationship. HC3-robust standard errors. $\dagger p<0.10$, $^{*}p<0.05$, $^{**}p<0.01$, $^{***}p<0.001$.}
+\label{tab:tercile}
+\begin{tabular}{lccccc}
+\toprule
+& (1) Small & (2) Medium & (3) Large & (4) Full & (5) Quadratic \\
+\midrule
+$\log(\text{cl.\ papers})$ & 0.0398 & 0.0195 & 0.0201 & 0.0165 & 0.0795 \\
+& (0.0479) & (0.0719) & (0.0157) & (0.0108) & (0.0662) \\[4pt]
+$\log(\text{cl.\ papers})^2$ & — & — & — & — & -0.0090 \\
+&  &  &  &  & (0.0093) \\[4pt]
+$\log(\text{cl.\ projects})$ & -0.1038 & 0.0407 & 0.0133 & 0.0092 & 0.0117 \\
+& (0.1725) & (0.0600) & (0.0112) & (0.0127) & (0.0136) \\[4pt]
+iGEM year span & 0.0018 & -0.0032 & -0.0334** & -0.0066 & -0.0065 \\
+& (0.0308) & (0.0464) & (0.0107) & (0.0130) & (0.0130) \\[4pt]
+First iGEM year & 0.0005 & -0.0068 & -0.0334** & -0.0097 & -0.0099 \\
+& (0.0305) & (0.0462) & (0.0118) & (0.0131) & (0.0130) \\[4pt]
+\midrule
+$N$ & 21 & 19 & 20 & 60 & 60 \\
+$R^2$ & 0.092 & 0.044 & 0.201 & 0.078 & 0.089 \\
+\bottomrule
+\end{tabular}
+\end{table}

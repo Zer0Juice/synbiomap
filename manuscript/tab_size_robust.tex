@@ -1,0 +1,24 @@
+\begin{table}[htbp]
+\centering
+\caption{Size-confound robustness. Dependent variable: city-level cluster overlap (cosine between paper and project cluster-frequency vectors; sample restricted to cities with $\geq 8$ non-noise documents of each type, following Section~8.1 of the analysis). Specifications add controls sequentially. HC3-robust standard errors in parentheses. $N=60$ cities, 19 countries throughout. $\dagger p<0.10$, $^{*}p<0.05$, $^{**}p<0.01$, $^{***}p<0.001$.}
+\label{tab:size_robust}
+\begin{tabular}{lccccc}
+\toprule
+& (1) & (2) & (3) & (4) & (5) \\
+\midrule
+$\log(\text{clustered papers})$ & — & 0.0203* & 0.0180$\dagger$ & 0.0169 & 0.0165 \\
+&  & (0.0087) & (0.0098) & (0.0108) & (0.0108) \\[4pt]
+$\log(\text{clustered projects})$ & — & — & 0.0071 & 0.0068 & 0.0092 \\
+&  &  & (0.0115) & (0.0119) & (0.0127) \\[4pt]
+iGEM year span & — & — & — & 0.0016 & -0.0066 \\
+&  &  &  & (0.0040) & (0.0130) \\[4pt]
+First iGEM year & — & — & — & — & -0.0097 \\
+&  &  &  &  & (0.0131) \\[4pt]
+\midrule
+Constant & 0.0590*** & -0.0084 & -0.0211 & -0.0402 & 19.5238 \\
+\midrule
+$N$ & 60 & 60 & 60 & 60 & 60 \\
+$R^2$ & 0.000 & 0.059 & 0.064 & 0.066 & 0.078 \\
+\bottomrule
+\end{tabular}
+\end{table}

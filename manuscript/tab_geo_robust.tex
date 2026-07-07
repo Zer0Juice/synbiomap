@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Geographic robustness. Each column restricts the sample by country group. OECD membership follows the 2024 member list. All specifications include iGEM year span and first iGEM year as additional controls. HC3-robust standard errors in parentheses. $\dagger p<0.10$, $^{*}p<0.05$, $^{**}p<0.01$, $^{***}p<0.001$.}
+\label{tab:geo_robust}
+\begin{tabular}{lcccccc}
+\toprule
+& \shortstack{All} & \shortstack{Drop US} & \shortstack{Drop CN} & \shortstack{Drop US+CN} & \shortstack{OECD} & \shortstack{Non-OECD} \\
+\midrule
+$\log(\text{cl.\ papers})$ & 0.0165 & 0.0162 & 0.0231* & 0.0206 & 0.0169 & 0.0406* \\
+& (0.0108) & (0.0118) & (0.0101) & (0.0128) & (0.0128) & (0.0183) \\[4pt]
+$\log(\text{cl.\ projects})$ & 0.0092 & 0.0086 & -0.0071 & -0.0208 & 0.0060 & -0.0202 \\
+& (0.0127) & (0.0146) & (0.0215) & (0.0360) & (0.0312) & (0.0148) \\[4pt]
+\midrule
+Year controls & Yes & Yes & Yes & Yes & Yes & Yes \\
+$N$ & 60 & 42 & 44 & 26 & 39 & 21 \\
+$R^2$ & 0.078 & 0.106 & 0.082 & 0.101 & 0.065 & 0.353 \\
+Countries & 19 & 18 & 18 & 17 & 14 & 5 \\
+\bottomrule
+\end{tabular}
+\end{table}
