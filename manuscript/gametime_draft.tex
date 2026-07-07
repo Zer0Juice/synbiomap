@@ -364,6 +364,37 @@ written down. A discovery made in one city is more likely to seed a related adva
 the same city than a similar one across the world. Geography shapes where innovation
 goes next.
 
+The question of why capabilities and knowledge cluster spatially has an answer grounded
+in economics. Duranton and Puga trace agglomeration to three micro-level mechanisms that
+operate at the scale of workers and firms rather than regions: sharing, matching, and
+learning \citep{durantonMicroFoundationsUrban2004}. Sharing happens when firms that
+concentrate together can sustain more specialized suppliers than any one firm could support
+alone, reducing input costs for everyone. Matching is more efficient in thicker markets: a
+researcher searching for a collaborator with a very specific skill finds one faster in a
+city with ten thousand researchers than in a town with fifty. And learning is faster
+when dense co-location brings people into incidental contact, the conversation at a
+conference, the seminar attended on a neighbour's recommendation, the former colleague
+now at a competing lab. All three mechanisms compound when the people and firms in
+question work in related areas: a shared vocabulary makes learning cheaper, overlapping
+skill sets make matching more likely, and complementary inputs make sharing more
+valuable. These are the micro-foundations of the regularities the relatedness literature
+documents at larger scales.
+
+Jane Jacobs added a different kind of agglomeration mechanism that is particularly
+relevant for a young field like synthetic biology \citep{jacobsEconomyCities1969}.
+Where Marshall's externalities come from \textit{specialization} within an industry,
+Jacobs externalities come from \textit{diversity} across industries: cities that mix
+many different activities generate cross-pollination between fields that can spark new
+combinations. Synthetic biology is itself a product of this kind of encounter, sitting
+at the intersection of molecular biology, computer science, and chemical engineering,
+none of which had previously been a single discipline. A field that is still defining
+its own boundaries benefits more from the Jacobsian mixing of a diverse city than from
+the Marshallian depth of a highly specialized one, because it needs to borrow tools and
+concepts from adjacent areas as fast as it generates its own. The empirical prediction
+is that synthetic biology should cluster in large, diverse cities rather than narrow
+specialist clusters, which is broadly consistent with the distribution of iGEM activity
+and academic output in this corpus.
+
 If capabilities are local and path-dependent, then measuring them matters, and
 measuring them is hard. Capability and innovation are abstract; we only ever observe
 their traces, the outputs a research process leaves behind. To study them at scale we
@@ -384,6 +415,23 @@ shapes which biotechnology capabilities a city develops over time
 \citep{boschmaScientificKnowledgeDynamics2014}. The city is small enough to be a
 coherent unit and large enough to contain a full innovation ecosystem, which makes it
 the right grain for comparing research across projects, papers, and patents.
+
+Two further arguments support the city as the unit of analysis. The first is the
+geography of labor markets. Workers, students, and researchers circulate within cities
+far more than between them: a graduate student commutes between university and a
+collaborating lab; a postdoc moves between two institutions in the same metropolitan
+area; a founder recruits from the alumni pool of the nearby university. The city
+approximates the catchment area of this circulation, capturing the labor market in
+which capabilities pool and recombine \citep{durantonMicroFoundationsUrban2004}. A
+coarser unit, like a national region or a country, would pool cities with very
+different specializations into one observation, blurring the within-country
+heterogeneity that is most interesting. A finer unit, like a neighbourhood or a
+campus, would miss the cross-institution dynamics that depend on city-level density.
+The second argument is practical: city is the geographic unit at which all three of
+our artifact types can be geocoded with reasonable reliability. Patent inventor
+addresses resolve to cities; author affiliations resolve to institutional cities;
+iGEM teams are registered to host institutions. Country and city are both available;
+finer grain is not, for most of the corpus.
 
 \subsection{A field worth watching}
 
@@ -528,16 +576,54 @@ engineered organism is grown to make a specific molecule, is the industrial form
 idea, and cyanobacteria bring to it something yeast cannot. They run on light and carbon
 dioxide instead of sugar.
 
-This is no longer only a laboratory idea. A handful of firms have taken gas-fed and
-photosynthetic microbes to industrial scale; LanzaTech, for instance, ferments
-carbon-rich industrial waste gases into fuels and chemicals at commercial volume. % [FLAG: verify/expand] LanzaTech uses acetogenic bacteria on waste gas (carbon capture, not cyanobacteria). For cyanobacteria specifically, e.g. Photanol, Algenol. Confirm which company examples you want and their exact claims.
-The shared premise is the one the Uppsala students were chasing in 2009: instead of
-pulling carbon out of the ground to make a fuel and then burning it back into the air,
-close the loop and grow the fuel from carbon that is already in the air or in a waste
-stream. Carbon capture by fermentation has moved from proof of concept to running plants
-within a couple of decades. It is the clearest existing answer to the question the
-introduction posed, whether the same power that damaged the biosphere can be turned to
-repairing it.
+This is no longer only a laboratory idea. Two commercial lineages have pushed these
+organisms toward industrial use, and they are worth distinguishing because they map
+closely onto the cluster structure the data chapter describes.
+
+The first lineage runs through cyanobacteria directly. Algenol, founded in 2006 and
+based in Fort Lauderdale, Florida, engineered cyanobacteria to secrete ethanol directly
+into the growth medium, bypassing the harvest and extraction steps that make algal
+biofuels expensive. The direct-ethanol pathway exploits the same photosynthetic
+metabolism the Uppsala students worked with: the cell fixes carbon dioxide using
+sunlight and diverts the fixed carbon not into biomass but into a secreted product.
+Joule Unlimited, founded in 2007 out of Cambridge, Massachusetts, took a parallel
+approach, engineering cyanobacteria to produce hydrocarbons directly from CO$_2$ and
+sunlight, aiming for a drop-in diesel substitute with no biomass harvest required.
+Photanol, a spinout from the University of Amsterdam, followed the same logic with
+organic acids and alcohols as target products, taking an explicitly academic-to-commercial
+pathway in which the founding science came directly from published university research
+on cyanobacterial metabolism. Each of these firms appears, at least in part, in the
+USPTO patent record: their inventors file in the United States to protect commercially
+valuable inventions, and those filings are part of the patent corpus in this study.
+The cities they cluster in, Cambridge, Fort Lauderdale, Amsterdam, and a handful of
+others, are consistent with the leaderboard the results chapter assembles from the
+bottom up.
+
+The second lineage uses a different organism but the same closed-loop logic. LanzaTech,
+founded in New Zealand and now headquartered in Skokie, Illinois, ferments carbon-rich
+industrial waste gases, steel-mill exhaust, refinery off-gas, municipal solid waste, into
+ethanol and other chemicals using acetogenic bacteria. The organism is not cyanobacterial,
+and the energy source is not sunlight but the chemical energy in industrial off-gases.
+But the conceptual move is the same as in the Uppsala project: take a carbon stream that
+would otherwise be emitted into the atmosphere, feed it to an engineered microbe, and
+recover something useful in return. LanzaTech's technology has reached commercial scale,
+with plants operating at steel mills in China, India, and Europe and a collaboration with
+Virgin Atlantic to produce sustainable aviation fuel. The New Zealand origin of the
+company, and the strong USPTO patent record that followed its move to the United States,
+is precisely the kind of trajectory the project-to-patent path in this thesis is designed
+to trace: an idea that began in academic and industrial research in one country, developed
+through patented stages in another, and eventually scaled to global deployment.
+
+The shared premise across both lineages is the one the Uppsala students were chasing in
+2009: instead of pulling carbon out of the ground to make a fuel and burning it back into
+the air, close the loop and grow the fuel from carbon already present in the atmosphere
+or in a waste stream. Carbon capture by fermentation has moved from proof of concept to
+running commercial plants within roughly two decades of the foundational academic work.
+It is the clearest existing answer to the question the introduction posed: whether the
+same biological power that damaged the biosphere can be aimed at repairing it. The speed
+of that transition, from student competition project to industrial-scale plant in fifteen
+years, also makes it a compelling case study for the thesis's central question about
+how local innovation ecosystems form and what role student science plays in them.
 
 \subsection{What iGEM leaves behind}
 
@@ -774,6 +860,27 @@ different words, and it stumbles precisely where synthetic biology is hardest, o
 shifting vocabulary shared with molecular biology
 \citep{oldhamSyntheticBiologyMapping2018}. Counting shared words treats language as a
 bag of tokens and throws away meaning.
+
+One step up from raw keyword overlap is a probabilistic topic model. Latent Dirichlet
+Allocation \citep{bleiLatentDirichletAllocation2003} represents each document as a
+mixture over a fixed number of latent topics, where each topic is a probability
+distribution over words. Documents about cyanobacteria and ethanol production land in
+similar topic mixtures even when they use different specific terms, because the underlying
+vocabulary distributions are close. This is genuinely better than keyword counting: it
+finds shared subject matter beneath surface word choice, and it can be applied to any
+document with text, including patents and student wikis. The problem is that the topics
+are fit separately for each document type or, if fit jointly, are dominated by the
+largest and most vocabulary-rich document type. In a corpus where papers outnumber
+projects and patents several times over, the latent topics are effectively paper topics
+discovered by a model that has seen far fewer patents and wikis. When a student project
+is mapped into those paper-derived topics, the assignment reflects how well the wiki's
+words fit the paper vocabulary, not how related the project is to the paper's subject.
+More fundamentally, topic models encode vocabulary distributions and nothing else; they
+cannot leverage the citation structure that tells us which documents humans have already
+judged to be related, and they cannot transfer knowledge from a large pre-trained corpus
+about the deeper semantic relationships that citation-trained models encode. For
+cross-type comparison in a field with heterogeneous writing styles, topic models solve
+the wrong problem.
 
 Citations are the other content-based option, and they are appealing because a citation
 is an explicit, human-made link between two documents. Where they exist, they are strong
@@ -1984,6 +2091,68 @@ Tianjin & 8 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Discussion}
+
+Three bodies of literature give the results their interpretive frame, and it is worth
+placing each finding in the conversation that can use it.
+
+The first is agglomeration and the geography of innovation. The core result, that a
+city's student projects and academic papers share specific research topics more than
+size and topic popularity can explain, is a new form of evidence for a familiar claim:
+that knowledge activity in a city is not a random sample of global output but a locally
+coherent specialization. The relatedness literature has established this for industries
+\citep{hidalgoProductSpaceConditions2007}, for patents \citep{boschmaScientificKnowledgeDynamics2014},
+and for scientific fields. This thesis extends the argument to a new type of actor.
+Student competitions had not previously been integrated into the city-level relatedness
+picture, and the positive result says they belong there. A city's iGEM teams are not
+an independent variable floating above the local research landscape; they are embedded
+in it, specializing in the same corners of the field where the academics and, further
+downstream, the patent filers concentrate. The Marshallian mechanism most consistent
+with this pattern is the labor-pooling and mentorship channel: the same faculty
+population advises students and runs labs, producing alignment through their shared
+topical interests. But the Jacobsian mechanism, the diverse city as a generator of
+novel combinations, is also operating, because the cities at the top of the leaderboard
+are large, diverse research hubs rather than narrow single-industry clusters.
+
+The second conversation is the relatedness and proximity literature. Boschma's
+proximity framework \citep{boschmaProximityInnovationCritical2005} argues that
+productive knowledge interaction requires actors to be cognitively close as well as
+geographically proximate: sharing a neighborhood is necessary but not sufficient for
+knowledge exchange; sharing a knowledge base is what makes the exchange productive.
+The Jaccard topic overlap measure operationalizes cognitive proximity in a way that
+scales to a corpus spanning three artifact types: it asks not whether documents use the
+same words, but whether the actors that produced them invest in the same specific
+research clusters. The fact that this measure shows the excess that the centroid
+measure (a purer geographic proxy) obscures is precisely Boschma's point in empirical
+form: size and co-location create the potential for interaction, but cognitive alignment
+is what reveals whether that potential is being realized. The Mantel validation result
+— that the semantic topic distances between cities agree with the parts-class distances
+derived from entirely different data — confirms that the cognitive proximity picked up
+by the measure is anchored in something real, not in how the embedding model happens
+to organize text.
+
+The third conversation is the Science of Science. Santolini and colleagues established
+iGEM as a model system for studying how teams collaborate and how network structure
+shapes scientific output \citep{santoliniIGEMModelSystem2023}. That work operates at
+the team level: which students worked with which advisors, and what did the network
+topology predict about project quality? The present thesis operates at the city level
+and adds a dimension that team-science studies typically omit: the commercial artifact.
+Papers and patents are both measured here, alongside the student projects, and the
+asymmetry in how the three relate is one of the more interesting findings. The
+project-to-paper link is strong; the paper-to-patent link is real; the direct
+project-to-patent link is the weakest of the three. This ladder structure, in which
+adjacent artifact types are more related than non-adjacent ones, is consistent with a
+model in which academic research is the translation layer that converts student work
+into commercial applications, rather than a world in which student ideas flow directly
+into patents. Whether that translation happens through career trajectories, through
+technology transfer, or through common mentors is a question the city-level data can
+suggest but not answer; individual-level matching of iGEM alumni to later patents would
+be required. The lead-lag result, a peak at $+3$ years, adds a temporal dimension to
+this: the Science of Science literature on how quickly academic knowledge becomes
+commercial typically operates at decade scales for patents; a three-year project-to-paper
+peak is notably fast, which may reflect the particular intensity and efficiency of the
+iGEM format as a research accelerator.
 
 \subsection{Limitations}
 
