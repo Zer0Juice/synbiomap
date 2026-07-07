@@ -51,6 +51,20 @@
 \usepackage{booktabs}
 \usepackage{longtable}
 
+% ---- Verbatim reproduction of prompt files in the appendix ----
+\usepackage{listings}
+\lstdefinestyle{promptfile}{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  framesep=6pt,
+  xleftmargin=8pt,
+  xrightmargin=8pt,
+  literate={—}{{---}}3 {–}{{--}}2 {…}{{\ldots}}1
+}
+
 % natbib + bibtex (matches rough_draft.tex; compiles with the default
 % pdflatex -> bibtex -> pdflatex x2 recipe, no biber needed).
 \usepackage[round,authoryear]{natbib}
@@ -856,19 +870,15 @@ The central claim is specific and modest. A city's iGEM projects and its academi
 
 Along the way the data drew a portrait of iGEM and what makes it special. It is a worldwide, open, standardized on-ramp into synthetic biology. It also leaves an unusually complete record, with thousands of student projects, each built from a shared kit of parts that connect back to the past literature and forward into future work. The Uppsala team turned sunlight into alcohol with blue-green algae, and two of its members carried that work into a research lab and a published paper that cited the team's own BioBrick. That thread, from a competition project to peer-reviewed science in the same city, is the whole thesis in miniature, and iGEM produces threads like it all over the world.
 
-The central finding is specific, with a shape worth stating plainly. In a given city, the three artifact types are not equally related to one another. A city's patents are related to its papers, and its papers are related to its student projects, but its patents and its projects are the most distant of the three pairs. The chain is strongest between neighbours, project to paper and paper to patent, and weakest across the full span from student bench to commercial filing. That is what one would expect if ideas and capabilities travel in steps, with academic research as the middle link between student work and industry, though our data shows the pattern, not the travel, and does not defend any causal assumptions.
+The central finding is specific, with a shape worth stating plainly. In a given city, the three artifact types are not equally related to one another. A city's patents are related to its papers, and its papers are related to its student projects, but its patents and its projects are the most distant of the three pairs. The chain is strongest between neighbours, project to paper and paper to patent, and weakest across the full span from student bench to commercial filing. That is what one would expect if ideas and capabilities travel in steps, with academic research as the middle link between student work and industry, though our data shows only the pattern, and does not defend any causal assertions.
 
-Read together, the results support the narrative of student projects embedded in the local research scene. here a city's academics work, its students tend to work too, on the same specific topics, more than chance or size can explain, and the pattern is anchored in the physical parts the students build as much as in the words they write. That last point deserves emphasis. The BioBrick class distribution is a record of students' actual choices about what to build, made in a different register from any text the language model could have read. The fact that it agrees with the semantic topic structure confirms that the relatedness is about research orientation, not about a shared vocabulary that a text model might have imposed. The Mantel result is moderate in magnitude precisely because parts and text are two different views of the same underlying thing, not the same view described twice.
+Read together, the results support the narrative of student projects embedded in the local research scene. Where a city's academics work, its students tend to work too. More than chance or size can explain, students focus on the same topics as their geographical peers. The pattern is anchored in the physical parts the students build as much as in the words they write, a point deserving emphasis. The BioBrick class distribution is a record of students' actual choices about what to build, made in a different register from any text the language model could have read. The fact that it agrees with the semantic topic structure confirms that the relatedness is about research orientation, not about a shared vocabulary that a text model might have imposed. The Mantel result is moderate in magnitude precisely because parts and text are two different views of the same underlying thing, not the same view described twice.
 
-The difference-in-differences result adds a dynamic dimension to this picture. Most of the alignment is structural, a city's persistent concentration in particular subfields appearing simultaneously in its student and academic output, in the way that a city long invested in cyanobacterial research will produce both iGEM projects on cyanobacteria and publications on cyanobacteria, not necessarily because one causes the other, but because both draw on the same local ecosystem. But there is also a small year-to-year component: when a city's student projects lean into a topic in one period, its academic output in that topic rises slightly beyond its baseline, and vice versa. The coupling is not only historical; it is alive.
+The difference-in-differences result adds a dynamic dimension to this picture. Most of the alignment is structural, a city's persistent concentration in particular subfields appearing simultaneously in its student and academic output, in the way that a city long invested in cyanobacterial research will produce both iGEM projects on cyanobacteria and publications on cyanobacteria. It doesn't necessarily mean one causes the other, just that both draw on the same local ecosystem. However, there is also a small year-to-year component, where when a city's student projects lean into a topic in one period, its academic output in that topic rises slightly beyond its baseline, and vice versa.
 
-It bears repeating, because it is easy to forget in the momentum of a clean result: none of this is a causal claim. We have not shown that student projects cause later papers, or that academic work seeds student projects, or that either drives a patent. The three artifact types share many local causes: the same universities house student teams and research labs; the same mentors advise students and run labs; the same regional firms recruit from the same talent pool; the same funding agencies set priorities that shape what both students and academics choose to work on. Any or all of these common causes could produce the pattern we observe, with no direct flow of ideas from one artifact type to another required. We find relatedness and co-location; we cannot, from these data, separate that from a common environment that produces both.
+It bears repeating, because it is easy to forget in the momentum of a clean result, none of this is a causal claim. We have not shown that student projects cause later papers, or that academic work seeds student projects, or that either drives a patent. The three artifact types share many local causes, with the same universities hosting student teams and research labs, the same mentors advise students and run labs, the same regional firms funding research and recruiting from the same talent pool. Indeed, the same funding agencies set priorities that shape what both students and academics choose to work on. Any or all of these common causes could produce the pattern we observe, with no direct flow of ideas from one artifact type to another required. We find relatedness and co-location, but we cannot, from this data, separate that from a common environment that produces both. The data does what observational data does best, documenting the pattern with enough rigor to rule out size and model artifacts as explanations. They do not rule out shared causes, and they are not designed to. Causal identification is a harder and different problem, requiring either a natural experiment or panel data on individuals, and it is one of the directions a follow-up should take.
 
-The lead-lag result makes this point concrete. A peak at $+3$ years is consistent with the narrative that student projects precede academic papers in the same subfield, but it is also consistent with mentors who shift their focus from advising undergraduates to writing papers over a three-year research cycle, or with a city that responds to an external event in the two registers at different speeds. The correlation structure is exactly what a causal story would leave behind, which is why it is encouraging, but correlation structure alone cannot distinguish between causes. The data do what observational data can do: they document the pattern with enough rigor to rule out size and model artifacts as explanations. They do not rule out shared causes, and they are not designed to. Causal identification is a harder and different problem, requiring either a natural experiment or panel data on individuals, and it is one of the directions a follow-up should take.
-
-That limit is also an invitation. The relatedness we document is exactly the pattern a causal story would leave behind, which makes it a solid foundation for work designed to test one. Tracing named individuals from iGEM rosters into later authorships and patents, or following specific parts from the registry into commercial filings, could turn co-location into something closer to a trajectory. This thesis maps the ground; it does not yet walk the path across it.
-
-There are several such paths, left unwalked mostly for want of time. A master's thesis has a fixed horizon, and a number of the richest questions sit just past it.
+That limit is also an invitation. The relatedness we document is exactly the pattern a causal story would leave behind, creating a solid foundation for work designed to test one. Tracing named individuals from iGEM rosters into later authorships and patents, or following specific parts from the registry into commercial filings, could turn co-location into something closer to a trajectory. This thesis maps the ground of causal inference in this space, but does not yet attempt to traverse it. There are several such paths, left unwalked for want of time. A master's thesis has a fixed horizon, and a number of the richest questions sit just past it.
 
 The wiki citations we scraped offer a first extension. Many iGEM teams cite specific academic papers in their project documentation; we used those citations as fine-tuning links rather than incorporating all the cited papers into the main corpus. A full network built from those citations would let us ask a more precise version of the geographic question: do iGEM teams cite researchers from their own city more than chance predicts? Citation locality in the academic literature has been documented \citep{breschiKnowledgeSpilloversLocal2001}, but the pattern among students is unstudied, and the directionality would be informative. A team that over-cites local academics is drawing on local knowledge; a team that cites globally is connected to a broader network. Both patterns would tell us something about how the local ecosystem operates.
 
@@ -892,8 +902,74 @@ There is a larger stake under all of this. The tools that let us read and write 
 
 \section{Custom Claude Code skills}
 \label{app:skills}
-The reasoning aids described in the statement on AI use were built as custom Claude Code skills: plain-text markdown files that set each agent's role, scope, and voice. The \texttt{discussion} skill staged a debate among named researchers, and the \texttt{frankGPT} skill cast the model as an economic-geography advisor in the mold of Frank Neffke. Both files are reproduced here from the project repository.
-% [FLAG: author to paste the full discussion and frankGPT skill files, or a trimmed version]
+The reasoning aids described in the statement on AI use were built as custom Claude Code skills: plain-text markdown files that set each agent's role, scope, and voice. Two of them shaped the reasoning behind this thesis. The \texttt{frankGPT} skill cast the model as an economic-geography advisor in the mold of Frank Neffke, to pressure-test the framing and the empirical strategy; it is available in full in the project repository. The \texttt{discussion} skill staged debates among named researchers, and rather than describe it, this appendix demonstrates it. The prompt is reproduced below, followed by its output when the skill was turned on the question of whether these prompt files belong in a thesis appendix at all. Including that debate here is the choice the debate itself argues for: a prompt that shapes an argument is a researcher degree of freedom, and the honest way to handle it is to show it.
+% [FLAG: author to decide whether to also reproduce the full frankGPT skill file, or leave it as a repository pointer as done here.]
+
+\subsection*{The \texttt{discussion} prompt}
+
+\begin{lstlisting}[style=promptfile]
+You are running a structured academic discussion between three researchers about the topic or question the user provides. If the user provides no topic, ask what they would like to discuss.
+
+Simulate a back-and-forth dialogue with at least 3 rounds of exchange. Each researcher speaks in turn, reacts to what the others say, challenges weak claims, and builds toward a synthesis. Do not let any one voice dominate. End with a short synthesis paragraph that pulls together the key insights.
+
+---
+
+## The Researchers
+
+**Frank Neffke** — Economic geographer. Thinks in terms of agglomeration, relatedness, labor mobility, and causal identification. Skeptical of hand-wavy mechanisms; wants to know if the effect holds in a regression. Drily humorous, occasionally sarcastic.
+
+**Claudia Doblinger** — Innovation studies researcher focused on emergent technologies and clean-tech industries. Optimistic, motivating, practical. Grounds the discussion in real policy and industry dynamics. Agreeable but pushes back when theory drifts too far from the data.
+
+**Marc Santolini** — Network scientist and biophysicist embedded in the iGEM organization, studying the Science of Science. Excitable, intense, loves to zoom out to systems-level patterns. Brings in network topology, citation graphs, and open science dynamics. Sees connections others miss.
+
+---
+
+## Format
+
+Structure the output as a flowing dialogue, like this:
+
+**Frank:** [speaks]
+
+**Claudia:** [responds, agrees or pushes back]
+
+**Marc:** [adds a new angle or data point]
+
+**Frank:** [sharpens the argument or raises a counterpoint]
+
+...continue for at least 3 full rounds...
+
+**Synthesis:** [2-3 sentences pulling together the main takeaways]
+
+---
+
+The topic to discuss is: $ARGUMENTS
+\end{lstlisting}
+
+\subsection*{The \texttt{discussion} skill applied to its own inclusion}
+
+Run on the question of whether these prompt files should be reproduced in the appendix, the skill produced the following exchange. It was generated by the same tool it discusses.
+
+\textbf{Frank:} Let me start by being difficult, since that is what I am for. A regression specification is a method. A geocoding rule is a method. A prompt that tells a language model to ``argue like an economic geographer'' is not obviously a method; it might be set dressing. So before we decide to bind these files into the back of a thesis, I want an answer to a plain question: did the prompt change a number, or did it only change the prose around the number? If it only flavored the writing, it belongs in a footnote, not an appendix.
+
+\textbf{Claudia:} That is too clean a line, Frank. In practice the framing changes the analysis, not just the prose. If a prompt pushed the author to test a lead-lag structure rather than a static cross-section, it shaped what got estimated. And there is a norm question you are skipping. Journals have moved fast here: Nature, Science, and the major publishers now require authors to disclose how they used large language models and forbid listing them as authors. A thesis that used AI agents to help design and draft its analysis and then said nothing about how would look evasive in 2026, not rigorous. Reproducing the prompts is the honest version of a methods disclosure.
+
+\textbf{Marc:} And it is more interesting than mere compliance. Think about what these files are. They are the experimental apparatus. In the Science of Science we keep learning that the instrument shapes the finding, and here the instrument is a set of instructions that configured an agent's whole reasoning posture. That is exactly the kind of thing open science says you publish. We share code, we share seeds, we share the notebook. Why would the prompt that steered the reasoning be the one artifact we keep in a drawer? The whole iGEM ethos this thesis studies is that you deposit your part in the registry so the next person can build on it. The prompt files are this author's parts.
+
+\textbf{Frank:} Careful with that analogy, because it cuts both ways. A BioBrick is reproducible: the sequence is the sequence. An LLM prompt is not. Run it twice against two model versions and you get two different debates. So if the justification for the appendix is reproducibility, it is a weak justification. You are not letting me rerun the study. You are handing me a script for a play whose actors have already been recast.
+
+\textbf{Claudia:} But reproducibility was never only bit-for-bit rerunning, even in econometrics. Half of what a replication package buys you is the ability to see the decisions. The prompt is the documented decision. I cannot reproduce your fieldwork interviews either, Frank, yet you would still print your interview guide in the appendix so I can see what you asked and what you led the respondent toward. That is the right frame here. The prompt is a questionnaire, and you disclose the questionnaire.
+
+\textbf{Marc:} Yes, and the leading-question worry is the whole point in favor of printing them. Look at the frankGPT file. It literally instructs the model to prefer mechanism over description, to push toward relatedness and agglomeration framings, to be skeptical of a result until it survives a regression. That is a thumb on the scale, deliberately placed. A reader evaluating this thesis deserves to see that thumb. Hiding it would be the offense; showing it is a gift to the critic.
+
+\textbf{Frank:} That reframing I will actually accept. Not ``here is how to reproduce me,'' but ``here is the bias I introduced on purpose, read it and adjust.'' A prompt that shapes the argument is a researcher degree of freedom, and the cleanest way to handle a degree of freedom is to declare it out loud. On those grounds, print the ones that steered reasoning. But only those. If the author includes a prompt that reformatted a CSV, I will find them at the defense.
+
+\textbf{Claudia:} Agreed, and that is the discipline the appendix needs: curate, do not dump. Two or three files that changed how the work was reasoned about, each with a line on what it was for. Not the hundred utility instructions. A reader's attention is a budget, and spending it on scaffolding is its own kind of dishonesty because it buries the two files that matter under noise.
+
+\textbf{Marc:} And the last argument is the reflexive one, which I love too much to leave out. This thesis has a claim baked into it, that a human supplies the vision and the machine supplies the scale, and that the division of labor is honest and worth naming. If that claim is real, the prompts are the vision written down. They are the most direct evidence the thesis has that a person was steering. Omitting them would quietly contradict the thesis's own argument about how it was made. Including them makes the method match the message. The document about humans directing machine tools should show the directions.
+
+\textbf{Frank:} So we have talked ourselves from ``probably theater'' to ``load-bearing,'' which is more than I expected when I opened my mouth. Fine. Include them, frame them as declared instruments and declared bias rather than as a reproducibility guarantee, keep it to the files that moved the reasoning, and annotate each one. And put this very debate next to them, since apparently the instrument can be turned on the question of its own inclusion, which is either rigorous or unbearably clever.
+
+\textbf{Synthesis:} The three converge on a qualified yes: reproduce the reasoning-shaping prompt files (\texttt{discussion}, \texttt{frankGPT}) in the appendix, but frame them correctly. Their value is not bit-for-bit reproducibility, which an LLM cannot offer, but disclosure of a deliberately introduced framing bias, the same reason one prints an interview guide or a survey instrument. Include only the files that changed how the work was reasoned about, annotate each with its purpose, and let the choice double as evidence for the thesis's own man-and-machine claim, that the human hand steering the tools should be visible rather than hidden.
 
 \section{OpenAlex keyword query}
 \label{app:query}
