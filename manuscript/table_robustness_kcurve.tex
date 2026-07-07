@@ -1,0 +1,57 @@
+% table_robustness_kcurve.tex
+% Base SPECTER2 vs fine-tuned SPECTER2 — excess co-membership by pair and k.
+% Permutation test (n=2000). Significance: * p<.05  ** p<.01  *** p<.001
+% Include with: \input{table_robustness_kcurve}
+\begin{longtable}{@{}llrrrrrrr@{}}
+\caption{Robustness check: excess co-membership under base vs.\ fine-tuned
+SPECTER2 across six neighbourhood sizes $k$.
+Each cell reports excess co-membership (observed minus null-model mean)
+from a permutation test ($n = 2{,}000$ shuffles).
+$n$ = number of cities with at least one artifact of each type.}
+\label{tab:robustness_kcurve} \\
+
+\toprule
+& & \multicolumn{3}{c}{Base SPECTER2} & \multicolumn{3}{c}{Fine-tuned SPECTER2} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}
+Pair & $k$ & $n$ & Excess & $p$ & $n$ & Excess & $p$ \\
+\midrule
+\endfirsthead
+
+\multicolumn{8}{l}{\small\textit{(continued)}} \\[2pt]
+\toprule
+& & \multicolumn{3}{c}{Base SPECTER2} & \multicolumn{3}{c}{Fine-tuned SPECTER2} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}
+Pair & $k$ & $n$ & Excess & $p$ & $n$ & Excess & $p$ \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{8}{r}{\small\textit{(continued on next page)}} \\
+\endfoot
+
+\bottomrule
+\multicolumn{8}{l}{\small $^{*}p<.05$;\enspace$^{**}p<.01$;\enspace$^{***}p<.001$. Permutation test, $n=2{,}000$ shuffles.} \\
+\endlastfoot
+
+    Paper--Project & 10 & 164 & +0.018$^{**}$ & 0.004 & 102 & +0.011$^{*}$ & 0.016 \\
+     & 20 & 164 & +0.028$^{***}$ & $<$\,0.001 & 102 & +0.019$^{**}$ & 0.003 \\
+     & 40 & 164 & +0.021$^{**}$ & 0.001 & 102 & +0.026$^{***}$ & $<$\,0.001 \\
+     & 60 & 164 & +0.021$^{***}$ & $<$\,0.001 & 102 & +0.015$^{**}$ & 0.006 \\
+     & 80 & 164 & +0.025$^{***}$ & $<$\,0.001 & 102 & +0.022$^{***}$ & $<$\,0.001 \\
+     & 120 & 164 & +0.026$^{***}$ & $<$\,0.001 & 102 & +0.010$^{*}$ & 0.012 \\
+    \addlinespace[4pt]
+    Paper--Patent & 10 & 66 & +0.042$^{**}$ & 0.003 & 58 & +0.100$^{***}$ & $<$\,0.001 \\
+     & 20 & 66 & +0.054$^{***}$ & $<$\,0.001 & 58 & +0.103$^{***}$ & $<$\,0.001 \\
+     & 40 & 66 & +0.020$^{*}$ & 0.023 & 58 & +0.094$^{***}$ & $<$\,0.001 \\
+     & 60 & 66 & +0.031$^{***}$ & $<$\,0.001 & 58 & +0.079$^{***}$ & $<$\,0.001 \\
+     & 80 & 66 & +0.030$^{***}$ & $<$\,0.001 & 58 & +0.086$^{***}$ & $<$\,0.001 \\
+     & 120 & 66 & +0.016$^{**}$ & 0.004 & 58 & +0.080$^{***}$ & $<$\,0.001 \\
+    \addlinespace[4pt]
+    Project--Patent & 10 & 46 & +0.023$^{*}$ & 0.046 & 46 & +0.007 & 0.208 \\
+     & 20 & 46 & $-$0.007 & 0.699 & 46 & +0.016$^{*}$ & 0.032 \\
+     & 40 & 46 & +0.000 & 0.477 & 46 & +0.011 & 0.088 \\
+     & 60 & 46 & +0.002 & 0.382 & 46 & +0.019$^{**}$ & 0.007 \\
+     & 80 & 46 & +0.011 & 0.072 & 46 & +0.013$^{*}$ & 0.029 \\
+     & 120 & 46 & $-$0.001 & 0.561 & 46 & +0.007 & 0.098 \\
+
+\end{longtable}

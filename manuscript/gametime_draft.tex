@@ -36,6 +36,7 @@
 \usepackage{graphicx}
 \graphicspath{{../outputs/figures/}}
 \usepackage{booktabs}
+\usepackage{longtable}
 
 % natbib + bibtex (matches rough_draft.tex; compiles with the default
 % pdflatex -> bibtex -> pdflatex x2 recipe, no biber needed).
@@ -563,6 +564,10 @@ To check, we replaced the semantic HDBSCAN clusters with $k$-means at a range of
 \caption{All three pairwise alignments across the full $k$-sweep (left: permutation excess over null; right: p-values). Project$\times$paper and paper$\times$patent both stay significant at every reasonable resolution. Project$\times$patent never crosses the significance threshold (dashed line, right panel), establishing the ladder structure in which academic papers mediate between student projects and patents.}
 \label{fig:kcurve}
 \end{figure}
+
+The $k$-sweep also settles the question of whether the fine-tuned embedding model inflates the result relative to the base SPECTER2. Table~\ref{tab:robustness_kcurve} runs the same permutation test at six values of $k$ for both models side by side. For paper$\times$project, both models produce significant excesses at every resolution, and the magnitudes are comparable, giving no indication that fine-tuning is manufacturing alignment that the base model does not see. For paper$\times$patent, the fine-tuned model shows somewhat larger excesses, which is expected: the training data included patent-paper pairs from the Marx matching, so the adapter was explicitly trained to bring those document types closer together, and it did. That the result is present in the base model as well confirms it is real; that it is amplified by fine-tuning is an expected consequence of what the fine-tuning was designed to do. For project$\times$patent, the base model shows no consistent significance across the six resolutions, and the fine-tuned model is mixed. Neither model produces a stable project-patent alignment. The conclusion the $k$-sweep supported — that academic papers are the middle link and the direct project-to-patent link is weak — holds in both models.
+
+\input{table_robustness_kcurve}
 
 The third worry is the depth threshold. We required at least \statClusterMinDocs{} documents of each type per city, and one might ask whether the effect lives only in a small set of unusually deep cities, or depends on exactly where the threshold was drawn. A high threshold keeps only the largest, most specialized cities; a low threshold lets in smaller cities with noisier topic profiles. Either could bias the result: high-threshold cities are more likely to have stable topic profiles that align by chance in large fields, and low-threshold cities introduce noise that could suppress the excess. We swept the threshold across a wide range, recomputing the excess at each setting (Figure~\ref{fig:power}). The excess persists across the range. Deeper cities, those above the higher thresholds, show the effect more cleanly, as one would expect when each city's topic profile is measured from more documents and is therefore more reliable. But the effect is not manufactured by the threshold: it appears at low thresholds among shallow cities and grows larger as the data get richer, which is the pattern a real signal leaves. A spurious result would not reliably strengthen as measurement improves. Taken together, the three checks establish that the central result does not rest on any particular feature of the sample, the clustering, or the inclusion criteria.
 
