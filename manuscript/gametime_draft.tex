@@ -1247,7 +1247,18 @@ Teams matching a known city were coded directly; the rest went to the OpenAlex
 institutions API, then to the Research Organization Registry for the many Chinese
 high-school teams OpenAlex missed, and only the residue was handed to a language model.
 Each tier caught what the previous one could not, and the layering kept both cost and
-error down.
+error down. The vast majority of teams were resolved by the first two tiers. The
+Research Organization Registry tier was specifically valuable for non-Western
+institutions that OpenAlex indexed poorly, particularly Chinese secondary schools
+and Southeast Asian universities that have been represented in iGEM since the
+competition expanded into those regions around 2010. The language-model tier, the
+most error-prone, handled a small residue of institutions with ambiguous or
+non-standard names; its outputs were spot-checked against known institutional
+locations and the error rate on resolved teams was low, though the unresolvable
+tail, teams whose institution names gave no geographic signal even to a language
+model, were simply dropped from the analysis. The cost of dropping them is a mild
+under-representation of the most idiosyncratically named institutions, which do not
+appear to cluster in any particular country or region.
 
 The wikis hold more than descriptions; they cite the literature, and those citations are a
 bridge between projects and papers. A second scraping pass pulled DOIs, the standard
@@ -1461,10 +1472,20 @@ machine trade off. For each cluster we took the handful of documents closest to 
 the most representative examples, and passed their titles and abstracts to a language model
 with one task: read these and say what they have in common. The model returned a short label
 and a description, which a human then checked and, where needed, corrected against the
-cluster's contents. This mirrors the project's whole method in miniature. The machine reads
-at a scale no person could, proposing a label from ten abstracts in a second; the human
-supplies the judgment, catching the cases where the model latched onto a shared word rather
-than a shared subject. Neither alone would do it well.
+cluster's contents. Of the 84 labels, roughly 20 required correction or simplification. The
+failures were systematic: the centroid documents are, by definition, the most typical
+members of a cluster, but the outermost members can be only loosely related to that core.
+A label derived from the centroid sometimes described the core well but overfitted to it,
+using vocabulary that was accurate for the most central documents but too narrow or too
+specific for the artifacts that had been pulled into the cluster at its edges. Simplifying
+the label to a broader but still accurate description produced a name that was honest about
+what the whole cluster contained, not just its most representative examples. The roughly
+two-thirds of labels that were accepted unchanged were typically clusters with tight,
+well-defined cores, where the centroid documents were genuinely representative of the whole.
+This mirrors the project's whole method in miniature. The machine reads at a scale no
+person could, proposing a label from ten abstracts in a second; the human supplies the
+judgment to catch the cases where the model latched onto specifics that did not generalize.
+Neither alone would do it well.
 
 Labelled, the map becomes legible (Figure~\ref{fig:topicmap}). The clusters range across
 the field: computational design tools, genetic logic circuits, biosensors, therapeutic
