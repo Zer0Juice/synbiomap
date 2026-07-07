@@ -613,7 +613,7 @@ def _(MIN_DOCS, lift_res, mo, pair_results, three_way):
 def _(FIGDIR, SOL, pair_results, plt):
     # ── Permutation null distributions with the observed value marked ─────────
     _panels = [("paper", "project"), ("paper", "patent"), ("project", "patent")]
-    fig_perm, axes_perm = plt.subplots(1, 3, figsize=(20, 6))
+    fig_perm, axes_perm = plt.subplots(3, 1, figsize=(10, 15))
 
     for _ax, _key in zip(axes_perm, _panels):
         _r = pair_results.get(_key)
@@ -625,9 +625,10 @@ def _(FIGDIR, SOL, pair_results, plt):
         _ax.axvline(_r["null_mean"], color=SOL["muted"], ls="--", lw=1.2, label="null mean")
         _sig = "" if _r["p_value"] < 0.05 else "  (n.s.)"
         _ax.set_title(f"{_key[0]} × {_key[1]}{_sig}\n{_r['n_cities']} cities")
-        _ax.set_xlabel("mean city co-membership"); _ax.legend(fontsize=11)
+        _ax.set_xlabel("mean city co-membership")
+        _ax.set_ylabel("permutations")
+        _ax.legend(fontsize=11)
 
-    axes_perm[0].set_ylabel("permutations")
     fig_perm.suptitle("Real overlap against the same-country null "
                       "(orange line right of the grey histogram is local signal)",
                       fontsize=19, fontweight="bold")
@@ -688,7 +689,7 @@ def _(FIGDIR, SOL, country_of, leave_one_country_out, pair_tables, plt, tri_vecs
     _pairs = [("paper", "project"), ("paper", "patent")]
     loco = {}
 
-    fig_loco, axes_loco = plt.subplots(1, 2, figsize=(20, 7))
+    fig_loco, axes_loco = plt.subplots(2, 1, figsize=(10, 12))
     for _ax, (_a, _b) in zip(axes_loco, _pairs):
         _cities = list(pair_tables[(_a, _b)].city_key)
         _d = leave_one_country_out(tri_vecs, _a, _b, _cities, country_of, n_perm=1500).head(7)
@@ -758,7 +759,7 @@ def _(FIGDIR, PROCESSED, SOL, pd, plt):
               ("paper", "patent", SOL["orange"]),
               ("project", "patent", SOL["project"])]
 
-    fig_ksweep, (axK1, axK2) = plt.subplots(1, 2, figsize=(20, 7))
+    fig_ksweep, (axK1, axK2) = plt.subplots(2, 1, figsize=(10, 12))
     for _a, _b, _col in _pairs:
         _d = kcurve[(kcurve.type_a == _a) & (kcurve.type_b == _b)].sort_values("k")
         axK1.plot(_d.k, _d.excess, "-o", lw=2.5, ms=9, color=_col, label=f"{_a}×{_b}")
@@ -957,7 +958,7 @@ def _(K, PROCESSED, arts, city_part_type_props, mantel_test, np, pd):
 @app.cell
 def _(FIGDIR, SOL, mantel, np, plt):
     # ── Left: the two distances rise together. Right: beats the shuffle null ──
-    fig_mantel, (axM1, axM2) = plt.subplots(1, 2, figsize=(19, 7))
+    fig_mantel, (axM1, axM2) = plt.subplots(2, 1, figsize=(10, 12))
 
     axM1.hexbin(mantel["part_dist"], mantel["sem_dist"], gridsize=32,
                 cmap="YlGnBu", mincnt=1)
@@ -1036,6 +1037,367 @@ def _(lift_res, loco, mo, pair_results):
     than shown absent, on only a couple of dozen cities. And carbon capture, the
     cyanobacterial-chassis topic where this project's hope lives, is the worked
     example the next section builds: the same test, narrowed to that one topic.
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ## 7. Dynamic coupling: difference-in-differences and lead-lag
+
+    Sections 1–6 measured standing topical overlap — do a city's three artifact
+    types land in the same clusters across the full corpus? That is the structural
+    question. Here we ask the temporal one: does activity in one type at time $t$
+    co-move with activity in another type at time $t + k$, within the same city and
+    the same topic?
+
+    Two tests. First, a difference-in-differences panel regression using five-year
+    period bins: for each pair (upstream, downstream), we regress the downstream
+    type's cluster-share on the upstream type's cluster-share, absorbing city fixed
+    effects and topic × period fixed effects by within-group demeaning
+    (Frisch-Waugh). Standard errors are clustered by city. The coefficient $\beta$
+    captures within-city, within-topic co-movement after removing each city's
+    standing specialization and each topic's global trend.
+
+    Second, a lead-lag profile: for each lag $k \in [-3, +3]$ years, we compare
+    a city's annual cluster-frequency vector for the upstream type at year $t$ with
+    the downstream type's vector at year $t + k$. A positive $k$ means the
+    downstream artifact comes after the upstream one. Bootstrap 95% confidence
+    intervals across city-year pairs. A permutation test (500 shuffles of project
+    year labels within each city) checks whether any asymmetry in the profile is
+    real.
+    """)
+    return
+
+
+@app.cell
+def _(arts, K, np, pd):
+    # ── Section 7 data: annual cluster-frequency vectors ─────────────────────
+    # One L2-normalised K-dimensional vector per (city_key, year, type).
+    # Requires at least MIN_ANNUAL_DOCS non-noise documents of that type in that
+    # city-year; below that threshold the vector is too sparse to be informative.
+    MIN_ANNUAL_DOCS = 2
+
+    _a = arts[arts["cluster_label"] >= 0].copy()
+
+    def make_annual_vecs(df, type_name, min_docs=MIN_ANNUAL_DOCS):
+        sub = df[df["type"] == type_name]
+        out = {}
+        for (ck, yr), grp in sub.groupby(["city_key", "year"]):
+            if len(grp) < min_docs:
+                continue
+            counts = np.zeros(K)
+            for lab, cnt in grp["cluster_label"].value_counts().items():
+                counts[int(lab)] = cnt
+            norm = np.linalg.norm(counts)
+            if norm > 0:
+                out[(ck, int(yr))] = counts / norm
+        return out
+
+    annual_vecs = {t: make_annual_vecs(_a, t) for t in ["project", "paper", "patent"]}
+
+    # ── Five-year period cluster-share table (for DiD regression) ─────────────
+    PERIOD_BINS   = [2003, 2008, 2013, 2018, 2024]
+    PERIOD_LABELS = ["2004-08", "2009-13", "2014-18", "2019-24"]
+    _a["period"] = pd.cut(_a["year"], bins=PERIOD_BINS, labels=PERIOD_LABELS)
+    _a = _a.dropna(subset=["period"])
+
+    def cluster_shares_long(df, type_name):
+        sub = df[df["type"] == type_name]
+        cnt = (sub.groupby(["city_key", "period", "cluster_label"])
+                   .size().reset_index(name="count"))
+        tot = cnt.groupby(["city_key", "period"])["count"].sum().reset_index(name="total")
+        cnt = cnt.merge(tot, on=["city_key", "period"])
+        cnt["share"] = cnt["count"] / cnt["total"]
+        return cnt[["city_key", "period", "cluster_label", "share"]]
+
+    _shares = {t: cluster_shares_long(_a, t) for t in ["project", "paper", "patent"]}
+
+    return annual_vecs, cluster_shares_long, _shares
+
+
+@app.cell
+def _(_shares, np, pd):
+    import statsmodels.formula.api as smf
+
+    # ── Tripartite DiD: cluster-share panel regression ────────────────────────
+    # Y = downstream cluster share in city c, topic k, period t
+    # X = upstream cluster share in same city, topic, period
+    # FE: city (c) + topic × period (k,t) — absorbed by double demeaning
+    # SE: clustered by city
+
+    def run_did_pair(shares_a, shares_b):
+        m = (shares_a.rename(columns={"share": "share_a"})
+             .merge(shares_b.rename(columns={"share": "share_b"}),
+                    on=["city_key", "period", "cluster_label"]))
+        m["topic_period"] = (m["cluster_label"].astype(str) + "_"
+                             + m["period"].astype(str))
+        for col in ["share_a", "share_b"]:
+            m[col] = m[col] - m.groupby("city_key")[col].transform("mean")
+            m[col] = m[col] - m.groupby("topic_period")[col].transform("mean")
+        m = m.dropna(subset=["share_a", "share_b"])
+        mod = smf.ols("share_b ~ share_a", data=m).fit(
+            cov_type="cluster", cov_kwds={"groups": m["city_key"]})
+        return mod, m["city_key"].nunique(), len(m)
+
+    _pairs = [
+        ("project", "paper",   "project → paper"),
+        ("paper",   "patent",  "paper → patent"),
+        ("project", "patent",  "project → patent"),
+    ]
+
+    did_results = {}
+    for _ta, _tb, _lbl in _pairs:
+        _mod, _nc, _n = run_did_pair(_shares[_ta], _shares[_tb])
+        did_results[(_ta, _tb)] = {
+            "label": _lbl, "model": _mod,
+            "beta": _mod.params["share_a"],
+            "se":   _mod.bse["share_a"],
+            "t":    _mod.tvalues["share_a"],
+            "p":    _mod.pvalues["share_a"],
+            "n_cities": _nc, "n_obs": _n,
+        }
+        _stars = ("***" if _mod.pvalues["share_a"] < 0.001 else
+                  "**"  if _mod.pvalues["share_a"] < 0.01  else
+                  "*"   if _mod.pvalues["share_a"] < 0.05  else "")
+        print(f"{_lbl:25s}  β={_mod.params['share_a']:+.5f}  "
+              f"t={_mod.tvalues['share_a']:+.2f}  "
+              f"p={_mod.pvalues['share_a']:.4f}{_stars}  "
+              f"N={_nc} cities")
+
+    return (did_results,)
+
+
+@app.cell
+def _(FIGDIR, SOL, did_results, np, plt):
+    # ── DiD coefficient plot ──────────────────────────────────────────────────
+    _pair_order = [("project","paper"), ("paper","patent"), ("project","patent")]
+    _colors = [SOL["project"], SOL["paper"], SOL["muted"]]
+    _betas  = [did_results[p]["beta"]     for p in _pair_order]
+    _ses    = [did_results[p]["se"]       for p in _pair_order]
+    _pvals  = [did_results[p]["p"]        for p in _pair_order]
+    _labels = [did_results[p]["label"]    for p in _pair_order]
+    _ncity  = [did_results[p]["n_cities"] for p in _pair_order]
+
+    fig_did, ax_did = plt.subplots(figsize=(10, 5))
+    _y = np.arange(len(_pair_order))
+    ax_did.barh(_y, _betas, xerr=_ses, color=_colors, capsize=8, height=0.5,
+                edgecolor="white", error_kw={"linewidth": 2})
+    ax_did.axvline(0, color=SOL["muted"], ls="--", lw=1.5)
+    ax_did.set_yticks(_y)
+    ax_did.set_yticklabels([f"{l}  (N={n})" for l, n in zip(_labels, _ncity)])
+    for yi, (b, se, p) in enumerate(zip(_betas, _ses, _pvals)):
+        stars = ("***" if p < 0.001 else "**" if p < 0.01 else
+                 "*"   if p < 0.05  else f"p={p:.2f}")
+        ax_did.text(b + se * 1.15, yi, stars, va="center", fontsize=14)
+    ax_did.set_xlabel("β  (cluster-share DiD coefficient, city-clustered SE)")
+    ax_did.set_title("Tripartite DiD: within-city, within-topic co-movement across five-year periods")
+    fig_did.tight_layout()
+    fig_did.savefig(FIGDIR / "tripartite_did.png", bbox_inches="tight")
+    fig_did
+    return (fig_did,)
+
+
+@app.cell
+def _(did_results, mo):
+    _pp = did_results[("project","paper")]
+    _px = did_results[("paper","patent")]
+    _pt = did_results[("project","patent")]
+    mo.md(f"""
+    Within a city and topic, when project activity in a five-year period rises
+    above that city's own baseline, academic output in the same topic also rises
+    (β = {_pp['beta']:+.4f}, t = {_pp['t']:.2f}, p = {_pp['p']:.4f},
+    {_pp['n_cities']} cities). The paper–patent link shows the same pattern
+    (β = {_px['beta']:+.4f}, t = {_px['t']:.2f}, p = {_px['p']:.4f},
+    {_px['n_cities']} cities). The direct project–patent co-movement is
+    {'significant' if _pt['p'] < 0.05 else 'not significant'}
+    (β = {_pt['beta']:+.4f}, p = {_pt['p']:.4f}), consistent with the
+    permutation test result that papers carry the middle link.
+
+    The city and topic×period fixed effects absorb each city's standing
+    specialization and each topic's global trend. What β captures is the
+    residual co-movement: when a city pushes into a topic in one period beyond
+    its own norm and beyond the field's global trend in that topic, the other
+    artifact type follows.
+    """)
+    return
+
+
+@app.cell
+def _(annual_vecs, np, pd):
+    # ── Lead-lag: annual cluster-vector cosine similarity at lags -3 to +3 ───
+    LAGS   = range(-3, 4)
+    N_BOOT = 500
+    _rng   = np.random.default_rng(42)
+
+    def lead_lag_profile(vecs_a, vecs_b):
+        lag_sims = {k: [] for k in LAGS}
+        for (city, yr), va in vecs_a.items():
+            for k in LAGS:
+                vb = vecs_b.get((city, yr + k))
+                if vb is not None:
+                    lag_sims[k].append(float(np.dot(va, vb)))
+        rows = []
+        for k, vals in lag_sims.items():
+            if not vals:
+                continue
+            arr = np.array(vals)
+            boot = [_rng.choice(arr, len(arr), replace=True).mean()
+                    for _ in range(N_BOOT)]
+            rows.append({"lag": k, "n_pairs": len(vals), "mean_sim": arr.mean(),
+                         "ci_lo": np.percentile(boot, 2.5),
+                         "ci_hi": np.percentile(boot, 97.5)})
+        return pd.DataFrame(rows).sort_values("lag").reset_index(drop=True)
+
+    ll_pp = lead_lag_profile(annual_vecs["project"], annual_vecs["paper"])
+    ll_px = lead_lag_profile(annual_vecs["paper"],   annual_vecs["patent"])
+
+    return LAGS, ll_pp, ll_px, lead_lag_profile, N_BOOT
+
+
+@app.cell
+def _(FIGDIR, LAGS, SOL, ll_pp, ll_px, plt):
+    # ── Lead-lag figure: two pairs stacked vertically ─────────────────────────
+    _data   = [ll_pp,             ll_px]
+    _titles = ["Project activity (year t) vs paper activity (year t+k)",
+               "Paper activity (year t) vs patent activity (year t+k)"]
+    _colors = [SOL["project"], SOL["paper"]]
+
+    fig_ll, axes_ll = plt.subplots(2, 1, figsize=(10, 10))
+    for ax, df, title, col in zip(axes_ll, _data, _titles, _colors):
+        ax.errorbar(df.lag, df.mean_sim,
+                    yerr=[df.mean_sim - df.ci_lo, df.ci_hi - df.mean_sim],
+                    fmt="o-", color=col, ecolor=col, capsize=5, linewidth=2.5, ms=8)
+        ax.axvline(0, color=SOL["text"], ls="--", lw=1, label="k = 0")
+        ax.axvspan(0.1, max(LAGS) + 0.4,  alpha=0.06, color=SOL["cyan"],   label="upstream leads")
+        ax.axvspan(min(LAGS) - 0.4, -0.1, alpha=0.06, color=SOL["orange"], label="upstream lags")
+        ax.set_xlabel("Lag k  (positive k → downstream artifact comes after upstream)")
+        ax.set_ylabel("Mean cosine similarity (cluster vectors)")
+        ax.set_title(title)
+        ax.set_xticks(list(LAGS))
+        ax.legend(fontsize=11)
+        ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{x:.3f}"))
+
+    fig_ll.suptitle("Lead-lag structure: does upstream activity precede downstream activity?",
+                    fontsize=16, fontweight="bold")
+    fig_ll.tight_layout()
+    fig_ll.savefig(FIGDIR / "tripartite_lead_lag.png", bbox_inches="tight")
+    fig_ll
+    return (fig_ll, axes_ll)
+
+
+@app.cell
+def _(annual_vecs, LAGS, N_BOOT, ll_pp, ll_px, np):
+    # ── Permutation test: is the lead-lag asymmetry real? ────────────────────
+    # Shuffle year labels for the upstream type within each city 500 times.
+    # Test statistics: (1) slope of a linear fit to the profile,
+    #                  (2) mean(k>0) - mean(k<0).
+    N_PERM = 500
+    _rng2  = np.random.default_rng(99)
+
+    def perm_profile(vecs_a, vecs_b):
+        cities = list({c for c, _ in vecs_a})
+        shuffled = {}
+        for city in cities:
+            yrs = [yr for (c, yr) in vecs_a if c == city]
+            perm = _rng2.permutation(yrs)
+            for orig, new in zip(yrs, perm):
+                shuffled[(city, orig)] = vecs_a[(city, new)]
+        means = {}
+        for k in LAGS:
+            sims = [float(np.dot(shuffled[(c,y)], vecs_b[(c, y+k)]))
+                    for (c, y) in shuffled if (c, y+k) in vecs_b]
+            means[k] = float(np.mean(sims)) if sims else float("nan")
+        return means
+
+    def perm_stats(obs_df, vecs_a, vecs_b):
+        lags_arr  = np.array(obs_df.lag)
+        sims_arr  = np.array(obs_df.mean_sim)
+        obs_slope    = float(np.polyfit(lags_arr, sims_arr, 1)[0])
+        obs_contrast = (obs_df[obs_df.lag > 0].mean_sim.mean()
+                        - obs_df[obs_df.lag < 0].mean_sim.mean())
+        null_slopes, null_contrasts = [], []
+        for _ in range(N_PERM):
+            pm = perm_profile(vecs_a, vecs_b)
+            valid = [(k, v) for k, v in pm.items() if not np.isnan(v)]
+            if len(valid) < 5:
+                continue
+            ls, ss = zip(*valid)
+            null_slopes.append(float(np.polyfit(ls, ss, 1)[0]))
+            null_contrasts.append(
+                np.mean([s for l, s in valid if l > 0])
+                - np.mean([s for l, s in valid if l < 0]))
+        p_slope    = (sum(s >= obs_slope    for s in null_slopes)    + 1) / (len(null_slopes)    + 1)
+        p_contrast = (sum(s >= obs_contrast for s in null_contrasts) + 1) / (len(null_contrasts) + 1)
+        return {"obs_slope": obs_slope, "null_slopes": np.array(null_slopes),
+                "obs_contrast": obs_contrast, "null_contrasts": np.array(null_contrasts),
+                "p_slope": p_slope, "p_contrast": p_contrast}
+
+    perm_pp = perm_stats(ll_pp, annual_vecs["project"], annual_vecs["paper"])
+    perm_px = perm_stats(ll_px, annual_vecs["paper"],   annual_vecs["patent"])
+
+    for lbl, r in [("project→paper", perm_pp), ("paper→patent", perm_px)]:
+        print(f"{lbl}: slope p={r['p_slope']:.4f}  contrast p={r['p_contrast']:.4f}")
+
+    return (perm_pp, perm_px)
+
+
+@app.cell
+def _(FIGDIR, SOL, perm_pp, perm_px, plt):
+    # ── Permutation figure: two pairs × two statistics (2×2, vertically led) ──
+    _rows = [(perm_pp, "project → paper"), (perm_px, "paper → patent")]
+    _col_pairs = [SOL["project"], SOL["paper"]]
+
+    fig_perm_ll, axes_pll = plt.subplots(2, 2, figsize=(14, 10))
+
+    for row_i, (r, lbl) in enumerate(_rows):
+        col = _col_pairs[row_i]
+
+        # Left column: slope distribution
+        ax = axes_pll[row_i, 0]
+        ax.hist(r["null_slopes"], bins=40, color=SOL["bg2"], edgecolor=SOL["muted"])
+        ax.axvline(r["obs_slope"], color=col, lw=2.5,
+                   label=f"observed = {r['obs_slope']:.5f}\np = {r['p_slope']:.4f}")
+        ax.set_xlabel("slope of lead-lag profile (null)"); ax.set_ylabel("permutations")
+        ax.set_title(f"{lbl}: slope test")
+        ax.legend(fontsize=11)
+
+        # Right column: contrast distribution
+        ax = axes_pll[row_i, 1]
+        ax.hist(r["null_contrasts"], bins=40, color=SOL["bg2"], edgecolor=SOL["muted"])
+        ax.axvline(r["obs_contrast"], color=col, lw=2.5,
+                   label=f"observed = {r['obs_contrast']:.5f}\np = {r['p_contrast']:.4f}")
+        ax.set_xlabel("mean(k>0) − mean(k<0) (null)"); ax.set_ylabel("permutations")
+        ax.set_title(f"{lbl}: contrast test")
+        ax.legend(fontsize=11)
+
+    fig_perm_ll.suptitle("Lead-lag permutation tests (500 within-city year shuffles)",
+                         fontsize=16, fontweight="bold")
+    fig_perm_ll.tight_layout()
+    fig_perm_ll.savefig(FIGDIR / "tripartite_lead_lag_perm.png", bbox_inches="tight")
+    fig_perm_ll
+    return (fig_perm_ll,)
+
+
+@app.cell
+def _(mo, perm_pp, perm_px):
+    mo.md(f"""
+    The lead-lag permutation tests check whether the profile shape—specifically
+    whether similarity is higher when the downstream artifact comes *after* the
+    upstream one—is real or a chance feature of the corpus timing.
+
+    For project → paper: slope p = {perm_pp['p_slope']:.4f},
+    contrast p = {perm_pp['p_contrast']:.4f}.
+    For paper → patent: slope p = {perm_px['p_slope']:.4f},
+    contrast p = {perm_px['p_contrast']:.4f}.
+
+    A p-value below 0.05 means the observed asymmetry—where similarity is higher
+    at positive lags than at negative ones—exceeds what year-shuffled cities
+    produce. The direction of the asymmetry, when it appears, is consistent with
+    projects feeding into papers and papers feeding into patents, but the test
+    establishes only that the temporal pattern is non-random, not that the flow
+    is causal.
     """)
     return
 
