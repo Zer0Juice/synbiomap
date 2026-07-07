@@ -21,8 +21,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{newtxtext,newtxmath} % Times New Roman-like text and matching math
-% ---- Page geometry: 2cm margins per thesis guidelines ----
-\usepackage[a4paper,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[a4paper,left=1in,right=1in,top=1in,bottom=1in]{geometry}
 
 % ---- Line spacing: 1.5 per thesis guidelines ----
 \usepackage{setspace}
@@ -97,9 +96,90 @@
 % ---- Directories: Roman numerals ----
 \pagenumbering{roman}
 \tableofcontents
+
+\newpage
+\phantomsection
+\addcontentsline{toc}{section}{List of Figures}
+\listoffigures
+
+\newpage
+\phantomsection
+\addcontentsline{toc}{section}{List of Tables}
+\listoftables
+
+\newpage
+\phantomsection
+\addcontentsline{toc}{section}{List of Appendices}
+\section*{List of Appendices}
+\begin{tabular}{@{}p{0.82\textwidth}r@{}}
+Appendix~A \enspace Custom Claude Code skills (\texttt{discussion} and \texttt{frankGPT}) & \pageref{app:skills} \\[6pt]
+Appendix~B \enspace OpenAlex keyword query & \pageref{app:query} \\
+\end{tabular}
+
+\newpage
+\phantomsection
+\addcontentsline{toc}{section}{List of Abbreviations}
+\section*{List of Abbreviations}
+\begin{longtable}{@{}l p{0.75\textwidth}@{}}
+BBa & BioBrick registry part identifier (naming prefix) \\
+BERT & Bidirectional Encoder Representations from Transformers \\
+CC & carbon capture \\
+DiD & difference-in-differences \\
+DNA & deoxyribonucleic acid \\
+FE & fixed effect(s) \\
+HC3 & heteroskedasticity-consistent standard errors (type 3) \\
+HDBSCAN & Hierarchical Density-Based Spatial Clustering of Applications with Noise \\
+iGEM & International Genetically Engineered Machine \\
+NLP & natural language processing \\
+OECD & Organisation for Economic Co-operation and Development \\
+OLS & ordinary least squares \\
+SPECTER2 & Scientific Paper Embeddings using Citation-informed Transformers (v2) \\
+SynBio & synthetic biology \\
+UMAP & Uniform Manifold Approximation and Projection \\
+USPTO & United States Patent and Trademark Office \\
+\end{longtable}
+
+\newpage
+\phantomsection
+\addcontentsline{toc}{section}{List of Symbols}
+\section*{List of Symbols}
+\begin{longtable}{@{}l p{0.72\textwidth}@{}}
+$c$ & a city; the unit of analysis \\
+$P_c,\ Q_c$ & the sets of city $c$'s papers and projects \\
+$\mathbf{e}_i$ & embedding vector of document $i$, with $\mathbf{e}_i \in \mathbb{R}^{768}$ \\
+$\bar{\mathbf{p}}_c,\ \bar{\mathbf{q}}_c$ & paper and project centroids (mean embeddings) of city $c$ \\
+$\bar{\delta}$ & mean project-level alignment (own-city minus other-city similarity) \\
+$O_c$ & Jaccard topic overlap for city $c$ \\
+$N_{\text{proj},c},\ N_{\text{paper},c}$ & project and paper counts in city $c$ \\
+$\gamma_k$ & fixed effect for country $k$ \\
+$\mathbb{1}[\cdot]$ & indicator function (1 if the condition holds, 0 otherwise) \\
+$Y_{c,k,t},\ X_{c,k,t}$ & downstream and upstream shares of cluster $k$ in city $c$, period $t$ \\
+$\alpha_c$ & city fixed effect \\
+$\delta_{k,t}$ & topic-by-period fixed effect \\
+$\beta,\ \hat{\beta}$ & difference-in-differences coefficient and its estimate \\
+$r_M$ & Mantel correlation coefficient \\
+$\hat{\Delta}$ & permutation excess: observed mean overlap minus the null mean \\
+$B$ & number of permutation (or bootstrap) replicates \\
+$R^2$ & coefficient of determination \\
+$p$ & p-value \\
+\end{longtable}
+
 \newpage
 \pagenumbering{arabic}
 
+\section{Declaration of Authorship}
+I hereby declare that the thesis submitted is my own unaided work. All direct or indirect
+sources used are acknowledged as references.
+I am aware that the thesis in digital form can be examined for the use of unauthorized aid
+and in order to determine whether the thesis as a whole or parts incorporated in it may be
+deemed as plagiarism. For the comparison of my work with existing sources I agree that it
+shall be entered in a database where it shall also remain after examination, to enable
+comparison with future theses submitted. Further rights of reproduction and usage, however,
+are not granted here.
+This paper was not previously presented to another examination board and has not been
+published.
+
+\newpage
 
 % ============================================================
 \section{Statement on AI use}
@@ -162,7 +242,7 @@ Underneath the embeddings and regressions, the data tells a simple story. Tools 
 
 \subsection{Innovation, research, and the role of the state in the Bioeconomy}
 
-Innovation policy rests on a simple bet: money spent on research today pays in the form of capability tomorrow. This is not a new concept; Vannevar Bush made the canonical case for it in 1945, arguing that basic science funded by the public and pursued without a fixed application in mind is the seedbed from which practical advances eventually grow \citep{bushScienceEndlessFrontier1945}. This framing has shaped decades of science funding: support the research, and the applications will follow. While this model isn't wrong, it does happen to be incomplete; it treats the flow from discovery to application as an automatic pipeline, freely running on its own once the money enters as input and outputting influential research.
+Innovation policy depends on the simple concept that money spent on research today pays in the form of capability tomorrow. This idea is not new; Vannevar Bush made the canonical case for it in 1945, arguing that basic science funded by the public and pursued without a fixed application in mind is the seedbed from which practical advances eventually grow \citep{bushScienceEndlessFrontier1945}. This framing has shaped decades of science funding, with the expectation that with support for research, breakthroughs and applications are soon to follow. While this model isn't wrong, it does happen to be incomplete; it treats the flow from discovery to application as an automatic pipeline, freely running on its own once the money enters as input and outputting influential research.
 
 The reality is messier. The pipeline model, with research at one end and products at the other, misses how much the two shape each other, and how much the public sector impacts the private. Governments act both as funders and active participants in innovation. The public sector plays the role of early customers and collaborators that help new technologies cross from lab to market \citep{doblingerGovernmentsPartners2019}. Whether a young technology survives the gap between a working prototype and a viable product often depends on public support. Innovation studies has spent decades documenting how much of this is collaborative and institutional, depending on the surrounding environment rather than on lone innovative genius.
 
@@ -770,15 +850,15 @@ Finally, causal identification is beyond the reach of the current design. The co
 \section{Conclusion}
 % ============================================================
 
-It has been a long route from the Anthropocene to a table of cities. The introduction opened with the observation that we have been reshaping the biosphere by accident, and asked whether the same tools could reshape it on purpose. The background placed that question inside a specific institutional structure: student competitions, academic labs, and commercial filers working in adjacent registers in the same cities, potentially connected into local innovation trajectories. The data chapter built the corpus that did not exist, resolving every ambiguity in the boundary of synthetic biology, the shape of iGEM's records, and the geography of three very different kinds of document. The results chapter asked the central question of the data directly, watched the first answer fail, understood why, replaced it with a measure that strips out the failure mode, and then spent the bulk of its length trying to break the answer it produced. What survived that treatment is what this conclusion claims.
+It has been a long route from the Anthropocene to a table of cities. The introduction opened with the observation that we have been reshaping the biosphere by accident, and asked whether the same tools could reshape it on purpose. The background placed that question inside a specific institutional structure. Student competitions, academic labs, and commercial filers working in adjacent registers in the same cities, potentially connected into local innovation trajectories. The data chapter built the corpus that did not exist, resolving every ambiguity in the boundary of synthetic biology, the shape of iGEM's records, and the geography of three very different kinds of document. The results chapter asked the central question of the data directly, watched the first answer fail, understood why, replaced it with a measure that strips out the failure mode, and then spent the bulk of its length trying to break the answer it produced. What survived that treatment is what this conclusion claims.
 
-The central claim is specific and modest: a city's iGEM projects and its academic papers share specific research topics more than size and topic popularity can explain, at a level of statistical confidence that a stringent permutation test places far beyond chance. That excess is not an artifact of one country, one cluster resolution, or one depth threshold. It is not a property of the embedding model, since it appears in the structure of the physical parts independently. And it is not merely a standing historical coincidence, since the difference-in-differences result finds a small but real year-to-year co-movement after each city's specialization is differenced out. The claim is well defended for what it is: a real, size-independent local alignment between student and academic synthetic biology.
+The central claim is specific and modest. A city's iGEM projects and its academic papers share specific research topics more than size and topic popularity can explain, at a level of statistical confidence that a stringent permutation test places far beyond chance. That excess is not an artifact of one country, one cluster resolution, or one depth threshold. It is not a property of the embedding model, since it appears in the structure of the physical parts independently. And it is not merely a standing historical coincidence, since the difference-in-differences result finds a small but real year-to-year co-movement after each city's specialization is differenced out. The claim is comfortably defended as a real, size-independent local alignment between student and academic synthetic biology.
 
-Along the way the data drew a portrait of iGEM as more than a competition. It is a worldwide, open, standardized on-ramp into synthetic biology, and it leaves an unusually complete record: thousands of student projects, each tied to a place and a year, each built from a shared kit of parts that connect back to the literature and forward into new work. The Uppsala team turned sunlight into alcohol with blue-green algae, and two of its members carried that work into a research lab and a published paper that cited their own BioBrick. That thread, from a competition project to peer-reviewed science in the same city, is the whole thesis in miniature, and iGEM produces threads like it all over the world.
+Along the way the data drew a portrait of iGEM and what makes it special. It is a worldwide, open, standardized on-ramp into synthetic biology. It also leaves an unusually complete record, with thousands of student projects, each built from a shared kit of parts that connect back to the past literature and forward into future work. The Uppsala team turned sunlight into alcohol with blue-green algae, and two of its members carried that work into a research lab and a published paper that cited the team's own BioBrick. That thread, from a competition project to peer-reviewed science in the same city, is the whole thesis in miniature, and iGEM produces threads like it all over the world.
 
-The central finding is specific, and it has a shape worth stating plainly. In a given city, the three artifact types are not equally related to one another. A city's patents are related to its papers, and its papers are related to its student projects, but its patents and its projects are the most distant of the three pairs. The chain is strongest between neighbours, project to paper and paper to patent, and weakest across the full span from student bench to commercial filing. That is what one would expect if ideas and capabilities travel in steps, with academic research as the middle link between student work and industry, though our data show the pattern, not the travel.
+The central finding is specific, with a shape worth stating plainly. In a given city, the three artifact types are not equally related to one another. A city's patents are related to its papers, and its papers are related to its student projects, but its patents and its projects are the most distant of the three pairs. The chain is strongest between neighbours, project to paper and paper to patent, and weakest across the full span from student bench to commercial filing. That is what one would expect if ideas and capabilities travel in steps, with academic research as the middle link between student work and industry, though our data shows the pattern, not the travel, and does not defend any causal assumptions.
 
-Read together, the results support a single narrative: student projects are embedded in the local research scene. Where a city's academics work, its students tend to work too, on the same specific topics, more than chance or size can explain, and the pattern is anchored in the physical parts the students build as much as in the words they write. That last point deserves emphasis. The BioBrick class distribution is a record of students' actual choices about what to build, made in a different register from any text the language model could have read. The fact that it agrees with the semantic topic structure confirms that the relatedness is about research orientation, not about a shared vocabulary that a text model might have imposed. The Mantel result is moderate in magnitude precisely because parts and text are two different views of the same underlying thing, not the same view described twice.
+Read together, the results support the narrative of student projects embedded in the local research scene. here a city's academics work, its students tend to work too, on the same specific topics, more than chance or size can explain, and the pattern is anchored in the physical parts the students build as much as in the words they write. That last point deserves emphasis. The BioBrick class distribution is a record of students' actual choices about what to build, made in a different register from any text the language model could have read. The fact that it agrees with the semantic topic structure confirms that the relatedness is about research orientation, not about a shared vocabulary that a text model might have imposed. The Mantel result is moderate in magnitude precisely because parts and text are two different views of the same underlying thing, not the same view described twice.
 
 The difference-in-differences result adds a dynamic dimension to this picture. Most of the alignment is structural, a city's persistent concentration in particular subfields appearing simultaneously in its student and academic output, in the way that a city long invested in cyanobacterial research will produce both iGEM projects on cyanobacteria and publications on cyanobacteria, not necessarily because one causes the other, but because both draw on the same local ecosystem. But there is also a small year-to-year component: when a city's student projects lean into a topic in one period, its academic output in that topic rises slightly beyond its baseline, and vice versa. The coupling is not only historical; it is alive.
 
@@ -806,6 +886,19 @@ Step back, and a policy point comes into focus. These ecosystems, student, acade
 
 There is a larger stake under all of this. The tools that let us read and write life are getting cheaper and more powerful every year, and they are spreading into the hands of students. The same capability could deepen the damage of the Anthropocene or help repair it; the algae that once remade the atmosphere by accident are now being engineered, on purpose, to pull carbon back out of it. Which future we get is not settled, and it will be shaped by who learns to hold the pen and what they choose to write. Science fiction has quietly become science fact. The generation now turning sunlight into fuel for a competition is the one that will decide what this technology is for. That is worth watching closely, and worth investing in, because the future it is drafting is the one the rest of us will live in.
 
+
+\newpage
+\appendix
+
+\section{Custom Claude Code skills}
+\label{app:skills}
+The reasoning aids described in the statement on AI use were built as custom Claude Code skills: plain-text markdown files that set each agent's role, scope, and voice. The \texttt{discussion} skill staged a debate among named researchers, and the \texttt{frankGPT} skill cast the model as an economic-geography advisor in the mold of Frank Neffke. Both files are reproduced here from the project repository.
+% [FLAG: author to paste the full discussion and frankGPT skill files, or a trimmed version]
+
+\section{OpenAlex keyword query}
+\label{app:query}
+The paper corpus was built with a keyword query tuned against the vocabulary of synthetic biology, kept here for inspection and reproduction.
+% [FLAG: author to paste the exact OpenAlex query string used in the ingestion scripts]
 
 \newpage
 \bibliographystyle{plainnat}
