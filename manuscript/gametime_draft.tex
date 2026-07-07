@@ -21,12 +21,15 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{newtxtext,newtxmath} % Times New Roman-like text and matching math
-% ---- Page geometry: 2 cm margins on all four sides ----
-\usepackage[a4paper,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+% ---- Page geometry: 2.5 cm margins (standard thesis) ----
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
 
-% ---- 1.5 line spacing ----
+% ---- Line spacing ----
 \usepackage{setspace}
-\onehalfspacing
+\setstretch{1.5}
+
+% ---- Small gap between paragraphs ----
+\setlength{\parskip}{0.2em plus 0.1em}
 
 % ---- Justified text is the LaTeX default; microtype improves it ----
 \usepackage{microtype}
@@ -645,8 +648,6 @@ Three further checks probe whether the alignment result is fragile. Table~\ref{t
 \input{tab_geo_robust}
 
 A natural question is whether the result is specific to carbon capture: if cities doing more carbon-capture work show systematically higher or lower alignment, the finding would describe that subfield rather than synthetic biology at large. Table~\ref{tab:cc_moderator} tests this by interacting $\log(\text{papers})$ with the share of a city's clustered documents in the carbon-capture topic clusters, both for papers (columns~1--2) and for projects (columns~3--4). Neither interaction is significant. The carbon-capture paper interaction coefficient is $0.49$ ($p = 0.245$); the project interaction is $-0.03$ ($p = 0.925$). Column~(5) enters both interactions jointly; neither moves. The main effect of $\log(\text{papers})$ remains positive and numerically stable across all five specifications. Carbon-capture cities are not special in this respect. The depth-alignment relationship is a general feature of where synthetic biology is practiced, not a signal confined to the one subfield where we followed the case study.
-
-\input{tab_cc_moderator}
 
 The cross-sectional regression shows that alignment exists; it cannot say whether it is a living year-to-year coupling or a structural feature baked into each city's long-run specialization. A difference-in-differences design separates the two. We split the sample into five-year periods and ask, within a city and topic, whether rising project activity in one period is accompanied by rising paper activity. Specifically, let $Y_{c,k,t}$ be the paper share of cluster $k$ in city $c$ in period $t$ (fraction of the city's papers landing in that cluster), and $X_{c,k,t}$ the corresponding project share. We fit:
 \begin{equation}
