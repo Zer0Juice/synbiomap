@@ -126,6 +126,13 @@ Carbon capture is where the argument comes down to earth, and its central charac
 
 Underneath the embeddings and the regressions, the story is simple. The tools of synthetic biology are open, standardized, and spreading, and the students learning to use them are doing it in public, in cities, alongside the labs and firms working on the same problems. Where those students cluster is a signal, however faint, of where a field is putting down roots. If that signal is real, and this thesis argues that a version of it is, then funding student science and the open research around it is one of the surest early investments a government can make in a field this young. We are learning to write life at the moment we most need to. Where that writing is being taught is worth knowing.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{pipeline_concept.png}
+\caption{Conceptual model of the three-artifact innovation ladder. Student iGEM projects introduce early-stage biological designs at time $t$; academic papers develop and disseminate those ideas roughly three years later; patents mark downstream commercial translation at a further lag. All three activities co-occur within a shared urban institutional environment whose role is the central object of study. Arrows label the proposed mechanism; the $+3$-year offset is empirically derived from the lead-lag analysis (Figure~\ref{fig:leadlagprofile}).}
+\label{fig:pipeline_concept}
+\end{figure}
+
 % ============================================================
 \section{Background}
 % ============================================================
@@ -359,6 +366,13 @@ We pulled them into one shared schema, a common set of fields every artifact car
 
 The shared schema also enforces the commitments the thesis makes about reproducibility. Every artifact in the corpus can be traced back to its source by its identifier, and the source data for each type is publicly available, so the corpus can be rebuilt. The pipeline from raw source data to final embeddings is documented in the public repository. What follows is how each artifact type was gathered, and how they were linked.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{world_map.png}
+\caption{Geographic distribution of synthetic biology artifacts across cities. Each panel shows one artifact type: iGEM student projects (left), academic papers (centre), and patents (right). Circle size is proportional to the square root of artifact count in that city. Projects are the most geographically concentrated, reflecting the university-competition structure of iGEM; papers reach more cities because a broader range of institutions publish; patents are the sparsest, concentrated in established biotechnology hubs. Annotation in each panel reports the total number of geocoded cities and artifacts. The pattern confirms that the corpus spans multiple continents, though it is weighted toward North America and Europe by the structure of all three data sources.}
+\label{fig:worldmap}
+\end{figure}
+
 \subsection{Patents}
 
 The patents came from Paul Oldham. Building a clean patent set for synthetic biology is genuinely hard, for the boundary reason the background described: the field has no tidy patent classification, and keyword searches drag in the descriptive molecular biology that shares its vocabulary. Oldham has spent years on exactly this problem, assembling and curating public datasets that map the patent landscape of the field
@@ -426,6 +440,13 @@ We assembled roughly one hundred thousand training pairs from the links above an
 The fine-tuning helped, measurably. On the held-out validation pairs it had never seen, the adapted model separated genuinely linked documents from random ones better than the base SPECTER2 did.% [FLAG: specific metric] Insert the held-out validation gain (e.g. AUC or mean reciprocal rank of adapter vs. base on pairs_val) once confirmed from the fine-tuning logs. The improvement generalizes rather than merely memorizing the training links, which is what the validation set is designed to detect: if the model had overfit to the training pairs, it would improve on those but not on the held-out ones.
 
 A caution belongs here, and the results chapter returns to it in detail. Fine-tuning on cross-type links we selected could, in principle, manufacture the very relatedness the thesis then claims to find. If we pushed iGEM projects and papers from the same city closer together during fine-tuning, the permutation test would find excess co-location simply because we trained the model to produce it. This is a genuine concern. We address it by running the main results on both models: the fine-tuned adapter and the base SPECTER2 without any adaptation. The central result, that cities' projects and papers share topics more than the permutation null allows, survives on the base model. Fine-tuning attenuates the result slightly rather than inflating it, which is the pattern one expects when adaptation improves the signal-to-noise ratio but does not create the signal. The adapter sharpens the picture; it does not paint one that was not there.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{data_provenance.png}
+\caption{Data pipeline and artifact counts at each processing stage. Three independent streams --- iGEM Registry, OpenAlex, and the Oldham et al.\ synthetic biology patent corpus --- are geocoded independently, then linked via cross-type citation pairs for fine-tuning. The fine-tuned SPECTER2 model embeds all 17,826 artifacts into a shared 768-dimensional semantic space, which is then projected and clustered to yield 84 topic clusters. City-level Jaccard overlap is computed for the 387 cities where at least two artifact types are co-present. Geocoding attrition is below 1.5\% for each stream; the 21,959 project-to-paper wiki-DOI links provide the primary fine-tuning signal for cross-type alignment.}
+\label{fig:provenance}
+\end{figure}
 
 \subsection{Embedding, projection, and clustering}
 
@@ -726,6 +747,13 @@ Tianjin & 8 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{cc_temporal_heatmap.png}
+\caption{Temporal presence of carbon-capture artifacts by city and year, for the twenty cities with the most artifacts in the case-study clusters. Each city is represented by three rows: iGEM projects (green), academic papers (blue), and patents (red). A filled cell indicates at least one artifact of that type in that city and year; empty cells are light grey. The figure makes visible the temporal sequencing that the lead-lag analysis formalizes: in several cities, a phase of student-project activity is followed by papers, and in a subset, eventually by patents. Data sparsity is also visible and honest: the majority of cities show project and paper activity but few patents, consistent with the ladder structure in which project-to-patent alignment is weakest and the patent step is the rarest translation.}
+\label{fig:ccheatmap}
+\end{figure}
 
 \subsection{Discussion}
 
