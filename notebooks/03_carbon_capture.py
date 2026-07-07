@@ -66,19 +66,19 @@ def _():
 
 @app.cell
 def _(mpl):
-    # ── Solarized Light theme + large figures ────────────────────────────────
+    # ── Publication-ready white theme ────────────────────────────────────────
     SOL = {
-        "bg": "#fdf6e3", "bg2": "#eee8d5", "muted": "#93a1a1", "text": "#657b83",
+        "bg": "#ffffff", "bg2": "#f0f0f0", "muted": "#888888", "text": "#222222",
         "paper": "#268bd2", "project": "#2aa198", "patent": "#cb4b16",
         "blue": "#268bd2", "cyan": "#2aa198", "orange": "#cb4b16",
         "yellow": "#b58900", "red": "#dc322f", "violet": "#6c71c4", "green": "#859900",
     }
     mpl.rcParams.update({
-        "figure.facecolor": SOL["bg"], "axes.facecolor": SOL["bg"],
+        "figure.facecolor": "#ffffff", "axes.facecolor": "#ffffff",
         "axes.edgecolor": SOL["muted"], "axes.labelcolor": SOL["text"],
         "xtick.color": SOL["text"], "ytick.color": SOL["text"], "text.color": SOL["text"],
-        "grid.color": SOL["bg2"], "grid.linestyle": "--", "grid.alpha": 0.8,
-        "savefig.facecolor": SOL["bg"], "savefig.dpi": 200, "figure.dpi": 120,
+        "grid.color": "#dddddd", "grid.linestyle": "--", "grid.alpha": 0.8,
+        "savefig.facecolor": "#ffffff", "savefig.dpi": 200, "figure.dpi": 120,
         "font.size": 15, "axes.titlesize": 20, "axes.titleweight": "bold",
         "axes.labelsize": 16, "legend.fontsize": 13,
         "xtick.labelsize": 13, "ytick.labelsize": 13,
