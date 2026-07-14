@@ -2,125 +2,115 @@
 
 **Do student iGEM projects, academic papers, and patents in synthetic biology form semantically related local innovation trajectories at the city level?**
 
-This repository contains the full research pipeline and documentation website for a CSH thesis project studying synthetic biology innovation across three types of knowledge artifact: student projects, academic publications, and patents. The primary case study is **carbon capture in synthetic biology**.
+This repository holds the full research pipeline and documentation website for a CSH thesis project. It studies synthetic biology innovation across three kinds of knowledge artifact — student projects (iGEM), academic publications (OpenAlex), and patents (USPTO) — and asks whether, within a city, these three types work on *related* topics rather than merely the same broad field. The primary worked example is **carbon capture in synthetic biology**.
+
+The claims here are about *semantic relatedness and association*, never causation.
 
 ## Project website
 
-[GitHub Pages site](https://zer0juice.github.io/synbiomap) — the main public-facing home for this project.
+[**zer0juice.github.io/synbiomap**](https://zer0juice.github.io/synbiomap) — the main public-facing home for the project (background, methods, results, the carbon-capture case study, and interactive explorers).
 
-## Quick start
+## What's in this repo
+
+| Path | What it is |
+|------|-----------|
+| `src/` | Reusable Python modules — ingestion, embedding, clustering, geocoding, analysis. All pipeline logic lives here. |
+| `scripts/` | Numbered, runnable pipeline steps that call `src/`. See [`scripts/README.md`](scripts/README.md) for the full ordered list. |
+| `notebooks/` | Walkthroughs and the case study. See [`notebooks/README.md`](notebooks/README.md). |
+| `data/processed/` | The normalized datasets (committed — see below). |
+| `config/settings.yaml` | Every pipeline parameter in one place. |
+| `models/specter2_synbio/` | The fine-tuned SPECTER2 adapter used for the tripartite analysis. |
+| `website/` | The Quarto documentation site (the top-level deliverable). |
+| `manuscript/` | The LaTeX manuscript (`main.tex`). |
+| `outputs/` | Generated figures and the Beamer slide deck. |
+
+## Two ways to use this repo
+
+**A. Explore the results (no credentials needed).** The processed datasets in
+`data/processed/` and the website's precomputed projection data in
+`website/assets/data/` are committed. You can open the notebooks, read the CSVs,
+or run the website straight after cloning — no API keys required.
 
 ```bash
-# 1. Clone
 git clone https://github.com/Zer0Juice/synbiomap
 cd synbiomap
-
-# 2. Install dependencies
 pip install -r requirements.txt
+quarto preview website        # browse the site locally
+```
 
-# 3. Configure credentials
-cp .env.example .env
-# Edit .env — add OPENALEX_EMAIL, OPENALEX_API_KEY, LENS_API_TOKEN
+**B. Rebuild from raw sources.** Re-running ingestion and embedding needs API
+credentials and is time-consuming. Raw downloads and the embedding cache are
+*not* committed (too large / re-fetchable); everything needed to regenerate them
+is in `scripts/`.
 
-# 4. Place iGEM data files
-#    data/raw/projects/igem_projects.csv
-#    data/raw/parts/igem_parts.csv
-
-# 5. Run the pipeline (choose one):
-
-# Option A — run all steps at once in the notebook
-jupyter notebook notebooks/pipeline.ipynb
-
-# Option B — run individual steps from the terminal
-python scripts/01_ingest_papers.py
-python scripts/02_ingest_patents.py
-python scripts/03_ingest_projects.py
-python scripts/04_embed.py
-python scripts/05_cluster.py
-python scripts/06_visualize.py
+```bash
+cp .env.example .env          # then fill in your API keys
+# place the iGEM CSV exports under data/raw/ (see scripts/03_ingest_projects.py)
+# then follow the ordered steps in scripts/README.md
 ```
 
 ## Repository structure
 
 ```
-├── config/
-│   └── settings.yaml          # all pipeline parameters — edit this to change behaviour
-│
+├── config/settings.yaml       # all pipeline parameters
+├── src/                        # reusable modules (imported by scripts/)
+│   ├── ingest/                 # openalex.py, odp.py, patentsview.py, igem.py,
+│   │                           #   igem_wiki.py, normalize.py
+│   ├── embed/embeddings.py     # SPECTER2 embedding + batch caching
+│   ├── cluster/cluster.py      # UMAP + HDBSCAN
+│   ├── geo/geocode.py          # Nominatim / OpenCage geocoding (cached)
+│   └── utils/                  # schema.py (shared columns), config.py
+├── scripts/                    # numbered pipeline steps — see scripts/README.md
+├── notebooks/                  # walkthroughs — see notebooks/README.md
+│   ├── pipeline.ipynb          # orchestrator for the ingest→export steps
+│   ├── 02_tripartite_city_analysis.py   # main analysis (marimo)
+│   └── 03_carbon_capture.py    # case study (marimo)
 ├── data/
-│   ├── raw/                   # downloaded raw files (not committed — too large)
-│   │   ├── projects/          # igem_projects.csv goes here
-│   │   └── parts/             # igem_parts.csv goes here
-│   ├── processed/             # normalized CSVs (output of steps 01–03, 05)
-│   │   ├── papers.csv
-│   │   ├── patents.csv
-│   │   ├── projects.csv
-│   │   ├── parts.csv
-│   │   └── all_artifacts.csv  # combined, with UMAP coords and cluster labels
-│   ├── embeddings/            # embedding cache and projections (not committed)
-│   │   ├── embeddings.json
-│   │   └── projections.json
-│   └── geo/                   # geocoding cache
-│       └── geocoding_cache.json
-│
-├── scripts/                   # pipeline steps — runnable individually or via notebook
-│   ├── 01_ingest_papers.py    # fetch papers from OpenAlex (3-layer keyword strategy)
-│   ├── 02_ingest_patents.py   # fetch patents from Lens.org (IPC codes + keywords)
-│   ├── 03_ingest_projects.py  # load iGEM projects and parts from CSV
-│   ├── 04_embed.py            # generate sentence embeddings (cached)
-│   ├── 05_cluster.py          # UMAP projection + HDBSCAN clustering
-│   └── 06_visualize.py        # export JSON files for the website
-│
-├── notebooks/
-│   └── pipeline.ipynb         # single notebook that runs all scripts + case study walkthrough
-│
-├── src/                       # reusable Python modules (imported by scripts/)
-│   ├── ingest/
-│   │   ├── openalex.py        # OpenAlex API client
-│   │   ├── lens.py            # Lens.org patent API client
-│   │   ├── igem.py            # iGEM CSV loader
-│   │   └── normalize.py       # converts raw records to shared schema
-│   ├── embed/
-│   │   └── embeddings.py      # sentence-transformer model + caching
-│   ├── cluster/
-│   │   └── cluster.py         # UMAP + HDBSCAN + result export
-│   ├── geo/
-│   │   └── geocode.py         # Nominatim geocoding with JSON cache
-│   └── utils/
-│       ├── schema.py           # shared column schema and dataclass
-│       └── config.py           # loads settings.yaml + .env
-│
-├── website/                   # Quarto documentation site (GitHub Pages)
-├── manuscript/                # LaTeX manuscript
-│   └── references.bib
-└── slides/                    # LaTeX Beamer slides
+│   ├── raw/                    # downloaded inputs (not committed)
+│   ├── processed/              # normalized CSVs (committed)
+│   │   ├── papers.csv  patents.csv  projects.csv  parts.csv
+│   │   ├── artifacts_tripartite*.csv   # the three-type corpus + clusters
+│   │   └── ...                 # city-level tables, robustness curves
+│   └── embeddings/             # embedding cache + projections (not committed)
+├── models/specter2_synbio/     # fine-tuned SPECTER2 adapter + eval metrics
+├── website/                    # Quarto site (GitHub Pages)
+├── manuscript/                 # LaTeX manuscript (main.tex) + generated tables/figures
+└── outputs/                    # figures/ and slides/ (Beamer deck)
 ```
 
 ## Data sources
 
 | Source | What it provides | Access |
 |--------|-----------------|--------|
-| [OpenAlex](https://openalex.org) | Academic papers | Free REST API; optional API key for higher rate limits |
-| [Lens.org](https://www.lens.org) | Patents | Free API (token required) |
-| [iGEM Registry](https://igem.org) | Student projects and parts | CSV download |
+| [OpenAlex](https://openalex.org) | Academic papers | Free REST API; optional key for higher rate limits |
+| [USPTO Open Data Portal](https://data.uspto.gov) / [PatentsView](https://patentsview.org) | Patents | Free API (key required) |
+| [iGEM Registry](https://igem.org) | Student projects and BioBrick parts | REST API + CSV export |
 
 ## Corpus construction strategy
 
-**Papers** follow Shapira, Kwon & Youtie (2017, *Scientometrics*): a two-layer keyword approach where Layer 1 uses core self-identifying terms (`"synthetic biology"`, `"synthetic genomics"`) and Layer 2 uses subfield terms (`"BioBrick"`, `"repressilator"`, `"minimal genome"`, etc.). Broad terms like `"metabolic engineering"` are intentionally excluded from retrieval — they would swamp the corpus with unrelated work.
+**Papers** follow Shapira, Kwon & Youtie (2017, *Scientometrics*): a layered keyword approach where core terms (`"synthetic biology"`, `"synthetic genomics"`, `"BioBrick"`) are combined with subfield terms (`"repressilator"`, `"minimal genome"`, `"genetic toggle switch"`, …). Broad terms such as `"metabolic engineering"` are intentionally excluded — they would swamp the corpus with unrelated work. Retrieval is supplemented by citation expansion from two seed papers (see `config/settings.yaml → corpus`).
 
-**Patents** follow van Doren, Koenigstein & Reiss (2013, *Systems and Synthetic Biology*): keywords are combined with an IPC class scope filter (C12N, C12P, C12Q, C12S, C40B) using AND logic. Pure keyword search overestimates synthetic biology patent activity because the terminology overlaps heavily with general biotechnology (Oldham & Hall, 2018).
+**Patents** follow van Doren, Koenigstein & Reiss (2013, *Systems and Synthetic Biology*): keywords are combined with an IPC class scope filter (C12N, C12P, C12Q, C12S, C40B) using AND logic. Pure keyword search overestimates synthetic biology patent activity because the terminology overlaps heavily with general biotechnology (Oldham & Hall, 2018). A parallel corpus derived from Oldham's curated synthetic-biology patent set is used as a robustness check.
 
-All parameters are in `config/settings.yaml`.
+All parameters live in `config/settings.yaml`.
 
 ## Methods summary
 
-| Step | Method | Key parameter |
-|------|--------|---------------|
-| Corpus construction | Layered keyword search | `config/settings.yaml` → `corpus` |
-| Case study tagging | Keyword match on title + abstract | `carbon_capture_keywords` |
-| Embeddings | `all-MiniLM-L6-v2` (384-dim) | Reimers & Gurevych (2019) |
+| Step | Method | Reference |
+|------|--------|-----------|
+| Corpus construction | Layered keyword + citation-seed search | Shapira et al. (2017); van Doren et al. (2013) |
+| Case-study tagging | Keyword match on title + abstract (`carbon_capture_keywords`) | — |
+| Embeddings | SPECTER2 (`allenai/specter2`), with a synthetic-biology fine-tuned adapter (`models/specter2_synbio/`) for the tripartite analysis | Cohan et al. (2020); Singh et al. (2022) |
 | Dimensionality reduction | UMAP, cosine metric | McInnes et al. (2018) |
 | Clustering | HDBSCAN | Campello et al. (2013) |
-| Geocoding | Nominatim (OpenStreetMap), cached | `data/geo/geocoding_cache.json` |
+| Relatedness test | City-level cluster co-membership vs. a permutation null | `src/analyze/relatedness.py` |
+| Geocoding | Nominatim (OpenStreetMap), cached | — |
+
+The base pipeline (`04_embed.py` → `06_visualize.py`) uses the settings in `config/settings.yaml`; the decisive tripartite analysis re-embeds the three-type corpus with the fine-tuned adapter (`09_embed_finetuned.py`). Embeddings are cached as sharded `.npy` batches under `data/embeddings/`, not a single file.
+
+## Reproducing the analysis
+
+The full, ordered pipeline is documented in [`scripts/README.md`](scripts/README.md). In short: ingest (01–03) → base embed/cluster (04–07) → fine-tune SPECTER2 → build and analyze the tripartite corpus (08–12) → robustness and case-study figures/tables (13–17). The two marimo notebooks narrate the main analysis and the carbon-capture case study on top of the processed outputs.
 
 ## License
 

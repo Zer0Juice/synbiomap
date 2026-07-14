@@ -24,17 +24,29 @@ cp .env.example .env
 # 4. Run the pipeline (see notebooks/ for step-by-step walkthroughs)
 ```
 
-## Step-by-step notebooks
+## Pipeline steps
+
+The pipeline is a set of numbered scripts under `scripts/`, each importing logic
+from `src/`. The full, ordered list — ingest → embed → cluster → tripartite
+analysis → robustness and figures — is documented in
+[`scripts/README.md`](https://github.com/Zer0Juice/synbiomap/blob/main/scripts/README.md).
+The high-level stages are:
+
+| Stage | Scripts | What it does |
+|-------|---------|-------------|
+| Ingest | `01`–`03d` | Papers (OpenAlex), patents (USPTO ODP), iGEM projects and parts |
+| Embed + cluster | `04`–`07` | Embeddings, UMAP + HDBSCAN, first relatedness test, website exports |
+| Fine-tune SPECTER2 | `build_finetune_data`, `finetune_specter2`, `eval_recall_at_k` | Domain-adapt the embedding model |
+| Tripartite analysis | `08`–`12` | Build the three-type corpus, re-embed, cluster, test relatedness |
+| Robustness + figures | `13`–`17` | Oldham patent check, regression and robustness tables, figures |
+
+## Walkthrough notebooks
 
 | Notebook | What it does |
 |----------|-------------|
-| `01_ingest_papers.ipynb` | Download papers from OpenAlex |
-| `02_ingest_patents.ipynb` | Download patents from Lens.org |
-| `03_ingest_projects.ipynb` | Load iGEM project and parts data |
-| `04_embed.ipynb` | Generate embeddings for all artifacts |
-| `05_cluster.ipynb` | UMAP reduction and HDBSCAN clustering |
-| `06_visualize.ipynb` | Export data for the website visualizations |
-| `walkthrough_carbon_capture.ipynb` | End-to-end walkthrough for the case study |
+| `notebooks/pipeline.ipynb` | Runs the ingest→export steps in order |
+| `notebooks/02_tripartite_city_analysis.py` (marimo) | The main three-type city-level analysis |
+| `notebooks/03_carbon_capture.py` (marimo) | The carbon-capture case study |
 
 ## Configuration
 
