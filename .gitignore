@@ -23,8 +23,9 @@ data/raw/
 data/embeddings/
 data/geo/geocoding_cache.json
 
-# Fine-tuning training pairs (generated, large — rebuild with build_finetune_data.py)
+# Fine-tuning training pairs and text caches (generated, large — rebuild with build_finetune_data.py)
 data/finetune/*.jsonl
+data/finetune/*.json
 
 # Keep processed CSVs and small exports
 !data/processed/.gitkeep
@@ -85,3 +86,19 @@ slides/*.pdf
 # Marimo editor cache/layout
 notebooks/__marimo__/
 __marimo__/
+
+# Claude Code agent scratch — worktrees are full repo copies, not for sharing
+.claude/worktrees/
+
+# frankGPT skill knowledge corpus — large PDFs + caches, not part of the thesis pipeline
+.claude/skills/frankGPT/knowledge/pdfs/
+.claude/skills/frankGPT/knowledge/_cache/
+
+# beamer skill build artifacts (LaTeX side-files regenerated on every build)
+.claude/skills/beamer/*.aux
+.claude/skills/beamer/*.log
+.claude/skills/beamer/*.nav
+.claude/skills/beamer/*.out
+.claude/skills/beamer/*.snm
+.claude/skills/beamer/*.toc
+.claude/skills/beamer/*.pdf
