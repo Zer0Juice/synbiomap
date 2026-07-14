@@ -14,6 +14,7 @@ import geodatasets
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+plt.style.use("default")
 import matplotlib.patches as mpatches
 import numpy as np
 
