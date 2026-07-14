@@ -1,0 +1,30 @@
+{
+  "config": {
+    "alpha": 32,
+    "architecture": "lora",
+    "attn_matrices": [
+      "q",
+      "v"
+    ],
+    "composition_mode": "add",
+    "dropout": 0.0,
+    "dtype": null,
+    "init_weights": "lora",
+    "init_weights_seed": null,
+    "intermediate_lora": false,
+    "leave_out": [],
+    "output_lora": false,
+    "r": 16,
+    "selfattn_lora": true,
+    "use_dora": false,
+    "use_gating": false,
+    "vera_b": null,
+    "vera_d": null
+  },
+  "hidden_size": 768,
+  "model_class": "BertAdapterModel",
+  "model_name": "allenai/specter2_base",
+  "model_type": "bert",
+  "name": "synbio_proximity",
+  "version": "adapters.1.3.0"
+}

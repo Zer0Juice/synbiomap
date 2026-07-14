@@ -57,6 +57,7 @@ Caching:
 from __future__ import annotations
 import json
 import logging
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Optional
 
@@ -65,6 +66,35 @@ import pandas as pd
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
+
+
+@contextmanager
+def _silence_inactive_adapter_warning():
+    """
+    Suppress one spurious warning emitted by the `adapters` library while an
+    adapter is being loaded.
+
+    During `load_adapter(...)` the library runs an internal forward pass before
+    the adapter is switched on, and logs:
+
+        "There are adapters available but none are activated for the forward pass."
+
+    even though the adapter ends up active (we verify this right after loading).
+    We drop only that exact message, and only around the load call, so a genuine
+    "no active adapter" warning during real encoding still gets through.
+    """
+    lg = logging.getLogger("adapters.model_mixin")
+
+    class _DropInactiveAdapter(logging.Filter):
+        def filter(self, record: logging.LogRecord) -> bool:
+            return "none are activated for the forward pass" not in record.getMessage()
+
+    f = _DropInactiveAdapter()
+    lg.addFilter(f)
+    try:
+        yield
+    finally:
+        lg.removeFilter(f)
 
 # ---------------------------------------------------------------------------
 # SPECTER2 wrapper
@@ -109,12 +139,17 @@ class Specter2Model:
         # set_active=True activates the adapter immediately (equivalent to calling
         # model.set_active_adapters("specter2_proximity") separately).
         logger.info(f"Loading adapter: {self.ADAPTER} (proximity / document similarity)")
-        self.model.load_adapter(
-            self.ADAPTER,
-            source="hf",
-            load_as=self.ADAPTER_NAME,
-            set_active=True,
-        )
+        with _silence_inactive_adapter_warning():
+            self.model.load_adapter(
+                self.ADAPTER,
+                source="hf",
+                load_as=self.ADAPTER_NAME,
+                set_active=True,
+            )
+        # load_adapter(set_active=True) leaves the adapter active; verify it, so the
+        # suppressed warning above can never hide a real "embedded without adapter".
+        if not self.model.active_adapters:
+            raise RuntimeError("SPECTER2 proximity adapter failed to activate")
         self.model.to(device)
         self.model.eval()
 
@@ -252,8 +287,11 @@ class FinetunedSpecter2Model(Specter2Model):
         logger.info(f"Loading SPECTER2 base + fine-tuned adapter: {adapter_path}")
         self.tokenizer = AutoTokenizer.from_pretrained(self.BASE_MODEL)
         self.model = AutoAdapterModel.from_pretrained(self.BASE_MODEL)
-        name = self.model.load_adapter(str(adapter_path), set_active=True)
+        with _silence_inactive_adapter_warning():
+            name = self.model.load_adapter(str(adapter_path), set_active=True)
         self.model.set_active_adapters(name)
+        if not self.model.active_adapters:
+            raise RuntimeError(f"fine-tuned adapter failed to activate: {adapter_path}")
         self.model.to(device)
         self.model.eval()
 
