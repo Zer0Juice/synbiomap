@@ -87,8 +87,8 @@ sorting=ynt
 	
 	\section{Introduction}
 	
-		The implications of humanity’s impact on Earth’s biosphere are far-reaching and deeply alarming. As our collective knowledge of ecology deepens, it has become clear that human processes are very capable of radically altering the natural world. While it is difficult to shake the assumptions that the patterns of nature are immutable forces that we live within the boundaries of, the observed reality is that our environment is not a fixed backdrop, but a complex adaptive system we are constantly reshaping. Human activity is now the dominant driver of planetary change, to the extent that scientists have proposed we have created and entered a new geological epoch: the Anthropocene \parencite{crutzen2006anthropocene}. We are effectively terraforming our own planet, and the current trajectory does not serve our collective long-term interests. However, there is a cautiously optimistic angle to consider; the very scale of global warming demonstrates that through collective action (intentional or otherwise), humanity wields unprecedented power to influence natural systems. This suggests that if we can act in concert, we might deliberately steer these systems in a beneficial direction.
-		
+	The implications of humanity’s impact on Earth’s biosphere are far-reaching and deeply alarming. As our collective knowledge of ecology deepens, it has become clear that human processes are very capable of radically altering the natural world. While it is difficult to shake the assumptions that the patterns of nature are immutable forces that we live within the boundaries of, the observed reality is that our environment is not a fixed backdrop, but a complex adaptive system we are constantly reshaping. Human activity is now the dominant driver of planetary change, to the extent that scientists have proposed we have created and entered a new geological epoch: the Anthropocene \parencite{crutzen2006anthropocene}. We are effectively terraforming our own planet, and the current trajectory does not serve our collective long-term interests. However, there is a cautiously optimistic angle to consider; the very scale of global warming demonstrates that through collective action (intentional or otherwise), humanity wields unprecedented power to influence natural systems. This suggests that if we can act in concert, we might deliberately steer these systems in a beneficial direction.
+	
 
 	We have always sought to understand and influence the natural world, building on experiments and developing deeper insights into the mechanisms at play around us. Biology, the study of life itself, has sought to learn and control the emergent phenomena that form the building blocks of our experience and connect all forms of life.
 	
@@ -133,21 +133,7 @@ sorting=ynt
 	
 	This section will establish this research's grounding in the literature and connections to related work. The core of our analysis is rooted in Economic Geography and Innovation studies, especially scientific relatedness and knowledge dynamics. To calculate relatedness, we make use of vector embeddings from Natural Language processing. Finally, we build upon data curated both by the iGEM organization and Science-of-Science studies on SynBio.
 	
-	\subsection{Measuring a moving field}
-	
-	There are a few challenges associated with the study of SynBio. This is a fast-moving field with shifting boundaries and heavy interdisciplinary links to descriptive molecular biology, using a shared vocabulary that makes it difficult to easily parse. For instance a molecular biologist might study metabolic pathways in E.coli with zero expertise or professional interest in engineering them. There have been several varying approaches to these obstacles when doing studies on synthetic biology, but we choose to build off a methodology and dataset used by Paul Oldham in his work studying research papers and patents, with some additions that will be explored in the following chapter.
-	
-	The overlap in vocabulary between SynBio and adjacent fields deeply complicates any keyword-based search or definition of the boundaries of synthetic biology. The nomenclature and methods of the field are also continuously evolving, leading to keyword drift that further complicates corpus construction. 
-	
-	\subsection{Measuring relatedness}
-	The Economic Geography literature has helped in exploring the differences between different regions' innovative potential, and why different areas move to specialize in different innovative technologies. As cities develop their capabilities in new industries and products, they tend to specialize in certain technologies over others. This could be due to geography (for instance, a city near a body of water will be better equipped to engage in shipping than one located in a desert), demographics (areas with younger populations will have a greater advantage in industries requiring manual labor), or a wide range of other factors. According to the principle of relatedness, as cities specialize in a technology they continue developing their comparative advantage in this technology and those related to it. This leads to branching out into similar innovative technologies. In the case of SynBio, this would mean that a firm developing capabilities in, for example, scaling industrial fermentation of ethanol would mean enhancing a city's potential to develop capabilties in production of other biofuels.
-	
-	There are several methods to evaluate relatedness between industries or technologies, each with an array of strengths and weaknesses \parencite{neffkeSkillRelatednessFirm2013a}. Citation networks are a simple method of determining co-occurence between artifacts such as papers or patents; if there is a citation linking two artifacts, they are related. Semantic overlap, measured as keyword co-occurence as used in \parencite{boschmaScientificKnowledgeDynamics2014} is also widely used. Technological class co-occurence is another simple measure that can be used to link patent filings. Revealed Co-Occurence marks two entities as related if they show up together more often than chance would allow \parencite{hidalgoProductSpaceConditions2007}. Relatedness can also be calculated by resource flows between two entities; for instance, if one firm buys a product from another, or if employees from one regularly seek work at another (Neffke Henning 2012). However, each of these measures has drawbacks. Citations can reflect other biases and are often a targeted measure, leading to manipulation \parencite{bacciniGlobalExploratoryComparison2023}, while not being conducive to links between different artifact types. Keyword co-occurence loses some accuracy as fields and their associated vocabulary evolves over time, due to the concept of keyword drift. Technology classes only can measure relatedness between patents, and don't accurately measure emerging fields (like SynBio) \parencite{jiangNaturalLanguageProcessing2025}. Revealed Co-Occurence requires spaces for artifacts to co-occur \textit{in}. We're aiming to measure relatedness across several different artifact text types in a fast-moving field, so we need a measure that's sector-agnostic. Keyword co-occurence would be principled and established in the literature, but keyword drift could get in the way of a meaningful measure that holds up across decades of time-series data. Instead, we will use a newer, but still well-established, tool for calculating relatedness: a Semantic Space.
-	
-	\subsection{Semantic Space}
-	
-	
-	\subsection{iGEM as Data}
+		\subsection{iGEM as Data}
 	
 	iGEM, or the International Genetic Engineering Machine, or iGEM, is a nonprofit that runs a student competition in synthetic biology, a cross between startup accelerator and science fair. Students work together in teams, over the course of a year, to produce an innovative project using the tools of synbio. They all share a basic tool kit of genetic parts, a list of rules and guidelines, and a basic program structure, but the teams are generally left up to their own devices to craft a project that will be entered into this worldwide competition. The result is something like an academic research paper presented at a conference, crossed with a startup in an accelerator. This competition is a major launching points for student's careers in synthetic biology, and sets standards and norms that have tremendous impact in the industry.
 	
@@ -155,7 +141,7 @@ sorting=ynt
 	
 	iGEM is a global, integrated, open knowledge base, but that doesn't mean that regional capabilities don't show up. Generally, teams are hosted by universities, and draw from a pool of advisors in their faculty or local community. This could mean that iGEM research has a high degree of relatedness to existing academic research going on at a city and university level.
 	
-	However, this conclusion is nontrivial, because the teams are operating under a different incentive structure, and with a different knowledge base, than an academic research group. Some teams are a result of collaborations between multiple institutions or research groups in a city; for example, the Munich team is a collaboration between TUM and LMU students. Some teams have strong existing networks of collaboration between other teams, with students competing multiple years in a row and establishing long-term cooperative bonds. Team collaboration is outside the focus of this inquiry but has been studied more in depth by Marc Santolini's research group at the learning planet institute in Paris \parencite{santoliniIGEMModelSystem2023}.
+	However, this conclusion is nontrivial, because the teams are operating under a different incentive structure, and with a different knowledge base, than an academic research group. Some teams are a result of collaborations between multiple institutions or research groups in a city; for example, the Munich team is a collaboration between students from Technical University of Munich and Ludwig Maximilian University. Some teams have strong existing networks of collaboration between other teams, with students competing multiple years in a row and establishing long-term cooperative bonds. Team collaboration is outside the focus of this inquiry but has been studied more in depth by Marc Santolini's research group at the learning planet institute in Paris \parencite{santoliniIGEMModelSystem2023}.
 	
 	An overarching goal of the iGEM organization in maintaining a registry of open-source tools and standards for synthetic biology. The impact of the organization extends far beyond the boundaries of the organized competition; alumni have gone on to form companies, start research labs of their own, and place meaningfully in this developing industry.
 	
@@ -165,41 +151,51 @@ sorting=ynt
 	
 	
 	
+	\subsection{Measuring a moving field}
+	
+	There are several challenges associated with the study of SynBio. This is a fast-moving field with shifting boundaries and heavy interdisciplinary links to descriptive molecular biology, using a shared vocabulary that makes it difficult to easily parse. For instance a molecular biologist might study metabolic pathways in E.coli with zero expertise or professional interest in engineering them. There have been several varying approaches to these obstacles when doing studies on synthetic biology, but we choose to build off a methodology and dataset used by Paul Oldham in his work studying research papers and patents, with some additions that will be explored in the following chapter.
+	
+	The overlap in vocabulary between SynBio and adjacent fields deeply complicates any keyword-based search or definition of the boundaries of synthetic biology. The nomenclature and methods of the field are also continuously evolving, leading to keyword drift that further complicates corpus construction. 
+	
+	\subsection{Measuring relatedness}
+	The Economic Geography literature has helped in exploring the differences between different regions' innovative potential, and why different areas move to specialize in different innovative technologies. As cities develop their capabilities in new industries and products, they tend to specialize in certain technologies over others. This could be due to geography (for instance, a city near a body of water will be better equipped to engage in shipping than one located in a desert), demographics (areas with younger populations will have a greater advantage in industries requiring manual labor), or a wide range of other factors. According to the principle of relatedness, as cities specialize in a technology they continue developing their comparative advantage in this technology and those related to it. This leads to branching out into similar innovative technologies. In the case of SynBio, this would mean that a firm developing capabilities in, for example, scaling industrial fermentation of ethanol would mean enhancing a city's potential to develop capabilties in production of other biofuels.
+	
+	There are several methods to evaluate relatedness between industries or technologies, each with an array of strengths and weaknesses \parencite{neffkeSkillRelatednessFirm2013a}. Citation networks are a simple method of determining co-occurence between artifacts such as papers or patents; if there is a citation linking two artifacts, they are related. Semantic overlap, measured as keyword co-occurence as used in \parencite{boschmaScientificKnowledgeDynamics2014} is also widely used. Technological class co-occurence is another simple measure that can be used to link patent filings. Revealed Co-Occurence marks two entities as related if they show up together more often than chance would allow \parencite{hidalgoProductSpaceConditions2007}. Relatedness can also be calculated by resource flows between two entities; for instance, if one firm buys a product from another, or if employees from one regularly seek work at another (Neffke Henning 2012). However, each of these measures has drawbacks. Citations can reflect other biases and are often a targeted measure, leading to manipulation \parencite{bacciniGlobalExploratoryComparison2023}, while not being conducive to links between different artifact types. Keyword co-occurence loses some accuracy as fields and their associated vocabulary evolves over time, due to the concept of keyword drift. Technology classes only can measure relatedness between patents, and don't accurately measure emerging fields (like SynBio) \parencite{jiangNaturalLanguageProcessing2025}. Revealed Co-Occurence requires spaces for artifacts to co-occur \textit{in}. We're aiming to measure relatedness across several different artifact text types in a fast-moving field, so we need a measure that's sector-agnostic. Keyword co-occurence would be principled and established in the literature, but keyword drift could get in the way of a meaningful measure that holds up across decades of time-series data. Instead, we will use a newer, but still well-established, tool for calculating relatedness: semantic embeddings.
+	
+	\subsection{Semantic Space}
+	
+	We want to quantitatively compare text, but natural language conveys deep meanings that can be difficult to manipulate with mathematics. 
+	
+	
+	To empirically determine whether two artifacts are related, we must turn their text into numbers, then compare them while preserving their underlying meaning. The traditional method of keyword co-occurence runs into some problems in emerging fields like synthetic biology, where the vocabulary overlaps heavily with established fields such as descriptive molecular biology. A paper on engineering metabolic pathways can look, for instance, much like a paper that only describes those natural metabolic pathways with no interest in creating new ones \parencite{oldhamSyntheticBiologyMapping2018}. We need a representation that captures the true meaning of a text rather than just overlap of a few key terms.
+	
+	The methods and concept we rely on emerge from linguistics and information science. Words appearing in the same contexts tend to mean similar things; for instance, ”Ferment," "culture," and "anaerobic" regularly turn up near one another, while "ferment" and “bumblebee” do not. 
+	
+	By tracking the contexts a word appears in across a large enough body of text, context patterns begin to stand in for the word itself and reflect the underlying meaning contained in the word. Turn each pattern into a set of numbers, and words used in similar ways end up with similar sets. Semantic meaning becomes represented by location in a shared “semantic space”.
+	
+	The first practical versions of this were built through our old friend keyword co-occurence; as linguist JR Firth, put it "you shall know a word by the company it keeps"\parencite{firthSynopsisLinguisticTheory1957}. Later research represented documents as vectors in a space with one axis per word, then measured how close two documents were by the angle between their vectors. In the 1990s, latent semantic analysis expanded on this, taking a big, sparse matrix of which words appeared in which documents and used linear algebra to compress it, squeezing thousands of word-axes down to a few hundred that captured the strongest patterns of co-occurrence \parencite{deerwesterIndexingLatentSemantic1990}. 
+	
+	The modern version of these semantic embeddings originated from the labs of Google in the form of Word2vec \parencite{mikolovEfficientEstimationWord2013}. They took a body of text, transformed it into a matrix with each word as a vector, and trained a small neural network to adjust the weights so that words which appeared next to each other would have corresponding nearby vectors. No single number in each vector meant anything you could name, but the geometry of the space captured how words relate to one another. The famous demonstration was taking the vector for "king," subtracting the vector for “man," adding “woman," and landing next to "queen" in the semantic space. Relationships between words thus become abstracted into the relationships between vectors, and meaning could be uncovered through empirical analysis.
+	
+	The following generations of NLP (natural language processing) models refined this strategy by making a word's vector depend on the sentence around it, so the same word gets different coordinates in different contexts. These contextual models are built on the transformer, an architecture introduced in 2017 \parencite{vaswaniAttentionAllYou2017}, and the best-known early example is BERT \parencite{devlinBERTPretrainingDeep2019}, which reads a sentence in both directions at once to work out what each word means. The same machinery was developed to embed sentences, then documents, into single vectors.
+	
+	SPECTER2, the model we use as a base for our semantic space, is a document embedder from the BERT family, built by the Allen Institute for AI \parencite{singhSciRepEvalMultiFormat2023}. What makes it well suited to us is what it was trained to predict. Rather than guessing neighboring words, it was trained on scientific abstracts and citation data; it learned to place two papers close together when one cites the other \parencite{cohanDocumentlevelRepresentation2020}. It turns each abstract into a 768-dimensional vector, and we take the cosine distance between two vectors as our measure of relatedness between the underlying texts. We fine-tune SPECTER2 specifically to process patents, iGEM projects, and SynBio publications, so that we can calculate relatedness across disparate artifact types. This lets us drop a student iGEM project, an academic paper, and a patent into the same embedding space and answer a question: are these three things, produced in the same city under very different incentives, based on related science? 
+	
+	
+	
 	\subsection{Case Study: Carbon Capture}
 	
 	To better understand this space, it could be helpful to focus on a specific example. We will do a deep-dive into one iGEM project, looking at its biobricks, the literature that those biobricks cite, the literature that cites them, and the patents that contain their genetic sequences.
 	
 	
-	\section{Methods}
+	\section{Data and Corpus Construction}
 	
-	To answer our questions we need three things: a corpus of artifacts linked to a set of cities, a way to compare them empirically, and a set of measures that capture relatedness. This section builds out and establishes the tools used in this analysis.
+	We analyze four types of artifacts: iGEM projects, their associated BioBricks parts, patent filings, and academic research papers. 
 	
-	\subsection{Data}
-	
-	We analyze three types of artifacts: iGEM projects, their associated BioBricks parts, and academic research papers. 
-	
-	\subsubsection{Projects}
+	\subsection{Projects}
 	The iGEM organization provides a wealth of open-access data that can offer novel insights into the structure of innovation in SynBio. Teams organize their projects into "wikis'', the main form of publication; these are open-source webpages in a specific format. We collected 4,606 of these projects, from 2009-2025, and treat each project as one document analagous to a research paper. 
 	
 	Each project also contribute a set of biobricks to the iGEM registry. These biobricks are either basic or composite; basic parts are new pieces of genetic code (often sourced directly from literature) translated into the biobrick format, while composite parts are comprised of existing biobricks. BioBrick creation represents the capabilities of a certain lab.
-	
-	\subsubsection{BioBricks}
-	Each part contains genetic code, in the form of an amino acid sequence, that plays a specific role in a genetic circuit. They're designed to be modular, interchangeable, and snap together in a way analogous to LEGO bricks. Thus, biobricks can be easily combined in different ways to form genetic sequences with different functions, similar to components in a circuit or functions in a piece of software.
-	
-	
-	Biobricks can be grouped by these functions:
-	\begin{itemize}
-		\item \textbf{Promoters} are switches that tell a cell's machinery where to start reading a gene. Some are \emph{constitutive}, or always on, like a hardwired light, while others are \emph{inducible}, reacting to a signal, like as the presence of a certain chemical or a temperature shift.
-		\item \textbf{Ribosome Binding Sites} sit between promoters and
-	\end{itemize}
-	
-	\subsection{iGEM Projects data}
-	
-	built from \url{https://teams.igem.org/}
-	
-	Teams were geocoded in a few different ways. First by directly passing the institutions to OpenAlex API for exact, very accurate locations, then by extracting their city from their home country, institution, and team name using Haiku API and geocoding with nominatim.
-	
-	\subsection{iGEM Parts Data}
 	
 	Built from \url{https://registry.igem.org/}
 	
@@ -213,29 +209,37 @@ sorting=ynt
 	
 	Thus, we have a multilayer network where projects are connected to each other, and to papers.
 	
-	\subsection{Papers Data}
+	
+	\subsection{BioBricks}
+	Each part contains genetic code, in the form of an amino acid sequence, that plays a specific role in a genetic circuit. They're designed to be modular, interchangeable, and snap together in a way analogous to LEGO bricks. Thus, biobricks can be easily combined in different ways to form genetic sequences with different functions, similar to components in a circuit or functions in a piece of software.
+	
+	
+	Biobricks can be grouped by these functions:
+	\begin{itemize}
+		\item \textbf{Promoters} are switches that tell a cell's machinery where to start reading a gene. Some are \emph{constitutive}, or always on, like a hardwired light, while others are \emph{inducible}, reacting to a signal, like as the presence of a certain chemical or a temperature shift.
+		\item \textbf{Ribosome Binding Sites} sit between promoters and
+	\end{itemize}
+	
+	\subsection{Papers}
 	
 	Built from \url{https://openalex.org/}
 	
 	Papers citing igem projects? Papers using biobricks? Which would be easier to measure?
 	
-	\subsection{Patent Data}
+	\subsection{Patents}
 	
 	Uses USPTO patent dataset
 	
 	Matt Marx papers-patent pairs code leads to citation-style links between patents and papers.
 	
+	\section{Methods}
+	
+	To answer our questions we need three things: a corpus of artifacts linked to a set of cities, a way to compare them empirically, and a set of measures that capture relatedness. This section builds out and establishes the tools used in this analysis.
+	
+
+	
 	\subsection{Semantic Embeddings}
 	
-	To empirically compare text and establish a degree of relatedness between documents, we create a semantic embedding space.
-	
-	This is done by generating document embeddings using a natural language processing model in the fashion of word-to-vec.
-	
-	The model represents each text artifact, in this case the project abstract, as a 768-dimensional vector. These dimensions, taken together, capture the semantic ``meaning'' of the text, instead of relying on keyword overlap (which can be problematic when studying the field of synthetic biology due to overlap in vocabulary with descriptive molecular biology and related fields (oldham + hall)) or citations.
-	
-	The model we used was SPECTER2 by the Allen Institute, which was trained specifically to predict whether two documents would be connected by a citation. SPECTER2 represents each text artifact, in this case the project abstract, as a 768-dimensional vector embedding. This embedding capture the semantic ``meaning'' of the text, instead of relying on keyword overlap (which can be problematic when studying the field of synthetic biology due to overlap in vocabulary with descriptive molecular biology and related fields (oldham + hall)) or citations.
-	
-	The embeddings can be viewed as points in a 768-dimensional space, and documents that are more semantically related will have embeddings with a higher degree of similarity. Therefore, we can take the cosine distance between the two vectors as a measure of relatedness between the two artifacts.
 	
 	[math showing city representation]
 	
@@ -396,7 +400,7 @@ sorting=ynt
 	\addcontentsline{toc}{section}{References}
 	
 	
-	\printbibliography
+\printbibliography
 	
 \end{document}
 
