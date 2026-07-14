@@ -47,6 +47,12 @@ manuscript/*.fls
 manuscript/*.fdb_latexmk
 manuscript/*.synctex.gz
 manuscript/*.pdf
+# biber / hyperref / toc side-files (regenerated on every build)
+manuscript/*.bcf
+manuscript/*.run.xml
+manuscript/*.lof
+manuscript/*.lot
+manuscript/*.toc
 slides/*.aux
 slides/*.log
 slides/*.out
@@ -61,6 +67,9 @@ slides/*.pdf
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# LibreOffice / OpenOffice lock files (created while a CSV is open in the app)
+.~lock.*#
 
 # Obsidian vault config
 .obsidian/
