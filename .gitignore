@@ -35,6 +35,8 @@ data/finetune/*.json
 # Quarto build artifacts
 website/_site/
 website/.quarto/
+website/*_files/
+website/quarto-session-temp*/
 /_site/
 /.quarto/
 
@@ -54,15 +56,20 @@ manuscript/*.run.xml
 manuscript/*.lof
 manuscript/*.lot
 manuscript/*.toc
-slides/*.aux
-slides/*.log
-slides/*.out
-slides/*.bbl
-slides/*.blg
-slides/*.fls
-slides/*.fdb_latexmk
-slides/*.synctex.gz
-slides/*.pdf
+# Beamer slide deck lives in outputs/slides/ (sibling of outputs/figures/ it embeds).
+# Track the source (.tex) + logo images; ignore the compiled PDF and all side-files.
+outputs/slides/*.aux
+outputs/slides/*.log
+outputs/slides/*.out
+outputs/slides/*.bbl
+outputs/slides/*.blg
+outputs/slides/*.fls
+outputs/slides/*.fdb_latexmk
+outputs/slides/*.synctex.gz
+outputs/slides/*.nav
+outputs/slides/*.snm
+outputs/slides/*.toc
+outputs/slides/*.pdf
 
 # macOS
 .DS_Store
