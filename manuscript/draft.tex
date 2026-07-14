@@ -1,0 +1,421 @@
+
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{hyphenat}
+
+% ---- Encoding and font ----
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{newtxtext,newtxmath} % Times New Roman-like text and matching math
+% ---- Page geometry: 2 cm margins on all four sides ----
+\usepackage[a4paper,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
+% ---- 1.5 line spacing ----
+\usepackage{setspace}
+\onehalfspacing
+
+% ---- Justified text is the LaTeX default; microtype improves it ----
+\usepackage{microtype}
+
+% ---- Math, graphics, links ----
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{{../outputs/figures/}}
+
+
+\usepackage[
+backend=biber,
+style=authoryear,
+sorting=ynt
+]{biblatex}
+\usepackage[hidelinks]{hyperref}
+
+\addbibresource{references.bib}
+\addbibresource{references_extra.bib}
+
+
+
+
+\begin{document}
+	% ============================================================
+	
+	% ---- Title page (unnumbered) ----
+	\begin{titlepage}
+		\centering
+		\vspace*{\fill}
+		{\Huge\bfseries Patents, Papers, Parts, and Planet\par}
+		\vspace{1cm}
+		{\Large Exploration of the Innovation Space in Synthetic Biology\par}
+		\vspace{2.5cm}
+		{\large\bfseries Advisors\par}
+		\vspace{0.4cm}
+		{\large Frank Neffke, Complexity Science Hub\par}
+		\vspace{0.2cm}
+		{\large Claudia Doblinger, Technical University of Munich\par}
+		\vspace*{\fill}
+	\end{titlepage}
+	
+	% ---- Directories: Roman numerals ----
+	\pagenumbering{roman}
+	\tableofcontents
+	\clearpage
+	
+	% ---- Main text: Arabic numerals ----
+	\pagenumbering{arabic}
+	
+	\begin{abstract}
+		Science and technology has advanced to the point where we can treat DNA as a programming language and living organisms as hardware. Cells are factories of protein production, and we can enter into their insides and fine-tune the machinery that makes them run. With standardized genetic parts and widely used assembly protocols, life itself has become a series of tools to optimize production. This is a new age of biotechnological innovation, with tools and standards spread around the worl, and a lower barrier of entry than ever before to genetic engineering. This project studies different forms of research in Synthetic Biology, student projects and academic publications, to see if geography plays a role in determining the focus of research.
+		
+		Are students, academics, and private industry researching the same topics in the cities they live and work? Trends sweep across fields of study, but conventional wisdom holds that certain areas will collectively specialized in specific research areas or industries. The International Genetic Engineering Machine, or iGEM, is a nonprofit that advances Synthetic Biology (SynBio) education through the curation of an annual student research competition, and the data from this competition provides a potential wealth of insights into the process of innovation in this industry. We study the corpus of iGEM project data and compare it empirically to a body of academic SynBio publications, to see if geographically-influenced semantic relatedness can be established. Semantic relatedness between iGEM projects and academic research is calculated, and the research landscapes of various cities are compared.
+		
+		Over the course of this inquiry, we will build a corpus of research artifacts in SynBio from the worlds of peer-reviewed publications, iGEM projects, and patent filings. We will embed these artifacts, comparing them across semantic space. We will study the research landscapes of various cities, and we will test them for relatedness. We will walk through what worked, what didn't, and questions that were raised along the way.
+	\end{abstract}
+	
+	\newpage
+	\section{List of Figures}
+	\newpage
+	\section{List of Tables}
+	\newpage
+	
+	\section{List of Appendices}
+	\newpage
+	
+	\section{List of Abbreviations}
+	\newpage
+	
+	\section{List of Symbols}
+	\newpage
+	
+	
+	\section{Introduction}
+
+	We have always sought to understand and influence the natural world, building on experiments and developing deeper insights into the mechanisms at play around us. Biology, the study of life itself, has sought to learn and control the emergent phenomena that form the building blocks of our experience and connect all forms of life.
+	
+	For most of its history, biology was a descriptive science focused on studying the life we could see, breaking down its forms and components so that we might build up a higher understanding of its laws. Dissections of bodies turned to organs, then to cells and the genes that guided them, in a process that built an account of life's principles. By the development of this work, we learned to read the very language of life itself, but we could not yet \textit{write} with it.
+	
+	Over the last few decades, this has changed. Learning the rules of life was one thing, but now we have the knowledge to play the game, 
+	has created new possibilities for growth and development, leading to the \textit{creation} and modification of new life forms.
+	
+	
+	\subsection{A Synthetic Biosphere}
+	
+	Synthetic Biology is an emergent field of research using standardized tools to engineer biological systems. Through this practice, cells are transformed into industrially productive machinery, with genetic sequences treated as functions running in the programming language of life. These sequences are catalogued, transformed, standardized, and connected together into genetic circuits.
+	
+	iGEM, or the International Genetic Engineering Machine, or iGEM, is a nonprofit that runs a student competition in synthetic biology, a cross between startup accelerator and science fair. Students work together in teams, over the course of a year, to produce an innovative project using the tools of synbio. They all share a basic tool kit of genetic parts, a list of rules and guidelines, and a basic program structure, but the teams are generally left up to their own devices to craft a project that will be entered into this worldwide competition. The result is something like an academic research paper presented at a conference, crossed with a startup in an accelerator. This competition is a major launching points for student's careers in synthetic biology, and sets standards and norms that have tremendous impact in the industry.
+	
+	Part of these norms is a dedication to principles of open science, extensive documentation, and the maintenance of a standardized open repository of genetic parts built to act as interoperable pieces of genetic circuits. The biobricks standard, created by Tom Knight of MIT, is a widely historically used "assembly standard", or protocol for connecting genetic parts. and as the repository and competition continues to grow, establishes a fascinating, well-documented database of the industry growing over time. Basic parts are often directly based on existing academic research, and composite parts are build by combining existing parts in the registry. These parts are classed into various functions in genetic circuits (such as regulating the expression of a gene or reporting a signal for an observer to read and quantify). As each iGEM project produces a stack of new parts and makes use of existing ones, this produces a fascinating and rich knowledge graph that shows how these research projects are connected, while also providing links to academic literature.
+	
+	iGEM is a global, integrated, open knowledge base, but that doesn't mean that regional capabilities don't show up. Generally, teams are hosted by universities, and draw from a pool of advisors in their faculty or local community. This could mean that iGEM research has a high degree of relatedness to existing academic research going on at a city and university level.
+	
+	However, this conclusion is nontrivial, because the teams are operating under a different incentive structure, and with a different knowledge base, than an academic research group. Some teams are a result of collaborations between multiple institutions or research groups in a city; for example, the Munich team is a collaboration between TUM and LMU students. Some teams have strong existing networks of collaboration between other teams, with students competing multiple years in a row and establishing long-term cooperative bonds. Team collaboration is outside the focus of this inquiry but has been studied more in depth by Marc Santolini's research group at the learning planet institute in Paris \parencite{santoliniIGEMModelSystem2023}.
+	
+	An overarching goal of the iGEM organization in maintaining a registry of open-source tools and standards for synthetic biology. The impact of the organization extends far beyond the boundaries of the organized competition; alumni have gone on to form companies, start research labs of their own, and place meaningfully in this developing industry.
+	
+	Research in SynBio, in both private sector and acadamia, generally form the basis for innovation. You can't have breakthroughs and advances without research. As iGEM forms the foundation for the careers of so many researchers in this field, its data can teach us important lessons about innovation in the industry.
+	
+	However, innovation is not evenly distributed, with different regions specializing in particular technologies and tending to branch out into related spaces over time \parencite{hidalgoProductSpaceConditions2007}. Following this logic, different cities should develop different sets of capabilities over time in an emerging field like SynBio. For example, a city with a thriving software development sector would likely be better at building computational tools, while a city with more agricultural capabilities would likely find it easier to scale engineered crops. The city is where industrial capabilties cluster, making it a natural unit of analysis for relatedness comparisons. Students are the researchers of tomorrow; the standards they learn and set are the foundations their careers will be built on, and we can learn about the future of innovation by studying their patterns of focus. The link between iGEM research and academic publications is underexplored, and we believe it's worth looking into the relationship between these overlapping, yet distinct, realities.
+	
+	The artifacts we're studying all reflect the process of innovation, but it's expressed differently across varying domains based on their priorities. A patent signifies belief in the commercial value of an idea, while an academic paper shows that the authors are seeking to have an impact on their field. These signals often diverge; many scientific breakthroughs that forever alter the landscape of their field have minimal commercial value, while many incredibly successful products are based on innovations that mean very little to their scientific fields of origin. For all these differences, these all reflect a shared set of innovative capabilities, so they can be used to get a holistic view of an areas's potential for discovering and developing new technology.
+	
+	Innovation in cities doesn't occur in a vacuum; the right conditions must exist for the fruits of innovation to sprout from the seeds of research. Especially in a fragile, emergent field such as SynBio, the right infrastructure is essential for the proper development of ideas. Well equipped labs, knowledgeable researchers, access to capital and ideas; no group can operate to its fullest potential when in an environment that fails to provide these ingredients. Cities tend to agglomerate all these factors, so it's no surprise that they are generally where deep-tech innovation takes place and capabilities cluster.
+	
+	We pool documents at the city level to represent and compare the capability spaces of different geographic areas. Instead of analyzing each output on a per-project basis, we standardize them and compress them into embeddings that can be easily empirically compared. This allows for a course-grained view of the entire industry's innovative landscape. Once this is established, we will explore further with a deep dive into carbon-capture technology, a narrower slice of the landscape that we can explore more in-depth.
+	
+	Capturing and transforming carbon emissions using microbial fermentation is an established, proven use-case of synthetic biology that's been successfully scaled to industrial levels. We tag patents, publications, and projects as related to microbial carbon capture, and choose a few specific examples to dissect. We felt these examples tightened the focus of the inquiry and allowed for a highlight of SynBio's potential for positive environmental impact. Student iGEM projects are often directly focused on solving a public problem, and carbon capture is a popular theme that connects a body of academic and commercial research.
+	
+	It's important to note that this inquiry does not attempt to establish causality between student, professional academic, and industry research. While there are numerous examples of iGEM projects leading to peer-reviewed publications, patents, or startups, there are a number of confounders that make the trajectory of ideas difficult to empirically prove at scale. For instance, iGEM projects often share infrastructure with an established university research group, and the students are guided towards researching themes that connect with those of their supervisors. These student projects generally takes a year to complete from start to finish, while the timeline for academics to publish their research in peer-reviewed journals, or for inventors to file patents, can range very widely. A student might work on a project connected to some ongoing research by their Principle Investigator, complete the annual iGEM cycle of research, patent some discovery they made, and launch a startup all while the original research is pending in peer review. Conversely, an iGEM project might explore a novel  idea that their research group wants to develop further, inspired by collaboration with a local company. It's common for iGEM teams to have mentors across industry and academia, and the projects often blend areas of interest from different research groups. Connecting one artifact to another causally is thus a challenge outside the scope of this project (but potentially worth exploring in followup research).
+	
+	As a contribution to the field, this project curates a corpus of iGEM projects, their genetic parts, academic research papers, and patents. All artifacts are geocoded to the city-level, and the projects, papers, and patents are connected to abstract text, embedded with a common NLP model, so that they can be meaningfully compared empirically. Relatedness between two artifacts can be easily calculated as the cosine distance between their corresponding embedding vectors. The data analysis pipeline is fully reproducible, with all code written in python and available publicly via a dedicated Github repository that can serve as a resource for further bibliometric research on Synthetic Biology.
+
+	A word on where this lands, before the machinery that gets us there. Measured the obvious way, by the average position of a city's work in semantic space, a city's projects, papers, and patents look nearly the same everywhere. That sameness is mostly the field talking. Every document here is synthetic biology, so any two start out close, and a permutation test strips the resemblance away. The real signal lives at a finer grain: which specific topics a city's work actually shares.
+
+	Asked that way, the answer has a shape, with papers at the center of it. A city's papers share specific topics with its student projects, and its papers share topics with its patents, each more than a same-country neighbor's would. Its projects and its patents, though, do not line up directly with each other. Papers are the hub the other two reach through: the published science of a place is the common ground its students and its inventors both stand on, even where the two never meet across it. That is the answer in miniature, and earning it is the rest of this thesis.
+	
+	
+	\section{Background}
+	
+	This section will establish this research's grounding in the literature and connections to related work. The core of our analysis is rooted in Economic Geography and Innovation studies, especially scientific relatedness and knowledge dynamics. To calculate relatedness, we make use of vector embeddings from Natural Language processing. Finally, we build upon data curated both by the iGEM organization and Science-of-Science studies on SynBio.
+	
+		\subsection{iGEM as Data}
+	
+	iGEM, or the International Genetic Engineering Machine, or iGEM, is a nonprofit that runs a student competition in synthetic biology, a cross between startup accelerator and science fair. Students work together in teams, over the course of a year, to produce an innovative project using the tools of synbio. They all share a basic tool kit of genetic parts, a list of rules and guidelines, and a basic program structure, but the teams are generally left up to their own devices to craft a project that will be entered into this worldwide competition. The result is something like an academic research paper presented at a conference, crossed with a startup in an accelerator. This competition is a major launching points for student's careers in synthetic biology, and sets standards and norms that have tremendous impact in the industry.
+	
+	Part of these norms is a dedication to principles of open science, extensive documentation, and the maintenance of a standardized open repository of genetic parts built using the ``biobricks'' standard to be interoperable pieces of genetic circuits. The biobrick protocol was created by Tom Knight of MIT, and as the repository and competition continues to grow, establishes a fascinating, well-documented database of the industry growing over time. Basic parts are often directly based on existing academic research, and composite parts are build by combining existing parts in the registry. These parts are classed into various functions in genetic circuits (such as regulating the expression of a gene or reporting a signal for an observer to read and quantify). As each iGEM project produces a stack of new parts and makes use of existing ones, this produces a fascinating and rich knowledge graph that shows how these research projects are connected, while also providing links to academic literature.
+	
+	iGEM is a global, integrated, open knowledge base, but that doesn't mean that regional capabilities don't show up. Generally, teams are hosted by universities, and draw from a pool of advisors in their faculty or local community. This could mean that iGEM research has a high degree of relatedness to existing academic research going on at a city and university level.
+	
+	However, this conclusion is nontrivial, because the teams are operating under a different incentive structure, and with a different knowledge base, than an academic research group. Some teams are a result of collaborations between multiple institutions or research groups in a city; for example, the Munich team is a collaboration between students from Technical University of Munich and Ludwig Maximilian University. Some teams have strong existing networks of collaboration between other teams, with students competing multiple years in a row and establishing long-term cooperative bonds. Team collaboration is outside the focus of this inquiry but has been studied more in depth by Marc Santolini's research group at the learning planet institute in Paris \parencite{santoliniIGEMModelSystem2023}.
+	
+	An overarching goal of the iGEM organization in maintaining a registry of open-source tools and standards for synthetic biology. The impact of the organization extends far beyond the boundaries of the organized competition; alumni have gone on to form companies, start research labs of their own, and place meaningfully in this developing industry.
+	
+	The biobrick registry is a fascinating example of a public resource that extends past its original
+	
+	We want to understand if regional specialization in igem research is correlated with regional specialization in academic research and patents.
+	
+	
+	
+	\subsection{Measuring a moving field}
+	
+	There are several challenges associated with the study of SynBio. This is a fast-moving field with shifting boundaries and heavy interdisciplinary links to descriptive molecular biology, using a shared vocabulary that makes it difficult to easily parse. For instance a molecular biologist might study metabolic pathways in E.coli with zero expertise or professional interest in engineering them. There have been several varying approaches to these obstacles when doing studies on synthetic biology, but we choose to build off a methodology and dataset used by Paul Oldham in his work studying research papers and patents, with some additions that will be explored in the following chapter.
+	
+	The overlap in vocabulary between SynBio and adjacent fields deeply complicates any keyword-based search or definition of the boundaries of synthetic biology. The nomenclature and methods of the field are also continuously evolving, leading to keyword drift that further complicates corpus construction. 
+	
+	\subsection{Measuring relatedness}
+	The Economic Geography literature has helped in exploring the differences between different regions' innovative potential, and why different areas move to specialize in different innovative technologies. As cities develop their capabilities in new industries and products, they tend to specialize in certain technologies over others. This could be due to geography (for instance, a city near a body of water will be better equipped to engage in shipping than one located in a desert), demographics (areas with younger populations will have a greater advantage in industries requiring manual labor), or a wide range of other factors. According to the principle of relatedness, as cities specialize in a technology they continue developing their comparative advantage in this technology and those related to it. This leads to branching out into similar innovative technologies. In the case of SynBio, this would mean that a firm developing capabilities in, for example, scaling industrial fermentation of ethanol would mean enhancing a city's potential to develop capabilties in production of other biofuels.
+	
+	There are several methods to evaluate relatedness between industries or technologies, each with an array of strengths and weaknesses \parencite{neffkeSkillRelatednessFirm2013a}. Citation networks are a simple method of determining co-occurence between artifacts such as papers or patents; if there is a citation linking two artifacts, they are related. Semantic overlap, measured as keyword co-occurence as used in \parencite{boschmaScientificKnowledgeDynamics2014} is also widely used. Technological class co-occurence is another simple measure that can be used to link patent filings. Revealed Co-Occurence marks two entities as related if they show up together more often than chance would allow \parencite{hidalgoProductSpaceConditions2007}. Relatedness can also be calculated by resource flows between two entities; for instance, if one firm buys a product from another, or if employees from one regularly seek work at another (Neffke Henning 2012). However, each of these measures has drawbacks. Citations can reflect other biases and are often a targeted measure, leading to manipulation \parencite{bacciniGlobalExploratoryComparison2023}, while not being conducive to links between different artifact types. Keyword co-occurence loses some accuracy as fields and their associated vocabulary evolves over time, due to the concept of keyword drift. Technology classes only can measure relatedness between patents, and don't accurately measure emerging fields (like SynBio) \parencite{jiangNaturalLanguageProcessing2025}. Revealed Co-Occurence requires spaces for artifacts to co-occur \textit{in}. We're aiming to measure relatedness across several different artifact text types in a fast-moving field, so we need a measure that's sector-agnostic. Keyword co-occurence would be principled and established in the literature, but keyword drift could get in the way of a meaningful measure that holds up across decades of time-series data. Instead, we will use a newer, but still well-established, tool for calculating relatedness: semantic embeddings.
+	
+	\subsection{Semantic Space}
+	
+	We want to quantitatively compare text, but natural language conveys deep meanings that can be difficult to manipulate with mathematics. 
+	
+	
+	To empirically determine whether two artifacts are related, we must turn their text into numbers, then compare them while preserving their underlying meaning. The traditional method of keyword co-occurence runs into some problems in emerging fields like synthetic biology, where the vocabulary overlaps heavily with established fields such as descriptive molecular biology. A paper on engineering metabolic pathways can look, for instance, much like a paper that only describes those natural metabolic pathways with no interest in creating new ones \parencite{oldhamSyntheticBiologyMapping2018}. We need a representation that captures the true meaning of a text rather than just overlap of a few key terms.
+	
+	The methods and concept we rely on emerge from linguistics and information science. Words appearing in the same contexts tend to mean similar things; for instance, ”Ferment," "culture," and "anaerobic" regularly turn up near one another, while "ferment" and “bumblebee” do not. 
+	
+	By tracking the contexts a word appears in across a large enough body of text, context patterns begin to stand in for the word itself and reflect the underlying meaning contained in the word. Turn each pattern into a set of numbers, and words used in similar ways end up with similar sets. Semantic meaning becomes represented by location in a shared “semantic space”.
+	
+	The first practical versions of this were built through our old friend keyword co-occurence; as linguist JR Firth, put it "you shall know a word by the company it keeps"\parencite{firthSynopsisLinguisticTheory1957}. Later research represented documents as vectors in a space with one axis per word, then measured how close two documents were by the angle between their vectors. In the 1990s, latent semantic analysis expanded on this, taking a big, sparse matrix of which words appeared in which documents and used linear algebra to compress it, squeezing thousands of word-axes down to a few hundred that captured the strongest patterns of co-occurrence \parencite{deerwesterIndexingLatentSemantic1990}. 
+	
+	The modern version of these semantic embeddings originated from the labs of Google in the form of Word2vec \parencite{mikolovEfficientEstimationWord2013}. They took a body of text, transformed it into a matrix with each word as a vector, and trained a small neural network to adjust the weights so that words which appeared next to each other would have corresponding nearby vectors. No single number in each vector meant anything you could name, but the geometry of the space captured how words relate to one another. The famous demonstration was taking the vector for "king," subtracting the vector for “man," adding “woman," and landing next to "queen" in the semantic space. Relationships between words thus become abstracted into the relationships between vectors, and meaning could be uncovered through empirical analysis.
+	
+	The following generations of NLP (natural language processing) models refined this strategy by making a word's vector depend on the sentence around it, so the same word gets different coordinates in different contexts. These contextual models are built on the transformer, an architecture introduced in 2017 \parencite{vaswaniAttentionAllYou2017}, and the best-known early example is BERT \parencite{devlinBERTPretrainingDeep2019}, which reads a sentence in both directions at once to work out what each word means. The same machinery was developed to embed sentences, then documents, into single vectors.
+	
+	SPECTER2, the model we use as a base for our semantic space, is a document embedder from the BERT family, built by the Allen Institute for AI \parencite{singhSciRepEvalMultiFormat2023}. What makes it well suited to us is what it was trained to predict. Rather than guessing neighboring words, it was trained on scientific abstracts and citation data; it learned to place two papers close together when one cites the other \parencite{cohanDocumentlevelRepresentation2020}. It turns each abstract into a 768-dimensional vector, and we take the cosine distance between two vectors as our measure of relatedness between the underlying texts. We fine-tune SPECTER2 specifically to process patents, iGEM projects, and SynBio publications, so that we can calculate relatedness across disparate artifact types. This lets us drop a student iGEM project, an academic paper, and a patent into the same embedding space and answer a question: are these three things, produced in the same city under very different incentives, based on related science? 
+	
+	
+	
+	\subsection{Case Study: Carbon Capture}
+	
+	To better understand this space, it could be helpful to focus on a specific example. We will do a deep-dive into one iGEM project, looking at its biobricks, the literature that those biobricks cite, the literature that cites them, and the patents that contain their genetic sequences.
+	
+	
+	\section{Data and Corpus Construction}
+	
+	We analyze four types of artifacts: iGEM projects, their associated BioBricks parts, patent filings, and academic research papers.
+
+	To compare things this different, we first make them the same shape. Every artifact carries the same handful of fields: an identifier and a type, a title and a block of abstract-like text, a year, and a place. Once a project, a paper, and a patent are described the same way, the only differences left between them are differences of content, which is what we are here to measure. Parts are the exception. A BioBrick is a sequence and a functional label, not a document, so it keeps its own fields and enters the analysis as physical evidence rather than as text. 
+	
+	\subsection{Projects}
+	The iGEM projects come from the competition's own registry, through its public team API. One pass pulls every team's name, institution, and year; a second visits each team's wiki, the public page where a team writes up its year of work, and lifts that description into the project's text. We treat a wiki the way we treat an abstract: one block of text describing what a group set out to do. Teams with no usable wiki, title, or description drop out, since a document with no text cannot be embedded. What remains is 4,606 projects from 2009 to 2025, the span over which iGEM's documentation is consistent enough to gather at scale. 
+	
+	Each project is also a bundle of parts. Over its year a team registers new BioBricks and reuses old ones, and every part it touches ties back to the team that used it. Because many of those parts were drawn straight from published papers, and composite parts are built from other parts, the projects sit inside a larger web: projects link to the parts they use, parts link to the papers behind them and to the parts they contain. A project can be read two ways at once, then, as a document to embed and as a node in a network that reaches out to the literature and to other teams.
+	
+	
+	\subsection{BioBricks}
+	Each part is a short stretch of DNA, a piece of genetic code that plays a specific role in a genetic circuit. They're designed to be modular, interchangeable, and snap together in a way analogous to LEGO bricks. Thus, biobricks can be easily combined in different ways to form genetic sequences with different functions, similar to components in a circuit or functions in a piece of software.
+	
+	
+	Biobricks can be grouped by these functions:
+	\begin{itemize}
+		\item \textbf{Promoters} are switches that tell a cell's machinery where to start reading a gene. Some are \emph{constitutive}, or always on, like a hardwired light, while others are \emph{inducible}, reacting to a signal, like as the presence of a certain chemical or a temperature shift.
+		\item \textbf{Ribosome binding sites} sit between a promoter and its gene and set how readily the cell's machinery latches on to begin translation, which tunes how much protein gets made.
+		\item \textbf{Coding sequences} are the genes themselves, the stretches that spell out a protein.
+		\item \textbf{Terminators} mark where reading stops, like the period at the end of a sentence.
+		\item \textbf{Reporters} give off a signal a person can read, often a fluorescent glow, so an experiment's outcome becomes visible.
+		\item \textbf{Composite parts}, or devices, wire several of these together into something that carries out a whole function.
+	\end{itemize}
+	
+	The registry holds roughly 89,000 parts in all. Two things about them matter here. A little over half name a source publication, the paper a sequence was lifted from, which is the thread that ties the parts back to the literature. And composite parts, built from basic ones, point to the parts inside them, so the registry is a network of parts citing parts rather than a flat list. We keep both links, part to paper and part to part, as explicit tables.
+
+	\subsection{Papers}
+	
+	Our papers come from OpenAlex, a free and open index of the world's scholarship. We keep each paper's title and abstract as its text, its year, and the institution of its first author, which becomes its city the same way a team's institution becomes one. Openness is the reason for the choice. A subscription database might index a few percent more, but it could not travel with the rest of this project, and a corpus nobody else can rebuild is worth less than one they can. The search returns 10,319 papers after de-duplication, all from 2000 or later. We drop everything before then: coverage that far back thins out, and the earliest iGEM project is still a decade off, so old papers only add noise to a comparison they can never join.
+	
+	Finding those papers is the hard part, because synthetic biology has no clean keyword fence, as the Background laid out. We cast the net in three layers. The first is a short list of core terms a paper about the field can hardly avoid, synthetic biology and its close cousins; it is precise but narrow. The second adds the names of specific subfields, terms like BioBrick and minimal genome that mark the work without naming the field. The third drops keywords and follows citations out of the core set, forward and backward, to catch the foundational methods papers whose titles carry none of the vocabulary. Each paper keeps a record of the layer that caught it, so the citation-expanded ones can be pulled back out and the result checked without them, our guard against the p-hacking worry that snowballing invites.
+	
+	\subsection{Patents}
+	
+	Our patents come from Paul Oldham's synthetic-biology patent dataset, the same work whose boundary-drawing the Background borrowed \parencite{oldhamSyntheticBiologyMapping2018}. Mapping the field's patent landscape is the hard part, and Oldham has done it: deciding which of the world's millions of patents count as synthetic biology at all. From his families we keep those filed with the United States Patent and Trademark Office. Restricting to one office drops the filings made only elsewhere, but it earns two things a worldwide pull could not, a usable inventor address on every document and a single body of patent law to reason about. The loss is smaller than it sounds: 5,458 of Oldham's families, 71.4 percent, carry at least one USPTO document.
+
+That single legal regime is not a neutral choice; it is part of why the USPTO is the right place to watch science turn into invention. United States law gives an inventor a grace period: a disclosure the inventor makes within a year before filing does not count as prior art against their own application (35 U.S.C. \S 102(b)(1)). An academic can publish first, earn the credit that publishing brings, and still patent the same work afterward. Much of the rest of the world runs the other way. At the European Patent Office, publishing before you file generally destroys the application, and a scientist has to choose between the paper and the patent. Because this thesis is looking for exactly the cases where one idea surfaces as both a paper and a patent, the jurisdiction that lets the two coexist is the one most likely to show them.
+	
+	Patents and papers are not strangers. The modern research university has fed industrial invention for the better part of a century, since Vannevar Bush cast basic science as the seedbed from which new technology grows \parencite{bushScienceEndlessFrontier1945}. The connection shows up in the documents themselves: patents cite scientific papers, on their front pages and in their text, and that reliance on public science has climbed steadily over the decades \parencite{narinIncreasingLinkage1997}. A patent that cites a paper is telling us, in the inventor's own hand, which science it was built on.
+
+Those citations do one specific job here. Marx and Fuegi assembled the links at scale, matching the references on a patent to the scientific articles they point to \parencite{marxFuegiRelianceScience2020}. We keep the patent-to-paper pairs where both documents already sit in our corpus, and we use them only to teach, not as findings. Each surviving pair becomes a training example in the fine-tuning step of the Methods, showing the model that a patent and the paper it was built on should land near each other in the shared space. The analysis itself never counts these citations; it reads only where the documents fall once that space exists.
+
+Placing a patent on the map takes a different rule than placing a paper. A paper has a first author whose institution we can treat as its home; a patent has a list of inventors with no clean lead, so the first-author trick does not carry over. We follow the convention from the economics of innovation and locate a patent by its inventors, the people who did the work, rather than by the company that owns it \parencite{breschiKnowledgeSpilloversLocal2001}. The USPTO makes this possible where other offices do not: it records a residence for every named inventor, so each patent arrives with real coordinates instead of a corporate headquarters that may sit an ocean away from the bench. A patent with inventors in several cities gets two geographies: we record its first-listed inventor's city, and separately give every inventor city a fractional share. The analysis in this thesis uses the first, keying each patent to one city so it sits on the same footing as papers and projects, and keeps the fractional version in reserve for a robustness check. Collapsing a multi-city patent to a single place is a real cost, and we count it among the limitations.
+	
+	\section{Methods}
+	
+	To answer our questions we need three things: a corpus of artifacts linked to a set of cities, a way to compare them empirically, and a set of measures that capture relatedness. This section builds out and establishes the tools used in this analysis.
+	
+
+	
+	\subsection{Semantic Embeddings}
+	
+	
+	The embedding step turns each document into a point in a shared space. We feed every title and abstract to SPECTER2, the scientific-text model introduced in the Background, joined into a single string, and keep the vector of 768 numbers it returns for each one. Two documents that point the same way in this space are about related science, and the cosine of the angle between them is the number we treat as their relatedness. Everything downstream, the city centroids, the clusters, the tests, is built on these vectors.
+
+	\subsection{Aligning projects, papers, and patents}
+
+	SPECTER2 learned to read papers, and it reads them well, but a project wiki and a patent are not papers. A student writes a wiki to explain a year's work in plain terms; a lawyer writes a patent to fence off a claim in careful legal language. The same underlying science can wear very different words across the three, and off the shelf the model can be fooled by the words, placing a patent and the paper it was built on farther apart than their content deserves. If the shared space is going to carry all three types honestly, we have to check that it does, and repair it where it does not.
+
+	We fix what SPECTER2 already knows and teach it only the new trick. The base model stays frozen, and we train a small adapter on top of it, a set of lightweight layers slipped between the base's own. Freezing the base keeps its hard-won reading of the science intact and leaves the adapter one job: to pull the different genres together where they describe the same work. Training uses documented links as its examples, pairs of documents we already know belong together, with an in-batch contrastive objective that draws each linked pair close and pushes it away from the other documents sharing its batch.
+
+	The links come from the knowledge graph the corpus already carries. A paper cites a paper; a part names the paper it was drawn from; a project registers a part; a team cites a paper on its wiki; and, the edge that matters most here, a patent cites a paper, taken from the Marx and Fuegi pairs. That patent link is the only one that brings a patent into training at all, so it is what teaches the adapter where patents belong in the space. Every pair is kept only when both of its documents already sit in our corpus, so the model learns from links inside the world it will be asked about.
+
+	To see whether the repair worked, we hold out a tenth of the links and turn each into a retrieval question. Given a patent, we rank every paper in the corpus by similarity and note where the paper it actually cites lands; given a project, we do the same for the paper it drew on. We score with recall@$k$, the share of questions whose answer falls in the top $k$, and the mean reciprocal rank, which rewards putting the answer higher. Every question runs twice, once through the base model and once through the fine-tuned one, so any gap is the adapter's doing. The links that point toward papers are the ones that sharpen. A patent finds its cited paper in the top five 88\% of the time after fine-tuning, up from 71\%, and first outright 61\% of the time, up from 50\%. A project's cited paper, the hardest case, lands in the top five about twice as often as before, whether the link runs through the team's wiki (9\% to 18\%) or through a shared part (11\% to 26\%). These are the two connections the argument leans on, a patent reaching back to its science and a student project reaching back to its literature, and both come into clearer focus.
+
+	The reverse direction barely moves, and that is telling rather than disappointing. Recovering the one specific patent or project from a paper stays hard; paper-to-patent even trades a little top-one accuracy (54\% to 48\%) for a better top-five (82\% to 87\%). Papers are the hub, and a single paper feeds many downstream artifacts, so pinning the exact one from the paper alone is a genuinely harder question. Two checks keep the result honest. Paper-to-paper retrieval does not degrade, edging up rather than down, so the adapter earns its cross-type alignment without unlearning what SPECTER2 already knew. And the held-out project links are few, dozens to a hundred, so their exact percentages carry wide error; the direction is steady across every run, the third decimal is not.
+	
+	\subsection{Topic Clustering}
+	
+	Centroids give a coarse summary, but the sharper question in the Results, whether a city's types work on the same specific topics, needs the documents sorted into topics first. We do that on the fine-tuned embeddings. The 768 dimensions are too many to cluster directly, since points grow sparse and distances lose their meaning as dimensions pile up, the curse of dimensionality, so we first compress them with UMAP into a low-dimensional space that keeps each document's local neighbourhood intact \parencite{mcinnesUMAP2018}. Over that reduced space we run HDBSCAN, a density-based method that finds clusters without being told how many to expect and sets the sparse leftovers aside as noise \parencite{campelloHDBSCAN2013}. It returns 80 topics and leaves 30\% of the documents unclustered, low-density points that carry no clear topic and drop out of the topic measure.
+	
+	A cluster is only a set of documents until we name it, so we label each one by reading its contents. For every cluster we pull the titles closest to its centre and the terms that set it apart from the rest, a light class-based TF-IDF score in the manner of BERTopic \parencite{grootendorstBERTopic2022}, and hand them to a language model. The trick is to label contrastively: the model also sees the labels of the cluster's nearest neighbours and has to say what makes this one different, which keeps a shelf of adjacent chassis-engineering clusters from collapsing into one generic name. The result is 80 human-readable topics, things like cyanobacterial chassis development and syngas fermentation, that the Results and the case study lean on.
+	
+	\subsection{Parts}
+	
+	We downloaded the entire dataset of $\sim$90,000 biobricks from the iGEM registry API, and matched them to the teams that originated them.
+	
+	\section{Representing Cities in Semantic Space}
+	
+	
+	\subsection{Centroids}
+	
+	To represent and compare cities at given points in time, we take the average of all its document embeddings of a certain type in a given period. These averages are also called \textbf{centroids}, the centers of a collection of points in our embedding space.
+	
+	This results in vectors that can be used in simple pairwise comparisons. These are course-grained, empirical representations of each city's research.
+	
+	\subsection{Topic Clusters}
+	
+	For a finer-grained representation of a city's research landscape, we cluster the points in the embedding space. Since related research tends to be closer together, clusters form around topics.
+	
+	768 dimensions is too many to find meaningful clusters due to ``The Curse of Dimensionality'', as high-dimensional spaces become increasingly sparce and noisy as dimensions are added.
+	
+	Instead, UMAP (Uniform Manifold Approximation and Projection) was used to compress the embedding space into 60 dimensions. UMAP is a powerful technique that reduces
+	
+	\subsection{Regression}
+	
+	First, we should identify the variables we will be comparing.
+	
+	\textbf{Relatedness of a city's papers \textless{}\textgreater{} Relatedness of a city's projects}
+	
+	Panel data, in 5 year chunks
+	
+	Other variables:
+	\begin{itemize}
+		\item GDP per capita
+		\item Population
+		\item Institution
+	\end{itemize}
+	
+	\[
+	\begin{aligned}
+		H_0: \mu_1 -\mu_0 = 0
+		\\
+		H_1: \mu_1 -\mu_0 \neq 0
+	\end{aligned}
+	\]
+	We use semantic distance as a measure of relatedness.
+	
+	Is relatedness measured by semantic distance correlated with citations between papers and projects? If it is, that provides some validation that this is a useful measure.
+	
+	Do cities publish papers related to their igem projects? Do they patent in clusters related to the projects?
+	
+	
+	
+	\subsection{Data Processing}
+	
+	Initially, we tried geocoding iGEM projects using Nominatim, an open-access geocoding service. However, this had limited success; many of the institutions were matched
+	
+	Successful geocoding of the iGEM projects to their cities was done through API calls to OpenAlex, ROR (Research Organization Registry), Claude Haiku and Qwen. Many projects had team names that corresponded to their cities; an initial pass was done by Qwen, which simply extracted city names from team names and matched them to a city if they corresponded to a city and institution in the right country. However, many teams were acronyms related to the name of a school. To geocode these teams, we first made API calls to OpenAlex Institutions API, which covers over 100,000 institutions with structured geographic data, and ROR, which has broader coverage of high schools and community labs.
+	
+	Claude Haiku
+	
+	\subsection{Coding Agents}
+	
+	To assist with the coding, literature review, and reasoning, AI agents were widely used in this project, and an array of different techniques were experimented with.
+	
+	\subsubsection{Coding}
+	
+	Anthropic's flagship coding agent \emph{Claude Code} was deployed frequently to assist in writing scripts for data retrieval, processing, and cleaning. The project was organized in a GitHub repo, which allows for public availability, version control, a clear work timeline, and rollback of any unwelcome changes. The principle human inputs, besides the ongoing chat conversations, were markdown files which directed the goal and scope of the project. For instance, ``write-up.md'' is an entirely human-written file that has served as both a rough-draft of the final manuscript and a reference for agents. Throughout this research project, the need for high-quality human input became ever more apparent.
+	
+	\subsubsection{Reasoning}
+	
+	However, Claude's utility did not end at agentic coding. For interdisciplinary research of this discipline, high level reasoning across an array of disciplines was necessary, and qualified experts with open calendars were at times difficult to come by. To help with this, agents were deployed in a manner inspired by James Evans' research into simulated collectives of LLMs.
+	
+	A ``discussion'' command was written which prompted the agent to simulate a discussion between a group of several real scientists. Real researchers with extensive publication history were used to encourage the LLM to cite their associated bodies of literature.
+	
+	\subsubsection{Referencing}
+	
+	The "Zotero Connector" plugin allowed for reference directly from a database of relevant literature. This plugin, in addition to a short script, was used to easily generate a bibliography file.
+	
+	
+	
+	\subsection{Patents}
+	
+	We ran a few BLAST searches on patent sequence data using Lens.org's PatSeq tool, but rate limits prevented us from executing this at scale. However, this would be a fascinating project with the right resources. Tracing the pathways of individual sequences of genetic code through the knowledge space.
+	
+	
+	\section{Results}
+	
+	
+	The results section will be organized across three escalating claims of increasingly general nature.
+	\begin{enumerate}
+		\item The semantic embedding approach is internally valid. Projects cluster close to the papers they cite
+		\item iGEM projects and papers co-specialize in cities with sufficient data depth
+		\item iGEM activity precedes or accompanies publication and patent activity. The temporal analysis is meant to be exploratory, not to make causal claims.
+	\end{enumerate}
+	
+	\subsection{Semantic Embeddings}
+	
+	SPECTER2 embeddings capture the underlying \textit{meaning} of the text they embed, which allows for a more flexible metric of relatedness than widely-used methods such as keyword co-occurence. 
+	
+	The most compelling part of this data collection so far may be the papers referencing biobricks. Even though there isn't a standard for citing open-source genetic parts registries in the literature, and even with the limitations of full-text search, there were still 671 papers collected that directly cite biobricks in the registry, from PubMedCentral alone. This represents but a small fraction of their true impact, as it only returns papers that:
+	\begin{enumerate}
+		\item Open access
+		\item indexed by pubmedcentral
+		\item Use a full biobrick ID in their text
+	\end{enumerate}
+	
+	
+	\subsection{Limitations}
+	
+	
+	As this is a Master's thesis with limited budget and a fixed time constraint, the depth of analysis and breadth of the data used has some room for further development. For instance, it would be quite interesting to be able to search the sequences of academic research projects and patents. Datasets such as Lens.org PatSeq make this data available, but acquiring it was outside the scope and budget of this project, so patents are instead connected by their abstract's semantic similarity to clusters.
+	
+	The model used for embedding, SPECTER2 developed by the AllenAI institute, is also not trained on data for patents or student iGEM projects. It was trained on a corpus of academic publication abstracts and titles to predict whether two papers were related by a citation.
+	
+	We are assuming that the artifacts are similar enough that their linguistic embeddings in SPECTER2 can be meaningfully compared.
+	
+	Searching full-text papers for biobrick IDs was challenging for practical reasons; BBa\_xxx strings all contain underscores, which do not play nicely with the search algorithms
+	
+	
+	\section{Conclusion}
+	
+	\subsection{Next Steps}
+	
+	Scraping the iGEM wikis for citations (DOI codes) would yield an interesting network connecting the two innovation spaces. Are iGEM teams more likely to cite researchers from their home city? Their home country?
+	
+	Matching patent and publication authors to iGEM teams. How often do researchers co-author with old iGEM teammates?
+	
+	Connecting iGEM alumni lists to hiring in biotech companies (revelio dataset). Are iGEM alumni more likely to be hired by companies with iGEM-affiliated management than candidates with comparable profiles?
+	
+	Matching biobrick code to patents through Lens PatSeq data could be a fascinating way to connect open-access resources to commercial research. Do sequences from the biobrick registry show up in patent filings?
+	
+	\section{Use of AI}
+	
+	
+	SPECTER2 is an artificial intelligence model from the BERT \parencite{devlinBERTPretrainingDeep2019} family of 2nd generation NLP (Natural Language Processing) models. As explained earlier, the document embeddings generated with it form the basis for much of this project's analyses.
+	
+	In addition to the NLP embeddings which the semantic embedding space was constructed on, Large Language Models (LLMs) were used extensively over the course of this project. The tools used were primarily from the Anthropic Claude family (Haiku, Sonnet, and Opus), with some lightweight data processing and vocabulary assistance done by a locally-hosted instance of qwen2.5:3b running in Ollama.
+	
+	\subsection{Open Questions}
+	
+	
+	\begin{itemize}
+		\item Are publications by iGEM teams related to the papers published in their same
+		\item Do cities produce iGEM research related to their academic publications?
+		\item Do iGEM research projects draw on local academic knowledge?
+	\end{itemize}
+	
+	\addcontentsline{toc}{section}{References}
+	
+	
+\printbibliography
+	
+\end{document}
+

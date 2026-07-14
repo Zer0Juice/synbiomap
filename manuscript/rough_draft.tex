@@ -32,6 +32,7 @@
 \graphicspath{{generated/figures/}}
 \input{generated/stats.tex}                  % defines \statOverlapMean, \statNCitiesAnalyzed, ...
 
+
 \title{Patents, Papers, Parts, and Planet\\[0.4em]{\large\itshape Rough AI Draft}}
 \date{}
 
@@ -42,9 +43,40 @@
 \fbox{\parbox{0.92\linewidth}{\centering\small\itshape
 This is a AI-generated working draft generated from human-origin rough draft text, an outline, and the results notebook. Prose, structure, and emphasis are
 provisional and under active revision; numbers and figures are generated from
-the analysis pipeline but the surrounding argument has not yet been finalised.}}
+the analysis pipeline but the surrounding argument has not yet been finalised. This is an experimental space, a mirror of this project's progress and Claude's "writing" capabilities, not a final deliverable.}}
 \end{center}
 \vspace{1em}
+
+\begin{abstract}
+Do cities whose students take up a theme in synthetic biology also produce academic
+papers in related areas? We assemble a shared-schema corpus of iGEM student
+projects, academic papers, and BioBrick parts, geocode each to a city, and embed the
+text of projects and papers in one semantic space with SPECTER2. Measured the
+obvious way, as the cosine between a city's average project and its average paper,
+overlap is high almost everywhere; but a regression shows this is mostly city size,
+and it carries little local signal. A sharper measure survives: whether a city's
+projects and papers fall in the same specific topic clusters beats a within-country
+re-pairing null (permutation $p = \statClusterPermP{}$) and is not explained by
+size. A project-level test agrees, and a difference-in-differences decomposition
+shows the alignment is mostly standing specialisation rather than year-to-year
+coupling. Physical BioBrick parts, measured with no reference to the text, rank
+cities the same way. We read the answer as a qualified yes: student and academic
+work co-specialise locally. We find relatedness and co-location, not a demonstrated
+flow of ideas.
+\end{abstract}
+
+\vspace{0.5em}
+\noindent\textit{A note on language.} This thesis speaks throughout of
+\textit{semantic relatedness}, \textit{association}, and \textit{co-location}. It
+does not claim that student projects cause academic papers, or the reverse. The
+artifacts we compare share many local causes, and our measures cannot separate a
+genuine flow of ideas from a university that simply houses both kinds of work.
+
+\newpage
+\tableofcontents
+\listoffigures
+\listoftables
+\newpage
 
 % ============================================================
 \section{Introduction}
@@ -64,61 +96,68 @@ of cause and effect.
 
 \subsection{Synthetic Biology}
 
-Humanity has always sought to understand and influence the natural world. Biology,
-the study of life itself, spent most of its history describing it, breaking
-organisms into their parts to work out the principles that hold them together.
-That descriptive work gave rise to something new. Once we understood life's
-principles well enough, we began to \textit{write} with them, designing and
-directing new biological systems of our own. This is the age of Synthetic Biology:
-a field that treats genetic sequences as functions in the programming language of
-life, standardises them, and snaps them together into genetic circuits
-\citep{wayIntegratingBiologicalRedesign2014}. A living cell becomes a kind of
-programmable factory. A single sequence might switch a gene on, report a signal,
-or drive a metabolic pathway. The parts compose much like software, and the living
-machinery that results is a tool we can aim at problems of our own choosing.
+For most of its history, biology was a reading science. It took life apart to see
+how it worked, cataloguing organs, then cells, then the genes beneath them, and
+built from that an account of the rules that hold a living thing together. The
+achievement was vast, and it was, in the end, descriptive. Biology had learned to
+\textit{read} the language of life without yet being able to \textit{write} in it.
 
-That shift from describing life to engineering it is recent, and it is moving
-fast. In a couple of decades Synthetic Biology has grown from a handful of
-proof-of-concept circuits into a field with real stakes in medicine, materials,
-agriculture, and energy
+That has changed. Once the rules were understood well enough, and once the cost of
+sequencing and synthesising DNA had fallen far enough, biologists began to compose
+with them, designing and directing living systems of their own. This is the premise
+of Synthetic Biology: that a genetic sequence can be treated as a function written
+in the programming language of life, that such functions can be standardised, and
+that they can be snapped together into genetic circuits
+\citep{wayIntegratingBiologicalRedesign2014}. A living cell becomes a programmable
+factory. One sequence switches a gene on, another reports a signal, a third drives a
+metabolic pathway; the parts compose much like software, and the living machinery
+they produce is a tool aimed at a problem of our own choosing. Biology has picked up
+the pen.
+
+The shift from reading life to writing it is recent, and it is moving fast. In two
+decades Synthetic Biology has grown from a handful of proof-of-concept circuits into
+a field with real stakes in medicine, materials, agriculture, and energy
 \citep{shapiraTrackingEmergenceSynthetic2017, raimbaultMappingEmergenceSynthetic2016}.
-It is also hard to pin down. Its boundaries keep moving, and its vocabulary
-overlaps heavily with the descriptive molecular biology it grew out of. A young
-field this consequential is worth watching closely, and worth asking where its
-innovation happens and who is doing it.
+It is also hard to pin down. Its boundaries keep moving, and its vocabulary overlaps
+heavily with the descriptive molecular biology it grew out of, the old reading
+science still speaking through the new writing one. A young field this consequential
+is worth watching closely, and worth asking where its innovation takes root, and who
+is doing the writing.
 
 \subsection{iGEM}
 
-One arena where that innovation takes shape early is iGEM. The International
-Genetically Engineered Machine competition is a worldwide student contest in
-Synthetic Biology, a sort of LEGO-robotics contest for genetic engineering. Teams
-of students, usually hosted by a university, spend most of a year designing and
-building an original project with the tools of the field. Every team starts from
-the same kit of standardised parts and the same basic rules, then is left to
-invent its own entry. They document that entry in public on a project ``wiki'', a
-page that reads much like an extended research abstract
-\citep{santoliniIGEMModelSystem2023}.
+If Synthetic Biology is biology learning to write, iGEM is where many of its writers
+first pick up the pen. The International Genetically Engineered Machine competition
+is a worldwide student contest in the field, something like a LEGO-robotics contest
+for genetic engineering. Teams of students, usually hosted by a university, spend
+most of a year designing and building an original project out of the tools of the
+field. Every team starts from the same kit of standardised parts and the same basic
+rules, then is left to invent its own entry. What a team makes of that shared kit is
+its own; that a shared kit exists at all is the point. They document the result in
+public on a project ``wiki'', a page that reads much like an extended research
+abstract \citep{santoliniIGEMModelSystem2023}.
 
-iGEM matters here for more than its scale. For many researchers it is a first
-serious project in Synthetic Biology, and a launching point for a career in
-academia or industry. Its alumni have founded companies and started labs of their
-own. iGEM styles itself as ``the heart of synthetic biology,'' and it isn't only
-hype. The competition also sets norms that reach well beyond it: open science,
-thorough public documentation, and a shared registry of standardised,
-interoperable parts. Those norms are what make iGEM legible to a study like this
-one. Thousands of projects, each documented the same way and each tied to a place
-and a year, add up to a detailed record of a field as it grows.
+iGEM matters here for more than its scale. For many researchers it is a first serious
+project in Synthetic Biology and a launching point for a career in academia or
+industry; its alumni have founded companies and started labs of their own. iGEM
+styles itself as ``the heart of synthetic biology,'' and it is not only hype. The
+competition sets norms that reach well past it: open science, thorough public
+documentation, and a shared registry of standardised, interoperable parts. Those
+norms are also what make iGEM legible to a study like this one. Thousands of
+projects, each documented the same way and each tied to a place and a year, add up
+to a detailed record of a field composing itself as it grows.
 
 % --- Argument and central claim ---------------------------------------------
 \subsection{From iGEM to a testable claim}
 
 That record is what makes iGEM worth studying, because it sits near the base of a
 larger chain. Innovation rests on research: new products grow out of people
-investigating what is possible. Synthetic Biology is one of the most active
+investigating what is possible, the pipeline from basic inquiry to application that
+\citet{bushScienceEndlessFrontier1945} set out in 1945. Synthetic Biology is one of the most active
 frontiers of that work, and iGEM is where a large share of its practitioners first
-learn to do it. If we want to know how innovation in the field takes root, and how
-its ideas travel, the student projects at the entry point are a natural place to
-start.
+learn the craft, their earliest sentences in the language of the field. If we want
+to know how innovation in Synthetic Biology takes root, and how its ideas travel,
+the student projects at the entry point are a natural place to start looking.
 
 This thesis makes one central, testable claim. When a city's student teams take up
 a theme, say biosensors or carbon capture, that city's published papers should
@@ -131,17 +170,18 @@ it precisely, then try hard to knock it down.
 % --- The artifacts -----------------------------------------------------------
 \subsection{Reading capabilities off artifacts}
 
-Capabilities are abstract, so we read them off the concrete things a place
-produces. Each kind of artifact records the creation of new knowledge in its own
-way, while pointing back to the same underlying capability. An academic paper is
-the currency of scholarship, rewarded by its influence on a field. A patent is a
-claim on commercial value, filed because someone expects an idea to pay. The two
-often diverge. A landmark result can have no obvious market, and a lucrative
+Capabilities are abstract, so we read them off the concrete things a place writes
+down. Each kind of artifact records the creation of new knowledge in its own way and
+its own register, while pointing back to the same underlying capability. An academic
+paper is the currency of scholarship, rewarded by its influence on a field. A patent
+is a claim on commercial value, filed because someone expects an idea to pay. The
+two often diverge: a landmark result can have no obvious market, and a lucrative
 patent can hold little that is scientifically new. Synthetic Biology adds a third
-kind of record that few fields keep so openly: the student project, published in
-full by teams still learning the craft. Different as these artifacts are in
-audience and incentive, they grow out of the same local pool of people and
-equipment, which is why comparing them can tell us something about a place.
+kind of record that few fields keep so openly, the student project, published in
+full by teams still learning the craft. Different as these artifacts are in audience
+and incentive, they are written by the same local pool of people, drawing on the
+same benches and the same ideas, which is why reading them together can tell us
+something about a place.
 
 This thesis works with four such artifacts, though unevenly. Its spine is the
 pairing of student \textit{projects} with academic \textit{papers}, the two we can
@@ -183,27 +223,30 @@ which are still roadmap.
 
 The modern industrial era reshaped the planet. We burned through vast reserves of
 ancient carbon, and in doing so we lived longer, fed more people, and grew past
-every earlier limit. We also changed the climate. The change is large enough that
-scientists have proposed a new geological epoch to mark it, the Anthropocene
-\citep{crutzen2006anthropocene}, an age in which human activity is a dominant
-force on the Earth system. We are terraforming our own planet, mostly by accident.
+every earlier limit. We also changed the climate, enough that scientists have
+proposed a new geological epoch to mark it, the Anthropocene
+\citep{crutzen2006anthropocene}, an age in which human activity is a dominant force
+on the Earth system. We are terraforming our own planet, mostly by accident, writing
+on the world in a hand we never learned to control.
 
-There is a hopeful reading of that same fact. If we can knock a planet's climate
-off balance without trying, then the same power, aimed on purpose, might help set
-it right. Biology is one of the best tools for the job, and carbon capture is
-where this thesis watches it work. Humanity's oldest biotechnology is control over
-fermentation: we brewed and baked with microbes long before we could name one.
-Synthetic Biology turns that old craft to a new end, engineering microbes such as
-\textit{E.\,coli} to pull carbon from industrial exhaust and build it into fuels
-and materials \citep{delisiRoleSyntheticBiology2020, gleizerConversionEscherichiaColi2019}.
+There is a hopeful reading of that same fact. If we can knock a planet's climate off
+balance without trying, then the same power, aimed on purpose, might help set it
+right. That turn, from an effect we suffer to one we compose, is the same turn
+Synthetic Biology makes with the cell, and biology is among the best tools for the
+job. Carbon capture is where this thesis watches it work. Humanity's oldest
+biotechnology is control over fermentation: we brewed and baked with microbes long
+before we could name one, writing with life by hand for centuries before we could
+read its language. Synthetic Biology turns that old craft to a new end, engineering
+microbes such as \textit{E.\,coli} to pull carbon from industrial exhaust and build
+it into fuels and materials \citep{delisiRoleSyntheticBiology2020, gleizerConversionEscherichiaColi2019}.
 
-Carbon capture runs through the whole project as a single thread. It's concrete,
+Carbon capture runs through the whole project as a single thread. It is concrete,
 and we can trace it from a student's bench to a patent filing. We tag projects,
-papers, and parts for their relevance to it, and follow the theme across all of
-them. Late in the analysis it does a second job. Every artifact we study is
-already synthetic biology, so any two of them look somewhat alike. Narrowing to
-one sub-topic strips that shared baseline away, so we can ask whether local
-relatedness still holds inside it.
+papers, and parts for their relevance to it and follow the theme across all three.
+Late in the analysis it does a second job. Every artifact we study is already
+Synthetic Biology, so any two of them look somewhat alike; narrowing to one
+sub-topic strips that shared baseline away, letting us ask whether local relatedness
+still holds inside it.
 
 % --- Unit of analysis --------------------------------------------------------
 \subsection{Why cities?}
@@ -213,7 +256,10 @@ and it clusters in cities. The reasons pile up in the same places: universities
 with expensive equipment and talented students, venture capital for startups,
 established industries like pharma that already own the infrastructure, and
 regulators willing to permit the work. Deep-tech research needs all of these at
-once, and cities are where they coincide.
+once, and cities are where they coincide. These ingredients feed each other:
+clean-energy startups that ally with nearby government and research labs patent
+far more, and raise money more easily, than those that go it alone
+\citep{doblingerGovernmentsPartners2019}.
 
 Cities also specialise. Regions build capability in particular technologies, then
 branch into adjacent ones over time \citep{hidalgoProductSpaceConditions2007}, so
@@ -243,6 +289,32 @@ them, and the patents that carry the same sequences. One project, traced through
 every artifact type at once, shows in miniature the local trajectory the rest of
 the thesis can only measure in aggregate.
 
+% --- A study made the way it studies -----------------------------------------
+\subsection{A study made the way it studies}
+
+One more thing belongs here, before the machinery starts, because it runs under
+everything that follows. This is a study of how people innovate with shared,
+standardised tools, and it was itself made with shared, standardised tools of a very
+new kind. The corpus was gathered, placed, embedded, and clustered with machine
+learning and language models, and the words on these pages were drafted in dialogue
+with them. The parallel is close enough to name. An iGEM team takes a common kit of
+genetic parts, adds a year of its own judgement, and builds something nobody handed
+it. Here a single researcher took a common kit of computational parts, models trained
+by others and open to anyone, and worked the same way.
+
+The division of labour is the point, in both cases. The tools supply reach. They read
+a hundred thousand abstracts, hold a 768-dimensional space steady, and place
+institutions named in languages the author cannot read. The human supplies aim: the
+question, the seed terms, the judgement of what counts and what a result means. Left
+to themselves, these models drift toward the average of everything they have seen;
+recent work finds that AI tools widen an individual scientist's reach while narrowing
+what the field as a whole attends to \citep{haoArtificialIntelligenceTools2026}. The
+counterweight is a person with a specific question who declines the generic answer.
+That tension, between a machine's scale and a human's aim, is the condition under
+which this thesis was written. It is also, one field down, the thing the thesis is
+about \citep{evansScience2025}: man and machine composing together, which here is not
+a footnote to the method but the method and the subject at once.
+
 % --- Scope and contributions -------------------------------------------------
 \subsection{Scope and contributions}
 
@@ -256,11 +328,12 @@ association and co-location, and we say so plainly wherever it matters.
 
 The thesis makes four contributions, all concrete. The first is a corpus that puts
 iGEM projects, academic papers, and BioBrick parts under one shared schema, each
-geocoded to a city. The second is an embedding-based measure of how related a
-city's student and academic work are. To keep that measure honest, the third is a
-battery of permutation and placebo tests that a positive result has to survive.
-The last is the pipeline itself, released as reproducible code and a public
-website, so anyone can rerun the analysis or aim it at a different subfield.
+geocoded to a city. The second is an embedding-based measure of how related a city's
+student and academic work are. To keep that measure honest, the third is a battery of
+permutation and placebo tests that a positive result has to survive. The last is the
+pipeline itself, released as reproducible code and a public website: a shared, open
+toolkit, in the spirit of the registry it draws on, that anyone can rerun or point at
+a different subfield.
 
 % --- What to expect ----------------------------------------------------------
 \subsection{A preview of the answer}
@@ -316,12 +389,16 @@ about seed terms and citation expansion deserve the space this thesis gives them
 Start with the geography. Innovation concentrates in space, and it has done so for
 as long as anyone has measured it. Firms in the same industry gather in the same
 regions to share labour, suppliers, and the loose talk that carries ideas from one
-bench to the next. Economists call these agglomeration economies, and they bite
+bench to the next. Economists call these agglomeration economies and localised
+knowledge spillovers \citep{breschiKnowledgeSpilloversLocal2001}, and they bite
 hardest on complex work. Studying scientific fields, patents, industries, and
 occupations across 353 US metropolitan areas,
 \citet{ballandComplexEconomicActivities2020} find that the more complex an activity,
 the more tightly it concentrates in a few large cities: complexity alone explains
-between 40 and 80 percent of how unevenly an activity is spread. Synthetic biology,
+between 40 and 80 percent of how unevenly an activity is spread. The pull is not
+confined to research. In wind-energy manufacturing, the more complex a component,
+the fewer places along the global supply chain end up making it
+\citep{suranaEffectsTechnologyComplexity2020}. Synthetic biology,
 which stitches together molecular biology, engineering, and software, is about as
 complex as activities get. A city is more than where such work happens. It is part
 of why it happens there at all.
@@ -715,10 +792,14 @@ a genuine flow of ideas from a university that simply houses both kinds of work.
 \subsection{Semantic embeddings}
 % ------------------------------------------------------------
 
-To compare text with numbers, we turn each document into a point in a shared
-space. This is a \textit{semantic embedding space}, a high-dimensional space where
-every document becomes a point and documents about similar things sit near each
-other. Distance in that space is the thing we measure.
+To compare text with numbers, we turn each document into a point in a shared space.
+This is a \textit{semantic embedding space}: a high-dimensional space where every
+document becomes a point and documents about similar things sit near each other.
+Distance in that space is the thing we measure. The model that builds it is, in
+effect, a reading machine. It reads every abstract in the corpus, far more than any
+person could hold at once, and records where each one sits in the space of what the
+field has written. This is the machine's half of the bargain from the Introduction:
+it supplies the reach, and we supply the questions we put to the space it lays out.
 
 We generate the points with SPECTER2, the scientific-text model introduced in the
 Background, run with its ``proximity'' adapter.\footnote{Model and adapter:
@@ -739,6 +820,48 @@ SPECTER2 returns unit-length vectors, so the natural measure of relatedness betw
 two documents is the cosine of the angle between them. Two documents pointing the
 same way are closely related; two at right angles have nothing in common. This
 cosine similarity is the building block for every measure below.
+
+% ------------------------------------------------------------
+% New (draft, starting point): fine-tuning the shared space to hold all three
+% artifact types. Integrate/trim against the surrounding proximity-adapter text.
+\subsection{Aligning projects, papers, and patents}
+% ------------------------------------------------------------
+
+SPECTER2 learned to read scientific papers, and it reads them well. A student
+wiki and a patent are written differently: a project page explains a goal in a
+team's own words, a patent guards its claims in legal language. Off the shelf the
+model can place the three kinds of document farther apart than their content
+deserves. The words differ even when the work is the same. If a patent and the
+paper it cites, or a project and the paper it drew on, land far apart, the shared
+space is not yet doing what the thesis asks of it, so we test that directly and
+sharpen the space where it falls short.
+
+The training signal is a set of documented links, each of one kind: one artifact
+built on another. A paper cites a paper. A paper first described a BioBrick part.
+A team submitted a part. A patent cites a paper, taken from Marx and Fuegi's
+patent--paper pairs, which match a patent to the science it references. A team
+cited a paper on its own wiki. Each link is a pair we ask the model to place close
+together.
+% cite: Marx \& Fuegi (2020), Reliance on Science in Patenting; SPECTER2 /
+% Pat-SPECTER precedent for embedding papers and patents in one space.
+
+We do this without disturbing what the model already knows. The base stays frozen;
+we train a small adapter on top of it, about half a percent of the weights, with
+an in-batch contrastive objective that pulls each linked pair together and pushes
+it away from the other documents in the same batch. Freezing the base keeps
+SPECTER2's reading of the science intact and leaves the adapter one job: to learn
+that these different kinds of document, when they describe the same work, belong
+in the same place.
+
+To see whether it worked we hold out a tenth of the links and turn each into a
+retrieval question. Given a patent, we rank every paper in the corpus by
+similarity and note where the paper it actually cites lands; given a project, we
+do the same for the paper it cited. We report recall@$k$, the share of questions
+whose answer falls in the top $k$, and the mean reciprocal rank, which rewards
+placing the answer higher. Each question runs twice, once through the base model
+and once through the fine-tuned one, so any difference is the adapter's doing. A
+same-kind question, paper to paper, checks that the adapter does not forget
+SPECTER2's original skill while it learns the new one.
 
 % ------------------------------------------------------------
 \subsection{Representing cities as centroids}
@@ -1027,6 +1150,42 @@ part-type fingerprints of the most active cities.
 \end{figure}
 
 % ------------------------------------------------------------
+\subsection{The machine in the method}
+% ------------------------------------------------------------
+
+It is worth gathering in one place the machines this study leaned on, because they
+did real work and because naming them is part of being honest about how the result
+was made. Three kinds of model appear in the pipeline. SPECTER2 does the reading,
+turning every abstract into a point in the shared space. A set of language models
+does the sorting and placing: a small model run locally\footnote{\texttt{qwen2.5:3b},
+served through Ollama.} took a first pass at pulling cities from team names, a
+stronger hosted model (Claude Haiku) resolved the hard cases the registries missed,
+and another labelled the topic clusters by reading each one's most central titles.
+A coding agent (Claude Code) wrote much of the glue, the scripts that fetch, clean,
+and join the sources, under version control in the public repository. None of these
+replaced a decision. Each extended a hand that could not otherwise reach as far.
+
+One use is worth singling out, because it is less obvious than the rest. Good
+interdisciplinary judgement is scarce, and expert time scarcer still, so at a few
+points the project convened a panel of language models prompted to argue as named
+researchers with real publication records, a technique adapted from work on
+simulated collectives of language models \citep{evansScience2025}. Casting the models
+as specific scholars pulls their associated literature into the room and keeps the
+argument closer to the field than a single generic prompt would. It is a crutch, not
+a substitute for a real reviewer, and it is treated as one: a way to pressure-test an
+idea before a person sees it, never a source of fact.
+
+The honest lesson from all of it points the same way the Introduction did. As the
+tools grew more capable, the human input that mattered did not shrink; it grew more
+important, and more specific. The models supply scale and tireless coverage, but they
+pull toward the average of what they were trained on, widening one researcher's reach
+while, across many researchers, narrowing what the field looks at
+\citep{haoArtificialIntelligenceTools2026}. What keeps a study from dissolving into
+that average is a person insisting on a particular question about a particular corner
+of the world. That is the method here: the two working together, shared tools in
+individual hands, the way the field it studies works.
+
+% ------------------------------------------------------------
 \subsection{Interpretive caution}
 % ------------------------------------------------------------
 
@@ -1089,6 +1248,43 @@ leads us to expect. The map behaves the way a sensible map should: the well-know
 hubs on top, and its uncertainty reserved for the cities we know least.
 
 \input{generated/tables/bottom15_cities.tex}
+
+% ------------------------------------------------------------
+% New (draft, starting point): retrieval evaluation of the fine-tuned shared
+% space. Numbers are from the full-corpus recall@k run; wire to generated stats.
+\subsection{The shared space holds all three artifact types}
+% ------------------------------------------------------------
+
+The city analysis uses papers and projects. The wider claim from the Background is
+that patents belong in the same space, so before leaning on it we check whether the
+space recovers the links between all three kinds of document.
+
+It does, even before any fine-tuning. Given a patent, the base model ranks the
+paper it cites inside its top five about seven times in ten, and first outright
+half the time, against a pool of every paper in the corpus. Patents and the papers
+they cite share a technical vocabulary, and a citation-trained model reads both.
+The premise the thesis needs, that a patent sits near the science it draws on,
+holds off the shelf.
+
+Fine-tuning improves the links that point toward papers. For patents, recall@5
+rises from 0.71 to 0.88 and recall@1 from 0.50 to 0.61. For student projects the
+relative gain is larger: a project's cited paper lands in the top five about twice
+as often after fine-tuning, whether the link comes from the team's wiki (0.09 to
+0.18) or through a shared BioBrick part (0.11 to 0.26). These are the two links the
+argument rests on, a patent reaching back to its science and a student project
+reaching back to its literature, and both come into clearer focus.
+
+The reverse direction barely moves. Recovering the one specific patent or project
+from a paper stays hard, and paper-to-patent even trades a little top-one accuracy
+(0.54 to 0.48) for a better top-five (0.82 to 0.87). Papers are the hub: the
+adapter pulls patents and projects toward the papers they build on, but a single
+paper feeds many downstream artifacts, so finding the exact one from the paper
+alone is a harder question. Paper-to-paper retrieval does not degrade, so the
+adapter adds this cross-type alignment without unlearning what it already had.
+
+Two cautions. The held-out project links number in the tens, so their exact
+figures carry wide error, and the adapter saw the training data once. The
+direction of the results is steady; the third decimal is not.
 
 % ------------------------------------------------------------
 \subsection{Most of the overlap is city size}
@@ -1375,7 +1571,9 @@ export scripts live in one repository at
 \url{https://zer0juice.github.io/synbiomap}. The visualisation step writes the small
 JSON files the site reads, the same files that back the two interactive views, so
 the website and this manuscript draw from one set of exported artifacts, not two
-diverging copies.
+diverging copies. Releasing the toolkit this way is the same wager iGEM makes with
+its registry: a study of open, shared tools ought to become one, left in a form the
+next person can pick up and point somewhere new.
 
 % ============================================================
 \section{Discussion}
@@ -1428,7 +1626,9 @@ nothing. A conventional reading of the stars would have reported a strong result
 Only the permutation test, which rebuilds the null from the data's own structure,
 catches that the result is a baseline in disguise. Anyone measuring relatedness
 inside a narrow domain should assume the baseline is there until a shuffle proves
-otherwise.
+otherwise. It is a small instance of the larger bargain this thesis was built on:
+the tools will happily hand back the average, and it falls to a person to distrust
+an answer that flatters the question.
 
 % ============================================================
 \section{Limitations}
@@ -1499,9 +1699,23 @@ citation network between projects and the local literature. We could match paper
 patent, and team authors, and ask whether researchers stay in the orbit of their
 old iGEM collaborators. We could match BioBrick sequences to patent filings through
 sequence databases, tracing individual pieces of genetic code from an open registry
-into commercial use. Each would replace a coarse, centroid-level association with a
+into commercial use. Where sequences resist matching, the front-page citations that
+already tie patents to the science they build on
+\citep{narinIncreasingLinkage1997, marxFuegiRelianceScience2020} give a ready-made
+second bridge. Each would replace a coarse, centroid-level association with a
 concrete, traceable link, and let a future study move past whether a city's projects
 and papers are related to whether one actually grew out of the other.
+
+A last word, wider than the data. This began with biology learning to write, and
+with students in a competition learning the same, one careful sentence in the
+language of life at a time. The study of those students was written the same way, by
+one person composing with tools built by others and open to anyone. Both belong to
+the same turn: a new power moving from something that happens to us into something we
+compose on purpose, whether the medium is a cell or a corpus. Whether iGEM's writers
+lead their cities' science or only keep pace with it, this thesis cannot yet say. It
+can say that they are writing in the same places, on the same themes, and that carbon
+capture is one corner where learning to write with life might help repair what
+writing it by accident has cost. That is reason enough to keep reading them closely.
 
 \bibliographystyle{plainnat}
 \bibliography{references,references_extra}
