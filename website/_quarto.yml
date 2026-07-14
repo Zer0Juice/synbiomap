@@ -20,10 +20,14 @@ website:
         text: Results
       - href: case-study.qmd
         text: "Carbon Capture"
+      - href: explorer.qmd
+        text: Explorer
       - href: methods.qmd
         text: "Methods & Data"
       - href: paper.qmd
         text: Paper
+      - href: reproducibility.qmd
+        text: Reproducibility
       - href: slides.qmd
         text: Slides
 
