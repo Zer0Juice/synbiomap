@@ -32,18 +32,18 @@ from src.embed.embeddings import _load_cache
 from src.analyze.robustness import kmeans_labels, decisive_for_labels
 
 PROCESSED = REPO_ROOT / "data" / "processed"
-CORPUS    = PROCESSED / "artifacts_tripartite_clustered.csv"
-CACHE     = REPO_ROOT / "data" / "embeddings" / "finetuned" / "embeddings.json"
-OUT       = PROCESSED / "robustness_kcurve.csv"
+DEFAULT_CORPUS = PROCESSED / "artifacts_tripartite_clustered.csv"
+DEFAULT_CACHE  = REPO_ROOT / "data" / "embeddings" / "finetuned" / "embeddings.json"
+DEFAULT_OUT    = PROCESSED / "robustness_kcurve.csv"
 
 PAIRS = [("paper", "project"), ("paper", "patent"), ("project", "patent")]
 MIN_DOCS = 5
 
 
-def run(ks, n_perm):
-    arts = pd.read_csv(CORPUS, low_memory=False)
+def run(ks, n_perm, corpus, cache_file, out):
+    arts = pd.read_csv(corpus, low_memory=False)
     arts["city_key"] = arts["city"].astype(str).str.strip().str.lower()
-    cache = _load_cache(CACHE)
+    cache = _load_cache(cache_file)
 
     valid = arts[arts["id"].isin(cache)].copy().reset_index(drop=True)
     ids = valid["id"].tolist()
@@ -68,12 +68,19 @@ def run(ks, n_perm):
         all_rows.extend(rows)
 
     df = pd.DataFrame(all_rows)
-    df.to_csv(OUT, index=False)
-    print(f"\nSaved: {OUT.relative_to(REPO_ROOT)}")
+    df.to_csv(out, index=False)
+    print(f"\nSaved: {out}")
 
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser(description="Clustering-resolution robustness sweep.")
     p.add_argument("--ks", type=int, nargs="+", default=[10, 20, 40, 60, 80, 120])
     p.add_argument("--n-perm", type=int, default=1000)
-    run(*[p.parse_args().__getattribute__(a) for a in ("ks", "n_perm")])
+    p.add_argument("--corpus", type=Path, default=DEFAULT_CORPUS,
+                   help="Clustered corpus CSV (default artifacts_tripartite_clustered.csv).")
+    p.add_argument("--cache", type=Path, default=DEFAULT_CACHE,
+                   help="Embedding cache file (default finetuned/embeddings.json).")
+    p.add_argument("--out", type=Path, default=DEFAULT_OUT,
+                   help="Output CSV (default robustness_kcurve.csv).")
+    a = p.parse_args()
+    run(a.ks, a.n_perm, a.corpus, a.cache, a.out)

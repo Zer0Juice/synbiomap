@@ -46,15 +46,15 @@ from src.cluster.cluster import (
 )
 
 PROCESSED = REPO_ROOT / "data" / "processed"
-CORPUS    = PROCESSED / "artifacts_tripartite.csv"
-CACHE     = REPO_ROOT / "data" / "embeddings" / "finetuned" / "embeddings.json"
-OUT_CSV   = PROCESSED / "artifacts_tripartite_clustered.csv"
-OUT_PROJ  = REPO_ROOT / "data" / "embeddings" / "finetuned" / "projections.json"
+DEFAULT_CORPUS = PROCESSED / "artifacts_tripartite.csv"
+DEFAULT_CACHE  = REPO_ROOT / "data" / "embeddings" / "finetuned" / "embeddings.json"
+DEFAULT_OUT    = PROCESSED / "artifacts_tripartite_clustered.csv"
+DEFAULT_PROJ   = REPO_ROOT / "data" / "embeddings" / "finetuned" / "projections.json"
 
 
 def run(args):
-    df = pd.read_csv(CORPUS, low_memory=False)
-    cache = _load_cache(CACHE)
+    df = pd.read_csv(args.corpus, low_memory=False)
+    cache = _load_cache(args.cache)
     valid = df[df["id"].isin(cache)].copy().reset_index(drop=True)
     print(f"Documents with embeddings: {len(valid):,} / {len(df):,}  "
           f"{valid['type'].value_counts().to_dict()}")
@@ -96,13 +96,21 @@ def run(args):
     print(f"\nCarbon-capture cluster (highest cc share): cluster {cc_cluster}")
 
     out = attach_results_to_df(df, ids, coords_2d, labels)
-    out.to_csv(OUT_CSV, index=False)
-    save_projections(ids, coords_2d, labels, OUT_PROJ)
-    print(f"\nSaved:\n  {OUT_CSV.relative_to(REPO_ROOT)}\n  {OUT_PROJ.relative_to(REPO_ROOT)}")
+    out.to_csv(args.out, index=False)
+    save_projections(ids, coords_2d, labels, args.proj)
+    print(f"\nSaved:\n  {args.out}\n  {args.proj}")
 
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser(description="Cluster the tripartite corpus in the fine-tuned space.")
+    p.add_argument("--corpus", type=Path, default=DEFAULT_CORPUS,
+                   help="Corpus CSV to cluster (default artifacts_tripartite.csv).")
+    p.add_argument("--cache", type=Path, default=DEFAULT_CACHE,
+                   help="Embedding cache file (default finetuned/embeddings.json).")
+    p.add_argument("--out", type=Path, default=DEFAULT_OUT,
+                   help="Clustered-corpus output CSV.")
+    p.add_argument("--proj", type=Path, default=DEFAULT_PROJ,
+                   help="Projections JSON output for the website map.")
     p.add_argument("--n-neighbors", type=int, default=15, help="UMAP n_neighbors (default 15)")
     p.add_argument("--cluster-dims", type=int, default=10, help="UMAP dims for clustering (default 10)")
     p.add_argument("--min-cluster-size", type=int, default=50,

@@ -22,8 +22,15 @@ weights remain available for a robustness check.
 Usage
 -----
   python scripts/08_build_tripartite_corpus.py
+
+  # Swap in a different paper set (e.g. Oldham's corpus) and write elsewhere,
+  # leaving the default corpus untouched:
+  python scripts/08_build_tripartite_corpus.py \
+      --papers data/processed/papers_oldham.csv \
+      --out    data/processed/artifacts_tripartite_oldham.csv
 """
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -35,13 +42,8 @@ sys.path.insert(0, str(REPO_ROOT))
 from src.utils.schema import REQUIRED_COLUMNS
 
 PROCESSED = REPO_ROOT / "data" / "processed"
-OUT = PROCESSED / "artifacts_tripartite.csv"
-
-SOURCES = {
-    "paper":   PROCESSED / "papers.csv",
-    "project": PROCESSED / "projects.csv",
-    "patent":  PROCESSED / "patents.csv",
-}
+DEFAULT_OUT = PROCESSED / "artifacts_tripartite.csv"
+DEFAULT_PAPERS = PROCESSED / "papers.csv"
 
 
 def load_typed(path: Path, expected_type: str) -> pd.DataFrame:
@@ -58,10 +60,17 @@ def load_typed(path: Path, expected_type: str) -> pd.DataFrame:
     return df
 
 
-def run():
+def run(papers_path: Path, out_path: Path):
+    papers_path = Path(papers_path).resolve()
+    out_path = Path(out_path).resolve()
+    sources = {
+        "paper":   papers_path,
+        "project": PROCESSED / "projects.csv",
+        "patent":  PROCESSED / "patents.csv",
+    }
     frames = []
     print(f"{'type':9} {'rows':>7} {'with_city':>10} {'with_text':>10}")
-    for typ, path in SOURCES.items():
+    for typ, path in sources.items():
         df = load_typed(path, typ)
         frames.append(df)
         print(f"{typ:9} {len(df):>7} {int(df['city'].notna().sum()):>10} "
@@ -77,9 +86,15 @@ def run():
           f"({int(usable.sum()):,} with both text and city)")
     print("By type:", combined["type"].value_counts().to_dict())
 
-    combined.to_csv(OUT, index=False)
-    print(f"\nSaved: {OUT.relative_to(REPO_ROOT)}")
+    combined.to_csv(out_path, index=False)
+    print(f"\nSaved: {out_path.relative_to(REPO_ROOT)}")
 
 
 if __name__ == "__main__":
-    run()
+    ap = argparse.ArgumentParser(description="Build the tripartite (paper+project+patent) corpus.")
+    ap.add_argument("--papers", type=Path, default=DEFAULT_PAPERS,
+                    help="Paper-source CSV (default data/processed/papers.csv).")
+    ap.add_argument("--out", type=Path, default=DEFAULT_OUT,
+                    help="Output CSV (default data/processed/artifacts_tripartite.csv).")
+    args = ap.parse_args()
+    run(args.papers, args.out)

@@ -32796,5 +32796,2238 @@
     "city": "Ben Arous",
     "lat": 36.765289306640625,
     "lon": 10.239255905151367
+  },
+  "https://openalex.org/I2802123492": {
+    "city": "London",
+    "lat": 51.52457809448242,
+    "lon": -0.08461599797010422
+  },
+  "https://openalex.org/I95297979": {
+    "city": "Ottawa",
+    "lat": 45.411170959472656,
+    "lon": -75.6981201171875
+  },
+  "https://openalex.org/I21851649": {
+    "city": "Sapporo",
+    "lat": 43.134666442871094,
+    "lon": 141.24563598632812
+  },
+  "https://openalex.org/I4210161128": {
+    "city": "Bristol",
+    "lat": 51.501564025878906,
+    "lon": -2.55159592628479
+  },
+  "https://openalex.org/I4210149924": {
+    "city": "Santa Fe",
+    "lat": -31.64881,
+    "lon": -60.70868
+  },
+  "https://openalex.org/I4210092595": {
+    "city": "Berkeley",
+    "lat": 37.875675201416016,
+    "lon": -122.26201629638672
+  },
+  "https://openalex.org/I127019355": {
+    "city": "Tucum\u00e1n",
+    "lat": -26.824140548706055,
+    "lon": -65.22260284423828
+  },
+  "https://openalex.org/I4210089787": {
+    "city": "Frankfurt am Main",
+    "lat": 50.13155746459961,
+    "lon": 8.51708698272705
+  },
+  "https://openalex.org/I157417397": {
+    "city": "Bowling Green",
+    "lat": 41.37477,
+    "lon": -83.65132
+  },
+  "https://openalex.org/I4210089467": {
+    "city": "Moscow",
+    "lat": 55.67818832397461,
+    "lon": 37.5698356628418
+  },
+  "https://openalex.org/I193524592": {
+    "city": "Tianjin",
+    "lat": 39.14221954345703,
+    "lon": 117.17666625976562
+  },
+  "https://openalex.org/I184647316": {
+    "city": "Rapid City",
+    "lat": 44.08053970336914,
+    "lon": -103.23101043701172
+  },
+  "https://openalex.org/I129862065": {
+    "city": "Thiruvananthapuram",
+    "lat": 8.525246620178223,
+    "lon": 76.92837524414062
+  },
+  "https://openalex.org/I1290603121": {
+    "city": "Islamabad",
+    "lat": 33.687408447265625,
+    "lon": 73.13677978515625
+  },
+  "https://openalex.org/I2800200528": {
+    "city": "Charlotte",
+    "lat": 35.22359848022461,
+    "lon": -80.87149810791016
+  },
+  "https://openalex.org/I2802581893": {
+    "city": "Frederick",
+    "lat": 39.41427,
+    "lon": -77.41054
+  },
+  "https://openalex.org/I4210146216": {
+    "city": "Ulm",
+    "lat": 48.39841079711914,
+    "lon": 9.99155044555664
+  },
+  "https://openalex.org/I116265982": {
+    "city": "Xining",
+    "lat": 36.62554168701172,
+    "lon": 101.75739288330078
+  },
+  "https://openalex.org/I1310183320": {
+    "city": "Santa Fe",
+    "lat": 35.63654327392578,
+    "lon": -105.9589614868164
+  },
+  "https://openalex.org/I4210137407": {
+    "city": "Champs-sur-Marne",
+    "lat": 48.849998474121094,
+    "lon": 2.5999999046325684
+  },
+  "https://openalex.org/I4210086037": {
+    "city": "Munich",
+    "lat": 48.14803695678711,
+    "lon": 11.576687812805176
+  },
+  "https://openalex.org/I4210131608": {
+    "city": "Nonthaburi",
+    "lat": 13.854093551635742,
+    "lon": 100.52141571044922
+  },
+  "https://openalex.org/I105140100": {
+    "city": "Madrid",
+    "lat": 40.4165,
+    "lon": -3.70256
+  },
+  "https://openalex.org/I44563897": {
+    "city": "Arras",
+    "lat": 50.29301071166992,
+    "lon": 2.781860113143921
+  },
+  "https://openalex.org/I4210109170": {
+    "city": "Toulouse",
+    "lat": 43.60426,
+    "lon": 1.44367
+  },
+  "https://openalex.org/I3211772741": {
+    "city": "Amsterdam",
+    "lat": 52.35678482055664,
+    "lon": 4.95813512802124
+  },
+  "https://openalex.org/I4210101901": {
+    "city": "Paterna",
+    "lat": 39.502628326416016,
+    "lon": -0.44078999757766724
+  },
+  "https://openalex.org/I207852960": {
+    "city": "Saskatoon",
+    "lat": 52.132381439208984,
+    "lon": -106.6689224243164
+  },
+  "https://openalex.org/I4210099176": {
+    "city": "S\u00e3o Paulo",
+    "lat": -23.535661697387695,
+    "lon": -46.558048248291016
+  },
+  "https://openalex.org/I3412056": {
+    "city": "Kyoto",
+    "lat": 35.02106857299805,
+    "lon": 135.75384521484375
+  },
+  "https://openalex.org/I139290212": {
+    "city": "Hempstead",
+    "lat": 40.70621109008789,
+    "lon": -73.61873626708984
+  },
+  "https://openalex.org/I4210157357": {
+    "city": "Trnava",
+    "lat": 48.377410888671875,
+    "lon": 17.587230682373047
+  },
+  "https://openalex.org/I4210091018": {
+    "city": "Mount Kisco",
+    "lat": 41.197998046875,
+    "lon": -73.72467803955078
+  },
+  "https://openalex.org/I4401726909": {
+    "city": "Dresden",
+    "lat": 51.05089,
+    "lon": 13.73832
+  },
+  "https://openalex.org/I308837": {
+    "city": "Suzhou",
+    "lat": 31.304079055786133,
+    "lon": 120.59538269042969
+  },
+  "https://openalex.org/I4210100483": {
+    "city": "Minsk",
+    "lat": 53.927696228027344,
+    "lon": 27.68490982055664
+  },
+  "https://openalex.org/I869089601": {
+    "city": "Los Gatos",
+    "lat": 37.23250198364258,
+    "lon": -121.97110748291016
+  },
+  "https://openalex.org/I4210144456": {
+    "city": "Dar es Salaam",
+    "lat": -6.82349,
+    "lon": 39.26951
+  },
+  "https://openalex.org/I2800578320": {
+    "city": "Cork",
+    "lat": 51.89797,
+    "lon": -8.47061
+  },
+  "https://openalex.org/I4210106630": {
+    "city": "Elsinore",
+    "lat": 56.03606033325195,
+    "lon": 12.61359977722168
+  },
+  "https://openalex.org/I186272606": {
+    "city": "Guangzhou",
+    "lat": 23.116670608520508,
+    "lon": 113.25
+  },
+  "https://openalex.org/I118618916": {
+    "city": "Saint-Martin-d'H\u00e8res",
+    "lat": 45.1786994934082,
+    "lon": 5.762810230255127
+  },
+  "https://openalex.org/I4210098305": {
+    "city": "Jinzhou",
+    "lat": 41.13412857055664,
+    "lon": 121.12956237792969
+  },
+  "https://openalex.org/I154893126": {
+    "city": "Guiyang",
+    "lat": 26.583330154418945,
+    "lon": 106.71666717529297
+  },
+  "https://openalex.org/I1302611135": {
+    "city": "Beijing",
+    "lat": 39.907501220703125,
+    "lon": 116.39723205566406
+  },
+  "https://openalex.org/I206597221": {
+    "city": "Gongju",
+    "lat": 36.46900177001953,
+    "lon": 127.13999938964844
+  },
+  "https://openalex.org/I4210156537": {
+    "city": "Ribeir\u00e3o Preto",
+    "lat": -21.177499771118164,
+    "lon": -47.810279846191406
+  },
+  "https://openalex.org/I51216347": {
+    "city": "Cambridge",
+    "lat": 52.2,
+    "lon": 0.11667
+  },
+  "https://openalex.org/I4210154586": {
+    "city": "Salamanca",
+    "lat": 40.42972183227539,
+    "lon": -3.6797499656677246
+  },
+  "https://openalex.org/I4210105455": {
+    "city": "Padua",
+    "lat": 45.4079704284668,
+    "lon": 11.885860443115234
+  },
+  "https://openalex.org/I170347488": {
+    "city": "Nagpur",
+    "lat": 21.122806549072266,
+    "lon": 79.07107543945312
+  },
+  "https://openalex.org/I4210098306": {
+    "city": "Clayton",
+    "lat": -37.91667175292969,
+    "lon": 145.11666870117188
+  },
+  "https://openalex.org/I4210145675": {
+    "city": "Nairobi",
+    "lat": -1.3086868524551392,
+    "lon": 36.802398681640625
+  },
+  "https://openalex.org/I175704753": {
+    "city": "Seattle",
+    "lat": 47.69996643066406,
+    "lon": -122.33346557617188
+  },
+  "https://openalex.org/I4210133090": {
+    "city": "Qu\u00e9bec",
+    "lat": 46.773643493652344,
+    "lon": -71.29600524902344
+  },
+  "https://openalex.org/I140494188": {
+    "city": "Troyes",
+    "lat": 48.30073165893555,
+    "lon": 4.085239887237549
+  },
+  "https://openalex.org/I4210088048": {
+    "city": "Reading",
+    "lat": 51.414695739746094,
+    "lon": -0.9411569833755493
+  },
+  "https://openalex.org/I4210122952": {
+    "city": "Nantes",
+    "lat": 47.21725,
+    "lon": -1.55336
+  },
+  "https://openalex.org/I4210134697": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I4405266956": {
+    "city": "Dresden",
+    "lat": 51.05089,
+    "lon": 13.73832
+  },
+  "https://openalex.org/I4388446408": {
+    "city": "Zaragoza Municipality",
+    "lat": 41.64828872680664,
+    "lon": -0.8830299973487854
+  },
+  "https://openalex.org/I4210158810": {
+    "city": "Shenyang",
+    "lat": 41.840423583984375,
+    "lon": 123.43651580810547
+  },
+  "https://openalex.org/I4210149382": {
+    "city": "Houston",
+    "lat": 29.763280868530273,
+    "lon": -95.36327362060547
+  },
+  "https://openalex.org/I4210146201": {
+    "city": "Washington",
+    "lat": 38.89511,
+    "lon": -77.03637
+  },
+  "https://openalex.org/I4210128274": {
+    "city": "Barcelona",
+    "lat": 41.38879,
+    "lon": 2.15899
+  },
+  "https://openalex.org/I126031752": {
+    "city": "Santa Barbara",
+    "lat": 34.40701675415039,
+    "lon": -119.6973648071289
+  },
+  "https://openalex.org/I4210113761": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I4210089156": {
+    "city": "Turin",
+    "lat": 45.01640701293945,
+    "lon": 7.638247013092041
+  },
+  "https://openalex.org/I161929037": {
+    "city": "Brest",
+    "lat": 48.39029,
+    "lon": -4.48628
+  },
+  "https://openalex.org/I35345632": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I4210134087": {
+    "city": "Abingdon",
+    "lat": 51.62466812133789,
+    "lon": -1.2956429719924927
+  },
+  "https://openalex.org/I166580119": {
+    "city": "Kolkata",
+    "lat": 22.576200485229492,
+    "lon": 88.36080169677734
+  },
+  "https://openalex.org/I4210112310": {
+    "city": "Bad Neuenahr-Ahrweiler",
+    "lat": 50.54636764526367,
+    "lon": 7.110053062438965
+  },
+  "https://openalex.org/I2800156163": {
+    "city": "Halle",
+    "lat": 51.4815788269043,
+    "lon": 11.979470252990723
+  },
+  "https://openalex.org/I4210147369": {
+    "city": "Shanghai",
+    "lat": 31.21175193786621,
+    "lon": 121.46725463867188
+  },
+  "https://openalex.org/I4210090431": {
+    "city": "Nagoya",
+    "lat": 35.19512176513672,
+    "lon": 137.01466369628906
+  },
+  "https://openalex.org/I4210107429": {
+    "city": "Barcelona",
+    "lat": 41.38879,
+    "lon": 2.15899
+  },
+  "https://openalex.org/I4210116760": {
+    "city": "Cuernavaca",
+    "lat": 18.902454376220703,
+    "lon": -99.21520233154297
+  },
+  "https://openalex.org/I68109076": {
+    "city": "Lake Forest",
+    "lat": 42.24859619140625,
+    "lon": -87.8993148803711
+  },
+  "https://openalex.org/I68145777": {
+    "city": "Lucknow",
+    "lat": 26.895843505859375,
+    "lon": 80.99299621582031
+  },
+  "https://openalex.org/I170429926": {
+    "city": "Strasbourg",
+    "lat": 48.58513259887695,
+    "lon": 7.75470495223999
+  },
+  "https://openalex.org/I4210145471": {
+    "city": "The Hague",
+    "lat": 52.055694580078125,
+    "lon": 4.263792991638184
+  },
+  "https://openalex.org/I3121987637": {
+    "city": "Santa Fe",
+    "lat": -31.64881,
+    "lon": -60.70868
+  },
+  "https://openalex.org/I250520410": {
+    "city": "Prairie View",
+    "lat": 30.09327,
+    "lon": -95.98773
+  },
+  "https://openalex.org/I19688894": {
+    "city": "Bareilly",
+    "lat": 28.29233169555664,
+    "lon": 79.49156951904297
+  },
+  "https://openalex.org/I3129975082": {
+    "city": "Beersheba",
+    "lat": 31.25181007385254,
+    "lon": 34.79130172729492
+  },
+  "https://openalex.org/I1340685415": {
+    "city": "Washington",
+    "lat": 38.89511,
+    "lon": -77.03637
+  },
+  "https://openalex.org/I4210129519": {
+    "city": "Szeged",
+    "lat": 46.244354248046875,
+    "lon": 20.155750274658203
+  },
+  "https://openalex.org/I4210152724": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I2799600842": {
+    "city": "Durham",
+    "lat": 35.974761962890625,
+    "lon": -78.88027954101562
+  },
+  "https://openalex.org/I2799963127": {
+    "city": "Zurich",
+    "lat": 47.36667,
+    "lon": 8.55
+  },
+  "https://openalex.org/I4210088679": {
+    "city": "Edinburgh",
+    "lat": 55.86550521850586,
+    "lon": -3.2000339031219482
+  },
+  "https://openalex.org/I164421362": {
+    "city": "D\u00fcsseldorf",
+    "lat": 51.24263381958008,
+    "lon": 6.737493991851807
+  },
+  "https://openalex.org/I4210100097": {
+    "city": "Oberschlei\u00dfheim",
+    "lat": 48.22859573364258,
+    "lon": 11.58631706237793
+  },
+  "https://openalex.org/I1309191912": {
+    "city": "Durham",
+    "lat": 35.90805435180664,
+    "lon": -78.86277770996094
+  },
+  "https://openalex.org/I4210090399": {
+    "city": "St Louis",
+    "lat": 38.62726974487305,
+    "lon": -90.19789123535156
+  },
+  "https://openalex.org/I4210104130": {
+    "city": "\u00dcr\u00fcmqi",
+    "lat": 43.79042434692383,
+    "lon": 87.61260986328125
+  },
+  "https://openalex.org/I4210112966": {
+    "city": "Madrid",
+    "lat": 40.416500091552734,
+    "lon": -3.7025599479675293
+  },
+  "https://openalex.org/I4210156315": {
+    "city": "Boston",
+    "lat": 42.35227584838867,
+    "lon": -71.06450653076172
+  },
+  "https://openalex.org/I199693650": {
+    "city": "Makkah al Mukarramah",
+    "lat": 21.320375442504883,
+    "lon": 39.96794891357422
+  },
+  "https://openalex.org/I188497080": {
+    "city": "Northfield",
+    "lat": 44.45830154418945,
+    "lon": -93.1615982055664
+  },
+  "https://openalex.org/I4210096256": {
+    "city": "Atlanta",
+    "lat": 33.749,
+    "lon": -84.38798
+  },
+  "https://openalex.org/I4210115524": {
+    "city": "Bussum",
+    "lat": 52.27472686767578,
+    "lon": 5.144138813018799
+  },
+  "https://openalex.org/I4210129944": {
+    "city": "Oxford",
+    "lat": 51.75642013549805,
+    "lon": -1.249796986579895
+  },
+  "https://openalex.org/I3019092743": {
+    "city": "Krakow",
+    "lat": 50.06444549560547,
+    "lon": 19.925832748413086
+  },
+  "https://openalex.org/I183638586": {
+    "city": "Naples",
+    "lat": 40.8521614074707,
+    "lon": 14.268110275268555
+  },
+  "https://openalex.org/I4210151493": {
+    "city": "Baltimore",
+    "lat": 39.29037857055664,
+    "lon": -76.61219024658203
+  },
+  "https://openalex.org/I4210129850": {
+    "city": "Paris",
+    "lat": 48.85340881347656,
+    "lon": 2.34879994392395
+  },
+  "https://openalex.org/I4210127218": {
+    "city": "Albuquerque",
+    "lat": 35.08449172973633,
+    "lon": -106.65113830566406
+  },
+  "https://openalex.org/I4210117806": {
+    "city": "Lafayette",
+    "lat": 40.462154388427734,
+    "lon": -86.93205261230469
+  },
+  "https://openalex.org/I4210133490": {
+    "city": "Split",
+    "lat": 43.50469207763672,
+    "lon": 16.406944274902344
+  },
+  "https://openalex.org/I31575130": {
+    "city": "London",
+    "lat": 51.50852966308594,
+    "lon": -0.12574000656604767
+  },
+  "https://openalex.org/I4210119339": {
+    "city": "Tomsk",
+    "lat": 56.46027374267578,
+    "lon": 84.97490692138672
+  },
+  "https://openalex.org/I164389053": {
+    "city": "New York",
+    "lat": 40.714271545410156,
+    "lon": -74.00596618652344
+  },
+  "https://openalex.org/I4210126202": {
+    "city": "Szeged",
+    "lat": 46.25299835205078,
+    "lon": 20.148239135742188
+  },
+  "https://openalex.org/I4210164268": {
+    "city": "Islamabad",
+    "lat": 33.72148,
+    "lon": 73.04329
+  },
+  "https://openalex.org/I4210147862": {
+    "city": "T\u00fcbingen",
+    "lat": 48.53709030151367,
+    "lon": 9.057966232299805
+  },
+  "https://openalex.org/I4210092380": {
+    "city": "South San Francisco",
+    "lat": 37.654659271240234,
+    "lon": -122.40775299072266
+  },
+  "https://openalex.org/I47807954": {
+    "city": "New York",
+    "lat": 40.75580596923828,
+    "lon": -73.75640106201172
+  },
+  "https://openalex.org/I90669466": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I70768539": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I4210121389": {
+    "city": "Eggenstein-Leopoldshafen",
+    "lat": 49.0993766784668,
+    "lon": 8.429459571838379
+  },
+  "https://openalex.org/I4210128633": {
+    "city": "Singapore",
+    "lat": 1.3045713901519775,
+    "lon": 103.79132843017578
+  },
+  "https://openalex.org/I4210139944": {
+    "city": "Shanghai",
+    "lat": 31.22664451599121,
+    "lon": 121.41903686523438
+  },
+  "https://openalex.org/I4210093580": null,
+  "https://openalex.org/I348769827": {
+    "city": "London",
+    "lat": 51.50852966308594,
+    "lon": -0.12574000656604767
+  },
+  "https://openalex.org/I4210143873": {
+    "city": "Elstree",
+    "lat": 51.63974380493164,
+    "lon": -0.3089100122451782
+  },
+  "https://openalex.org/I4210136959": {
+    "city": "San Diego",
+    "lat": 32.94532775878906,
+    "lon": -117.24111938476562
+  },
+  "https://openalex.org/I2802373619": {
+    "city": "London",
+    "lat": 51.50853,
+    "lon": -0.12574
+  },
+  "https://openalex.org/I4389425508": {
+    "city": "Paris",
+    "lat": 48.85340881347656,
+    "lon": 2.34879994392395
+  },
+  "https://openalex.org/I2801339483": {
+    "city": "Los Angeles",
+    "lat": 34.05223083496094,
+    "lon": -118.24368286132812
+  },
+  "https://openalex.org/I4210127285": {
+    "city": "Charlottesville",
+    "lat": 38.03756332397461,
+    "lon": -78.45173645019531
+  },
+  "https://openalex.org/I4210122684": {
+    "city": "Tokyo",
+    "lat": 35.6259651184082,
+    "lon": 139.73052978515625
+  },
+  "https://openalex.org/I2800398797": {
+    "city": "Glasgow",
+    "lat": 55.866668701171875,
+    "lon": -4.296667098999023
+  },
+  "https://openalex.org/I4210096056": {
+    "city": "Shanghai",
+    "lat": 31.162311553955078,
+    "lon": 121.40687561035156
+  },
+  "https://openalex.org/I177880774": {
+    "city": "Madison",
+    "lat": 40.75981903076172,
+    "lon": -74.41709899902344
+  },
+  "https://openalex.org/I4210104209": {
+    "city": "New Brighton",
+    "lat": 35.87471389770508,
+    "lon": -78.59015655517578
+  },
+  "https://openalex.org/I4210099973": {
+    "city": "M\u00fcnster",
+    "lat": 51.96916580200195,
+    "lon": 7.59250020980835
+  },
+  "https://openalex.org/I4210100624": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I2802152550": {
+    "city": "Berkeley",
+    "lat": 37.8695182800293,
+    "lon": -122.26605987548828
+  },
+  "https://openalex.org/I110757952": {
+    "city": "Bratislava",
+    "lat": 48.14815902709961,
+    "lon": 17.106740951538086
+  },
+  "https://openalex.org/I4210103433": {
+    "city": "Paris",
+    "lat": 48.857521057128906,
+    "lon": 2.3728559017181396
+  },
+  "https://openalex.org/I4210118668": {
+    "city": "Warsaw",
+    "lat": 52.22977066040039,
+    "lon": 21.01177978515625
+  },
+  "https://openalex.org/I4210100476": {
+    "city": "Tours",
+    "lat": 47.38719177246094,
+    "lon": 0.6697270274162292
+  },
+  "https://openalex.org/I4210143163": {
+    "city": "Wadsworth",
+    "lat": 41.13545227050781,
+    "lon": -81.73419952392578
+  },
+  "https://openalex.org/I40900055": {
+    "city": "Melbourne",
+    "lat": -37.80951690673828,
+    "lon": 144.9697265625
+  },
+  "https://openalex.org/I4210136308": {
+    "city": "Grenoble",
+    "lat": 45.17869,
+    "lon": 5.71479
+  },
+  "https://openalex.org/I4210116117": {
+    "city": "\u00dcr\u00fcmqi",
+    "lat": 43.800960540771484,
+    "lon": 87.60045623779297
+  },
+  "https://openalex.org/I4210109520": {
+    "city": "Wageningen",
+    "lat": 51.97431945800781,
+    "lon": 5.646696090698242
+  },
+  "https://openalex.org/I4210134384": {
+    "city": "Bangkok",
+    "lat": 13.74440860748291,
+    "lon": 100.53934478759766
+  },
+  "https://openalex.org/I4210086486": {
+    "city": "Zhaotong",
+    "lat": 27.316669464111328,
+    "lon": 103.71666717529297
+  },
+  "https://openalex.org/I2610724": {
+    "city": "Chemnitz",
+    "lat": 50.83570098876953,
+    "lon": 12.929220199584961
+  },
+  "https://openalex.org/I115715567": {
+    "city": "Ranchi",
+    "lat": 23.34316062927246,
+    "lon": 85.30940246582031
+  },
+  "https://openalex.org/I4210110903": {
+    "city": "Aarhus",
+    "lat": 56.15673828125,
+    "lon": 10.210760116577148
+  },
+  "https://openalex.org/I4210165351": {
+    "city": "Nagakute-shi",
+    "lat": 35.18335,
+    "lon": 137.04895
+  },
+  "https://openalex.org/I126193024": {
+    "city": "London",
+    "lat": 51.55157470703125,
+    "lon": -0.1106870025396347
+  },
+  "https://openalex.org/I4210124615": {
+    "city": "Dijon",
+    "lat": 47.31344,
+    "lon": 5.01391
+  },
+  "https://openalex.org/I4210135589": {
+    "city": "Jakarta",
+    "lat": -6.230568885803223,
+    "lon": 106.83240509033203
+  },
+  "https://openalex.org/I4210133208": {
+    "city": "Zapopan",
+    "lat": 20.720277786254883,
+    "lon": -103.3919448852539
+  },
+  "https://openalex.org/I3131550300": {
+    "city": "Toulouse",
+    "lat": 43.60426,
+    "lon": 1.44367
+  },
+  "https://openalex.org/I2800895607": {
+    "city": "Moscow",
+    "lat": 55.752220153808594,
+    "lon": 37.61555862426758
+  },
+  "https://openalex.org/I185286233": {
+    "city": "Pite\u015fti",
+    "lat": 44.849998474121094,
+    "lon": 24.866670608520508
+  },
+  "https://openalex.org/I4210128697": {
+    "city": "Cambridge",
+    "lat": 42.3709716796875,
+    "lon": -71.135498046875
+  },
+  "https://openalex.org/I4210152467": {
+    "city": "Sulzbach",
+    "lat": 49.29882,
+    "lon": 7.05696
+  },
+  "https://openalex.org/I4210085921": {
+    "city": "Madrid",
+    "lat": 40.416500091552734,
+    "lon": -3.7025599479675293
+  },
+  "https://openalex.org/I306340464": {
+    "city": "Nitra",
+    "lat": 48.3076286315918,
+    "lon": 18.084529876708984
+  },
+  "https://openalex.org/I4210155607": {
+    "city": "Villeurbanne",
+    "lat": 45.76601,
+    "lon": 4.8795
+  },
+  "https://openalex.org/I4210149540": {
+    "city": "Beijing",
+    "lat": 40.097801208496094,
+    "lon": 116.2796859741211
+  },
+  "https://openalex.org/I4210150713": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I4210088441": {
+    "city": "Salvador",
+    "lat": -12.993368148803711,
+    "lon": -38.52101516723633
+  },
+  "https://openalex.org/I4210157667": {
+    "city": "Oklahoma City",
+    "lat": 35.479373931884766,
+    "lon": -97.52487182617188
+  },
+  "https://openalex.org/I4210150433": {
+    "city": "Lodz",
+    "lat": 51.77058029174805,
+    "lon": 19.473949432373047
+  },
+  "https://openalex.org/I4210128052": {
+    "city": "Pie\u0161\u0165any",
+    "lat": 48.58586502075195,
+    "lon": 17.815650939941406
+  },
+  "https://openalex.org/I1302485747": {
+    "city": "New York",
+    "lat": 40.73699951171875,
+    "lon": -73.98982238769531
+  },
+  "https://openalex.org/I47301684": {
+    "city": "Normal",
+    "lat": 40.5142,
+    "lon": -88.99063
+  },
+  "https://openalex.org/I4210091327": {
+    "city": "Leipzig",
+    "lat": 51.33961868286133,
+    "lon": 12.37129020690918
+  },
+  "https://openalex.org/I2801261045": {
+    "city": "Philadelphia",
+    "lat": 39.9523811340332,
+    "lon": -75.16361999511719
+  },
+  "https://openalex.org/I4210140243": {
+    "city": "Alexandria",
+    "lat": 38.8072395324707,
+    "lon": -77.05851745605469
+  },
+  "https://openalex.org/I335988729": {
+    "city": "Santo Domingo",
+    "lat": 18.475446701049805,
+    "lon": -69.90982818603516
+  },
+  "https://openalex.org/I4210099371": {
+    "city": "Grenoble",
+    "lat": 45.17869,
+    "lon": 5.71479
+  },
+  "https://openalex.org/I166433441": {
+    "city": "Bremen",
+    "lat": 53.07582,
+    "lon": 8.80717
+  },
+  "https://openalex.org/I4210096025": {
+    "city": "Houston",
+    "lat": 29.67259407043457,
+    "lon": -95.41887664794922
+  },
+  "https://openalex.org/I4210160624": {
+    "city": "Pessac",
+    "lat": 44.80565,
+    "lon": -0.6324
+  },
+  "https://openalex.org/I4210148937": {
+    "city": "Malvern",
+    "lat": 40.0607795715332,
+    "lon": -75.54106140136719
+  },
+  "https://openalex.org/I1306287861": {
+    "city": "Tokyo",
+    "lat": 35.6895,
+    "lon": 139.69171
+  },
+  "https://openalex.org/I4210132047": {
+    "city": "Beijing",
+    "lat": 39.95650100708008,
+    "lon": 116.36168670654297
+  },
+  "https://openalex.org/I932564295": {
+    "city": "Amsterdam",
+    "lat": 52.37403,
+    "lon": 4.88969
+  },
+  "https://openalex.org/I4210164902": {
+    "city": "Dar es Salaam",
+    "lat": -6.823490142822266,
+    "lon": 39.269508361816406
+  },
+  "https://openalex.org/I26072440": {
+    "city": "Prayagraj",
+    "lat": 25.444780349731445,
+    "lon": 81.84322357177734
+  },
+  "https://openalex.org/I4210087176": {
+    "city": "Williamstown",
+    "lat": 42.70777893066406,
+    "lon": -73.21360778808594
+  },
+  "https://openalex.org/I4210105683": {
+    "city": "Blumenau",
+    "lat": -26.9194393157959,
+    "lon": -49.06610870361328
+  },
+  "https://openalex.org/I3124161356": {
+    "city": "\u010cesk\u00e9 Bud\u011bjovice",
+    "lat": 48.97447,
+    "lon": 14.47434
+  },
+  "https://openalex.org/I4210095073": {
+    "city": "Stellenbosch",
+    "lat": -33.93462,
+    "lon": 18.86676
+  },
+  "https://openalex.org/I4210088691": {
+    "city": "Guadalajara",
+    "lat": 20.663938522338867,
+    "lon": -103.46061706542969
+  },
+  "https://openalex.org/I38335241": {
+    "city": "Raipur",
+    "lat": 21.23332977294922,
+    "lon": 81.63333129882812
+  },
+  "https://openalex.org/I4210143223": {
+    "city": "Willemstad",
+    "lat": 12.12246,
+    "lon": -68.88641
+  },
+  "https://openalex.org/I3025886734": {
+    "city": "Inglewood",
+    "lat": 33.952880859375,
+    "lon": -118.37590789794922
+  },
+  "https://openalex.org/I2802934434": {
+    "city": "Trento",
+    "lat": 46.0703010559082,
+    "lon": 11.122902870178223
+  },
+  "https://openalex.org/I4210115519": {
+    "city": "Fontainebleau",
+    "lat": 48.40908,
+    "lon": 2.70177
+  },
+  "https://openalex.org/I4210098026": {
+    "city": "Montpellier",
+    "lat": 43.61093,
+    "lon": 3.87635
+  },
+  "https://openalex.org/I2800191209": {
+    "city": "Philadelphia",
+    "lat": 39.945343017578125,
+    "lon": -75.15571594238281
+  },
+  "https://openalex.org/I4210162470": {
+    "city": "Baltimore",
+    "lat": 39.27961730957031,
+    "lon": -76.6297607421875
+  },
+  "https://openalex.org/I140275651": {
+    "city": "Veszpr\u00e9m",
+    "lat": 47.09327,
+    "lon": 17.91149
+  },
+  "https://openalex.org/I4210133585": {
+    "city": "Medell\u00edn",
+    "lat": 6.251840114593506,
+    "lon": -75.56359100341797
+  },
+  "https://openalex.org/I16231767": {
+    "city": "Turku",
+    "lat": 60.44916534423828,
+    "lon": 22.295833587646484
+  },
+  "https://openalex.org/I4210148144": {
+    "city": "Ouagadougou",
+    "lat": 12.370272636413574,
+    "lon": -1.512539029121399
+  },
+  "https://openalex.org/I4210154774": {
+    "city": "Villeneuve-d'Ascq",
+    "lat": 50.61669158935547,
+    "lon": 3.166640043258667
+  },
+  "https://openalex.org/I2802675514": {
+    "city": "Los Angeles",
+    "lat": 34.0543212890625,
+    "lon": -118.25383758544922
+  },
+  "https://openalex.org/I1279686153": {
+    "city": "Irving",
+    "lat": 32.81401824951172,
+    "lon": -96.94889068603516
+  },
+  "https://openalex.org/I4210090086": {
+    "city": "San Jose",
+    "lat": 37.33939,
+    "lon": -121.89496
+  },
+  "https://openalex.org/I42317466": {
+    "city": "Istanbul",
+    "lat": 41.01383972167969,
+    "lon": 28.94965934753418
+  },
+  "https://openalex.org/I4210157022": {
+    "city": "Heidelberg",
+    "lat": 49.4224967956543,
+    "lon": 8.672953605651855
+  },
+  "https://openalex.org/I4210163586": {
+    "city": "Paris",
+    "lat": 48.86140441894531,
+    "lon": 2.288114070892334
+  },
+  "https://openalex.org/I4392021166": {
+    "city": "Seattle",
+    "lat": 47.60620880126953,
+    "lon": -122.33206939697266
+  },
+  "https://openalex.org/I4210134870": {
+    "city": "South Bend",
+    "lat": 41.666507720947266,
+    "lon": -86.22174835205078
+  },
+  "https://openalex.org/I4210152422": {
+    "city": "Toulouse",
+    "lat": 43.60426,
+    "lon": 1.44367
+  },
+  "https://openalex.org/I128902783": {
+    "city": "Downers Grove",
+    "lat": 41.808921813964844,
+    "lon": -88.01116943359375
+  },
+  "https://openalex.org/I4210093934": {
+    "city": "Lake Forest",
+    "lat": 42.27031326293945,
+    "lon": -87.9031982421875
+  },
+  "https://openalex.org/I4210163958": {
+    "city": "Cambridge",
+    "lat": 52.23509216308594,
+    "lon": 0.1534239947795868
+  },
+  "https://openalex.org/I4210155277": {
+    "city": "Udine",
+    "lat": 46.01478576660156,
+    "lon": 13.266218185424805
+  },
+  "https://openalex.org/I108865366": {
+    "city": "Rockville",
+    "lat": 39.096649169921875,
+    "lon": -77.2037582397461
+  },
+  "https://openalex.org/I189075073": {
+    "city": "Mar del Plata",
+    "lat": -38.00042,
+    "lon": -57.5562
+  },
+  "https://openalex.org/I4210139871": {
+    "city": "Talence",
+    "lat": 44.80849,
+    "lon": -0.58915
+  },
+  "https://openalex.org/I26604189": {
+    "city": "Dadri",
+    "lat": 28.552570343017578,
+    "lon": 77.55403137207031
+  },
+  "https://openalex.org/I4210106090": {
+    "city": "Angers",
+    "lat": 47.47156,
+    "lon": -0.55202
+  },
+  "https://openalex.org/I4210162479": {
+    "city": "Nyon",
+    "lat": 46.3831787109375,
+    "lon": 6.2395501136779785
+  },
+  "https://openalex.org/I4210107521": {
+    "city": "Milan",
+    "lat": 45.47987365722656,
+    "lon": 9.232205390930176
+  },
+  "https://openalex.org/I4210106036": {
+    "city": "Budapest",
+    "lat": 47.505157470703125,
+    "lon": 19.0656795501709
+  },
+  "https://openalex.org/I4210100303": {
+    "city": "Lucknow",
+    "lat": 26.910541534423828,
+    "lon": 80.95719146728516
+  },
+  "https://openalex.org/I1322829787": {
+    "city": "Dallas",
+    "lat": 32.665042877197266,
+    "lon": -96.9548568725586
+  },
+  "https://openalex.org/I301949180": {
+    "city": "Tokyo",
+    "lat": 35.662506103515625,
+    "lon": 139.708251953125
+  },
+  "https://openalex.org/I4210103008": {
+    "city": "Kobe",
+    "lat": 34.69129943847656,
+    "lon": 135.18299865722656
+  },
+  "https://openalex.org/I4210140120": {
+    "city": "Turku",
+    "lat": 60.45642852783203,
+    "lon": 22.28510284423828
+  },
+  "https://openalex.org/I4210092791": {
+    "city": "Ithaca",
+    "lat": 42.44063186645508,
+    "lon": -76.49661254882812
+  },
+  "https://openalex.org/I4210094956": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I168673124": {
+    "city": "Tianjin",
+    "lat": 39.14222,
+    "lon": 117.17667
+  },
+  "https://openalex.org/I4210102596": {
+    "city": "Vand\u0153uvre-l\u00e8s-Nancy",
+    "lat": 48.66115188598633,
+    "lon": 6.171140193939209
+  },
+  "https://openalex.org/I4210129342": {
+    "city": "Dallas",
+    "lat": 32.87006378173828,
+    "lon": -96.95046997070312
+  },
+  "https://openalex.org/I1293612202": {
+    "city": "Safenwil",
+    "lat": 47.323001861572266,
+    "lon": 7.981740951538086
+  },
+  "https://openalex.org/I153327471": {
+    "city": "Tokyo",
+    "lat": 35.904930114746094,
+    "lon": 139.77389526367188
+  },
+  "https://openalex.org/I4210159709": {
+    "city": "Termez",
+    "lat": 37.22417,
+    "lon": 67.27833
+  },
+  "https://openalex.org/I4210090186": {
+    "city": "Cincinnati",
+    "lat": 39.292144775390625,
+    "lon": -84.48736572265625
+  },
+  "https://openalex.org/I4210160430": {
+    "city": "Zaragoza",
+    "lat": 41.65605926513672,
+    "lon": -0.8773400187492371
+  },
+  "https://openalex.org/I12524447": {
+    "city": "South Orange",
+    "lat": 40.74314498901367,
+    "lon": -74.24663543701172
+  },
+  "https://openalex.org/I4210105552": {
+    "city": "Modderfontein",
+    "lat": -26.08909034729004,
+    "lon": 28.165340423583984
+  },
+  "https://openalex.org/I4210165842": {
+    "city": "Wako",
+    "lat": 35.7894401550293,
+    "lon": 139.6233367919922
+  },
+  "https://openalex.org/I1336277565": {
+    "city": "Auckland",
+    "lat": -36.84852981567383,
+    "lon": 174.76348876953125
+  },
+  "https://openalex.org/I4210129581": {
+    "city": "Kyoto",
+    "lat": 34.95000076293945,
+    "lon": 135.77305603027344
+  },
+  "https://openalex.org/I4210146990": {
+    "city": "Cambridge",
+    "lat": 42.3631477355957,
+    "lon": -71.11532592773438
+  },
+  "https://openalex.org/I4210092091": {
+    "city": "Guangzhou",
+    "lat": 23.117048263549805,
+    "lon": 113.23441314697266
+  },
+  "https://openalex.org/I4210091574": {
+    "city": "Villeneuve-d'Ascq",
+    "lat": 50.61669158935547,
+    "lon": 3.166640043258667
+  },
+  "https://openalex.org/I1330254920": {
+    "city": "Washington D.C.",
+    "lat": 38.895572662353516,
+    "lon": -77.02877044677734
+  },
+  "https://openalex.org/I4210150798": {
+    "city": "Manchester",
+    "lat": 53.38869857788086,
+    "lon": -2.2918999195098877
+  },
+  "https://openalex.org/I172993857": {
+    "city": "Wilsonville",
+    "lat": 45.29983901977539,
+    "lon": -122.77371215820312
+  },
+  "https://openalex.org/I4210161363": {
+    "city": "Cupertino",
+    "lat": 37.323463439941406,
+    "lon": -122.0216293334961
+  },
+  "https://openalex.org/I4210088307": {
+    "city": "Bratislava",
+    "lat": 48.14815902709961,
+    "lon": 17.106740951538086
+  },
+  "https://openalex.org/I4210159180": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I4210090951": {
+    "city": "Miami",
+    "lat": 25.849082946777344,
+    "lon": -80.24494934082031
+  },
+  "https://openalex.org/I2801030728": {
+    "city": "Leipzig",
+    "lat": 51.33962,
+    "lon": 12.37129
+  },
+  "https://openalex.org/I2800229700": {
+    "city": "Helsinki",
+    "lat": 60.16952133178711,
+    "lon": 24.935449600219727
+  },
+  "https://openalex.org/I4210105847": {
+    "city": "Atsugi",
+    "lat": 35.44049072265625,
+    "lon": 139.31561279296875
+  },
+  "https://openalex.org/I2801348669": {
+    "city": "Cambridge",
+    "lat": 42.372894287109375,
+    "lon": -71.11917114257812
+  },
+  "https://openalex.org/I901610228": {
+    "city": "Basel",
+    "lat": 47.546119689941406,
+    "lon": 7.598083972930908
+  },
+  "https://openalex.org/I4210158242": {
+    "city": "San Diego",
+    "lat": 32.900901794433594,
+    "lon": -117.21094512939453
+  },
+  "https://openalex.org/I4210121674": {
+    "city": "Stornoway",
+    "lat": 58.208255767822266,
+    "lon": -6.388318061828613
+  },
+  "https://openalex.org/I4210158053": {
+    "city": "Raleigh",
+    "lat": 35.7721,
+    "lon": -78.63861
+  },
+  "https://openalex.org/I132976966": {
+    "city": "Krems",
+    "lat": 48.40921,
+    "lon": 15.61415
+  },
+  "https://openalex.org/I4210165369": {
+    "city": "Fujisawa",
+    "lat": 35.39969253540039,
+    "lon": 139.4544219970703
+  },
+  "https://openalex.org/I4210113914": {
+    "city": "Beijing",
+    "lat": 39.87727355957031,
+    "lon": 116.3934555053711
+  },
+  "https://openalex.org/I4210099511": {
+    "city": "Pittsburgh",
+    "lat": 40.4436149597168,
+    "lon": -80.16343688964844
+  },
+  "https://openalex.org/I1304082316": {
+    "city": "Arlington",
+    "lat": 38.88101,
+    "lon": -77.10428
+  },
+  "https://openalex.org/I4210104446": {
+    "city": "Heidelberg",
+    "lat": 49.4227409362793,
+    "lon": 8.67618465423584
+  },
+  "https://openalex.org/I6980041": {
+    "city": "Ness Ziona",
+    "lat": 31.914602279663086,
+    "lon": 34.80215072631836
+  },
+  "https://openalex.org/I4210164597": {
+    "city": "Carlsbad",
+    "lat": 33.1324462890625,
+    "lon": -117.25791931152344
+  },
+  "https://openalex.org/I4210095130": null,
+  "https://openalex.org/I4210124109": {
+    "city": "Halle",
+    "lat": 51.49761199951172,
+    "lon": 11.940140724182129
+  },
+  "https://openalex.org/I4210088647": {
+    "city": "York",
+    "lat": 53.95763,
+    "lon": -1.08271
+  },
+  "https://openalex.org/I157674215": {
+    "city": "Kolkata",
+    "lat": 22.56262969970703,
+    "lon": 88.363037109375
+  },
+  "https://openalex.org/I4210163498": {
+    "city": "Ede",
+    "lat": 52.03333,
+    "lon": 5.65833
+  },
+  "https://openalex.org/I67063127": {
+    "city": "South San Francisco",
+    "lat": 37.654659271240234,
+    "lon": -122.40775299072266
+  },
+  "https://openalex.org/I4210165362": {
+    "city": "Palo Alto",
+    "lat": 37.43159866333008,
+    "lon": -122.10364532470703
+  },
+  "https://openalex.org/I3130805194": {
+    "city": "Tandil",
+    "lat": -37.3287,
+    "lon": -59.1369
+  },
+  "https://openalex.org/I4210108345": {
+    "city": "Kansas City",
+    "lat": 39.09973,
+    "lon": -94.57857
+  },
+  "https://openalex.org/I4210155284": {
+    "city": "La Plata",
+    "lat": -34.921451568603516,
+    "lon": -57.95452880859375
+  },
+  "https://openalex.org/I4210108250": {
+    "city": "Kazan\u2019",
+    "lat": 55.792449951171875,
+    "lon": 49.12104034423828
+  },
+  "https://openalex.org/I48825208": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I1296788130": {
+    "city": "Kuala Lumpur",
+    "lat": 3.1134119033813477,
+    "lon": 101.65262603759766
+  },
+  "https://openalex.org/I336106212": {
+    "city": "Mississauga",
+    "lat": 43.5789,
+    "lon": -79.6583
+  },
+  "https://openalex.org/I4210155843": {
+    "city": "New York",
+    "lat": 40.73939895629883,
+    "lon": -73.98929595947266
+  },
+  "https://openalex.org/I4210146919": {
+    "city": "Shanghai",
+    "lat": 31.174427032470703,
+    "lon": 121.45748138427734
+  },
+  "https://openalex.org/I145897649": {
+    "city": "Beijing",
+    "lat": 39.907501220703125,
+    "lon": 116.39723205566406
+  },
+  "https://openalex.org/I4391767942": {
+    "city": "Beijing",
+    "lat": 39.907501220703125,
+    "lon": 116.39723205566406
+  },
+  "https://openalex.org/I4210092827": {
+    "city": "Kr\u0161ko",
+    "lat": 45.95518112182617,
+    "lon": 15.493395805358887
+  },
+  "https://openalex.org/I4210093352": {
+    "city": "Trivandrum",
+    "lat": 8.48550033569336,
+    "lon": 76.9492416381836
+  },
+  "https://openalex.org/I4210117822": {
+    "city": "Montpellier",
+    "lat": 43.610931396484375,
+    "lon": 3.876349925994873
+  },
+  "https://openalex.org/I4210086361": {
+    "city": "Badalona",
+    "lat": 41.45003890991211,
+    "lon": 2.2474100589752197
+  },
+  "https://openalex.org/I4210119061": {
+    "city": "Toulouse",
+    "lat": 43.60426,
+    "lon": 1.44367
+  },
+  "https://openalex.org/I4210137033": {
+    "city": "Pavia",
+    "lat": 45.20236587524414,
+    "lon": 9.13697338104248
+  },
+  "https://openalex.org/I4210131230": {
+    "city": "Andover",
+    "lat": 42.65842819213867,
+    "lon": -71.13700103759766
+  },
+  "https://openalex.org/I4210102907": {
+    "city": "Tokyo",
+    "lat": 35.68949890136719,
+    "lon": 139.69171142578125
+  },
+  "https://openalex.org/I4210092681": {
+    "city": "Antwerp",
+    "lat": 51.220638275146484,
+    "lon": 4.410749912261963
+  },
+  "https://openalex.org/I4210125309": {
+    "city": "Tours",
+    "lat": 47.39484,
+    "lon": 0.70398
+  },
+  "https://openalex.org/I97750245": {
+    "city": "Tres Cantos",
+    "lat": 40.60102462768555,
+    "lon": -3.7155539989471436
+  },
+  "https://openalex.org/I4210098902": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I4210122148": {
+    "city": "Freiburg",
+    "lat": 47.98097229003906,
+    "lon": 7.892666816711426
+  },
+  "https://openalex.org/I2800986571": {
+    "city": "Frederick",
+    "lat": 39.41427,
+    "lon": -77.41054
+  },
+  "https://openalex.org/I2802180866": {
+    "city": "Yokohama",
+    "lat": 35.43333053588867,
+    "lon": 139.64999389648438
+  },
+  "https://openalex.org/I115441956": {
+    "city": "Buffalo",
+    "lat": 42.886451721191406,
+    "lon": -78.87837219238281
+  },
+  "https://openalex.org/I1287521167": {
+    "city": "Bethesda",
+    "lat": 38.98067092895508,
+    "lon": -77.10025787353516
+  },
+  "https://openalex.org/I4210107087": {
+    "city": "Ludwigshafen am Rhein",
+    "lat": 49.49515914916992,
+    "lon": 8.432817459106445
+  },
+  "https://openalex.org/I101072179": {
+    "city": "Tomsk",
+    "lat": 56.4738883972168,
+    "lon": 84.97666931152344
+  },
+  "https://openalex.org/I4210139461": {
+    "city": "Palaiseau",
+    "lat": 48.71828,
+    "lon": 2.2498
+  },
+  "https://openalex.org/I1318287680": {
+    "city": "Silver Spring",
+    "lat": 39.03550720214844,
+    "lon": -76.9828109741211
+  },
+  "https://openalex.org/I4210106422": {
+    "city": "Campinas",
+    "lat": -22.905559539794922,
+    "lon": -47.060829162597656
+  },
+  "https://openalex.org/I75747061": {
+    "city": "Scranton",
+    "lat": 41.40916,
+    "lon": -75.6649
+  },
+  "https://openalex.org/I1324310836": {
+    "city": "San Diego",
+    "lat": 32.878089904785156,
+    "lon": -117.20256042480469
+  },
+  "https://openalex.org/I1341640284": {
+    "city": "Amsterdam",
+    "lat": 52.37403,
+    "lon": 4.88969
+  },
+  "https://openalex.org/I4210166131": {
+    "city": "Ottawa",
+    "lat": 45.43860626220703,
+    "lon": -75.69749450683594
+  },
+  "https://openalex.org/I4210141612": {
+    "city": "Louisville",
+    "lat": 38.25651550292969,
+    "lon": -85.750732421875
+  },
+  "https://openalex.org/I4210110338": {
+    "city": "Mozzagrogna",
+    "lat": 42.218807220458984,
+    "lon": 14.443854331970215
+  },
+  "https://openalex.org/I4210132203": {
+    "city": "Seoul",
+    "lat": 37.566,
+    "lon": 126.9784
+  },
+  "https://openalex.org/I4210138366": {
+    "city": "Racine",
+    "lat": 42.78456497192383,
+    "lon": -87.77168273925781
+  },
+  "https://openalex.org/I4210165169": {
+    "city": "Oslo",
+    "lat": 59.94670104980469,
+    "lon": 10.772478103637695
+  },
+  "https://openalex.org/I4210124657": {
+    "city": "Guangzhou",
+    "lat": 23.149864196777344,
+    "lon": 113.22215270996094
+  },
+  "https://openalex.org/I65163767": {
+    "city": "Potters Bar",
+    "lat": 51.69353103637695,
+    "lon": -0.17835000157356262
+  },
+  "https://openalex.org/I157286207": {
+    "city": "Maynooth",
+    "lat": 53.3849983215332,
+    "lon": -6.593609809875488
+  },
+  "https://openalex.org/I4210115638": {
+    "city": "Bucharest",
+    "lat": 44.43225,
+    "lon": 26.10626
+  },
+  "https://openalex.org/I4210123774": {
+    "city": "Portland",
+    "lat": 43.65299987792969,
+    "lon": -70.2760009765625
+  },
+  "https://openalex.org/I4210139885": null,
+  "https://openalex.org/I708430": {
+    "city": "La Verne",
+    "lat": 34.09962844848633,
+    "lon": -117.77216339111328
+  },
+  "https://openalex.org/I4210098516": {
+    "city": "Prague",
+    "lat": 49.98223876953125,
+    "lon": 14.490616798400879
+  },
+  "https://openalex.org/I4210094201": {
+    "city": "Csongr\u00e1d",
+    "lat": 46.217796325683594,
+    "lon": 19.88287925720215
+  },
+  "https://openalex.org/I4210162140": {
+    "city": "Monmouth Junction",
+    "lat": 40.4133186340332,
+    "lon": -74.50695037841797
+  },
+  "https://openalex.org/I7863295": {
+    "city": "Radnor",
+    "lat": 40.04622,
+    "lon": -75.35991
+  },
+  "https://openalex.org/I102373834": {
+    "city": "Bryn Mawr",
+    "lat": 40.01982879638672,
+    "lon": -75.30462646484375
+  },
+  "https://openalex.org/I4210154249": {
+    "city": "Nay Pyi Taw",
+    "lat": 19.786699295043945,
+    "lon": 96.13227844238281
+  },
+  "https://openalex.org/I2799330578": {
+    "city": "Ottawa",
+    "lat": 45.4011116027832,
+    "lon": -75.6513900756836
+  },
+  "https://openalex.org/I2802459557": {
+    "city": "Hong Kong",
+    "lat": 22.32261085510254,
+    "lon": 114.1805419921875
+  },
+  "https://openalex.org/I4210105181": {
+    "city": "Saint-\u00c9tienne-du-Rouvray",
+    "lat": 49.37794,
+    "lon": 1.10467
+  },
+  "https://openalex.org/I924572780": {
+    "city": "Tallinn",
+    "lat": 59.433021545410156,
+    "lon": 24.761011123657227
+  },
+  "https://openalex.org/I51441396": {
+    "city": "Weimar",
+    "lat": 50.98030090332031,
+    "lon": 11.32903003692627
+  },
+  "https://openalex.org/I190752583": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I1336742384": {
+    "city": "Washington",
+    "lat": 38.895111083984375,
+    "lon": -77.03636932373047
+  },
+  "https://openalex.org/I4210162648": {
+    "city": "Shanghai",
+    "lat": 31.185819625854492,
+    "lon": 121.5918960571289
+  },
+  "https://openalex.org/I4210138439": {
+    "city": "Chihuahua City",
+    "lat": 28.63528060913086,
+    "lon": -106.0888900756836
+  },
+  "https://openalex.org/I4210133068": {
+    "city": "Durango",
+    "lat": 37.2752799987793,
+    "lon": -107.88007354736328
+  },
+  "https://openalex.org/I48780066": {
+    "city": "Shenyang",
+    "lat": 41.79222106933594,
+    "lon": 123.43277740478516
+  },
+  "https://openalex.org/I2799784675": {
+    "city": "Bochum",
+    "lat": 51.481651306152344,
+    "lon": 7.216479778289795
+  },
+  "https://openalex.org/I103225651": {
+    "city": "San Michele all'Adige",
+    "lat": 46.18967056274414,
+    "lon": 11.132120132446289
+  },
+  "https://openalex.org/I4210117977": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I4387153640": {
+    "city": "Manizales",
+    "lat": 5.06889009475708,
+    "lon": -75.51737976074219
+  },
+  "https://openalex.org/I4210101441": {
+    "city": "Nijmegen",
+    "lat": 51.81904983520508,
+    "lon": 5.856881141662598
+  },
+  "https://openalex.org/I4210128986": {
+    "city": "Montpellier",
+    "lat": 43.61093,
+    "lon": 3.87635
+  },
+  "https://openalex.org/I153230381": {
+    "city": "Bathurst",
+    "lat": -33.430023193359375,
+    "lon": 149.56556701660156
+  },
+  "https://openalex.org/I1311206647": {
+    "city": "Washington D.C.",
+    "lat": 38.90025329589844,
+    "lon": -77.02789306640625
+  },
+  "https://openalex.org/I129775632": {
+    "city": "Durham",
+    "lat": 35.878028869628906,
+    "lon": -78.84500885009766
+  },
+  "https://openalex.org/I4210152518": {
+    "city": "Champs-sur-Marne",
+    "lat": 48.85,
+    "lon": 2.6
+  },
+  "https://openalex.org/I2801963157": {
+    "city": "Bonn",
+    "lat": 50.73438,
+    "lon": 7.09549
+  },
+  "https://openalex.org/I2802603000": {
+    "city": "Pohang",
+    "lat": 36.014163970947266,
+    "lon": 129.32321166992188
+  },
+  "https://openalex.org/I4210164718": {
+    "city": "Raleigh",
+    "lat": 35.772098541259766,
+    "lon": -78.63861083984375
+  },
+  "https://openalex.org/I4210163976": {
+    "city": "Seville",
+    "lat": 37.42134475708008,
+    "lon": -6.031211853027344
+  },
+  "https://openalex.org/I4210136509": {
+    "city": "Songjiang",
+    "lat": 31.071815490722656,
+    "lon": 121.18107604980469
+  },
+  "https://openalex.org/I4210128522": {
+    "city": "Dhaka",
+    "lat": 23.780776977539062,
+    "lon": 90.40050506591797
+  },
+  "https://openalex.org/I4210163977": {
+    "city": "Wroc\u0142aw",
+    "lat": 51.07664108276367,
+    "lon": 17.022310256958008
+  },
+  "https://openalex.org/I2972652528": {
+    "city": "Windisch",
+    "lat": 47.47899,
+    "lon": 8.21842
+  },
+  "https://openalex.org/I4210154195": {
+    "city": "Osorno",
+    "lat": -40.573951721191406,
+    "lon": -73.13347625732422
+  },
+  "https://openalex.org/I4210140515": {
+    "city": "Shenyang",
+    "lat": 41.79222106933594,
+    "lon": 123.43277740478516
+  },
+  "https://openalex.org/I4210135860": {
+    "city": "Newport Beach",
+    "lat": 33.669525146484375,
+    "lon": -117.86592864990234
+  },
+  "https://openalex.org/I4210090005": {
+    "city": "Lucknow",
+    "lat": 26.839279174804688,
+    "lon": 80.92312622070312
+  },
+  "https://openalex.org/I4210119860": {
+    "city": "Villejuif",
+    "lat": 48.7939,
+    "lon": 2.35992
+  },
+  "https://openalex.org/I4210114274": {
+    "city": "Marseille",
+    "lat": 43.29695129394531,
+    "lon": 5.381070137023926
+  },
+  "https://openalex.org/I100538780": {
+    "city": "Middletown",
+    "lat": 41.562320709228516,
+    "lon": -72.65065002441406
+  },
+  "https://openalex.org/I4210096362": {
+    "city": "Ibaraki",
+    "lat": 36.024776458740234,
+    "lon": 140.1228790283203
+  },
+  "https://openalex.org/I4210140627": {
+    "city": "Palo Alto",
+    "lat": 37.452232360839844,
+    "lon": -122.11345672607422
+  },
+  "https://openalex.org/I4210089877": {
+    "city": "Leipzig",
+    "lat": 51.33961868286133,
+    "lon": 12.37129020690918
+  },
+  "https://openalex.org/I4210160169": {
+    "city": "'s-Hertogenbosch",
+    "lat": 51.695411682128906,
+    "lon": 5.184388160705566
+  },
+  "https://openalex.org/I1302978242": {
+    "city": "London",
+    "lat": 51.524009704589844,
+    "lon": -0.13296499848365784
+  },
+  "https://openalex.org/I46597724": {
+    "city": "Poznan",
+    "lat": 52.40692,
+    "lon": 16.92993
+  },
+  "https://openalex.org/I4210134573": {
+    "city": "Trondheim",
+    "lat": 63.43027877807617,
+    "lon": 10.400278091430664
+  },
+  "https://openalex.org/I4210105028": {
+    "city": "New York",
+    "lat": 41.50226593017578,
+    "lon": -74.54668426513672
+  },
+  "https://openalex.org/I2799978770": {
+    "city": "Erfurt",
+    "lat": 50.948734283447266,
+    "lon": 11.08709716796875
+  },
+  "https://openalex.org/I4210131147": {
+    "city": "Son\u012bpat",
+    "lat": 28.994779586791992,
+    "lon": 77.01937103271484
+  },
+  "https://openalex.org/I4210099578": {
+    "city": "Boston",
+    "lat": 42.35843,
+    "lon": -71.05977
+  },
+  "https://openalex.org/I32393484": {
+    "city": "Rio de Janeiro",
+    "lat": -22.909135818481445,
+    "lon": -43.17923355102539
+  },
+  "https://openalex.org/I4210150153": {
+    "city": "Lund",
+    "lat": 55.716712951660156,
+    "lon": 13.225248336791992
+  },
+  "https://openalex.org/I4210141710": {
+    "city": "Taipei",
+    "lat": 25.037517547607422,
+    "lon": 121.5636978149414
+  },
+  "https://openalex.org/I115304662": {
+    "city": "Vic",
+    "lat": 41.930118560791016,
+    "lon": 2.2548599243164062
+  },
+  "https://openalex.org/I4387155697": {
+    "city": "\u00c9pinal",
+    "lat": 48.18324,
+    "lon": 6.45304
+  },
+  "https://openalex.org/I122991210": {
+    "city": "Pisa",
+    "lat": 43.70853,
+    "lon": 10.4036
+  },
+  "https://openalex.org/I1288880153": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I24648388": {
+    "city": "Peoria",
+    "lat": 40.69364929199219,
+    "lon": -89.5889892578125
+  },
+  "https://openalex.org/I4210107180": {
+    "city": "Malvern",
+    "lat": 40.061222076416016,
+    "lon": -75.54067993164062
+  },
+  "https://openalex.org/I4210155982": {
+    "city": "Oxford",
+    "lat": 51.71451187133789,
+    "lon": -1.2197610139846802
+  },
+  "https://openalex.org/I4210098300": {
+    "city": "Edmonton",
+    "lat": 53.55014,
+    "lon": -113.46871
+  },
+  "https://openalex.org/I4210153270": {
+    "city": "Bratislava",
+    "lat": 48.34733581542969,
+    "lon": 18.025909423828125
+  },
+  "https://openalex.org/I4391768210": {
+    "city": "Beijing",
+    "lat": 39.907501220703125,
+    "lon": 116.39723205566406
+  },
+  "https://openalex.org/I150406212": {
+    "city": "Khartoum",
+    "lat": 15.55177,
+    "lon": 32.53241
+  },
+  "https://openalex.org/I4210106827": {
+    "city": "Sarajevo",
+    "lat": 43.84864044189453,
+    "lon": 18.3564395904541
+  },
+  "https://openalex.org/I2802079556": {
+    "city": "Berlin",
+    "lat": 52.52437,
+    "lon": 13.41053
+  },
+  "https://openalex.org/I4210120266": {
+    "city": "Prague",
+    "lat": 50.08803939819336,
+    "lon": 14.420760154724121
+  },
+  "https://openalex.org/I85788879": {
+    "city": "Plymouth",
+    "lat": 50.37152862548828,
+    "lon": -4.143050193786621
+  },
+  "https://openalex.org/I4210136791": {
+    "city": "Avignon",
+    "lat": 43.94834,
+    "lon": 4.80892
+  },
+  "https://openalex.org/I37613341": {
+    "city": "Vilnius",
+    "lat": 54.65058517456055,
+    "lon": 25.271244049072266
+  },
+  "https://openalex.org/I4210164039": {
+    "city": "Casper",
+    "lat": 42.85722732543945,
+    "lon": -106.30317687988281
+  },
+  "https://openalex.org/I177918364": {
+    "city": "Taichung",
+    "lat": 24.226943969726562,
+    "lon": 120.58000183105469
+  },
+  "https://openalex.org/I4210134054": {
+    "city": "Slough",
+    "lat": 51.509490966796875,
+    "lon": -0.5954099893569946
+  },
+  "https://openalex.org/I165283593": {
+    "city": "Rennes",
+    "lat": 48.11198,
+    "lon": -1.67429
+  },
+  "https://openalex.org/I4210106545": {
+    "city": "Valbonne",
+    "lat": 43.63292,
+    "lon": 6.99911
+  },
+  "https://openalex.org/I4210142642": {
+    "city": "Moscow",
+    "lat": 55.770816802978516,
+    "lon": 37.589622497558594
+  },
+  "https://openalex.org/I4210128773": {
+    "city": "Milan",
+    "lat": 45.48706817626953,
+    "lon": 9.144637107849121
+  },
+  "https://openalex.org/I98647062": {
+    "city": "Muttenz",
+    "lat": 47.522708892822266,
+    "lon": 7.645110130310059
+  },
+  "https://openalex.org/I522815984": {
+    "city": "Aberdeen",
+    "lat": 57.1436882019043,
+    "lon": -2.098140001296997
+  },
+  "https://openalex.org/I155707491": {
+    "city": "Haverford",
+    "lat": 40.01317,
+    "lon": -75.29435
+  },
+  "https://openalex.org/I4210152567": {
+    "city": "Montpellier",
+    "lat": 43.61761474609375,
+    "lon": 3.871570110321045
+  },
+  "https://openalex.org/I4210088036": {
+    "city": "Surrey",
+    "lat": 49.04648971557617,
+    "lon": -122.79740905761719
+  },
+  "https://openalex.org/I3083075713": {
+    "city": "London",
+    "lat": 51.5145378112793,
+    "lon": -0.10847999900579453
+  },
+  "https://openalex.org/I4210151646": {
+    "city": "Mississauga",
+    "lat": 43.661529541015625,
+    "lon": -79.66523742675781
+  },
+  "https://openalex.org/I4210108476": {
+    "city": "Cambridge",
+    "lat": 42.361507415771484,
+    "lon": -71.1022720336914
+  },
+  "https://openalex.org/I4210095809": {
+    "city": "San Diego",
+    "lat": 32.71571,
+    "lon": -117.16472
+  },
+  "https://openalex.org/I4210118008": {
+    "city": "Wageningen",
+    "lat": 51.98677062988281,
+    "lon": 5.663337230682373
+  },
+  "https://openalex.org/I4210109752": {
+    "city": "Monroe",
+    "lat": 47.85538101196289,
+    "lon": -121.97096252441406
+  },
+  "https://openalex.org/I4210140493": {
+    "city": "Nanjing",
+    "lat": 32.06167,
+    "lon": 118.77778
+  },
+  "https://openalex.org/I110357561": {
+    "city": "Philadelphia",
+    "lat": 39.9523811340332,
+    "lon": -75.16361999511719
+  },
+  "https://openalex.org/I33585257": {
+    "city": "Chennai",
+    "lat": 13.08784,
+    "lon": 80.27847
+  },
+  "https://openalex.org/I4210095867": {
+    "city": "Hyderabad",
+    "lat": 17.442468643188477,
+    "lon": 78.48695373535156
+  },
+  "https://openalex.org/I4392021152": {
+    "city": "Mont-Saint-Aignan",
+    "lat": 49.463069915771484,
+    "lon": 1.0936399698257446
+  },
+  "https://openalex.org/I4210121384": {
+    "city": "Tokyo",
+    "lat": 35.66212463378906,
+    "lon": 139.67819213867188
+  },
+  "https://openalex.org/I4210130123": {
+    "city": "Li\u00e8ge",
+    "lat": 50.58254623413086,
+    "lon": 5.5662760734558105
+  },
+  "https://openalex.org/I4210108751": {
+    "city": "Lunz am See",
+    "lat": 47.85226821899414,
+    "lon": 15.041736602783203
+  },
+  "https://openalex.org/I4210115126": {
+    "city": "Lausanne",
+    "lat": 46.5264778137207,
+    "lon": 6.644330024719238
+  },
+  "https://openalex.org/I143247161": {
+    "city": "Lucknow",
+    "lat": 26.83928,
+    "lon": 80.92313
+  },
+  "https://openalex.org/I4210136394": {
+    "city": "London",
+    "lat": 51.50852966308594,
+    "lon": -0.12574000656604767
+  },
+  "https://openalex.org/I137428128": {
+    "city": "Needham",
+    "lat": 42.2934684753418,
+    "lon": -71.263916015625
+  },
+  "https://openalex.org/I4210138412": {
+    "city": "Villeneuve-d'Ascq",
+    "lat": 50.61669,
+    "lon": 3.16664
+  },
+  "https://openalex.org/I119203015": {
+    "city": "Zibo",
+    "lat": 36.79056167602539,
+    "lon": 118.0633316040039
+  },
+  "https://openalex.org/I4210129589": {
+    "city": "Yamunanagar",
+    "lat": 30.126558303833008,
+    "lon": 77.28605651855469
+  },
+  "https://openalex.org/I12093191": {
+    "city": "Stirling",
+    "lat": 56.1190299987793,
+    "lon": -3.9368200302124023
+  },
+  "https://openalex.org/I4210166672": {
+    "city": "Salt Lake City",
+    "lat": 40.760780334472656,
+    "lon": -111.89105224609375
+  },
+  "https://openalex.org/I4391768147": {
+    "city": "Amsterdam",
+    "lat": 52.37403106689453,
+    "lon": 4.889689922332764
+  },
+  "https://openalex.org/I2799274915": {
+    "city": "London",
+    "lat": 51.50018310546875,
+    "lon": -0.17088599503040314
+  },
+  "https://openalex.org/I4210115724": {
+    "city": "Aberdeen Proving Ground",
+    "lat": 39.466861724853516,
+    "lon": -76.13066101074219
+  },
+  "https://openalex.org/I180519160": {
+    "city": "Copenhagen",
+    "lat": 55.675941467285156,
+    "lon": 12.565529823303223
+  },
+  "https://openalex.org/I41455075": {
+    "city": "Campina Grande",
+    "lat": -7.23056,
+    "lon": -35.88111
+  },
+  "https://openalex.org/I187986737": {
+    "city": "Paris",
+    "lat": 48.85341,
+    "lon": 2.3488
+  },
+  "https://openalex.org/I4210166920": {
+    "city": "Seattle",
+    "lat": 47.60620880126953,
+    "lon": -122.33206939697266
+  },
+  "https://openalex.org/I12323705": {
+    "city": "Trieste",
+    "lat": 45.64953,
+    "lon": 13.77678
+  },
+  "https://openalex.org/I70349855": {
+    "city": "Hanoi",
+    "lat": 21.0245,
+    "lon": 105.84117
+  },
+  "https://openalex.org/I4210162062": {
+    "city": "Rome",
+    "lat": 41.900718688964844,
+    "lon": 12.512537002563477
+  },
+  "https://openalex.org/I4210128862": {
+    "city": "Omaha",
+    "lat": 41.25795364379883,
+    "lon": -96.04168701171875
   }
 }

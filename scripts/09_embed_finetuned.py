@@ -30,38 +30,43 @@ sys.path.insert(0, str(REPO_ROOT))
 from src.embed.embeddings import load_finetuned_model, generate_embeddings, _load_cache
 
 PROCESSED   = REPO_ROOT / "data" / "processed"
-CORPUS      = PROCESSED / "artifacts_tripartite.csv"
+DEFAULT_CORPUS = PROCESSED / "artifacts_tripartite.csv"
 ADAPTER     = REPO_ROOT / "models" / "specter2_synbio" / "best"
-CACHE_FILE  = REPO_ROOT / "data" / "embeddings" / "finetuned" / "embeddings.json"
+DEFAULT_CACHE  = REPO_ROOT / "data" / "embeddings" / "finetuned" / "embeddings.json"
 
 
-def run(batch_size: int):
-    df = pd.read_csv(CORPUS, low_memory=False)
+def run(batch_size: int, corpus: Path, cache_file: Path):
+    df = pd.read_csv(corpus, low_memory=False)
     df = df[df["text"].notna()].copy()
     print(f"Corpus: {len(df):,} documents  {df['type'].value_counts().to_dict()}")
 
-    cache = _load_cache(CACHE_FILE)
+    cache = _load_cache(cache_file)
     already = int(df["id"].isin(cache).sum())
     print(f"Already embedded (cache): {already:,} / {len(df):,}")
     if already == len(df):
         print("Nothing to do — all documents already embedded.")
         return
 
-    CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    cache_file.parent.mkdir(parents=True, exist_ok=True)
     print(f"Loading fine-tuned model from {ADAPTER} ...")
     model = load_finetuned_model(ADAPTER)
 
     cache = generate_embeddings(
         df, model,
-        cache_file=CACHE_FILE,
+        cache_file=cache_file,
         batch_size=batch_size,
         checkpoint_every=256,
     )
-    print(f"Done. Cache now holds {len(cache):,} embeddings at {CACHE_FILE}")
+    print(f"Done. Cache now holds {len(cache):,} embeddings at {cache_file}")
 
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser(description="Embed the tripartite corpus with the fine-tuned adapter.")
     p.add_argument("--batch-size", type=int, default=32, help="Encoding batch size (default 32)")
+    p.add_argument("--corpus", type=Path, default=DEFAULT_CORPUS,
+                   help="Corpus CSV to embed (default artifacts_tripartite.csv).")
+    p.add_argument("--cache", type=Path, default=DEFAULT_CACHE,
+                   help="Embedding cache file; batch files live alongside it "
+                        "(default data/embeddings/finetuned/embeddings.json).")
     args = p.parse_args()
-    run(args.batch_size)
+    run(args.batch_size, args.corpus, args.cache)
