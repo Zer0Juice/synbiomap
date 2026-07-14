@@ -2,18 +2,19 @@ Source: https://old.reddit.com/r/productivity/comments/akkdth/how_to_be_producti
 
 By Kaido Mac
 
-I've heard it said that there are only two problems in the world:
+adapted to our purposes
+
+There are only two problems in the world:
 
 1. You don't know what you want
 2. You don't know how to get what you want
 
-All throughout grade school, I had tremendous difficulty writing essays. I would stare at the blank page in front of me, noodle around with sentences & ideas, and just generally be one frustrated cat. I knew what I wanted - to write & turn in an essay that would get me an "A" - but I had no idea how to DO it.
 
-As I got older & learned the value of checklists (aka a list of step-by-step actions to follow, also known as a "procedure"), I worked hard to create a procedure for writing essays. I now have a solid essay procedure that I'm going to share with you. **This essay procedure has gotten me an "A" on every single essay I've turned in since I started using it.**
-
-_So without further ado, here is my procedure:_
+Here's how to get it.
 
 **First, math time!** You need to convert the professor's requirements into numbers. So you start with the basic formula: in Microsoft Word, with 1" margins, using double-spacing with 12-point Times New Roman font, you can fit about 5 fleshed-out, well-written paragraphs per page, or about 300 words. So if your job is to deliver a 10-page paper, then 10 pages times 5 paragraphs is 50 paragraphs (apply the same logic if your teacher has a word-count requirement instead). Note that you also need an opening & a closing paragraph, so 50 total paragraphs minus 2 opening & closing paragraphs is 48 paragraphs required.
+
+
 
 **Second, the fun part - generating ideas!** So the structure of a paragraph is quite easy:
 

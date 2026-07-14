@@ -809,7 +809,6 @@
 - rigor
 
 **101. Dual-space preview**
-
 - OLS map W
 - 384→768
 - MLP adapter

@@ -1,27 +1,9 @@
 # Thesis Outline — *Proteins, Papers, Parts, and Planet*
 
-**Target length:** ~70 pages (±10% → 63–77 pp)
-
-**Scope note:** Structural outline of *what was actually done*, anchored mainly to
-the notebooks (`notebooks/01_city_level_analysis.ipynb`, `notebooks/02_dual_space_alignment.ipynb`,
-`notebooks/pipeline.ipynb`) and the supporting `scripts/` and `src/` modules. Figure filenames
-refer to files in `outputs/figures/`. Numbers are the current corpus counts.
-
-**Realized corpus (current `data/processed/`):**
-- `papers.csv` — 10,319 papers, 2000–2026, 294 carbon-capture flagged
-- `projects.csv` — 4,606 iGEM projects, 2009–2025, 141 carbon-capture flagged
-- `parts.csv` — 89,060 BioBrick parts, 2003–2025
-- `all_artifacts.csv` — 13,335 combined rows
-- `city_level.csv` — 387 cities (have BOTH papers and projects = analysis sample)
-- `city_level_carbon_capture.csv` — 7 carbon-capture cities
-
-The realized analysis covers **papers + projects + parts**
-
----
 
 ## Front Matter (~5 pp)
 
-- Title page — *Patents, Papers, Parts, and Planet*
+- Title page
 - Abstract — research question, data, method, headline result (semantic overlap is
   dominated by field-level similarity; permutation tests show the cross-sectional
   result is a centroid-stability artifact; one narrow genuine paper-volume signal)
@@ -31,36 +13,46 @@ The realized analysis covers **papers + projects + parts**
 - List of tables
 - Note on non-causal language (relatedness / association / co-location, not causation)
 
----
+
+70 pages. roughly 50 pages of text. At 5 paragraphs per page, that's 250 paragraphs. at 5 sentences per paragraph, that's 1250 sentences.
+
+
 
 ## Chapter 1 — Introduction (~5 pp)
 
 - 1.1 Research question — *Do cities where iGEM student projects are active also produce
   academic papers in semantically related areas of synthetic biology?* (from notebook 01, cell 0)
+
 - 1.2 Motivation — innovation as a possible local path: student projects → academic
-  publications (downstream patents left to future work, Ch. 12)
+  publications. 
+	- synbio is important for innovation, 
+	- igem is important for synbio, 
+	- we should study igem to learn more about innovation in synbio
+	- I will establish that iGEM projects are topically related to local research.
+
 - 1.3 The three realized artifact types (projects, papers, parts); "Planet" = the
-  carbon-capture / sustainability lens. Patents are the planned fourth strand, not yet analysed
+  carbon-capture / sustainability lens
 - 1.4 Unit of analysis: the city (aggregated across years)
+	- cities are useful units of analysis
+	- cities cluster capabilities
 - 1.5 The carbon-capture case study as the worked example
 - 1.6 What this thesis does NOT claim — descriptive/correlational only; shared confounders
   (research infrastructure, university quality, mentor coupling)
 - 1.7 Contributions (a shared-schema multi-artifact corpus; an embedding-based city
   relatedness measure; a battery of falsification/permutation tests; a reproducible
   pipeline + website)
-- 1.8 Thesis roadmap
 
 ---
 
 ## Chapter 2 — Background and Related Work (~6 pp)
 *(mirrors `manuscript/main.tex` §2)*
 
-- 2.1 Synthetic biology as a fast-moving, self-named field
+* SynBio moves fast and is tough to define, measure, and predict
 - 2.2 Economic geography of innovation and **relatedness** — product space and skill
   relatedness applied to *text* rather than product/occupation co-occurrence
   - Hidalgo et al. (2007), *The Product Space*; Neffke & Henning (2013), *Skill Relatedness*
 - 2.3 iGEM and the "student engineer" — informal, interdisciplinary project wikis
-- 2.4 Measuring a field that keeps moving — keyword vs. citation-based corpus construction
+- 2.4 Measuring a field that keeps moving. keyword vs. citation-based corpus construction
 - 2.5 A common representation for heterogeneous artifacts — document embeddings
   - SPECTER / SPECTER2 (Cohan et al. 2020; allenai/specter2), citation-informed contrastive training
 - 2.6 BioBrick parts as a physical, text-independent fingerprint of what teams did

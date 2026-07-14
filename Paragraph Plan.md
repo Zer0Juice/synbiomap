@@ -32,12 +32,7 @@ So the whole job reduces to: **invent 250 paragraph topics** (Step 2, below), th
 ### Two reconciliations the math forced
 
 1. **Budget vs. chapter estimates.** The page estimates in `THESIS_OUTLINE.md` sum to
-   ~64 text pages (≈320 paragraphs) — over the 250 target. The allocation below scales
-   them down to fit 250.
-2. **Missing Chapter 7.** §4.7 references a dual-space alignment method "detailed in
-   Ch. 7," but no Ch. 7 exists in the outline. I reinstated a short Ch. 7 (12 paragraphs).
-   **Its content is a guess — confirm the source (which notebook/script) so Step 3 can be
-   grounded.**
+   ~64 text pages (≈320 paragraphs)
 
 ### Per-chapter paragraph budget (sums to 250)
 
@@ -66,51 +61,9 @@ list, already arranged into a logical sequence per the procedure.
 
 ### Chapter 1 — Introduction (20)
 
-1. Hook: synthetic biology treats DNA as programmable code and turns cells into industrial machinery — a new way innovation is being made.
-2. The research question stated plainly: *do cities where iGEM student projects are active also produce academic papers in semantically related areas of synbio?*
-3. Why the question matters: innovation is unevenly distributed and clusters in cities; the student→research local pathway is novel and unstudied.
-4. Roadmap of the thesis: corpus → embeddings → city centroids → relatedness tests → parts validation → carbon-capture case → what the negative result teaches.
-5. Synthetic biology defined: standardized parts, genetic circuits, DNA as a programming language, cells as productive machinery.
-6. SynBio is economically important and fast-moving — an emergent field worth measuring for innovation studies.
-7. iGEM introduced: a worldwide student competition, "lego robots for genetic engineering," year-long team projects.
-8. Why iGEM matters to synbio: a launching pad for careers, sets norms (open science, documentation), "the heart of synthetic biology."
-9. The logical chain: synbio matters for innovation → iGEM matters for synbio → studying iGEM teaches us about synbio innovation.
-10. The core claim the thesis sets out to establish: iGEM projects are topically related to local academic research.
-11. Different artifacts reflect knowledge creation differently: papers (scholarly impact), patents (commercial value), projects (student innovation).
-12. The realized artifact types here: projects, papers, parts. Patents are the planned fourth strand, not yet realized.
-13. "Planet" = the carbon-capture / sustainability lens that threads through the title and the case study.
-14. The city as the unit of analysis: most innovation happens in cities, especially in technical fields needing lab infrastructure.
-15. Cities cluster capabilities and branch into adjacent technologies over time (relatedness/branching preview).
-16. Aggregating across years: why documents are pooled at the city level rather than analyzed per project.
-17. The carbon-capture case study as the worked example that runs through the whole pipeline.
-18. What the thesis does NOT claim: descriptive/correlational only; shared confounders (research infrastructure, university quality, mentor coupling).
-19. Contributions: a shared-schema multi-artifact corpus; an embedding-based city relatedness measure; a battery of falsification/permutation tests; a reproducible pipeline + website.
-20. Preview of the headline finding: local relatedness is real but lives at the *niche* level — cluster co-membership is a genuine positive signal (perm-p ≈ 0.0005), while the coarse centroid measure is a field-baseline / centroid-stability artifact (the foil) and the paper-volume effect is only marginal.
+
 
 ### Chapter 2 — Background & Related Work (22)
-
-21. Chapter roadmap: where this sits — economic geography of innovation, relatedness, embeddings, and iGEM.
-22. SynBio moves fast and resists definition; its vocabulary overlaps with molecular biology, making the field hard to delimit (Oldham & Hall).
-23. Why measuring a moving field is hard: keyword drift, interdisciplinary boundaries, evolving nomenclature.
-24. Economic geography of innovation: innovation clusters spatially via agglomeration and knowledge spillovers.
-25. The relatedness principle: regions diversify into activities related to what they already do.
-26. The Product Space (Hidalgo et al. 2007): co-occurrence reveals capability relatedness.
-27. Skill relatedness (Neffke & Henning 2013): labor flows reveal relatedness between industries.
-28. This thesis's twist: apply relatedness to *text* (embeddings) instead of product/occupation co-occurrence.
-29. Boschma et al. (2014): scientific relatedness and knowledge dynamics in biotechnology at the city level — the closest methodological base.
-30. The branching/trajectory idea: cities follow path-dependent innovation trajectories.
-31. iGEM and the "student engineer": informal, interdisciplinary project wikis as a data source.
-32. Santolini et al. (2023): iGEM as a structured dataset for studying team dynamics and innovation.
-33. iGEM's open-science norms: documentation, the BioBrick registry, standardized parts.
-34. The BioBrick standard (Tom Knight, MIT): interoperable genetic parts, basic vs. composite.
-35. Parts as a knowledge graph: basic parts drawn from literature, composite parts built from existing parts.
-36. Corpus construction trade-offs: keyword-based vs. citation-based retrieval.
-37. Document embeddings as a common representation for heterogeneous artifacts.
-38. SPECTER / SPECTER2 (Cohan et al. 2020): citation-informed contrastive training on scientific text.
-39. Precedent for embedding papers + patents in one shared space (Pat-SPECTER, PatentSBERTa, etc.).
-40. BioBrick parts as a physical, text-independent fingerprint of what teams actually did.
-41. The gap this thesis fills: no prior work links student projects, papers, and parts in a shared semantic space at the city level.
-42. Synthesis: the conceptual toolkit (relatedness + embeddings + iGEM) assembled for the analysis.
 
 ### Chapter 3 — Data & Corpus Construction (30)
 
@@ -260,23 +213,6 @@ list, already arranged into a logical sequence per the procedure.
 177. What the parts validation does for the thesis's overall credibility.
 178. Section synthesis: parts corroborate the embedding clusters but inherit the same depth limits.
 
-### Chapter 7 — Dual-Space Alignment (12) *(reinstated — confirm source)*
-
-> **Flag:** referenced in §4.7 but absent from the outline. Topics below are inferred;
-> point me at the notebook/script so Step 3 can be grounded in real numbers.
-
-179. Why a Chapter 7: the dual-space alignment method is referenced but never written up.
-180. The problem: aligning a 384-d space to the 768-d SPECTER2 space.
-181. The OLS map W (384 → 768) construction.
-182. The optional MLP adapter alternative.
-183. Train / validation split for fitting the map.
-184. The evaluation metric for alignment quality.
-185. Results of the linear map.
-186. Results of the MLP adapter and the head-to-head comparison.
-187. What dual-space alignment enables (cross-model artifact comparison).
-188. Limitations of the alignment approach.
-189. When it matters vs. when single-space embedding is enough.
-190. Section synthesis / decision: whether dual-space is used in the main analysis.
 
 ### Chapter 8 — Case Study: Carbon Capture (14)
 
@@ -339,19 +275,6 @@ list, already arranged into a logical sequence per the procedure.
 238. Section synthesis: what to trust and what to hedge.
 
 ### Chapter 12 — Conclusion & Future Work (12)
-
-239. Restated research question and the qualified-yes answer.
-240. The headline: local relatedness is real at the niche level (cluster co-membership, perm-p ≈ 0.0005, robust to city size); the coarse centroid measure is a field-baseline artifact (the foil) that conventional significance masked until permutation; the methodological lesson is to use niche-sensitive measures in single-field corpora.
-241. Deviation vectors: subtract the global synbio centroid before comparing.
-242. Cluster co-membership as the primary go-forward measure.
-243. Subfield-focused designs where field-level similarity no longer dominates.
-244. Institution-/PI-level data to test the mentor-coupling mechanism.
-245. Patents — the planned fourth artifact strand (the "what's next" headline).
-246. The patent-ingest script already exists (`02_ingest_patents.py`, Lens.org; IPC + keyword strategy, van Doren et al. 2013).
-247. Next step: geocode, embed patents in the shared SPECTER2 space, add them as the downstream "translation" layer (projects → papers → patents).
-248. Scraping iGEM wikis for DOI citations — the in-progress dataset (263 teams scraped so far).
-249. Other future directions: alumni hiring (Revelio), PatSeq sequence matching, author matching.
-250. Closing: the value of a careful negative result and a fully reproducible pipeline.
 
 ---
 
