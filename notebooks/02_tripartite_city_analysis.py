@@ -1265,26 +1265,26 @@ def _(FIGDIR, LAGS, SOL, ll_pp, ll_px, plt):
     _colors = [SOL["project"], SOL["paper"]]
 
     fig_ll, axes_ll = plt.subplots(2, 1, figsize=(10, 10))
-    for ax, df, title, col in zip(axes_ll, _data, _titles, _colors):
-        ax.errorbar(df.lag, df.mean_sim,
-                    yerr=[df.mean_sim - df.ci_lo, df.ci_hi - df.mean_sim],
-                    fmt="o-", color=col, ecolor=col, capsize=5, linewidth=2.5, ms=8)
-        ax.axvline(0, color=SOL["text"], ls="--", lw=1, label="k = 0")
-        ax.axvspan(0.1, max(LAGS) + 0.4,  alpha=0.06, color=SOL["cyan"],   label="upstream leads")
-        ax.axvspan(min(LAGS) - 0.4, -0.1, alpha=0.06, color=SOL["orange"], label="upstream lags")
-        ax.set_xlabel("Lag k  (positive k → downstream artifact comes after upstream)")
-        ax.set_ylabel("Mean cosine similarity (cluster vectors)")
-        ax.set_title(title)
-        ax.set_xticks(list(LAGS))
-        ax.legend(fontsize=11)
-        ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{x:.3f}"))
+    for _ax_ll, _df_ll, _title_ll, _col_ll in zip(axes_ll, _data, _titles, _colors):
+        _ax_ll.errorbar(_df_ll.lag, _df_ll.mean_sim,
+                    yerr=[_df_ll.mean_sim - _df_ll.ci_lo, _df_ll.ci_hi - _df_ll.mean_sim],
+                    fmt="o-", color=_col_ll, ecolor=_col_ll, capsize=5, linewidth=2.5, ms=8)
+        _ax_ll.axvline(0, color=SOL["text"], ls="--", lw=1, label="k = 0")
+        _ax_ll.axvspan(0.1, max(LAGS) + 0.4,  alpha=0.06, color=SOL["cyan"],   label="upstream leads")
+        _ax_ll.axvspan(min(LAGS) - 0.4, -0.1, alpha=0.06, color=SOL["orange"], label="upstream lags")
+        _ax_ll.set_xlabel("Lag k  (positive k → downstream artifact comes after upstream)")
+        _ax_ll.set_ylabel("Mean cosine similarity (cluster vectors)")
+        _ax_ll.set_title(_title_ll)
+        _ax_ll.set_xticks(list(LAGS))
+        _ax_ll.legend(fontsize=11)
+        _ax_ll.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{x:.3f}"))
 
     fig_ll.suptitle("Lead-lag structure: does upstream activity precede downstream activity?",
                     fontsize=16, fontweight="bold")
     fig_ll.tight_layout()
     fig_ll.savefig(FIGDIR / "tripartite_lead_lag.png", bbox_inches="tight")
     fig_ll
-    return (fig_ll, axes_ll)
+    return (fig_ll,)
 
 
 @app.cell
@@ -1293,7 +1293,7 @@ def _(annual_vecs, LAGS, N_BOOT, ll_pp, ll_px, np):
     # Shuffle year labels for the upstream type within each city 500 times.
     # Test statistics: (1) slope of a linear fit to the profile,
     #                  (2) mean(k>0) - mean(k<0).
-    N_PERM = 500
+    _N_PERM_LL = 500
     _rng2  = np.random.default_rng(99)
 
     def perm_profile(vecs_a, vecs_b):
@@ -1318,7 +1318,7 @@ def _(annual_vecs, LAGS, N_BOOT, ll_pp, ll_px, np):
         obs_contrast = (obs_df[obs_df.lag > 0].mean_sim.mean()
                         - obs_df[obs_df.lag < 0].mean_sim.mean())
         null_slopes, null_contrasts = [], []
-        for _ in range(N_PERM):
+        for _ in range(_N_PERM_LL):
             pm = perm_profile(vecs_a, vecs_b)
             valid = [(k, v) for k, v in pm.items() if not np.isnan(v)]
             if len(valid) < 5:
@@ -1351,26 +1351,26 @@ def _(FIGDIR, SOL, perm_pp, perm_px, plt):
 
     fig_perm_ll, axes_pll = plt.subplots(2, 2, figsize=(14, 10))
 
-    for row_i, (r, lbl) in enumerate(_rows):
-        col = _col_pairs[row_i]
+    for _ri, (_r_perm, _lbl_perm) in enumerate(_rows):
+        _c_perm = _col_pairs[_ri]
 
         # Left column: slope distribution
-        ax = axes_pll[row_i, 0]
-        ax.hist(r["null_slopes"], bins=40, color=SOL["bg2"], edgecolor=SOL["muted"])
-        ax.axvline(r["obs_slope"], color=col, lw=2.5,
-                   label=f"observed = {r['obs_slope']:.5f}\np = {r['p_slope']:.4f}")
-        ax.set_xlabel("slope of lead-lag profile (null)"); ax.set_ylabel("permutations")
-        ax.set_title(f"{lbl}: slope test")
-        ax.legend(fontsize=11)
+        _axL = axes_pll[_ri, 0]
+        _axL.hist(_r_perm["null_slopes"], bins=40, color=SOL["bg2"], edgecolor=SOL["muted"])
+        _axL.axvline(_r_perm["obs_slope"], color=_c_perm, lw=2.5,
+                   label=f"observed = {_r_perm['obs_slope']:.5f}\np = {_r_perm['p_slope']:.4f}")
+        _axL.set_xlabel("slope of lead-lag profile (null)"); _axL.set_ylabel("permutations")
+        _axL.set_title(f"{_lbl_perm}: slope test")
+        _axL.legend(fontsize=11)
 
         # Right column: contrast distribution
-        ax = axes_pll[row_i, 1]
-        ax.hist(r["null_contrasts"], bins=40, color=SOL["bg2"], edgecolor=SOL["muted"])
-        ax.axvline(r["obs_contrast"], color=col, lw=2.5,
-                   label=f"observed = {r['obs_contrast']:.5f}\np = {r['p_contrast']:.4f}")
-        ax.set_xlabel("mean(k>0) − mean(k<0) (null)"); ax.set_ylabel("permutations")
-        ax.set_title(f"{lbl}: contrast test")
-        ax.legend(fontsize=11)
+        _axR = axes_pll[_ri, 1]
+        _axR.hist(_r_perm["null_contrasts"], bins=40, color=SOL["bg2"], edgecolor=SOL["muted"])
+        _axR.axvline(_r_perm["obs_contrast"], color=_c_perm, lw=2.5,
+                   label=f"observed = {_r_perm['obs_contrast']:.5f}\np = {_r_perm['p_contrast']:.4f}")
+        _axR.set_xlabel("mean(k>0) − mean(k<0) (null)"); _axR.set_ylabel("permutations")
+        _axR.set_title(f"{_lbl_perm}: contrast test")
+        _axR.legend(fontsize=11)
 
     fig_perm_ll.suptitle("Lead-lag permutation tests (500 within-city year shuffles)",
                          fontsize=16, fontweight="bold")
