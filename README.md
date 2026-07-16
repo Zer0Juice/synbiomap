@@ -2,13 +2,13 @@
 
 **Do student iGEM projects, academic papers, and patents in synthetic biology form semantically related local innovation trajectories at the city level?**
 
-This repository holds the full research pipeline and documentation website for a CSH thesis project. It studies synthetic biology innovation across three kinds of knowledge artifact — student projects (iGEM), academic publications (OpenAlex), and patents (USPTO) — and asks whether, within a city, these three types work on *related* topics rather than merely the same broad field. The primary worked example is **carbon capture in synthetic biology**.
+This repository holds the full research pipeline and documentation website for my Master's thesis. It studies synthetic biology innovation across three kinds of knowledge artifact: student projects (iGEM), academic publications (OpenAlex), and patents (USPTO). We ask whether, within a city, these three types work on related topics. The primary worked example is **carbon capture using cyanobacterial fermentation.
 
-The claims here are about *semantic relatedness and association*, never causation.
+Claims here are about *semantic relatedness and association*
 
 ## Project website
 
-[**zer0juice.github.io/synbiomap**](https://zer0juice.github.io/synbiomap) — the main public-facing home for the project (background, methods, results, the carbon-capture case study, and interactive explorers).
+[**zer0juice.github.io/synbiomap**](https://zer0juice.github.io/synbiomap): the main public-facing home for the project (background, methods, results, the carbon-capture case study, and interactive explorers).
 
 ## What's in this repo
 
@@ -29,7 +29,7 @@ The claims here are about *semantic relatedness and association*, never causatio
 **A. Explore the results (no credentials needed).** The processed datasets in
 `data/processed/` and the website's precomputed projection data in
 `website/assets/data/` are committed. You can open the notebooks, read the CSVs,
-or run the website straight after cloning — no API keys required.
+or run the website straight after cloning, with no API keys required.
 
 ```bash
 git clone https://github.com/Zer0Juice/synbiomap
@@ -80,17 +80,18 @@ cp .env.example .env          # then fill in your API keys
 
 ## Data sources
 
-| Source | What it provides | Access |
-|--------|-----------------|--------|
-| [OpenAlex](https://openalex.org) | Academic papers | Free REST API; optional key for higher rate limits |
-| [USPTO Open Data Portal](https://data.uspto.gov) / [PatentsView](https://patentsview.org) | Patents | Free API (key required) |
-| [iGEM Registry](https://igem.org) | Student projects and BioBrick parts | REST API + CSV export |
+| Source                                                                                    | What it provides                    | Access                                             |
+| ----------------------------------------------------------------------------------------- | ----------------------------------- | -------------------------------------------------- |
+| [OpenAlex](https://openalex.org)                                                          | Academic papers                     | Free REST API; optional key for higher rate limits |
+| [USPTO Open Data Portal](https://data.uspto.gov) / [PatentsView](https://patentsview.org) | Patents                             | Free API (key required)                            |
+| [iGEM Registry](https://igem.org)                                                         | Student projects and BioBrick parts | REST API + CSV export                              |
 
 ## Corpus construction strategy
 
 **Papers** follow Shapira, Kwon & Youtie (2017, *Scientometrics*): a layered keyword approach where core terms (`"synthetic biology"`, `"synthetic genomics"`, `"BioBrick"`) are combined with subfield terms (`"repressilator"`, `"minimal genome"`, `"genetic toggle switch"`, …). Broad terms such as `"metabolic engineering"` are intentionally excluded — they would swamp the corpus with unrelated work. Retrieval is supplemented by citation expansion from two seed papers (see `config/settings.yaml → corpus`).
 
-**Patents** follow van Doren, Koenigstein & Reiss (2013, *Systems and Synthetic Biology*): keywords are combined with an IPC class scope filter (C12N, C12P, C12Q, C12S, C40B) using AND logic. Pure keyword search overestimates synthetic biology patent activity because the terminology overlaps heavily with general biotechnology (Oldham & Hall, 2018). A parallel corpus derived from Oldham's curated synthetic-biology patent set is used as a robustness check.
+**Patents** data set is from Paul Oldham: https://github.com/poldham/synbio
+This data is supplemented by abstracts and geocoding based on inventor addresses pulled through the [USPTO's Open Data Portal](https://data.uspto.gov)
 
 All parameters live in `config/settings.yaml`.
 
@@ -106,7 +107,7 @@ All parameters live in `config/settings.yaml`.
 | Relatedness test | City-level cluster co-membership vs. a permutation null | `src/analyze/relatedness.py` |
 | Geocoding | Nominatim (OpenStreetMap), cached | — |
 
-The base pipeline (`04_embed.py` → `06_visualize.py`) uses the settings in `config/settings.yaml`; the decisive tripartite analysis re-embeds the three-type corpus with the fine-tuned adapter (`09_embed_finetuned.py`). Embeddings are cached as sharded `.npy` batches under `data/embeddings/`, not a single file.
+Embeddings are cached as sharded `.npy` batches under `data/embeddings/`, not a single file.
 
 ## Reproducing the analysis
 
@@ -114,4 +115,12 @@ The full, ordered pipeline is documented in [`scripts/README.md`](scripts/README
 
 ## License
 
-To be determined.
+The **code** in this repository is released under the [MIT License](LICENSE) — Copyright (c) 2026 Zakhary Roth.
+
+The **bundled datasets** are not covered by the MIT License; each retains the terms of its upstream source:
+
+- **Papers** — [OpenAlex](https://openalex.org), released **CC0** (public domain).
+- **Student projects and BioBrick parts** — [iGEM Registry](https://igem.org), **CC BY 4.0** (attribution).
+- **Patents** — derived from Paul Oldham's synthetic-biology patent landscape dataset (*Synthetic Biology: Mapping the Patent Landscape*; [bioRxiv 10.1101/483826](https://doi.org/10.1101/483826), data at [OSF 10.17605/OSF.IO/73FMU](https://doi.org/10.17605/OSF.IO/73FMU)), licensed **CC BY-NC 3.0** — attribution required and **non-commercial use only**. Abstracts and inventor-address geocoding are supplemented from the [USPTO Open Data Portal](https://data.uspto.gov) (US public domain).
+
+Because the patent data is NonCommercial, that portion of the datasets may only be reused non-commercially, even though the code is MIT-licensed. Please credit each source when reusing the data.
