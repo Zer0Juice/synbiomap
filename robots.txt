@@ -1,1 +1,1 @@
-Sitemap: https://zer0juice.github.io/synbio-diversification/sitemap.xml
+Sitemap: https://zer0juice.github.io/synbiomap/sitemap.xml

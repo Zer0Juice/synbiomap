@@ -131,24 +131,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./paper.html"> 
-<span class="menu-text">Paper</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./methods.html"> 
-<span class="menu-text">Methods</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link active" href="./results.html" aria-current="page"> 
 <span class="menu-text">Results</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./case-study.html"> 
-<span class="menu-text">Case Study: Carbon Capture</span></a>
+<span class="menu-text">Carbon Capture</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./explorer.html"> 
 <span class="menu-text">Explorer</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./methods.html"> 
+<span class="menu-text">Methods &amp; Data</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./paper.html"> 
+<span class="menu-text">Paper</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./reproducibility.html"> 
@@ -174,13 +174,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#corpus-overview" id="toc-corpus-overview" class="nav-link active" data-scroll-target="#corpus-overview">Corpus overview</a></li>
-  <li><a href="#semantic-space" id="toc-semantic-space" class="nav-link" data-scroll-target="#semantic-space">Semantic space</a></li>
-  <li><a href="#clustering" id="toc-clustering" class="nav-link" data-scroll-target="#clustering">Clustering</a></li>
-  <li><a href="#city-level-patterns" id="toc-city-level-patterns" class="nav-link" data-scroll-target="#city-level-patterns">City-level patterns</a></li>
-  <li><a href="#carbon-capture-subset" id="toc-carbon-capture-subset" class="nav-link" data-scroll-target="#carbon-capture-subset">Carbon capture subset</a></li>
+  <li><a href="#semantic-space" id="toc-semantic-space" class="nav-link active" data-scroll-target="#semantic-space">Semantic space</a></li>
+  <li><a href="#thematic-clusters" id="toc-thematic-clusters" class="nav-link" data-scroll-target="#thematic-clusters">Thematic clusters</a></li>
+  <li><a href="#city-level-semantic-overlap" id="toc-city-level-semantic-overlap" class="nav-link" data-scroll-target="#city-level-semantic-overlap">City-level semantic overlap</a></li>
+  <li><a href="#regression-what-predicts-higher-overlap" id="toc-regression-what-predicts-higher-overlap" class="nav-link" data-scroll-target="#regression-what-predicts-higher-overlap">Regression: what predicts higher overlap?</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbio-diversification/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -204,182 +203,190 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="corpus-overview" class="level2">
-<h2 class="anchored" data-anchor-id="corpus-overview">Corpus overview</h2>
-<p>The pipeline currently covers papers and iGEM projects. Patents and parts will be added in a later pipeline run.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Artifact type</th>
-<th style="text-align: right;">Count</th>
-<th>Year range</th>
-<th style="text-align: right;">Cities geocoded</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Papers</td>
-<td style="text-align: right;">9,449</td>
-<td>2000–2026</td>
-<td style="text-align: right;">8,720 (92%)</td>
-</tr>
-<tr class="even">
-<td>iGEM projects</td>
-<td style="text-align: right;">4,615</td>
-<td>2009–2025</td>
-<td style="text-align: right;">4,615 (100%)</td>
-</tr>
-<tr class="odd">
-<td>Patents</td>
-<td style="text-align: right;">—</td>
-<td>—</td>
-<td style="text-align: right;">—</td>
-</tr>
-<tr class="even">
-<td>iGEM parts</td>
-<td style="text-align: right;">—</td>
-<td>—</td>
-<td style="text-align: right;">—</td>
-</tr>
-<tr class="odd">
-<td><strong>Total</strong></td>
-<td style="text-align: right;"><strong>14,064</strong></td>
-<td><strong>2000–2026</strong></td>
-<td style="text-align: right;"><strong>13,335 (95%)</strong></td>
-</tr>
-</tbody>
-</table>
-<p>Papers were retrieved from OpenAlex using core synthetic biology keywords (“synthetic biology”, “synthetic genomics”, “BioBrick”) and subfield keywords (“repressilator”, “minimal genome”, “xenobiology”, etc.). iGEM projects were geocoded using a three-tier pipeline: OpenAlex institution lookup → Claude Haiku city extraction → Nominatim coordinates. Paper coordinates were obtained by fetching full institution objects from OpenAlex (which include city and lat/lon) using institution IDs stored during ingestion.</p>
-</section>
 <section id="semantic-space" class="level2">
 <h2 class="anchored" data-anchor-id="semantic-space">Semantic space</h2>
-<p>All artifacts were embedded using SPECTER (Lo et al., 2020), a transformer model pre-trained on scientific text to produce 768-dimensional vectors from title and abstract. Embeddings were reduced to 2D with UMAP for visualization.</p>
-<p>The shared projection shows papers and iGEM projects occupying overlapping but distinguishable regions of semantic space, consistent with the hypothesis that student projects and academic research share the same knowledge domain.</p>
-<p>See the <a href="./explorer.html">Explorer</a> for the interactive version.</p>
+<p>All 13,335 artifacts — 8,720 papers and 4,615 iGEM projects — were embedded with <a href="https://huggingface.co/allenai/specter2">SPECTER2</a> and projected to two dimensions using UMAP. The figure below shows the full projection. Blue points are papers; orange points are iGEM projects; green diamonds are carbon-capture flagged artifacts from either type.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use the legend to toggle artifact types on and off. Hover over any point to see the title, city, and year.</p>
+</div>
+</div>
+<iframe src="assets/figures/fig1_umap_all.html" width="100%" height="620px" frameborder="0" style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
+</iframe>
+<p><strong>What the projection shows.</strong> Papers and iGEM projects interleave across the semantic space rather than splitting into two distinct blobs. The topics of student projects and academic papers aren’t that far apart — which makes sense, given that students are building from the same scientific literature their advisors write.</p>
+<hr>
 </section>
-<section id="clustering" class="level2">
-<h2 class="anchored" data-anchor-id="clustering">Clustering</h2>
-<p>HDBSCAN was applied to the full 768-dimensional embedding space.</p>
+<section id="thematic-clusters" class="level2">
+<h2 class="anchored" data-anchor-id="thematic-clusters">Thematic clusters</h2>
+<p>HDBSCAN identified 347 local clusters in the embedding space. The 25 largest named clusters (covering about 2,200 artifacts) include:</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 19%">
+<col style="width: 51%">
+</colgroup>
 <thead>
 <tr class="header">
-<th></th>
-<th style="text-align: right;">Count</th>
+<th>Cluster</th>
+<th style="text-align: right;">Size</th>
+<th>Example topics</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Total artifacts</td>
-<td style="text-align: right;">14,064</td>
+<td>Plastic degradation and biodegradation</td>
+<td style="text-align: right;">191</td>
+<td>PET, polyhydroxyalkanoates</td>
 </tr>
 <tr class="even">
-<td>Clusters found</td>
-<td style="text-align: right;">256</td>
+<td>Antimicrobial peptides for crop protection</td>
+<td style="text-align: right;">189</td>
+<td>bacteriocins, plant immunity</td>
 </tr>
 <tr class="odd">
-<td>Artifacts assigned to a cluster</td>
-<td style="text-align: right;">9,169 (65%)</td>
+<td>Bacteriophage therapy and engineering</td>
+<td style="text-align: right;">115</td>
+<td>phage display, lytic cycles</td>
 </tr>
 <tr class="even">
-<td>Noise (unassigned)</td>
-<td style="text-align: right;">4,895 (35%)</td>
+<td>Microbial chassis and metabolic engineering</td>
+<td style="text-align: right;">114</td>
+<td><em>E. coli</em>, <em>B. subtilis</em> chassis</td>
+</tr>
+<tr class="odd">
+<td>Engineered bacteria for cancer therapy</td>
+<td style="text-align: right;">110</td>
+<td>tumor-targeting microbes</td>
+</tr>
+<tr class="even">
+<td>Engineered living materials and assembly</td>
+<td style="text-align: right;">105</td>
+<td>biofilms, curli fibres</td>
+</tr>
+<tr class="odd">
+<td>CRISPR-Cas genome editing systems</td>
+<td style="text-align: right;">90</td>
+<td>Cas9, base editing</td>
+</tr>
+<tr class="even">
+<td>Biofuel and fine chemical production</td>
+<td style="text-align: right;">79</td>
+<td>ethanol, terpenes, fatty acids</td>
+</tr>
+<tr class="odd">
+<td>Minimal genome design and essentiality</td>
+<td style="text-align: right;">75</td>
+<td>JCVI-syn3, essential genes</td>
+</tr>
+<tr class="even">
+<td>DNA assembly automation standards</td>
+<td style="text-align: right;">73</td>
+<td>Golden Gate, BioBricks, MoClo</td>
 </tr>
 </tbody>
 </table>
-<p>The 35% noise rate is typical for HDBSCAN on heterogeneous text corpora — it reflects genuine semantic diversity within the synthetic biology literature rather than a pipeline failure.</p>
+<p>The remaining ~11,000 artifacts fall into smaller thematic clusters (each ≤ 54 artifacts) collectively labelled “Other”.</p>
+<hr>
 </section>
-<section id="city-level-patterns" class="level2">
-<h2 class="anchored" data-anchor-id="city-level-patterns">City-level patterns</h2>
-<p>Top 10 cities by total artifact count (papers + projects):</p>
+<section id="city-level-semantic-overlap" class="level2">
+<h2 class="anchored" data-anchor-id="city-level-semantic-overlap">City-level semantic overlap</h2>
+<p>For each of the 379 cities with both papers and iGEM projects, we computed the <strong>cosine similarity</strong> between the average (centroid) SPECTER2 embedding of that city’s papers and the average embedding of its projects. Higher values mean the city’s papers and projects are topically closer.</p>
+<iframe src="assets/figures/fig3_city_overlap.html" width="100%" height="720px" frameborder="0" style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
+</iframe>
+<p>Overlap scores range from <strong>0.80 to 0.99</strong> (mean 0.94). The range is narrow because all artifacts are drawn from a single field (synthetic biology), so SPECTER2 places even diverse documents fairly close together. Variation within this range is nonetheless real and interpretable: cities at the high end have papers and projects that are genuinely more co-topical than cities at the low end.</p>
+<p><strong>Top cities</strong> include Cambridge (US), Shanghai, Tianjin, Berkeley, and Boston — all major synthetic biology research centres with large, focused iGEM programmes.</p>
+<hr>
+</section>
+<section id="regression-what-predicts-higher-overlap" class="level2">
+<h2 class="anchored" data-anchor-id="regression-what-predicts-higher-overlap">Regression: what predicts higher overlap?</h2>
+<p>We regressed city-level semantic overlap on city size (log papers, log projects), temporal engagement (year span of iGEM activity), and carbon-capture shares. Standard errors are HC3 heteroskedasticity-robust.</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 27%">
+<col style="width: 27%">
+<col style="width: 27%">
+</colgroup>
 <thead>
 <tr class="header">
-<th>Rank</th>
-<th>City</th>
-<th style="text-align: right;">Papers</th>
-<th style="text-align: right;">Projects</th>
-<th style="text-align: right;">Total</th>
+<th>Variable</th>
+<th style="text-align: center;">(1) Size only</th>
+<th style="text-align: center;">(2) + Temporal</th>
+<th style="text-align: center;">(3) + Carbon</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>1</td>
-<td>Beijing</td>
-<td style="text-align: right;">290</td>
-<td style="text-align: right;">258</td>
-<td style="text-align: right;">548</td>
+<td>log(papers)</td>
+<td style="text-align: center;">0.0168*** (0.0015)</td>
+<td style="text-align: center;">0.0165*** (0.0015)</td>
+<td style="text-align: center;">0.0167*** (0.0015)</td>
 </tr>
 <tr class="even">
-<td>2</td>
-<td>Cambridge</td>
-<td style="text-align: right;">294</td>
-<td style="text-align: right;">40</td>
-<td style="text-align: right;">334</td>
+<td>log(projects)</td>
+<td style="text-align: center;">0.0187*** (0.0018)</td>
+<td style="text-align: center;">0.0102*** (0.0030)</td>
+<td style="text-align: center;">0.0102*** (0.0030)</td>
 </tr>
 <tr class="odd">
-<td>3</td>
-<td>Shanghai</td>
-<td style="text-align: right;">108</td>
-<td style="text-align: right;">216</td>
-<td style="text-align: right;">324</td>
+<td>iGEM year span</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">0.0016*** (0.0004)</td>
+<td style="text-align: center;">0.0016*** (0.0004)</td>
 </tr>
 <tr class="even">
-<td>4</td>
-<td>London</td>
-<td style="text-align: right;">236</td>
-<td style="text-align: right;">29</td>
-<td style="text-align: right;">265</td>
+<td>CC paper share</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">0.0188 (0.0157)</td>
 </tr>
 <tr class="odd">
-<td>5</td>
-<td>Tokyo</td>
-<td style="text-align: right;">103</td>
-<td style="text-align: right;">56</td>
-<td style="text-align: right;">159</td>
+<td>CC project share</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">−0.0086 (0.0188)</td>
 </tr>
 <tr class="even">
-<td>6</td>
-<td>Wuhan</td>
-<td style="text-align: right;">22</td>
-<td style="text-align: right;">134</td>
-<td style="text-align: right;">156</td>
+<td>R²</td>
+<td style="text-align: center;">0.620</td>
+<td style="text-align: center;">0.634</td>
+<td style="text-align: center;">0.638</td>
 </tr>
 <tr class="odd">
-<td>7</td>
-<td>Shenzhen</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">145</td>
-<td style="text-align: right;">155</td>
-</tr>
-<tr class="even">
-<td>8</td>
-<td>Paris</td>
-<td style="text-align: right;">117</td>
-<td style="text-align: right;">37</td>
-<td style="text-align: right;">154</td>
-</tr>
-<tr class="odd">
-<td>9</td>
-<td>New York</td>
-<td style="text-align: right;">98</td>
-<td style="text-align: right;">35</td>
-<td style="text-align: right;">133</td>
-</tr>
-<tr class="even">
-<td>10</td>
-<td>San Diego</td>
-<td style="text-align: right;">127</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">127</td>
+<td>N</td>
+<td style="text-align: center;">379</td>
+<td style="text-align: center;">379</td>
+<td style="text-align: center;">379</td>
 </tr>
 </tbody>
 </table>
-<p>Beijing and Shanghai reflect the rapid growth of Chinese synthetic biology research and iGEM participation since 2012. Cambridge (MA/UK) leads for academic papers, anchored by MIT, Harvard, and the Wellcome Sanger Institute.</p>
-</section>
-<section id="carbon-capture-subset" class="level2">
-<h2 class="anchored" data-anchor-id="carbon-capture-subset">Carbon capture subset</h2>
-<p>267 papers (2.8% of corpus) and 141 iGEM projects (3.1% of corpus) were tagged as carbon-capture related. 30 cities have at least one carbon-capture artifact of both types, providing the basis for city-level cross-type analysis.</p>
-<p>Full analysis on the <a href="./case-study.html">Case Study: Carbon Capture</a> page.</p>
+<p><em>*** p &lt; 0.01; ** p &lt; 0.05; * p &lt; 0.1. Robust standard errors in parentheses.</em></p>
+<p><strong>What the regression says:</strong></p>
+<p>Cities with more papers <em>and</em> more projects have higher overlap (Models 1–3). Bigger synthetic biology footprints tend to be more focused ones — scale and specialisation go together.</p>
+<p>Longer iGEM engagement also predicts higher overlap (Models 2–3), even after controlling for total project count. Cities where teams keep coming back year after year are also the cities with deep, focused research programmes — the two seem to track each other.</p>
+<p>The carbon-capture shares (Model 3) add nothing once size and time are in the model. This isn’t surprising given how small the CC subset is (375 artifacts, 7 qualifying cities).</p>
+<p>Size alone (log papers + log projects) accounts for about 62% of the variance in city-level overlap. That’s the main story.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Causal interpretation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>These associations cannot be interpreted causally. Cities with more papers and more projects are likely the same cities with stronger research infrastructure, more specialised universities, and larger synthetic biology communities — all factors that independently drive both outcomes.</p>
+</div>
+</div>
 
 
 <!-- -->
@@ -511,7 +518,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/zer0juice\.github\.io\/synbio-diversification");
+        var filterRegex = new RegExp("https:\/\/zer0juice\.github\.io\/synbiomap");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -842,82 +849,120 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Results"</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Corpus overview</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Semantic space</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>The pipeline currently covers papers and iGEM projects.</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Patents and parts will be added in a later pipeline run.</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Artifact type <span class="pp">|</span> Count <span class="pp">|</span> Year range <span class="pp">|</span> Cities geocoded <span class="pp">|</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------------|------:|------------|----------------:|</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Papers <span class="pp">|</span> 9,449 <span class="pp">|</span> 2000–2026 <span class="pp">|</span> 8,720 (92%) <span class="pp">|</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> iGEM projects <span class="pp">|</span> 4,615 <span class="pp">|</span> 2009–2025 <span class="pp">|</span> 4,615 (100%) <span class="pp">|</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Patents <span class="pp">|</span> — <span class="pp">|</span> — <span class="pp">|</span> — <span class="pp">|</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> iGEM parts <span class="pp">|</span> — <span class="pp">|</span> — <span class="pp">|</span> — <span class="pp">|</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total** | **14,064** | **2000–2026** | **13,335 (95%)** <span class="pp">|</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>Papers were retrieved from OpenAlex using core synthetic biology keywords</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>("synthetic biology", "synthetic genomics", "BioBrick") and subfield keywords</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>("repressilator", "minimal genome", "xenobiology", etc.).</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>iGEM projects were geocoded using a three-tier pipeline:</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>OpenAlex institution lookup → Claude Haiku city extraction → Nominatim coordinates.</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>Paper coordinates were obtained by fetching full institution objects from</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>OpenAlex (which include city and lat/lon) using institution IDs stored during ingestion.</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## Semantic space</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>All artifacts were embedded using SPECTER (Lo et al., 2020), a transformer</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>model pre-trained on scientific text to produce 768-dimensional vectors from</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>title and abstract. Embeddings were reduced to 2D with UMAP for visualization.</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>The shared projection shows papers and iGEM projects occupying overlapping but</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>distinguishable regions of semantic space, consistent with the hypothesis that</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>student projects and academic research share the same knowledge domain.</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>All 13,335 artifacts — 8,720 papers and 4,615 iGEM projects — were embedded with</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">SPECTER2</span><span class="co">](https://huggingface.co/allenai/specter2)</span> and projected to two dimensions</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>using UMAP. The figure below shows the full projection. Blue points are papers;</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>orange points are iGEM projects; green diamonds are carbon-capture flagged artifacts</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>from either type.</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>Use the legend to toggle artifact types on and off. Hover over any point to see the title, city, and year.</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;iframe src="assets/figures/fig1_umap_all.html"</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="in">        width="100%" height="620px" frameborder="0"</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="in">        style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);"&gt;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/iframe&gt;</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>**What the projection shows.** Papers and iGEM projects interleave across the semantic</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>space rather than splitting into two distinct blobs. The topics of student projects and</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>academic papers aren't that far apart — which makes sense, given that students are building</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>from the same scientific literature their advisors write.</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## Thematic clusters</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>HDBSCAN identified 347 local clusters in the embedding space. The 25 largest</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>named clusters (covering about 2,200 artifacts) include:</span>
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>See the <span class="co">[</span><span class="ot">Explorer</span><span class="co">](explorer.qmd)</span> for the interactive version.</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">## Clustering</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>HDBSCAN was applied to the full 768-dimensional embedding space.</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> Count <span class="pp">|</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---:|</span></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Total artifacts <span class="pp">|</span> 14,064 <span class="pp">|</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Clusters found <span class="pp">|</span> 256 <span class="pp">|</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Artifacts assigned to a cluster <span class="pp">|</span> 9,169 (65%) <span class="pp">|</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Noise (unassigned) <span class="pp">|</span> 4,895 (35%) <span class="pp">|</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Cluster <span class="pp">|</span> Size <span class="pp">|</span> Example topics <span class="pp">|</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-----:|----------------|</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Plastic degradation and biodegradation <span class="pp">|</span> 191 <span class="pp">|</span> PET, polyhydroxyalkanoates <span class="pp">|</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Antimicrobial peptides for crop protection <span class="pp">|</span> 189 <span class="pp">|</span> bacteriocins, plant immunity <span class="pp">|</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Bacteriophage therapy and engineering <span class="pp">|</span> 115 <span class="pp">|</span> phage display, lytic cycles <span class="pp">|</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Microbial chassis and metabolic engineering <span class="pp">|</span> 114 <span class="pp">|</span> *E. coli*, *B. subtilis* chassis <span class="pp">|</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Engineered bacteria for cancer therapy <span class="pp">|</span> 110 <span class="pp">|</span> tumor-targeting microbes <span class="pp">|</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Engineered living materials and assembly <span class="pp">|</span> 105 <span class="pp">|</span> biofilms, curli fibres <span class="pp">|</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CRISPR-Cas genome editing systems <span class="pp">|</span> 90 <span class="pp">|</span> Cas9, base editing <span class="pp">|</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Biofuel and fine chemical production <span class="pp">|</span> 79 <span class="pp">|</span> ethanol, terpenes, fatty acids <span class="pp">|</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Minimal genome design and essentiality <span class="pp">|</span> 75 <span class="pp">|</span> JCVI-syn3, essential genes <span class="pp">|</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> DNA assembly automation standards <span class="pp">|</span> 73 <span class="pp">|</span> Golden Gate, BioBricks, MoClo <span class="pp">|</span></span>
 <span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>The 35% noise rate is typical for HDBSCAN on heterogeneous text corpora — it</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>reflects genuine semantic diversity within the synthetic biology literature</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>rather than a pipeline failure.</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="fu">## City-level patterns</span></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>Top 10 cities by total artifact count (papers + projects):</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Rank <span class="pp">|</span> City <span class="pp">|</span> Papers <span class="pp">|</span> Projects <span class="pp">|</span> Total <span class="pp">|</span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|------|-------:|---------:|------:|</span></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1 <span class="pp">|</span> Beijing <span class="pp">|</span> 290 <span class="pp">|</span> 258 <span class="pp">|</span> 548 <span class="pp">|</span></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 2 <span class="pp">|</span> Cambridge <span class="pp">|</span> 294 <span class="pp">|</span> 40 <span class="pp">|</span> 334 <span class="pp">|</span></span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 3 <span class="pp">|</span> Shanghai <span class="pp">|</span> 108 <span class="pp">|</span> 216 <span class="pp">|</span> 324 <span class="pp">|</span></span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 4 <span class="pp">|</span> London <span class="pp">|</span> 236 <span class="pp">|</span> 29 <span class="pp">|</span> 265 <span class="pp">|</span></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 5 <span class="pp">|</span> Tokyo <span class="pp">|</span> 103 <span class="pp">|</span> 56 <span class="pp">|</span> 159 <span class="pp">|</span></span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 6 <span class="pp">|</span> Wuhan <span class="pp">|</span> 22 <span class="pp">|</span> 134 <span class="pp">|</span> 156 <span class="pp">|</span></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 7 <span class="pp">|</span> Shenzhen <span class="pp">|</span> 10 <span class="pp">|</span> 145 <span class="pp">|</span> 155 <span class="pp">|</span></span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 8 <span class="pp">|</span> Paris <span class="pp">|</span> 117 <span class="pp">|</span> 37 <span class="pp">|</span> 154 <span class="pp">|</span></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 9 <span class="pp">|</span> New York <span class="pp">|</span> 98 <span class="pp">|</span> 35 <span class="pp">|</span> 133 <span class="pp">|</span></span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 10 <span class="pp">|</span> San Diego <span class="pp">|</span> 127 <span class="pp">|</span> 0 <span class="pp">|</span> 127 <span class="pp">|</span></span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>Beijing and Shanghai reflect the rapid growth of Chinese synthetic biology</span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>research and iGEM participation since 2012. Cambridge (MA/UK) leads for</span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>academic papers, anchored by MIT, Harvard, and the Wellcome Sanger Institute.</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>The remaining ~11,000 artifacts fall into smaller thematic clusters (each ≤ 54 artifacts)</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>collectively labelled "Other".</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="fu">## City-level semantic overlap</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>For each of the 379 cities with both papers and iGEM projects, we computed the</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>**cosine similarity** between the average (centroid) SPECTER2 embedding of that city's</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>papers and the average embedding of its projects. Higher values mean the city's papers</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>and projects are topically closer.</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;iframe src="assets/figures/fig3_city_overlap.html"</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="in">        width="100%" height="720px" frameborder="0"</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="in">        style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);"&gt;</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/iframe&gt;</span></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>Overlap scores range from **0.80 to 0.99** (mean 0.94). The range is narrow because</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>all artifacts are drawn from a single field (synthetic biology), so SPECTER2 places</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>even diverse documents fairly close together. Variation within this range is nonetheless</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>real and interpretable: cities at the high end have papers and projects that are</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>genuinely more co-topical than cities at the low end.</span>
 <span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="fu">## Carbon capture subset</span></span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>267 papers (2.8% of corpus) and 141 iGEM projects (3.1% of corpus) were</span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>tagged as carbon-capture related. 30 cities have at least one carbon-capture</span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>artifact of both types, providing the basis for city-level cross-type analysis.</span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>Full analysis on the <span class="co">[</span><span class="ot">Case Study: Carbon Capture</span><span class="co">](case-study.qmd)</span> page.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>**Top cities** include Cambridge (US), Shanghai, Tianjin, Berkeley, and Boston — all</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>major synthetic biology research centres with large, focused iGEM programmes.</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regression: what predicts higher overlap?</span></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>We regressed city-level semantic overlap on city size (log papers, log projects),</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>temporal engagement (year span of iGEM activity), and carbon-capture shares.</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>Standard errors are HC3 heteroskedasticity-robust.</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Variable <span class="pp">|</span> (1) Size only <span class="pp">|</span> (2) + Temporal <span class="pp">|</span> (3) + Carbon <span class="pp">|</span></span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|:---:|:---:|:---:|</span></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> log(papers) <span class="pp">|</span> 0.0168<span class="sc">\*\*\*</span> (0.0015) <span class="pp">|</span> 0.0165<span class="sc">\*\*\*</span> (0.0015) <span class="pp">|</span> 0.0167<span class="sc">\*\*\*</span> (0.0015) <span class="pp">|</span></span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> log(projects) <span class="pp">|</span> 0.0187<span class="sc">\*\*\*</span> (0.0018) <span class="pp">|</span> 0.0102<span class="sc">\*\*\*</span> (0.0030) <span class="pp">|</span> 0.0102<span class="sc">\*\*\*</span> (0.0030) <span class="pp">|</span></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> iGEM year span <span class="pp">|</span> — <span class="pp">|</span> 0.0016<span class="sc">\*\*\*</span> (0.0004) <span class="pp">|</span> 0.0016<span class="sc">\*\*\*</span> (0.0004) <span class="pp">|</span></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CC paper share <span class="pp">|</span> — <span class="pp">|</span> — <span class="pp">|</span> 0.0188 (0.0157) <span class="pp">|</span></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CC project share <span class="pp">|</span> — <span class="pp">|</span> — <span class="pp">|</span> −0.0086 (0.0188) <span class="pp">|</span></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> R² <span class="pp">|</span> 0.620 <span class="pp">|</span> 0.634 <span class="pp">|</span> 0.638 <span class="pp">|</span></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> N <span class="pp">|</span> 379 <span class="pp">|</span> 379 <span class="pp">|</span> 379 <span class="pp">|</span></span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>*\*\*\* p &lt; 0.01; \*\* p &lt; 0.05; \* p &lt; 0.1. Robust standard errors in parentheses.*</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>**What the regression says:**</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>Cities with more papers *and* more projects have higher overlap (Models 1–3). Bigger</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>synthetic biology footprints tend to be more focused ones — scale and specialisation go</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>together.</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>Longer iGEM engagement also predicts higher overlap (Models 2–3), even after controlling</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>for total project count. Cities where teams keep coming back year after year are also the</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>cities with deep, focused research programmes — the two seem to track each other.</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>The carbon-capture shares (Model 3) add nothing once size and time are in the model. This</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>isn't surprising given how small the CC subset is (375 artifacts, 7 qualifying cities).</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>Size alone (log papers + log projects) accounts for about 62% of the variance in</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>city-level overlap. That's the main story.</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="fu">## Causal interpretation</span></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>These associations cannot be interpreted causally. Cities with more papers and more projects</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>are likely the same cities with stronger research infrastructure, more specialised universities,</span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>and larger synthetic biology communities — all factors that independently drive both outcomes.</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
@@ -927,11 +972,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Zer0Juice/synbio-diversification/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/Zer0Juice/synbio-diversification">
+    <a class="nav-link" href="https://github.com/Zer0Juice/synbiomap">
       <i class="bi bi-github" role="img">
 </i> 
     </a>

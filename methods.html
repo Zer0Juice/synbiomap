@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Methods – Patents, Papers, Parts &amp; Planet</title>
+<title>Methods &amp; Data – Patents, Papers, Parts &amp; Planet</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -106,6 +106,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -131,24 +160,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./paper.html"> 
-<span class="menu-text">Paper</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link active" href="./methods.html" aria-current="page"> 
-<span class="menu-text">Methods</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="./results.html"> 
 <span class="menu-text">Results</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./case-study.html"> 
-<span class="menu-text">Case Study: Carbon Capture</span></a>
+<span class="menu-text">Carbon Capture</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./explorer.html"> 
 <span class="menu-text">Explorer</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./methods.html" aria-current="page"> 
+<span class="menu-text">Methods &amp; Data</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./paper.html"> 
+<span class="menu-text">Paper</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./reproducibility.html"> 
@@ -174,22 +203,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#data-sources" id="toc-data-sources" class="nav-link active" data-scroll-target="#data-sources">Data sources</a></li>
-  <li><a href="#corpus-construction" id="toc-corpus-construction" class="nav-link" data-scroll-target="#corpus-construction">Corpus construction</a></li>
-  <li><a href="#case-study-identification" id="toc-case-study-identification" class="nav-link" data-scroll-target="#case-study-identification">Case study identification</a></li>
-  <li><a href="#embeddings" id="toc-embeddings" class="nav-link" data-scroll-target="#embeddings">Embeddings</a></li>
-  <li><a href="#dimensionality-reduction-umap" id="toc-dimensionality-reduction-umap" class="nav-link" data-scroll-target="#dimensionality-reduction-umap">Dimensionality reduction (UMAP)</a></li>
-  <li><a href="#clustering-hdbscan" id="toc-clustering-hdbscan" class="nav-link" data-scroll-target="#clustering-hdbscan">Clustering (HDBSCAN)</a></li>
+  <li><a href="#corpus-construction" id="toc-corpus-construction" class="nav-link active" data-scroll-target="#corpus-construction">Corpus construction</a>
+  <ul class="collapse">
+  <li><a href="#papers" id="toc-papers" class="nav-link" data-scroll-target="#papers">Papers</a></li>
+  <li><a href="#igem-projects" id="toc-igem-projects" class="nav-link" data-scroll-target="#igem-projects">iGEM Projects</a></li>
+  <li><a href="#patents" id="toc-patents" class="nav-link" data-scroll-target="#patents">Patents</a></li>
+  </ul></li>
   <li><a href="#geocoding" id="toc-geocoding" class="nav-link" data-scroll-target="#geocoding">Geocoding</a></li>
+  <li><a href="#embeddings" id="toc-embeddings" class="nav-link" data-scroll-target="#embeddings">Embeddings</a></li>
+  <li><a href="#dimensionality-reduction-and-clustering" id="toc-dimensionality-reduction-and-clustering" class="nav-link" data-scroll-target="#dimensionality-reduction-and-clustering">Dimensionality reduction and clustering</a>
+  <ul class="collapse">
+  <li><a href="#umap-projection" id="toc-umap-projection" class="nav-link" data-scroll-target="#umap-projection">UMAP projection</a></li>
+  <li><a href="#hdbscan-clustering" id="toc-hdbscan-clustering" class="nav-link" data-scroll-target="#hdbscan-clustering">HDBSCAN clustering</a></li>
+  </ul></li>
+  <li><a href="#city-level-semantic-overlap" id="toc-city-level-semantic-overlap" class="nav-link" data-scroll-target="#city-level-semantic-overlap">City-level semantic overlap</a></li>
+  <li><a href="#regression-specification" id="toc-regression-specification" class="nav-link" data-scroll-target="#regression-specification">Regression specification</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbio-diversification/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Methods</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">Methods &amp; Data</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -206,112 +246,135 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This page describes how the corpus was built, how artifacts were embedded and clustered, and how the carbon-capture case study was identified.</p>
-<section id="data-sources" class="level2">
-<h2 class="anchored" data-anchor-id="data-sources">Data sources</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Artifact type</th>
-<th>Source</th>
-<th>Access method</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Academic papers</td>
-<td><a href="https://openalex.org">OpenAlex</a></td>
-<td>Free REST API</td>
-</tr>
-<tr class="even">
-<td>Patents</td>
-<td><a href="https://www.lens.org">Lens.org</a></td>
-<td>Free API (token required)</td>
-</tr>
-<tr class="odd">
-<td>iGEM projects</td>
-<td>iGEM community data</td>
-<td>CSV download</td>
-</tr>
-<tr class="even">
-<td>iGEM parts</td>
-<td>iGEM Parts Registry</td>
-<td>CSV download / API</td>
-</tr>
-</tbody>
-</table>
-<p>All artifacts are normalized to a <strong>shared schema</strong> before processing. See <code>src/utils/schema.py</code> for field definitions.</p>
-</section>
 <section id="corpus-construction" class="level2">
 <h2 class="anchored" data-anchor-id="corpus-construction">Corpus construction</h2>
-<p>Papers and patents were retrieved by searching for synthetic biology keywords in titles and abstracts. The seed keywords were:</p>
-<ul>
-<li><code>synthetic biology</code></li>
-<li><code>metabolic engineering</code></li>
-<li><code>genetic engineering</code></li>
-</ul>
-<p>Citation expansion was applied to papers: we also retrieved works that cite highly-cited seed papers, to capture related work that uses different terminology.</p>
-<p>The keyword list and year range can be adjusted in <code>config/settings.yaml</code>.</p>
+<section id="papers" class="level3">
+<h3 class="anchored" data-anchor-id="papers">Papers</h3>
+<p>Academic papers were retrieved from <a href="https://openalex.org">OpenAlex</a> using a two-layer keyword strategy:</p>
+<p><strong>Layer 1 — core keywords</strong> retrieve papers explicitly about the field: &gt; <em>synthetic biology · synthetic genomics · synthetic genome · BioBrick</em></p>
+<p><strong>Layer 2 — subfield keywords</strong> extend coverage to technical papers that may not use “synthetic biology” explicitly: &gt; <em>synthetic gene network · synthetic gene circuit · synthetic cell · minimal genome · minimal cell · &gt; standard biological parts · repressilator · xenobiology · cell-free synthetic biology</em></p>
+<p>This approach follows Shapira et al.&nbsp;(2017), who used a similar multi-keyword strategy to delineate the synthetic biology literature.</p>
+<p>All papers were filtered to years 2000–2026. The final corpus contains <strong>8,720 papers</strong>.</p>
 </section>
-<section id="case-study-identification" class="level2">
-<h2 class="anchored" data-anchor-id="case-study-identification">Case study identification</h2>
-<p>Artifacts were tagged as belonging to the <strong>carbon capture case study</strong> if their title or abstract contained at least one of these keywords:</p>
-<ul>
-<li>carbon capture, carbon sequestration, CO2 fixation, carbon dioxide reduction, carbon neutral, biofuel, carbon cycle, autotrophic, RuBisCO, Calvin cycle, carboxylase</li>
-</ul>
-<p>A <strong>confidence score</strong> (0–1) measures the fraction of keywords matched. Any keyword match sets <code>case_study_flag = True</code>.</p>
+<section id="igem-projects" class="level3">
+<h3 class="anchored" data-anchor-id="igem-projects">iGEM Projects</h3>
+<p>iGEM project data were retrieved from the <a href="https://parts.igem.org">iGEM Registry API</a>. Each project entry includes team name, institution, year, wiki description, and (where available) a list of BioBrick parts used. Projects were normalized to a shared schema with <code>id</code>, <code>title</code>, <code>text</code>, <code>year</code>, <code>city</code>, <code>country</code>, <code>lat</code>, <code>lon</code>, and <code>case_study_flag</code>.</p>
+<p>The final corpus contains <strong>4,615 projects</strong> spanning 2009–2025.</p>
 </section>
-<section id="embeddings" class="level2">
-<h2 class="anchored" data-anchor-id="embeddings">Embeddings</h2>
-<p>Each artifact’s title and abstract were concatenated and encoded with a pre-trained sentence-transformer model (<a href="https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2"><code>all-MiniLM-L6-v2</code></a>). This model encodes text into a 384-dimensional vector that captures semantic meaning.</p>
-<blockquote class="blockquote">
-<p>Reimers &amp; Gurevych (2019). <em>Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks.</em> EMNLP 2019. <a href="https://arxiv.org/abs/1908.10084">arXiv:1908.10084</a></p>
-</blockquote>
+<section id="patents" class="level3">
+<h3 class="anchored" data-anchor-id="patents">Patents</h3>
+<p>Patent data was not included in the final analysis. An initial attempt to retrieve patents from Lens.org via IPC classification (C12N, C12P, C12Q) returned too few usable records with city-level geocoding to support city-level analysis. This is noted as a limitation.</p>
+<hr>
 </section>
-<section id="dimensionality-reduction-umap" class="level2">
-<h2 class="anchored" data-anchor-id="dimensionality-reduction-umap">Dimensionality reduction (UMAP)</h2>
-<p>Embeddings were projected to 2D with <strong>UMAP</strong> for visualization. UMAP was chosen over t-SNE because it better preserves global structure alongside local neighborhoods.</p>
-<blockquote class="blockquote">
-<p>McInnes et al.&nbsp;(2018). <em>UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction.</em> <a href="https://arxiv.org/abs/1802.03426">arXiv:1802.03426</a></p>
-</blockquote>
-<p>Key parameters (adjustable in <code>config/settings.yaml</code>):</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Parameter</th>
-<th>Value</th>
-<th>Meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>n_neighbors</code></td>
-<td>15</td>
-<td>Local neighborhood size</td>
-</tr>
-<tr class="even">
-<td><code>min_dist</code></td>
-<td>0.1</td>
-<td>Minimum spread in projected space</td>
-</tr>
-<tr class="odd">
-<td><code>metric</code></td>
-<td>cosine</td>
-<td>Distance metric for embeddings</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="clustering-hdbscan" class="level2">
-<h2 class="anchored" data-anchor-id="clustering-hdbscan">Clustering (HDBSCAN)</h2>
-<p>Clusters were identified with <strong>HDBSCAN</strong>, a density-based algorithm that does not require specifying the number of clusters in advance. Points that do not belong to any cluster are labeled as noise (label = -1).</p>
-<blockquote class="blockquote">
-<p>Campello et al.&nbsp;(2013). <em>Density-Based Clustering Based on Hierarchical Density Estimates.</em> ECML PKDD 2013.</p>
-</blockquote>
 </section>
 <section id="geocoding" class="level2">
 <h2 class="anchored" data-anchor-id="geocoding">Geocoding</h2>
-<p>Institution locations from OpenAlex and Lens.org were converted to latitude/longitude using Nominatim (OpenStreetMap), with results cached locally. Analysis is at the <strong>city level</strong>.</p>
+<p><strong>Papers</strong> were geocoded using the institution metadata returned by OpenAlex. Each paper’s lead institution was mapped to a city and coordinates.</p>
+<p><strong>iGEM projects</strong> were geocoded using a three-tier pipeline:</p>
+<ol type="1">
+<li>OpenAlex institution lookup (for recognized university names)</li>
+<li>Research Organization Registry (ROR) for remaining institutions</li>
+<li>Claude Haiku (local LLM) for hard cases with unusual institution names</li>
+</ol>
+<p>All geocoding results were cached to disk and are reproducible without API calls on re-runs. Cities with no geocoding result were excluded from the city-level analysis.</p>
+<hr>
+</section>
+<section id="embeddings" class="level2">
+<h2 class="anchored" data-anchor-id="embeddings">Embeddings</h2>
+<p>All artifacts (papers and projects) were encoded into 768-dimensional vectors using <strong>SPECTER2</strong> (<a href="https://huggingface.co/allenai/specter2">Specter2, 2022</a>), specifically the <strong>proximity adapter</strong> trained for symmetric document-similarity retrieval.</p>
+<p><strong>Why SPECTER2?</strong></p>
+<ul>
+<li>Trained on scientific papers using citation-informed contrastive learning, making it more domain-appropriate than general models (BERT, GPT) for scientific text.</li>
+<li>The proximity adapter is explicitly optimised for measuring cosine similarity between two documents, which is exactly our use case.</li>
+<li>768-dimensional output is compact enough to embed 13,000+ documents in a single session.</li>
+</ul>
+<p>Each document was encoded as the <code>[CLS]</code> token of the final hidden layer, truncated to 256 tokens (sufficient for most abstracts). Embeddings were cached incrementally to disk — safe to interrupt and resume.</p>
+<hr>
+</section>
+<section id="dimensionality-reduction-and-clustering" class="level2">
+<h2 class="anchored" data-anchor-id="dimensionality-reduction-and-clustering">Dimensionality reduction and clustering</h2>
+<section id="umap-projection" class="level3">
+<h3 class="anchored" data-anchor-id="umap-projection">UMAP projection</h3>
+<p>Embeddings were reduced from 768 to 2 dimensions using <a href="https://arxiv.org/abs/1802.03426">UMAP</a> (McInnes et al., 2018). Parameters: <code>n_neighbors=10</code>, <code>min_dist=0.05</code>, <code>metric=cosine</code>.</p>
+<p>A separate 30-dimensional UMAP projection (same parameters) was computed for clustering, since HDBSCAN performs better on higher-dimensional UMAP output than on 2D (Grootendorst, 2022, <em>BERTopic</em>).</p>
+</section>
+<section id="hdbscan-clustering" class="level3">
+<h3 class="anchored" data-anchor-id="hdbscan-clustering">HDBSCAN clustering</h3>
+<p>Clusters were identified with <a href="https://doi.org/10.1007/978-3-642-37456-2_14">HDBSCAN</a> (Campello et al., 2013) on the 30D UMAP coordinates. Parameters: <code>min_cluster_size=10</code>, <code>min_samples=1</code>.</p>
+<p>This produced 347 clusters. The 25 largest were labeled using Claude Haiku: for each cluster, the 20 titles closest to the cluster centroid in 30D space were sent to the model with a prompt asking for a 3–6 word topic label. Artifacts in smaller clusters are grouped as “Other” in figures.</p>
+<hr>
+</section>
+</section>
+<section id="city-level-semantic-overlap" class="level2">
+<h2 class="anchored" data-anchor-id="city-level-semantic-overlap">City-level semantic overlap</h2>
+<p>For each city with at least one paper and at least one project with a valid embedding, we computed:</p>
+<p><span class="math display">\[\text{semantic\_overlap}_i = \cos(\bar{e}^{\text{papers}}_i,\; \bar{e}^{\text{projects}}_i)\]</span></p>
+<p>where <span class="math inline">\(\bar{e}\)</span> is the L2-normalised mean embedding vector (centroid) for all documents of that type in city <span class="math inline">\(i\)</span>.</p>
+<p>The centroid-similarity approach is equivalent to the mean pairwise cosine similarity when embeddings are unit-normalised (Turney &amp; Pantel, 2010), and is computationally efficient for cities with many documents.</p>
+<p>A city must appear in both the papers and projects datasets to contribute to the city-level analysis. <strong>379 cities</strong> meet this criterion.</p>
+<hr>
+</section>
+<section id="regression-specification" class="level2">
+<h2 class="anchored" data-anchor-id="regression-specification">Regression specification</h2>
+<p>We regressed city-level semantic overlap on:</p>
+<p><span class="math display">\[\text{overlap}_i = \alpha + \beta_1 \log(n\_papers_i) + \beta_2 \log(n\_projects_i) + \beta_3 \cdot \text{year\_span}_i + \varepsilon_i\]</span></p>
+<p>Count variables are log-transformed to account for the skewed distribution of city sizes (a common practice in urban economics; Wooldridge, 2019, Ch. 6). Standard errors are HC3 heteroskedasticity-robust (White, 1980).</p>
+<hr>
+</section>
+<section id="limitations" class="level2">
+<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
+<ol type="1">
+<li><p><strong>No patents.</strong> The patent pipeline failed to produce a usable city-level dataset. Claims about the “papers → patents” step in the innovation trajectory cannot be tested.</p></li>
+<li><p><strong>SPECTER2 is trained on papers, not projects.</strong> iGEM project descriptions are shorter, less formal, and structurally different from scientific abstracts. The embedding model may represent papers more faithfully, potentially inflating paper-project similarity for short project descriptions.</p></li>
+<li><p><strong>Cross-sectional design.</strong> All years are pooled. We cannot observe temporal ordering within cities — whether projects preceded papers, or vice versa.</p></li>
+<li><p><strong>Single-institution geocoding.</strong> Papers with multiple author institutions are assigned to the lead institution only. Multi-city collaborations are not captured.</p></li>
+<li><p><strong>Keyword inclusion rules.</strong> The corpus definition depends on keyword lists. The choice of keywords determines which papers and projects are included, and reasonable alternatives would produce a different corpus.</p></li>
+</ol>
+<hr>
+</section>
+<section id="reproducibility" class="level2">
+<h2 class="anchored" data-anchor-id="reproducibility">Reproducibility</h2>
+<p>All code is on <a href="https://github.com/Zer0Juice/synbiomap">GitHub</a>. The full pipeline can be reproduced with:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Install dependencies</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Set API keys</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> .env.example .env  <span class="co"># edit to add your keys</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Ingest papers and projects</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/01_ingest_papers.py</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/03_ingest_projects.py</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Embed all artifacts (~6 hours on CPU, ~1 hour on Apple Silicon)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/04_embed.py</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Project and cluster</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/05_cluster.py</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. Label top 25 clusters (requires ANTHROPIC_API_KEY)</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/05b_label_clusters.py</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. Export website data and figures</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/06_visualize.py</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/07_export_figures.py</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 8. Build the website</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render website/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Intermediate data files are cached; the pipeline is safe to interrupt and resume. Pre-computed outputs (embeddings, clusters, city-level CSV) are included in the repository so that steps 1–6 can be skipped for a quick local render.</p>
+<hr>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li>Campello, R., Moulavi, D., &amp; Sander, J. (2013). Density-based clustering based on hierarchical density estimates. <em>ECML PKDD</em>.</li>
+<li>Cohan, A., et al.&nbsp;(2020). SPECTER: Document-level representation learning using citation-informed transformers. <em>ACL 2020</em>.</li>
+<li>Grootendorst, M. (2022). BERTopic: Neural topic modeling with a class-based TF-IDF procedure. <em>arXiv:2203.05794</em>.</li>
+<li>McInnes, L., Healy, J., &amp; Melville, J. (2018). UMAP: Uniform manifold approximation and projection for dimension reduction. <em>arXiv:1802.03426</em>.</li>
+<li>Shapira, P., et al.&nbsp;(2017). Mapping synthetic biology. <em>New Biotechnology</em>.</li>
+<li>Turney, P. D., &amp; Pantel, P. (2010). From frequency to meaning: Vector space models of semantics. <em>JAIR</em>.</li>
+<li>White, H. (1980). A heteroskedasticity-consistent covariance matrix estimator. <em>Econometrica</em>.</li>
+<li>Wooldridge, J. M. (2019). <em>Introductory Econometrics</em>. Cengage.</li>
+</ul>
 
 
 <!-- -->
@@ -443,7 +506,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/zer0juice\.github\.io\/synbio-diversification");
+        var filterRegex = new RegExp("https:\/\/zer0juice\.github\.io\/synbiomap");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -770,94 +833,209 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Methods"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>This page describes how the corpus was built, how artifacts were embedded and</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>clustered, and how the carbon-capture case study was identified.</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data sources</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Artifact type <span class="pp">|</span> Source <span class="pp">|</span> Access method <span class="pp">|</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------------|--------|---------------|</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Academic papers <span class="pp">|</span> <span class="co">[</span><span class="ot">OpenAlex</span><span class="co">](https://openalex.org)</span> <span class="pp">|</span> Free REST API <span class="pp">|</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Patents <span class="pp">|</span> <span class="co">[</span><span class="ot">Lens.org</span><span class="co">](https://www.lens.org)</span> <span class="pp">|</span> Free API (token required) <span class="pp">|</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> iGEM projects <span class="pp">|</span> iGEM community data <span class="pp">|</span> CSV download <span class="pp">|</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> iGEM parts <span class="pp">|</span> iGEM Parts Registry <span class="pp">|</span> CSV download / API <span class="pp">|</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>All artifacts are normalized to a **shared schema** before processing.</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>See <span class="in">`src/utils/schema.py`</span> for field definitions.</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## Corpus construction</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>Papers and patents were retrieved by searching for synthetic biology keywords</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>in titles and abstracts. The seed keywords were:</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`synthetic biology`</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`metabolic engineering`</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`genetic engineering`</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>Citation expansion was applied to papers: we also retrieved works that cite</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>highly-cited seed papers, to capture related work that uses different</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>terminology.</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>The keyword list and year range can be adjusted in <span class="in">`config/settings.yaml`</span>.</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## Case study identification</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>Artifacts were tagged as belonging to the **carbon capture case study** if</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>their title or abstract contained at least one of these keywords:</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>carbon capture, carbon sequestration, CO2 fixation,</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  carbon dioxide reduction, carbon neutral, biofuel,</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  carbon cycle, autotrophic, RuBisCO, Calvin cycle, carboxylase</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>A **confidence score** (0–1) measures the fraction of keywords matched.</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>Any keyword match sets <span class="in">`case_study_flag = True`</span>.</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## Embeddings</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>Each artifact's title and abstract were concatenated and encoded with a</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>pre-trained sentence-transformer model</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">`all-MiniLM-L6-v2`</span><span class="co">](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)</span>).</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>This model encodes text into a 384-dimensional vector that captures</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>semantic meaning.</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Reimers &amp; Gurevych (2019). *Sentence-BERT: Sentence Embeddings using</span></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Siamese BERT-Networks.* EMNLP 2019. </span><span class="co">[</span><span class="ot">arXiv:1908.10084</span><span class="co">](https://arxiv.org/abs/1908.10084)</span></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dimensionality reduction (UMAP)</span></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>Embeddings were projected to 2D with **UMAP** for visualization.</span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>UMAP was chosen over t-SNE because it better preserves global structure</span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>alongside local neighborhoods.</span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; McInnes et al. (2018). *UMAP: Uniform Manifold Approximation and</span></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Projection for Dimension Reduction.* </span><span class="co">[</span><span class="ot">arXiv:1802.03426</span><span class="co">](https://arxiv.org/abs/1802.03426)</span></span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>Key parameters (adjustable in <span class="in">`config/settings.yaml`</span>):</span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Parameter <span class="pp">|</span> Value <span class="pp">|</span> Meaning <span class="pp">|</span></span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|-------|---------|</span></span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`n_neighbors`</span> <span class="pp">|</span> 15 <span class="pp">|</span> Local neighborhood size <span class="pp">|</span></span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`min_dist`</span> <span class="pp">|</span> 0.1 <span class="pp">|</span> Minimum spread in projected space <span class="pp">|</span></span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`metric`</span> <span class="pp">|</span> cosine <span class="pp">|</span> Distance metric for embeddings <span class="pp">|</span></span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a><span class="fu">## Clustering (HDBSCAN)</span></span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>Clusters were identified with **HDBSCAN**, a density-based algorithm that</span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>does not require specifying the number of clusters in advance.</span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>Points that do not belong to any cluster are labeled as noise (label = -1).</span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Campello et al. (2013). *Density-Based Clustering Based on Hierarchical</span></span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Density Estimates.* ECML PKDD 2013.</span></span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a><span class="fu">## Geocoding</span></span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>Institution locations from OpenAlex and Lens.org were converted to</span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>latitude/longitude using Nominatim (OpenStreetMap), with results cached</span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>locally. Analysis is at the **city level**.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Methods &amp; Data"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Corpus construction</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">### Papers</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>Academic papers were retrieved from <span class="co">[</span><span class="ot">OpenAlex</span><span class="co">](https://openalex.org)</span> using a two-layer keyword strategy:</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>**Layer 1 — core keywords** retrieve papers explicitly about the field:</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; *synthetic biology · synthetic genomics · synthetic genome · BioBrick*</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>**Layer 2 — subfield keywords** extend coverage to technical papers that may not use "synthetic biology" explicitly:</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; *synthetic gene network · synthetic gene circuit · synthetic cell · minimal genome · minimal cell ·</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; standard biological parts · repressilator · xenobiology · cell-free synthetic biology*</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>This approach follows Shapira et al. (2017), who used a similar multi-keyword strategy</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>to delineate the synthetic biology literature.</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>All papers were filtered to years 2000–2026. The final corpus contains **8,720 papers**.</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="fu">### iGEM Projects</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>iGEM project data were retrieved from the <span class="co">[</span><span class="ot">iGEM Registry API</span><span class="co">](https://parts.igem.org)</span>.</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>Each project entry includes team name, institution, year, wiki description, and (where</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>available) a list of BioBrick parts used. Projects were normalized to a shared schema with</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="in">`id`</span>, <span class="in">`title`</span>, <span class="in">`text`</span>, <span class="in">`year`</span>, <span class="in">`city`</span>, <span class="in">`country`</span>, <span class="in">`lat`</span>, <span class="in">`lon`</span>, and <span class="in">`case_study_flag`</span>.</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>The final corpus contains **4,615 projects** spanning 2009–2025.</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="fu">### Patents</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>Patent data was not included in the final analysis. An initial attempt to retrieve</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>patents from Lens.org via IPC classification (C12N, C12P, C12Q) returned too few</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>usable records with city-level geocoding to support city-level analysis. This is</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>noted as a limitation.</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## Geocoding</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>**Papers** were geocoded using the institution metadata returned by OpenAlex. Each</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>paper's lead institution was mapped to a city and coordinates.</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>**iGEM projects** were geocoded using a three-tier pipeline:</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>OpenAlex institution lookup (for recognized university names)</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Research Organization Registry (ROR) for remaining institutions</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Claude Haiku (local LLM) for hard cases with unusual institution names</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>All geocoding results were cached to disk and are reproducible without API calls on re-runs.</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>Cities with no geocoding result were excluded from the city-level analysis.</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="fu">## Embeddings</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>All artifacts (papers and projects) were encoded into 768-dimensional vectors using</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>**SPECTER2** (<span class="co">[</span><span class="ot">Specter2, 2022</span><span class="co">](https://huggingface.co/allenai/specter2)</span>), specifically</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>the **proximity adapter** trained for symmetric document-similarity retrieval.</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>**Why SPECTER2?**</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Trained on scientific papers using citation-informed contrastive learning, making it</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>  more domain-appropriate than general models (BERT, GPT) for scientific text.</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The proximity adapter is explicitly optimised for measuring cosine similarity between</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>  two documents, which is exactly our use case.</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>768-dimensional output is compact enough to embed 13,000+ documents in a single session.</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>Each document was encoded as the <span class="in">`[CLS]`</span> token of the final hidden layer, truncated</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>to 256 tokens (sufficient for most abstracts). Embeddings were cached incrementally</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>to disk — safe to interrupt and resume.</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dimensionality reduction and clustering</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a><span class="fu">### UMAP projection</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>Embeddings were reduced from 768 to 2 dimensions using</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">UMAP</span><span class="co">](https://arxiv.org/abs/1802.03426)</span> (McInnes et al., 2018).</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>Parameters: <span class="in">`n_neighbors=10`</span>, <span class="in">`min_dist=0.05`</span>, <span class="in">`metric=cosine`</span>.</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>A separate 30-dimensional UMAP projection (same parameters) was computed for</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>clustering, since HDBSCAN performs better on higher-dimensional UMAP output</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>than on 2D (Grootendorst, 2022, *BERTopic*).</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a><span class="fu">### HDBSCAN clustering</span></span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>Clusters were identified with <span class="co">[</span><span class="ot">HDBSCAN</span><span class="co">](https://doi.org/10.1007/978-3-642-37456-2_14)</span></span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>(Campello et al., 2013) on the 30D UMAP coordinates.</span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>Parameters: <span class="in">`min_cluster_size=10`</span>, <span class="in">`min_samples=1`</span>.</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>This produced 347 clusters. The 25 largest were labeled using Claude Haiku: for each</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>cluster, the 20 titles closest to the cluster centroid in 30D space were sent to the</span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>model with a prompt asking for a 3–6 word topic label. Artifacts in smaller clusters</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>are grouped as "Other" in figures.</span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a><span class="fu">## City-level semantic overlap</span></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>For each city with at least one paper and at least one project with a valid embedding,</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>we computed:</span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>$$\text{semantic<span class="sc">\_</span>overlap}_i = \cos(\bar{e}^{\text{papers}}_i,\; \bar{e}^{\text{projects}}_i)$$</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>where $\bar{e}$ is the L2-normalised mean embedding vector (centroid) for all</span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>documents of that type in city $i$.</span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>The centroid-similarity approach is equivalent to the mean pairwise cosine similarity</span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>when embeddings are unit-normalised (Turney &amp; Pantel, 2010), and is computationally</span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>efficient for cities with many documents.</span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>A city must appear in both the papers and projects datasets to contribute to the</span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>city-level analysis. **379 cities** meet this criterion.</span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regression specification</span></span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>We regressed city-level semantic overlap on:</span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>$$\text{overlap}_i = \alpha + \beta_1 \log(n<span class="sc">\_</span>papers_i) + \beta_2 \log(n<span class="sc">\_</span>projects_i) + \beta_3 \cdot \text{year<span class="sc">\_</span>span}_i + \varepsilon_i$$</span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>Count variables are log-transformed to account for the skewed distribution of</span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>city sizes (a common practice in urban economics; Wooldridge, 2019, Ch. 6).</span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>Standard errors are HC3 heteroskedasticity-robust (White, 1980).</span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a><span class="fu">## Limitations</span></span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**No patents.** The patent pipeline failed to produce a usable city-level dataset.</span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>   Claims about the "papers → patents" step in the innovation trajectory cannot be tested.</span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**SPECTER2 is trained on papers, not projects.** iGEM project descriptions are shorter,</span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>   less formal, and structurally different from scientific abstracts. The embedding model</span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>   may represent papers more faithfully, potentially inflating paper-project similarity</span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a>   for short project descriptions.</span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Cross-sectional design.** All years are pooled. We cannot observe temporal ordering</span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>   within cities — whether projects preceded papers, or vice versa.</span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Single-institution geocoding.** Papers with multiple author institutions are assigned</span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>   to the lead institution only. Multi-city collaborations are not captured.</span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Keyword inclusion rules.** The corpus definition depends on keyword lists. The choice</span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>   of keywords determines which papers and projects are included, and reasonable alternatives</span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>   would produce a different corpus.</span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproducibility</span></span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a>All code is on <span class="co">[</span><span class="ot">GitHub</span><span class="co">](https://github.com/Zer0Juice/synbiomap)</span>.</span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>The full pipeline can be reproduced with:</span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Install dependencies</span></span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Set API keys</span></span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> .env.example .env  <span class="co"># edit to add your keys</span></span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Ingest papers and projects</span></span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/01_ingest_papers.py</span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/03_ingest_projects.py</span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Embed all artifacts (~6 hours on CPU, ~1 hour on Apple Silicon)</span></span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/04_embed.py</span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Project and cluster</span></span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/05_cluster.py</span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. Label top 25 clusters (requires ANTHROPIC_API_KEY)</span></span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/05b_label_clusters.py</span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. Export website data and figures</span></span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/06_visualize.py</span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/07_export_figures.py</span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a><span class="co"># 8. Build the website</span></span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render website/</span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a>Intermediate data files are cached; the pipeline is safe to interrupt and resume.</span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a>Pre-computed outputs (embeddings, clusters, city-level CSV) are included in the repository</span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a>so that steps 1–6 can be skipped for a quick local render.</span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a><span class="fu">## References</span></span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Campello, R., Moulavi, D., &amp; Sander, J. (2013). Density-based clustering based on hierarchical density estimates. *ECML PKDD*.</span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Cohan, A., et al. (2020). SPECTER: Document-level representation learning using citation-informed transformers. *ACL 2020*.</span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Grootendorst, M. (2022). BERTopic: Neural topic modeling with a class-based TF-IDF procedure. *arXiv:2203.05794*.</span>
+<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>McInnes, L., Healy, J., &amp; Melville, J. (2018). UMAP: Uniform manifold approximation and projection for dimension reduction. *arXiv:1802.03426*.</span>
+<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Shapira, P., et al. (2017). Mapping synthetic biology. *New Biotechnology*.</span>
+<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Turney, P. D., &amp; Pantel, P. (2010). From frequency to meaning: Vector space models of semantics. *JAIR*.</span>
+<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>White, H. (1980). A heteroskedasticity-consistent covariance matrix estimator. *Econometrica*.</span>
+<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Wooldridge, J. M. (2019). *Introductory Econometrics*. Cengage.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
@@ -867,11 +1045,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Zer0Juice/synbio-diversification/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/Zer0Juice/synbio-diversification">
+    <a class="nav-link" href="https://github.com/Zer0Juice/synbiomap">
       <i class="bi bi-github" role="img">
 </i> 
     </a>

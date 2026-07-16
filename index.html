@@ -131,24 +131,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./paper.html"> 
-<span class="menu-text">Paper</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./methods.html"> 
-<span class="menu-text">Methods</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="./results.html"> 
 <span class="menu-text">Results</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./case-study.html"> 
-<span class="menu-text">Case Study: Carbon Capture</span></a>
+<span class="menu-text">Carbon Capture</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./explorer.html"> 
 <span class="menu-text">Explorer</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./methods.html"> 
+<span class="menu-text">Methods &amp; Data</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./paper.html"> 
+<span class="menu-text">Paper</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./reproducibility.html"> 
@@ -174,11 +174,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#what-this-project-is-about" id="toc-what-this-project-is-about" class="nav-link active" data-scroll-target="#what-this-project-is-about">What this project is about</a></li>
-  <li><a href="#primary-case-study-carbon-capture-in-synthetic-biology" id="toc-primary-case-study-carbon-capture-in-synthetic-biology" class="nav-link" data-scroll-target="#primary-case-study-carbon-capture-in-synthetic-biology">Primary case study: carbon capture in synthetic biology</a></li>
+  <li><a href="#what-this-project-asks" id="toc-what-this-project-asks" class="nav-link active" data-scroll-target="#what-this-project-asks">What this project asks</a></li>
+  <li><a href="#the-corpus-in-numbers" id="toc-the-corpus-in-numbers" class="nav-link" data-scroll-target="#the-corpus-in-numbers">The corpus in numbers</a></li>
   <li><a href="#navigate-the-site" id="toc-navigate-the-site" class="nav-link" data-scroll-target="#navigate-the-site">Navigate the site</a></li>
+  <li><a href="#source-code" id="toc-source-code" class="nav-link" data-scroll-target="#source-code">Source code</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbio-diversification/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -186,7 +187,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <div class="quarto-title-block"><div><h1 class="title">Patents, Papers, Parts &amp; Planet</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-<p class="subtitle lead">Do student projects, academic research, and patents in synthetic biology form local innovation trajectories?</p>
+<p class="subtitle lead">Do student projects and academic research in synthetic biology form semantically related local innovation trajectories?</p>
 </div>
 
 
@@ -203,35 +204,73 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="what-this-project-is-about" class="level2">
-<h2 class="anchored" data-anchor-id="what-this-project-is-about">What this project is about</h2>
-<p>This project asks whether student research projects, academic publications, and patents within synthetic biology cluster together meaningfully. Does a city specializing in a specific cluster of student research predict further specialization in academic and commercial fields?</p>
-<p>The guiding idea is that innovation in a technical field may follow a local path:</p>
-<ol type="1">
-<li><strong>Student projects</strong> (iGEM teams) introduce early ideas</li>
-<li><strong>Academic papers</strong> develop and refine them</li>
-<li><strong>Patents</strong> reflect downstream application and translation</li>
-</ol>
-<p>We look at each artifact as a different expression of innovation and knowledge creation in a local region. Each artifact represents a unique expression of innovation, and the relatedness between them can show novel insights into innovation in an emergent field.</p>
-<p>We test whether these three artifact types occupy <strong>related regions of semantic space</strong>, share <strong>thematic clusters</strong>, and show <strong>plausible city-level temporal continuity</strong> in the same subfield.</p>
-<p><strong>We do not claim to show causation.</strong> The language we use is: semantic relatedness, association, cluster overlap, plausible temporal sequence, and local innovation trajectory.</p>
-</section>
-<section id="primary-case-study-carbon-capture-in-synthetic-biology" class="level2">
-<h2 class="anchored" data-anchor-id="primary-case-study-carbon-capture-in-synthetic-biology">Primary case study: carbon capture in synthetic biology</h2>
-<p>The main worked example throughout this project is <strong>carbon capture in synthetic biology</strong> : engineering microorganisms to fix CO₂ or produce carbon-neutral fuels. This subfield is large enough to find examples across all three artifact types, and is directly relevant to planetary sustainability.</p>
-<div class="callout callout-style-default callout-note callout-titled">
+<section id="what-this-project-asks" class="level2">
+<h2 class="anchored" data-anchor-id="what-this-project-asks">What this project asks</h2>
+<p>This project examines whether iGEM student projects and academic papers in synthetic biology tend to occupy <strong>related regions of semantic space</strong> in the same cities.</p>
+<p>The working idea is simple: cities that produce focused iGEM activity in a synthetic biology subfield may also produce focused academic output in the same area — not because one causes the other, but because both reflect the same local knowledge infrastructure.</p>
+<p>We measure this using <strong>SPECTER2 embeddings</strong> (scientific text vectors) and <strong>UMAP projection</strong>, then test city-level semantic overlap with a regression framework.</p>
+<p>The primary case study is <strong>carbon capture in synthetic biology</strong> — a subfield large enough to find examples across both artifact types.</p>
+<div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note
+<span class="screen-reader-only">Important</span>Language note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>All visualizations and results pages support filtering to the carbon-capture case study. Look for the <strong>“Carbon Capture”</strong> toggle.</p>
+<p>This project uses <em>descriptive</em> language throughout: <em>semantically related</em>, <em>co-located</em>, <em>associated with</em>. We do not claim that iGEM projects cause related papers, or vice versa.</p>
 </div>
 </div>
+<hr>
+</section>
+<section id="the-corpus-in-numbers" class="level2">
+<h2 class="anchored" data-anchor-id="the-corpus-in-numbers">The corpus in numbers</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Artifact type</th>
+<th style="text-align: right;">Count</th>
+<th style="text-align: center;">Year range</th>
+<th style="text-align: right;">Geocoded cities</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Academic papers</td>
+<td style="text-align: right;">8,720</td>
+<td style="text-align: center;">2000–2026</td>
+<td style="text-align: right;">1,146</td>
+</tr>
+<tr class="even">
+<td>iGEM projects</td>
+<td style="text-align: right;">4,615</td>
+<td style="text-align: center;">2009–2025</td>
+<td style="text-align: right;">626</td>
+</tr>
+<tr class="odd">
+<td><strong>Total</strong></td>
+<td style="text-align: right;"><strong>13,335</strong></td>
+<td style="text-align: center;"><strong>2000–2026</strong></td>
+<td style="text-align: right;"><strong>379 shared</strong></td>
+</tr>
+<tr class="even">
+<td>Carbon-capture papers</td>
+<td style="text-align: right;">234</td>
+<td style="text-align: center;">2005–2026</td>
+<td style="text-align: right;">—</td>
+</tr>
+<tr class="odd">
+<td>Carbon-capture projects</td>
+<td style="text-align: right;">141</td>
+<td style="text-align: center;">2011–2025</td>
+<td style="text-align: right;">—</td>
+</tr>
+</tbody>
+</table>
+<p>Papers were retrieved from OpenAlex using core synthetic biology keywords. iGEM projects come from the iGEM Registry API. All artifacts were geocoded to the city of their lead institution.</p>
+<hr>
 </section>
 <section id="navigate-the-site" class="level2">
 <h2 class="anchored" data-anchor-id="navigate-the-site">Navigate the site</h2>
@@ -244,28 +283,20 @@ Note
 </thead>
 <tbody>
 <tr class="odd">
-<td><a href="./paper.html">Paper</a></td>
-<td>The full manuscript</td>
-</tr>
-<tr class="even">
-<td><a href="./methods.html">Methods</a></td>
-<td>How we built the corpus, embeddings, and clusters</td>
-</tr>
-<tr class="odd">
 <td><a href="./results.html">Results</a></td>
-<td>Main findings across all artifact types</td>
+<td>UMAP semantic space · city-level overlap scores · regression table</td>
 </tr>
 <tr class="even">
-<td><a href="./case-study.html">Case Study: Carbon Capture</a></td>
-<td>Deep dive into the carbon capture subfield</td>
+<td><a href="./case-study.html">Carbon Capture</a></td>
+<td>Deep dive into the carbon capture subfield · 7 focal cities</td>
 </tr>
 <tr class="odd">
-<td><a href="./explorer.html">Explorer</a></td>
-<td>Interactive semantic space and geographic views</td>
+<td><a href="./methods.html">Methods &amp; Data</a></td>
+<td>Corpus construction · SPECTER2 embeddings · clustering · reproducibility</td>
 </tr>
 <tr class="even">
-<td><a href="./reproducibility.html">Reproducibility</a></td>
-<td>How to re-run the pipeline</td>
+<td><a href="./paper.html">Paper</a></td>
+<td>Full manuscript</td>
 </tr>
 <tr class="odd">
 <td><a href="./slides.html">Slides</a></td>
@@ -273,6 +304,11 @@ Note
 </tr>
 </tbody>
 </table>
+<hr>
+</section>
+<section id="source-code" class="level2">
+<h2 class="anchored" data-anchor-id="source-code">Source code</h2>
+<p>All code is available on <a href="https://github.com/Zer0Juice/synbiomap">GitHub</a>. The pipeline is fully reproducible: see <a href="./methods.html">Methods &amp; Data</a> for step-by-step commands.</p>
 
 
 <!-- -->
@@ -404,7 +440,7 @@ Note
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/zer0juice\.github\.io\/synbio-diversification");
+        var filterRegex = new RegExp("https:\/\/zer0juice\.github\.io\/synbiomap");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -733,56 +769,64 @@ Note
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Patents, Papers, Parts &amp; Planet"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Do student projects, academic research, and patents in synthetic biology form local innovation trajectories?"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Do student projects and academic research in synthetic biology form semantically related local innovation trajectories?"</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## What this project is about</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## What this project asks</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>This project asks whether student research projects, academic publications, and patents</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>within synthetic biology cluster together meaningfully. Does a city specializing in a specific cluster of student research</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>predict further specialization in academic and commercial fields?</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>The guiding idea is that innovation in a technical field may follow a local path:</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Student projects** (iGEM teams) introduce early ideas</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Academic papers** develop and refine them</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Patents** reflect downstream application and translation</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>This project examines whether iGEM student projects and academic papers in synthetic biology</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>tend to occupy **related regions of semantic space** in the same cities.</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>The working idea is simple: cities that produce focused iGEM activity in a synthetic biology</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>subfield may also produce focused academic output in the same area — not because one causes</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>the other, but because both reflect the same local knowledge infrastructure.</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>We measure this using **SPECTER2 embeddings** (scientific text vectors) and **UMAP projection**,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>then test city-level semantic overlap with a regression framework.</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>We look at each artifact as a different expression of innovation and knowledge creation in a local region.</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>Each artifact represents a unique expression of innovation, and the relatedness between them can show novel insights</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>into innovation in an emergent field.</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>We test whether these three artifact types occupy **related regions of semantic</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>space**, share **thematic clusters**, and show **plausible city-level temporal</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>continuity** in the same subfield.</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>**We do not claim to show causation.** The language we use is:</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>semantic relatedness, association, cluster overlap, plausible temporal sequence,</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>and local innovation trajectory.</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">## Primary case study: carbon capture in synthetic biology</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>The main worked example throughout this project is **carbon capture in synthetic</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>biology** : engineering microorganisms to fix CO₂ or produce carbon-neutral fuels.</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>This subfield is large enough to find examples across all three artifact types,</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>and is directly relevant to planetary sustainability.</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>All visualizations and results pages support filtering to the carbon-capture</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>case study. Look for the **"Carbon Capture"** toggle.</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Navigate the site</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Page <span class="pp">|</span> What you will find <span class="pp">|</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|-------------------|</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Paper</span><span class="co">](paper.qmd)</span> <span class="pp">|</span> The full manuscript <span class="pp">|</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Methods</span><span class="co">](methods.qmd)</span> <span class="pp">|</span> How we built the corpus, embeddings, and clusters <span class="pp">|</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Results</span><span class="co">](results.qmd)</span> <span class="pp">|</span> Main findings across all artifact types <span class="pp">|</span></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Case Study: Carbon Capture</span><span class="co">](case-study.qmd)</span> <span class="pp">|</span> Deep dive into the carbon capture subfield <span class="pp">|</span></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Explorer</span><span class="co">](explorer.qmd)</span> <span class="pp">|</span> Interactive semantic space and geographic views <span class="pp">|</span></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Reproducibility</span><span class="co">](reproducibility.qmd)</span> <span class="pp">|</span> How to re-run the pipeline <span class="pp">|</span></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Slides</span><span class="co">](slides.qmd)</span> <span class="pp">|</span> Presentation slides <span class="pp">|</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>The primary case study is **carbon capture in synthetic biology** — a subfield large enough to</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>find examples across both artifact types.</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## Language note</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>This project uses *descriptive* language throughout: *semantically related*, *co-located*,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>*associated with*. We do not claim that iGEM projects cause related papers, or vice versa.</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## The corpus in numbers</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Artifact type <span class="pp">|</span> Count <span class="pp">|</span> Year range <span class="pp">|</span> Geocoded cities <span class="pp">|</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------------|------:|:----------:|----------------:|</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Academic papers <span class="pp">|</span> 8,720 <span class="pp">|</span> 2000–2026 <span class="pp">|</span> 1,146 <span class="pp">|</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> iGEM projects <span class="pp">|</span> 4,615 <span class="pp">|</span> 2009–2025 <span class="pp">|</span> 626 <span class="pp">|</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total** | **13,335** | **2000–2026** | **379 shared** <span class="pp">|</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Carbon-capture papers <span class="pp">|</span> 234 <span class="pp">|</span> 2005–2026 <span class="pp">|</span> — <span class="pp">|</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Carbon-capture projects <span class="pp">|</span> 141 <span class="pp">|</span> 2011–2025 <span class="pp">|</span> — <span class="pp">|</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>Papers were retrieved from OpenAlex using core synthetic biology keywords.</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>iGEM projects come from the iGEM Registry API.</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>All artifacts were geocoded to the city of their lead institution.</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## Navigate the site</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Page <span class="pp">|</span> What you will find <span class="pp">|</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|-------------------|</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Results</span><span class="co">](results.qmd)</span> <span class="pp">|</span> UMAP semantic space · city-level overlap scores · regression table <span class="pp">|</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Carbon Capture</span><span class="co">](case-study.qmd)</span> <span class="pp">|</span> Deep dive into the carbon capture subfield · 7 focal cities <span class="pp">|</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Methods &amp; Data</span><span class="co">](methods.qmd)</span> <span class="pp">|</span> Corpus construction · SPECTER2 embeddings · clustering · reproducibility <span class="pp">|</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Paper</span><span class="co">](paper.qmd)</span> <span class="pp">|</span> Full manuscript <span class="pp">|</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Slides</span><span class="co">](slides.qmd)</span> <span class="pp">|</span> Presentation slides <span class="pp">|</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="fu">## Source code</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>All code is available on <span class="co">[</span><span class="ot">GitHub</span><span class="co">](https://github.com/Zer0Juice/synbiomap)</span>.</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>The pipeline is fully reproducible: see <span class="co">[</span><span class="ot">Methods &amp; Data</span><span class="co">](methods.qmd)</span> for step-by-step commands.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
@@ -792,11 +836,11 @@ Note
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Zer0Juice/synbio-diversification/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/Zer0Juice/synbio-diversification">
+    <a class="nav-link" href="https://github.com/Zer0Juice/synbiomap">
       <i class="bi bi-github" role="img">
 </i> 
     </a>

@@ -131,24 +131,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./paper.html"> 
-<span class="menu-text">Paper</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./methods.html"> 
-<span class="menu-text">Methods</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="./results.html"> 
 <span class="menu-text">Results</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./case-study.html"> 
-<span class="menu-text">Case Study: Carbon Capture</span></a>
+<span class="menu-text">Carbon Capture</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./explorer.html"> 
 <span class="menu-text">Explorer</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./methods.html"> 
+<span class="menu-text">Methods &amp; Data</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./paper.html"> 
+<span class="menu-text">Paper</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link active" href="./reproducibility.html" aria-current="page"> 
@@ -175,12 +175,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#requirements" id="toc-requirements" class="nav-link active" data-scroll-target="#requirements">Requirements</a></li>
-  <li><a href="#step-by-step-notebooks" id="toc-step-by-step-notebooks" class="nav-link" data-scroll-target="#step-by-step-notebooks">Step-by-step notebooks</a></li>
+  <li><a href="#pipeline-steps" id="toc-pipeline-steps" class="nav-link" data-scroll-target="#pipeline-steps">Pipeline steps</a></li>
+  <li><a href="#walkthrough-notebooks" id="toc-walkthrough-notebooks" class="nav-link" data-scroll-target="#walkthrough-notebooks">Walkthrough notebooks</a></li>
   <li><a href="#configuration" id="toc-configuration" class="nav-link" data-scroll-target="#configuration">Configuration</a></li>
   <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
   <li><a href="#rendering-the-website-locally" id="toc-rendering-the-website-locally" class="nav-link" data-scroll-target="#rendering-the-website-locally">Rendering the website locally</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbio-diversification/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -212,8 +213,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>API credentials (see <code>.env.example</code>)</li>
 </ul>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Clone the repository</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/Zer0Juice/synbio-diversification</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> synbio-diversification</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/Zer0Juice/synbiomap</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> synbiomap</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Install dependencies</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span>
@@ -224,8 +225,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Run the pipeline (see notebooks/ for step-by-step walkthroughs)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="step-by-step-notebooks" class="level2">
-<h2 class="anchored" data-anchor-id="step-by-step-notebooks">Step-by-step notebooks</h2>
+<section id="pipeline-steps" class="level2">
+<h2 class="anchored" data-anchor-id="pipeline-steps">Pipeline steps</h2>
+<p>The pipeline is a set of numbered scripts under <code>scripts/</code>, each importing logic from <code>src/</code>. The full, ordered list — ingest → embed → cluster → tripartite analysis → robustness and figures — is documented in <a href="https://github.com/Zer0Juice/synbiomap/blob/main/scripts/README.md"><code>scripts/README.md</code></a>. The high-level stages are:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 31%">
+<col style="width: 44%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Stage</th>
+<th>Scripts</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ingest</td>
+<td><code>01</code>–<code>03d</code></td>
+<td>Papers (OpenAlex), patents (USPTO ODP), iGEM projects and parts</td>
+</tr>
+<tr class="even">
+<td>Embed + cluster</td>
+<td><code>04</code>–<code>07</code></td>
+<td>Embeddings, UMAP + HDBSCAN, first relatedness test, website exports</td>
+</tr>
+<tr class="odd">
+<td>Fine-tune SPECTER2</td>
+<td><code>build_finetune_data</code>, <code>finetune_specter2</code>, <code>eval_recall_at_k</code></td>
+<td>Domain-adapt the embedding model</td>
+</tr>
+<tr class="even">
+<td>Tripartite analysis</td>
+<td><code>08</code>–<code>12</code></td>
+<td>Build the three-type corpus, re-embed, cluster, test relatedness</td>
+</tr>
+<tr class="odd">
+<td>Robustness + figures</td>
+<td><code>13</code>–<code>17</code></td>
+<td>Oldham patent check, regression and robustness tables, figures</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="walkthrough-notebooks" class="level2">
+<h2 class="anchored" data-anchor-id="walkthrough-notebooks">Walkthrough notebooks</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 43%">
@@ -239,32 +285,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>01_ingest_papers.ipynb</code></td>
-<td>Download papers from OpenAlex</td>
+<td><code>notebooks/pipeline.ipynb</code></td>
+<td>Runs the ingest→export steps in order</td>
 </tr>
 <tr class="even">
-<td><code>02_ingest_patents.ipynb</code></td>
-<td>Download patents from Lens.org</td>
+<td><code>notebooks/02_tripartite_city_analysis.py</code> (marimo)</td>
+<td>The main three-type city-level analysis</td>
 </tr>
 <tr class="odd">
-<td><code>03_ingest_projects.ipynb</code></td>
-<td>Load iGEM project and parts data</td>
-</tr>
-<tr class="even">
-<td><code>04_embed.ipynb</code></td>
-<td>Generate embeddings for all artifacts</td>
-</tr>
-<tr class="odd">
-<td><code>05_cluster.ipynb</code></td>
-<td>UMAP reduction and HDBSCAN clustering</td>
-</tr>
-<tr class="even">
-<td><code>06_visualize.ipynb</code></td>
-<td>Export data for the website visualizations</td>
-</tr>
-<tr class="odd">
-<td><code>walkthrough_carbon_capture.ipynb</code></td>
-<td>End-to-end walkthrough for the case study</td>
+<td><code>notebooks/03_carbon_capture.py</code> (marimo)</td>
+<td>The carbon-capture case study</td>
 </tr>
 </tbody>
 </table>
@@ -412,7 +442,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/zer0juice\.github\.io\/synbio-diversification");
+        var filterRegex = new RegExp("https:\/\/zer0juice\.github\.io\/synbiomap");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -752,8 +782,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Clone the repository</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/Zer0Juice/synbio-diversification</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> synbio-diversification</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/Zer0Juice/synbiomap</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> synbiomap</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Install dependencies</span></span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span>
@@ -765,35 +795,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Run the pipeline (see notebooks/ for step-by-step walkthroughs)</span></span>
 <span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step-by-step notebooks</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="fu">## Pipeline steps</span></span>
 <span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Notebook <span class="pp">|</span> What it does <span class="pp">|</span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------|-------------|</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`01_ingest_papers.ipynb`</span> <span class="pp">|</span> Download papers from OpenAlex <span class="pp">|</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`02_ingest_patents.ipynb`</span> <span class="pp">|</span> Download patents from Lens.org <span class="pp">|</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`03_ingest_projects.ipynb`</span> <span class="pp">|</span> Load iGEM project and parts data <span class="pp">|</span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`04_embed.ipynb`</span> <span class="pp">|</span> Generate embeddings for all artifacts <span class="pp">|</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`05_cluster.ipynb`</span> <span class="pp">|</span> UMAP reduction and HDBSCAN clustering <span class="pp">|</span></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`06_visualize.ipynb`</span> <span class="pp">|</span> Export data for the website visualizations <span class="pp">|</span></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`walkthrough_carbon_capture.ipynb`</span> <span class="pp">|</span> End-to-end walkthrough for the case study <span class="pp">|</span></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## Configuration</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>All major parameters (keywords, model name, clustering settings) are in</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="in">`config/settings.yaml`</span>. Edit that file to change the pipeline behaviour.</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data</span></span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>Raw data files are not committed to the repository (too large).</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>Processed CSVs in <span class="in">`data/processed/`</span> are committed and can be used to</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>skip the ingestion step.</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rendering the website locally</span></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Install Quarto: https://quarto.org/docs/get-started/</span></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> preview website/</span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>The pipeline is a set of numbered scripts under <span class="in">`scripts/`</span>, each importing logic</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>from <span class="in">`src/`</span>. The full, ordered list — ingest → embed → cluster → tripartite</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>analysis → robustness and figures — is documented in</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">`scripts/README.md`</span><span class="co">](https://github.com/Zer0Juice/synbiomap/blob/main/scripts/README.md)</span>.</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>The high-level stages are:</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Stage <span class="pp">|</span> Scripts <span class="pp">|</span> What it does <span class="pp">|</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------|---------|-------------|</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Ingest <span class="pp">|</span> <span class="in">`01`</span>–<span class="in">`03d`</span> <span class="pp">|</span> Papers (OpenAlex), patents (USPTO ODP), iGEM projects and parts <span class="pp">|</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Embed + cluster <span class="pp">|</span> <span class="in">`04`</span>–<span class="in">`07`</span> <span class="pp">|</span> Embeddings, UMAP + HDBSCAN, first relatedness test, website exports <span class="pp">|</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Fine-tune SPECTER2 <span class="pp">|</span> <span class="in">`build_finetune_data`</span>, <span class="in">`finetune_specter2`</span>, <span class="in">`eval_recall_at_k`</span> <span class="pp">|</span> Domain-adapt the embedding model <span class="pp">|</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Tripartite analysis <span class="pp">|</span> <span class="in">`08`</span>–<span class="in">`12`</span> <span class="pp">|</span> Build the three-type corpus, re-embed, cluster, test relatedness <span class="pp">|</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Robustness + figures <span class="pp">|</span> <span class="in">`13`</span>–<span class="in">`17`</span> <span class="pp">|</span> Oldham patent check, regression and robustness tables, figures <span class="pp">|</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## Walkthrough notebooks</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Notebook <span class="pp">|</span> What it does <span class="pp">|</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------|-------------|</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`notebooks/pipeline.ipynb`</span> <span class="pp">|</span> Runs the ingest→export steps in order <span class="pp">|</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`notebooks/02_tripartite_city_analysis.py`</span> (marimo) <span class="pp">|</span> The main three-type city-level analysis <span class="pp">|</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`notebooks/03_carbon_capture.py`</span> (marimo) <span class="pp">|</span> The carbon-capture case study <span class="pp">|</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## Configuration</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>All major parameters (keywords, model name, clustering settings) are in</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="in">`config/settings.yaml`</span>. Edit that file to change the pipeline behaviour.</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>Raw data files are not committed to the repository (too large).</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>Processed CSVs in <span class="in">`data/processed/`</span> are committed and can be used to</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>skip the ingestion step.</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rendering the website locally</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a><span class="co"># Install Quarto: https://quarto.org/docs/get-started/</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> preview website/</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
@@ -803,11 +845,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Zer0Juice/synbio-diversification/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/Zer0Juice/synbio-diversification">
+    <a class="nav-link" href="https://github.com/Zer0Juice/synbiomap">
       <i class="bi bi-github" role="img">
 </i> 
     </a>
