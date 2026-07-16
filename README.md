@@ -2,7 +2,7 @@
 
 **Do student iGEM projects, academic papers, and patents in synthetic biology form semantically related local innovation trajectories at the city level?**
 
-This repository holds the full research pipeline and documentation website for my Master's thesis. It studies synthetic biology innovation across three kinds of knowledge artifact: student projects (iGEM), academic publications (OpenAlex), and patents (USPTO). We ask whether, within a city, these three types work on related topics. The primary worked example is **carbon capture using cyanobacterial fermentation.
+This repository holds the full research pipeline and documentation website for my Master's thesis. It studies synthetic biology innovation across three kinds of knowledge artifact: student projects (iGEM), academic publications (OpenAlex), and patents (USPTO). We ask whether, within a city, these three types work on related topics. The primary worked example is **carbon capture using cyanobacterial fermentation.**
 
 Claims here are about *semantic relatedness and association*
 
