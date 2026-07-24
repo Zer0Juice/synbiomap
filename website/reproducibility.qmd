@@ -34,11 +34,12 @@ The high-level stages are:
 
 | Stage | Scripts | What it does |
 |-------|---------|-------------|
-| Ingest | `01`–`03d` | Papers (OpenAlex), patents (USPTO ODP), iGEM projects and parts |
-| Embed + cluster | `04`–`07` | Embeddings, UMAP + HDBSCAN, first relatedness test, website exports |
+| Ingest | `01`–`03d` | Papers (OpenAlex), patents (USPTO / Oldham set), iGEM projects and parts |
+| Embed + cluster | `04`–`07` | Base embeddings, UMAP + HDBSCAN, first relatedness test |
 | Fine-tune SPECTER2 | `build_finetune_data`, `finetune_specter2`, `eval_recall_at_k` | Domain-adapt the embedding model |
 | Tripartite analysis | `08`–`12` | Build the three-type corpus, re-embed, cluster, test relatedness |
 | Robustness + figures | `13`–`17` | Oldham patent check, regression and robustness tables, figures |
+| Website export | `18` | Regenerate the Explorer JSON (three artifact types) from the tripartite corpus |
 
 ## Walkthrough notebooks
 
@@ -61,7 +62,22 @@ skip the ingestion step.
 
 ## Rendering the website locally
 
+The Explorer reads five JSON files under `website/assets/data/`. Regenerate them from the
+tripartite corpus, then preview:
+
 ```bash
+# Rebuild the three-type Explorer data (no heavy pipeline re-run needed)
+python3 scripts/18_export_website_assets.py
+
 # Install Quarto: https://quarto.org/docs/get-started/
-quarto preview website/
+quarto preview website/    # live preview
+quarto render  website/    # build _site/
+```
+
+## Publishing
+
+There is no automated GitHub Action; the site is published manually from the built output:
+
+```bash
+quarto publish gh-pages website/
 ```

@@ -6,9 +6,10 @@ format:
     toc: false
 ---
 
-Search for a city to see what it works on — which artifact types are present, how its
-activity sits in the shared semantic space, and a list of individual papers, patents,
-and iGEM projects from that location.
+Search for a city to see what it works on: which of the three artifact types are present, how its
+activity sits in the shared semantic space, and a list of the individual papers, patents, and iGEM
+projects from that location. Click any artifact to read its abstract; carbon-capture work is marked
+with a red badge.
 
 ```{=html}
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>

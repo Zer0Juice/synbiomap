@@ -6,12 +6,12 @@
  *
  * Data file expected in website/assets/data/:
  *   - cities.json : array of {city, country, lat, lon, count_papers,
- *                   count_patents, count_projects, count_parts,
+ *                   count_patents, count_projects,
  *                   count_carbon_capture} objects
  *
- * Uses Plotly.js choropleth/scatter_geo for a static-hosting-compatible map.
- *
- * TODO: Wire up city selection and cluster composition display.
+ * Uses Plotly.js scatter_geo for a static-hosting-compatible map.
+ * Bubble size scales with a city's total synthetic-biology activity
+ * (papers + patents + projects); hover shows the breakdown by type.
  */
 
 (function () {
@@ -35,8 +35,7 @@
       (c) =>
         (c.count_papers || 0) +
         (c.count_patents || 0) +
-        (c.count_projects || 0) +
-        (c.count_parts || 0)
+        (c.count_projects || 0)
     );
 
     const trace = {

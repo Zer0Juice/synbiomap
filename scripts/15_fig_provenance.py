@@ -149,7 +149,7 @@ arrow(ax, 6.5, y_emb - 0.36, 6.5, y_clust + 0.32)
 y_out1 = 1.05
 y_out2 = 0.35
 box(ax, 4.0, y_out1, 4.0, 0.55, C_SHARED,
-    "84 topic clusters  (human-reviewed labels)", fontsize=9,
+    "80 topic clusters  (human-reviewed labels)", fontsize=9,
     alpha_fill=0.06)
 box(ax, 9.5, y_out1, 5.5, 0.55, C_SHARED,
     "387 cities  with ≥2 co-present artifact types", fontsize=9,

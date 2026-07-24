@@ -1,196 +1,163 @@
 ---
 title: "Patents, Papers, Parts & Planet"
-subtitle: "Mapping Local Innovation Trajectories in Synthetic Biology"
-author: "CSH Thesis · Supervised by Frank Neffke & Claudia Doblinger"
+subtitle: "Local innovation trajectories in synthetic biology"
+author: "Zakhary Roth · Complexity Science Hub · advised by Frank Neffke & Claudia Doblinger"
 format:
   revealjs:
     theme: simple
     slide-number: true
     controls: true
     progress: true
-    history: true
     center: false
     width: 1200
     height: 700
     margin: 0.08
     highlight-style: github
-    footer: "Patents, Papers, Parts & Planet — CSH Thesis"
+    footer: "Patents, Papers, Parts & Planet"
 ---
 
 ## The question
 
-**Do iGEM student projects and academic papers in synthetic biology cluster together semantically — in the same cities?**
+**Do a city's students, academics, and inventors in synthetic biology work on the same things?**
 
 ::: {.columns}
-::: {.column width="60%"}
-- Synthetic biology is a rapidly growing field
-- Innovation is not evenly distributed geographically
-- Cities tend to specialize in related knowledge domains
-- **iGEM** introduces a novel artifact: open-science student competition projects
+::: {.column width="58%"}
+- Biology moved from *reading* life to *writing* it
+- Innovation is local: places branch into related work
+- iGEM is a rare open, geotagged record of students learning the field
+- We put three artifact types in one semantic space and test for shared topics, city by city
 :::
-::: {.column width="40%"}
-**Three artifact types:**
+::: {.column width="42%"}
+**Three artifact types**
 
-🧬 iGEM projects (4,615)
+🧬 iGEM projects — 4,606
 
-📄 Academic papers (8,720)
+📄 Academic papers — 10,319
 
-📋 ~~Patents~~ *(not available)*
+📋 USPTO patents — 2,901
+
+**17,826 artifacts · 80 topics**
 :::
 :::
 
 ::: {.callout-note}
-We test **semantic relatedness**, not causation. Both artifact types may reflect the same underlying city-level specialisation.
+We test semantic relatedness and co-location, not causation.
 :::
 
 ---
 
-## Why iGEM?
+## Why iGEM and BioBricks
 
-iGEM (International Genetically Engineered Machine) is a global student competition founded at MIT in 2004.
+- iGEM: a worldwide student competition, projects built from a shared kit of standard DNA parts
+- ~89,000 BioBricks in an open registry, each with a stable `BBa_` id and a functional class
+- LEGO logic: a part from Uppsala combines with a part from Auckland
+- The parts are a second, independent record of what students actually built
 
-- Teams design biological systems using open-source "BioBrick" parts
-- All parts deposited in a public registry (~90,000 parts total)
-- Projects documented on public wikis
-- Hosted at universities → embedded in local academic culture
-
-> "Do cities that produce focused iGEM activity also produce focused academic output in the same synthetic biology subfield?"
+> Uppsala 2009's *Booze Bugs* engineered cyanobacteria to make alcohol from sunlight; a 2014 paper cites the team's own BioBrick. One thread, competition to publication.
 
 ---
 
-## Data
+## Building the corpus
 
-| Source | Records | Years | Cities |
-|--------|--------:|------:|-------:|
-| OpenAlex (papers) | 8,720 | 2000–2026 | 1,146 |
-| iGEM Registry (projects) | 4,615 | 2009–2025 | 626 |
-| **Both types** | **13,335** | | **379 shared** |
+| Source | Records | Geocoded to |
+|---|--:|---|
+| OpenAlex (keyword) | 10,319 papers | institution city |
+| Oldham USPTO set | 2,901 patents | inventor cities (fractional) |
+| iGEM Registry + wikis | 4,606 projects | team city (multi-tier) |
 
-**Carbon capture case study:**
-
-- 234 papers + 141 projects flagged by keyword match
-- Keywords: *carbon capture, CO₂ fixation, RuBisCO, biofuel, Calvin cycle,* …
-
----
-
-## Method: SPECTER2 embeddings
-
-Each artifact → 768-dimensional vector using **SPECTER2** (AllenAI, 2022)
-
-- Trained on scientific papers with citation supervision
-- *Proximity adapter* optimised for document-to-document similarity
-- More domain-appropriate than BERT or GPT for scientific text
-
-Then: **UMAP** to 30D (clustering) and 2D (visualization)
-
-Then: **HDBSCAN** → 347 clusters; top 25 labeled with Claude Haiku
+- Shared schema: id · type · title · text · year · city · country · carbon-capture flag
+- Fine-tuned SPECTER2 on ~100k cross-type links (wiki DOIs + Marx patent–paper pairs)
+- UMAP → HDBSCAN → 80 human-reviewed topic clusters
 
 ---
 
-## The semantic space
+## The measure that failed
 
-*Papers (blue) and iGEM projects (orange) interleave across semantic space*
+Average a city's projects and papers into two vectors, take the cosine.
 
-*Carbon-capture artifacts (green ◆) span several adjacent subfield clusters*
+- Looks great: similarity ≈ 0.95 almost everywhere
+- But it correlates ~0.71 with city size → **centroid collapse**
+- It measures *how much* a city publishes, not *what* it publishes
 
-→ See [interactive figure](results.qmd) on the Results page
-
----
-
-## Thematic clusters (top 10 by size)
-
-| Cluster | Size |
-|---------|-----:|
-| Plastic degradation and biodegradation | 191 |
-| Antimicrobial peptides for crop protection | 189 |
-| Bacteriophage therapy and engineering | 115 |
-| Microbial chassis and metabolic engineering | 114 |
-| Engineered bacteria for cancer therapy | 110 |
-| CRISPR-Cas genome editing systems | 90 |
-| Biofuel and fine chemical production | 79 |
-| Minimal genome design and essentiality | 75 |
-| DNA assembly automation standards | 73 |
-| Biosensor / point-of-care detection | 55 |
+A useful negative result: the fix is to stop averaging and count topics.
 
 ---
 
-## City-level semantic overlap
+## The measure that worked
 
-For each city with papers **and** projects:
+Represent each city as a profile over the 80 topics. Read the cosine overlap of two types, then test it against a **within-country permutation null** (shuffle which city pairs with which, holding size and topic popularity fixed).
 
-$$\text{overlap}_i = \cos\left(\bar{e}^{\text{papers}}_i,\; \bar{e}^{\text{projects}}_i\right)$$
+| Pair | Cities | Excess | *p* | Beats null? |
+|---|:--:|:--:|:--:|:--:|
+| Project × paper | 120 | +0.0102 | 0.0077 | ✅ |
+| Paper × patent | 44 | +0.0352 | 0.0055 | ✅ |
+| Project × patent | 28 | +0.0041 | 0.24 | ❌ |
 
-**379 cities** · Range: 0.80 – 0.99 · Mean: 0.94
-
-Top cities: Cambridge, Shanghai, Tianjin, Berkeley, Boston
-
-→ High-overlap cities are large, focused synthetic biology centres
-
----
-
-## Regression results
-
-| Variable | (1) | (2) | (3) |
-|---|:---:|:---:|:---:|
-| log(papers) | 0.017\*\*\* | 0.017\*\*\* | 0.017\*\*\* |
-| log(projects) | 0.019\*\*\* | 0.010\*\*\* | 0.010\*\*\* |
-| iGEM year span | — | 0.002\*\*\* | 0.002\*\*\* |
-| CC paper share | — | — | 0.019 |
-| CC project share | — | — | −0.009 |
-| **R²** | **0.62** | **0.63** | **0.64** |
-
-*\*\*\* p < 0.01, HC3 robust SE, N = 379*
-
-**Key finding:** More papers + more projects + longer iGEM engagement → higher semantic alignment
+**Papers are the hub. The field is a star, not a triangle.**
 
 ---
 
-## Case study: Carbon capture
+## Trying to break it
 
-7 cities with ≥2 CC papers and ≥2 CC projects:
-
-| City | CC Papers | CC Projects | CC Overlap |
-|------|----------:|------------:|-----------:|
-| San Diego | 3 | 3 | 0.963 |
-| Wuhan | 2 | 5 | 0.959 |
-| Beijing | 10 | 2 | 0.956 |
-| Shanghai | 2 | 6 | 0.948 |
-| Madison | 3 | 2 | 0.929 |
-| Austin | 2 | 2 | 0.923 |
-
-→ Small sample, but expected hubs. Consistently high overlap (0.92–0.96).
+- **Drop any country** — result barely moves (drop US: paper×patent *p* = 0.001)
+- **Change cluster count** — project×paper and paper×patent significant across the whole k-sweep; project×patent never
+- **Vary the depth threshold** — excess persists, cleaner in deeper cities
+- **Base vs fine-tuned model** — survives on base SPECTER2; fine-tuning sharpens, does not invent
 
 ---
 
-## Limitations
+## The parts agree (Mantel)
 
-1. **No patents** — the downstream translation step cannot be tested
-2. **SPECTER2 domain mismatch** — trained on papers, not project descriptions
-3. **Cross-sectional** — cannot determine temporal ordering within cities
-4. **Single-institution geocoding** — multi-city collaborations not captured
-5. **Carbon-capture sample is small** — 7 cities limits statistical power
+Is it all just an artifact of how SPECTER2 reads text? Check the semantic structure against something the model never saw.
+
+- Build a city-by-city distance matrix from the mix of **BioBrick part classes**
+- Compare it to the semantic topic-distance matrix
+- $r_M = 0.127$, $p = 0.0005$ across 164 cities
+
+Two independent windows, one made of words and one of DNA parts, see the same shape. The strongest single piece of evidence the relatedness is real.
 
 ---
 
-## Conclusion
+## A dynamic trace
 
-**Cities with larger, more sustained synthetic biology footprints show higher semantic alignment between their iGEM projects and academic papers.**
+Difference-in-differences, within a city and topic, after differencing out each city's baseline and each topic's trend:
 
-- R² ≈ 0.62 from size alone; temporal engagement adds further explanatory power
-- Carbon capture case study identifies the expected geographic hubs
-- Results are *descriptive*: both artifact types likely reflect the same underlying city-level specialisation
+- **Paper → patent:** $\hat\beta = +0.355$, $p = 0.028$ ($N = 44$) — academic output predicts later patenting in the same topic
+- **Project → paper:** significant in the larger bipartite sample ($N = 161$), underpowered in the tripartite one
+- Lead-lag ordering: a null at this sample size (bipartite found a +3-year peak)
 
-**Next steps:**
-- Add patent data (PatentsView, better geocoding)
-- Longitudinal analysis: does project activity in year $t$ predict paper activity in $t+k$?
-- Extend to other synthetic biology subfields beyond carbon capture
+---
+
+## Case study: carbon capture
+
+Three adjacent clusters trace the ladder:
+
+- **Cluster 7** Cyanobacterial Metabolic Engineering — projects
+- **Cluster 8** Cyanobacterial Chassis Development — papers
+- **Cluster 62** Industrial Fermentation — patents
+
+Leaderboard: **Auckland (19), Uppsala (18), Daejeon (15), San Diego (14), Gainesville (13)** — where students, academics, and inventors all work on engineering cyanobacteria at once.
+
+Alignment inside the subfield is as strong as field-wide ($\bar\delta = +0.0140$, 90% positive).
+
+---
+
+## What it shows, and what it can't
+
+**Establishes:** real, size-independent local relatedness between a city's projects and papers, and papers and patents; robust to country, cluster count, threshold, and model; anchored in physical parts.
+
+**Does not establish:** causation. The three share many local causes — same universities, mentors, funders. We document the pattern; we do not identify the mechanism.
+
+**Policy:** where students cluster is a signal of where a field is putting down roots. Funding student science and open tools is an early investment in the field.
 
 ---
 
 ## Thank you
 
-**Full website:** [zer0juice.github.io/synbiomap](https://zer0juice.github.io/synbiomap)
+**Website:** [zer0juice.github.io/synbiomap](https://zer0juice.github.io/synbiomap)
 
-**Code:** [github.com/Zer0Juice/synbiomap](https://github.com/Zer0Juice/synbiomap)
+**Code & data:** [github.com/Zer0Juice/synbiomap](https://github.com/Zer0Juice/synbiomap)
 
-**Supervisors:** Frank Neffke (CSH) · Claudia Doblinger (TU Munich)
+**Manuscript & this deck as PDF:** on the [Paper](paper.qmd) page
+
+Advised by Frank Neffke (CSH) · Claudia Doblinger (TU Munich)

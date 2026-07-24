@@ -1,60 +1,64 @@
 ---
 title: "Patents, Papers, Parts & Planet"
-subtitle: "Do student projects and academic research in synthetic biology form semantically related local innovation trajectories?"
+subtitle: "Do a city's students, academics, and inventors in synthetic biology work on the same things?"
 ---
 
-## What this project asks
+For most of its history, biology read nature. It broke life into organs, then cells, then
+the genes beneath them, and slowly worked out the rules that hold a living thing together.
+Synthetic biology is the moment biology starts to write. We now compose new biological
+systems from standardized genetic parts, treating DNA as code and cells as hardware. The
+same power that has been reshaping the planet by accident could, aimed on purpose, help
+repair it. Engineered microbes can already pull carbon dioxide out of the air and turn it
+into fuel.
 
-This project examines whether iGEM student projects and academic papers in synthetic biology
-tend to occupy **related regions of semantic space** in the same cities.
+The students in [iGEM](https://igem.org) are learning to hold that pen. Every year, thousands
+of them design and build a project from a shared kit of interchangeable DNA parts, and they
+write it all up on a public wiki. That makes iGEM something most young fields never get: an
+open, geotagged record of a field composing itself. This project asks what that record can
+tell us about where synthetic biology is putting down roots.
 
-The working idea is simple: cities that produce focused iGEM activity in a synthetic biology
-subfield may also produce focused academic output in the same area — not because one causes
-the other, but because both reflect the same local knowledge infrastructure.
+## The question
 
-We measure this using **SPECTER2 embeddings** (scientific text vectors) and **UMAP projection**,
-then test city-level semantic overlap with a regression framework.
+Do cities whose students research a topic in synthetic biology also produce academic papers,
+and patents, in related areas? We put student projects, academic papers, and patents into one
+shared semantic space and test whether a city's three kinds of work land on the same specific
+topics more often than chance allows.
 
-The primary case study is **carbon capture in synthetic biology** — a subfield large enough to
-find examples across both artifact types.
-
-::: {.callout-important}
-## Language note
-This project uses *descriptive* language throughout: *semantically related*, *co-located*,
-*associated with*. We do not claim that iGEM projects cause related papers, or vice versa.
-:::
-
----
+The short answer is a qualified yes, with a specific shape. A city's papers line up with its
+projects, and its papers line up with its patents, but its projects and its patents stay
+further apart. Academic research is the middle link. The field is shaped like a star, with
+papers at the hub, not a triangle.
 
 ## The corpus in numbers
 
-| Artifact type | Count | Year range | Geocoded cities |
-|---------------|------:|:----------:|----------------:|
-| Academic papers | 8,720 | 2000–2026 | 1,146 |
-| iGEM projects | 4,615 | 2009–2025 | 626 |
-| **Total** | **13,335** | **2000–2026** | **379 shared** |
-| Carbon-capture papers | 234 | 2005–2026 | — |
-| Carbon-capture projects | 141 | 2011–2025 | — |
+| Artifact type | Count | Years |
+|---|---:|:---:|
+| Academic papers (OpenAlex) | 10,319 | 2000–2026 |
+| iGEM student projects | 4,606 | 2009–2025 |
+| USPTO patents (Oldham set) | 2,901 | — |
+| **Total artifacts** | **17,826** | |
 
-Papers were retrieved from OpenAlex using core synthetic biology keywords.
-iGEM projects come from the iGEM Registry API.
-All artifacts were geocoded to the city of their lead institution.
+All three are geocoded to a city and embedded into the same 768-dimensional space with a
+fine-tuned [SPECTER2](https://huggingface.co/allenai/specter2) model, then grouped into 80
+topic clusters. 156 cities carry all three artifact types at once.
 
----
+::: {.callout-note}
+## A note on language
+This work is descriptive. We measure relatedness and co-location, and we test them hard, but
+we do not claim that student projects cause later papers or that papers cause patents. The
+three share many local causes, and observational data like this cannot separate them.
+:::
 
-## Navigate the site
+## Where to go next
 
 | Page | What you will find |
 |------|-------------------|
-| [Results](results.qmd) | UMAP semantic space · city-level overlap scores · regression table |
-| [Carbon Capture](case-study.qmd) | Deep dive into the carbon capture subfield · 7 focal cities |
-| [Methods & Data](methods.qmd) | Corpus construction · SPECTER2 embeddings · clustering · reproducibility |
-| [Paper](paper.qmd) | Full manuscript |
-| [Slides](slides.qmd) | Presentation slides |
+| [Background](background.qmd) | Why a young field is hard to see, and why iGEM is a rare window into it |
+| [Methods & data](methods.qmd) | How the corpus was built, geocoded, embedded, and clustered |
+| [Results](results.qmd) | The full analysis: the measure that failed, the one that worked, and every attempt to break it |
+| [Case study: carbon capture](case-study.qmd) | Engineering cyanobacteria to turn light and CO₂ into fuel, city by city |
+| [Explorer](explorer.qmd) | Search any city and see its projects, papers, and patents in the shared space |
+| [Paper & slides](paper.qmd) | The full manuscript and the talk |
 
----
-
-## Source code
-
-All code is available on [GitHub](https://github.com/Zer0Juice/synbiomap).
-The pipeline is fully reproducible: see [Methods & Data](methods.qmd) for step-by-step commands.
+All code and data are on [GitHub](https://github.com/Zer0Juice/synbiomap). The pipeline is
+built to be rebuilt: see [Reproducibility](reproducibility.qmd).

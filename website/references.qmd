@@ -1,0 +1,12 @@
+---
+title: "References"
+nocite: |
+  @*
+---
+
+The works cited across this site and in the manuscript. The full bibliography is drawn from the
+project's reference databases (`references.bib` and `references_extra.bib` in the
+[repository](https://github.com/Zer0Juice/synbiomap)).
+
+::: {#refs}
+:::

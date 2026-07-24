@@ -4,38 +4,52 @@ project:
   resources:
     - assets/data/**
     - assets/figures/**
+    - assets/downloads/**
 
 website:
   title: "Patents, Papers, Parts & Planet"
-  description: "Tracing synthetic biology innovation from student projects to patents"
+  description: "Do student projects, academic papers, and patents in synthetic biology share topics city by city?"
   site-url: "https://zer0juice.github.io/synbiomap"
   repo-url: "https://github.com/Zer0Juice/synbiomap"
   repo-actions: [issue]
+  favicon: assets/favicon.png
 
   navbar:
     left:
       - href: index.qmd
         text: Home
-      - href: results.qmd
-        text: Results
-      - href: case-study.qmd
-        text: "Carbon Capture"
+      - text: "The Study"
+        menu:
+          - href: background.qmd
+            text: Background
+          - href: methods.qmd
+            text: "Methods & Data"
+      - text: "Findings"
+        menu:
+          - href: results.qmd
+            text: Results
+          - href: case-study.qmd
+            text: "Case Study: Carbon Capture"
       - href: explorer.qmd
         text: Explorer
-      - href: methods.qmd
-        text: "Methods & Data"
-      - href: paper.qmd
-        text: Paper
+      - text: "Paper"
+        menu:
+          - href: paper.qmd
+            text: "Summary & PDF"
+          - href: references.qmd
+            text: References
+          - href: slides.qmd
+            text: Slides
       - href: reproducibility.qmd
         text: Reproducibility
-      - href: slides.qmd
-        text: Slides
 
   page-footer:
     left: "CSH Thesis Project — Synthetic Biology Innovation"
     right:
       - icon: github
         href: "https://github.com/Zer0Juice/synbiomap"
+
+bibliography: [references.bib, references_extra.bib]
 
 format:
   html:

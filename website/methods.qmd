@@ -1,203 +1,172 @@
 ---
-title: "Methods & Data"
+title: "Methods & data"
 ---
 
-## Corpus construction
-
-### Papers
-
-Academic papers were retrieved from [OpenAlex](https://openalex.org) using a two-layer keyword strategy:
-
-**Layer 1 — core keywords** retrieve papers explicitly about the field:
-> *synthetic biology · synthetic genomics · synthetic genome · BioBrick*
-
-**Layer 2 — subfield keywords** extend coverage to technical papers that may not use "synthetic biology" explicitly:
-> *synthetic gene network · synthetic gene circuit · synthetic cell · minimal genome · minimal cell ·
-> standard biological parts · repressilator · xenobiology · cell-free synthetic biology*
-
-This approach follows Shapira et al. (2017), who used a similar multi-keyword strategy
-to delineate the synthetic biology literature.
-
-All papers were filtered to years 2000–2026. The final corpus contains **8,720 papers**.
-
-### iGEM Projects
-
-iGEM project data were retrieved from the [iGEM Registry API](https://parts.igem.org).
-Each project entry includes team name, institution, year, wiki description, and (where
-available) a list of BioBrick parts used. Projects were normalized to a shared schema with
-`id`, `title`, `text`, `year`, `city`, `country`, `lat`, `lon`, and `case_study_flag`.
-
-The final corpus contains **4,615 projects** spanning 2009–2025.
-
-### Patents
-
-Patent data was not included in the final analysis. An initial attempt to retrieve
-patents from Lens.org via IPC classification (C12N, C12P, C12Q) returned too few
-usable records with city-level geocoding to support city-level analysis. This is
-noted as a limitation.
-
----
-
-## Geocoding
-
-**Papers** were geocoded using the institution metadata returned by OpenAlex. Each
-paper's lead institution was mapped to a city and coordinates.
-
-**iGEM projects** were geocoded using a three-tier pipeline:
-
-1. OpenAlex institution lookup (for recognized university names)
-2. Research Organization Registry (ROR) for remaining institutions
-3. Claude Haiku (local LLM) for hard cases with unusual institution names
-
-All geocoding results were cached to disk and are reproducible without API calls on re-runs.
-Cities with no geocoding result were excluded from the city-level analysis.
-
----
-
-## Embeddings
-
-All artifacts (papers and projects) were encoded into 768-dimensional vectors using
-**SPECTER2** ([Specter2, 2022](https://huggingface.co/allenai/specter2)), specifically
-the **proximity adapter** trained for symmetric document-similarity retrieval.
-
-**Why SPECTER2?**
-
-- Trained on scientific papers using citation-informed contrastive learning, making it
-  more domain-appropriate than general models (BERT, GPT) for scientific text.
-- The proximity adapter is explicitly optimised for measuring cosine similarity between
-  two documents, which is exactly our use case.
-- 768-dimensional output is compact enough to embed 13,000+ documents in a single session.
-
-Each document was encoded as the `[CLS]` token of the final hidden layer, truncated
-to 256 tokens (sufficient for most abstracts). Embeddings were cached incrementally
-to disk — safe to interrupt and resume.
-
----
-
-## Dimensionality reduction and clustering
-
-### UMAP projection
-
-Embeddings were reduced from 768 to 2 dimensions using
-[UMAP](https://arxiv.org/abs/1802.03426) (McInnes et al., 2018).
-Parameters: `n_neighbors=10`, `min_dist=0.05`, `metric=cosine`.
-
-A separate 30-dimensional UMAP projection (same parameters) was computed for
-clustering, since HDBSCAN performs better on higher-dimensional UMAP output
-than on 2D (Grootendorst, 2022, *BERTopic*).
-
-### HDBSCAN clustering
-
-Clusters were identified with [HDBSCAN](https://doi.org/10.1007/978-3-642-37456-2_14)
-(Campello et al., 2013) on the 30D UMAP coordinates.
-Parameters: `min_cluster_size=10`, `min_samples=1`.
-
-This produced 347 clusters. The 25 largest were labeled using Claude Haiku: for each
-cluster, the 20 titles closest to the cluster centroid in 30D space were sent to the
-model with a prompt asking for a 3–6 word topic label. Artifacts in smaller clusters
-are grouped as "Other" in figures.
-
----
-
-## City-level semantic overlap
-
-For each city with at least one paper and at least one project with a valid embedding,
-we computed:
-
-$$\text{semantic\_overlap}_i = \cos(\bar{e}^{\text{papers}}_i,\; \bar{e}^{\text{projects}}_i)$$
-
-where $\bar{e}$ is the L2-normalised mean embedding vector (centroid) for all
-documents of that type in city $i$.
-
-The centroid-similarity approach is equivalent to the mean pairwise cosine similarity
-when embeddings are unit-normalised (Turney & Pantel, 2010), and is computationally
-efficient for cities with many documents.
-
-A city must appear in both the papers and projects datasets to contribute to the
-city-level analysis. **379 cities** meet this criterion.
-
----
-
-## Regression specification
-
-We regressed city-level semantic overlap on:
-
-$$\text{overlap}_i = \alpha + \beta_1 \log(n\_papers_i) + \beta_2 \log(n\_projects_i) + \beta_3 \cdot \text{year\_span}_i + \varepsilon_i$$
-
-Count variables are log-transformed to account for the skewed distribution of
-city sizes (a common practice in urban economics; Wooldridge, 2019, Ch. 6).
-Standard errors are HC3 heteroskedasticity-robust (White, 1980).
-
----
-
-## Limitations
-
-1. **No patents.** The patent pipeline failed to produce a usable city-level dataset.
-   Claims about the "papers → patents" step in the innovation trajectory cannot be tested.
-
-2. **SPECTER2 is trained on papers, not projects.** iGEM project descriptions are shorter,
-   less formal, and structurally different from scientific abstracts. The embedding model
-   may represent papers more faithfully, potentially inflating paper-project similarity
-   for short project descriptions.
-
-3. **Cross-sectional design.** All years are pooled. We cannot observe temporal ordering
-   within cities — whether projects preceded papers, or vice versa.
-
-4. **Single-institution geocoding.** Papers with multiple author institutions are assigned
-   to the lead institution only. Multi-city collaborations are not captured.
-
-5. **Keyword inclusion rules.** The corpus definition depends on keyword lists. The choice
-   of keywords determines which papers and projects are included, and reasonable alternatives
-   would produce a different corpus.
-
----
-
-## Reproducibility
-
-All code is on [GitHub](https://github.com/Zer0Juice/synbiomap).
-The full pipeline can be reproduced with:
-
-```bash
-# 1. Install dependencies
-pip install -r requirements.txt
-
-# 2. Set API keys
-cp .env.example .env  # edit to add your keys
-
-# 3. Ingest papers and projects
-python scripts/01_ingest_papers.py
-python scripts/03_ingest_projects.py
-
-# 4. Embed all artifacts (~6 hours on CPU, ~1 hour on Apple Silicon)
-python scripts/04_embed.py
-
-# 5. Project and cluster
-python scripts/05_cluster.py
-
-# 6. Label top 25 clusters (requires ANTHROPIC_API_KEY)
-python scripts/05b_label_clusters.py
-
-# 7. Export website data and figures
-python scripts/06_visualize.py
-python scripts/07_export_figures.py
-
-# 8. Build the website
-quarto render website/
-```
-
-Intermediate data files are cached; the pipeline is safe to interrupt and resume.
-Pre-computed outputs (embeddings, clusters, city-level CSV) are included in the repository
-so that steps 1–6 can be skipped for a quick local render.
-
----
-
-## References
-
-- Campello, R., Moulavi, D., & Sander, J. (2013). Density-based clustering based on hierarchical density estimates. *ECML PKDD*.
-- Cohan, A., et al. (2020). SPECTER: Document-level representation learning using citation-informed transformers. *ACL 2020*.
-- Grootendorst, M. (2022). BERTopic: Neural topic modeling with a class-based TF-IDF procedure. *arXiv:2203.05794*.
-- McInnes, L., Healy, J., & Melville, J. (2018). UMAP: Uniform manifold approximation and projection for dimension reduction. *arXiv:1802.03426*.
-- Shapira, P., et al. (2017). Mapping synthetic biology. *New Biotechnology*.
-- Turney, P. D., & Pantel, P. (2010). From frequency to meaning: Vector space models of semantics. *JAIR*.
-- White, H. (1980). A heteroskedasticity-consistent covariance matrix estimator. *Econometrica*.
-- Wooldridge, J. M. (2019). *Introductory Econometrics*. Cengage.
+Answering the question meant building a corpus that did not exist: student projects, academic
+papers, and patents in synthetic biology, each geocoded to a city, tied to a year, and carrying
+text we could embed. The three come from different worlds and arrive in different shapes, so most
+of the work was in the collecting and the cleaning. This page walks through how each artifact type
+was gathered, linked, embedded, and clustered.
+
+![Geographic distribution of the three artifact types. Projects (left) are the most concentrated,
+following iGEM's university-competition structure; papers (centre) reach more cities; patents
+(right) are sparsest, clustered in established biotech hubs.](assets/figures/world_map.png){#fig-worldmap}
+
+## A shared corpus
+
+Every artifact carries the same fields whatever its type: a unique id, an artifact type (project,
+paper, patent, or part), a title, the text used for embedding, a year, a city with coordinates, a
+country, and a flag for the carbon-capture subset. Once every artifact wears the same schema, the
+differences between a patent claim and a student wiki stop mattering for the analysis. A distance
+computation, a cluster assignment, or a city-level overlap all look the same whether the document
+was filed in a patent office or written by an undergraduate.
+
+The schema also enforces the reproducibility the project commits to. Every artifact traces back to
+its source by id, every source is public, and the full pipeline from raw data to embeddings lives
+in the [repository](https://github.com/Zer0Juice/synbiomap). The corpus can be rebuilt from
+scratch.
+
+## Patents
+
+The patents came from Paul Oldham. Building a clean synthetic-biology patent set is genuinely hard:
+the field has no tidy patent classification, and keyword searches drag in the descriptive molecular
+biology that shares its vocabulary. Oldham has spent years assembling and curating public datasets
+that map the field's patent landscape [@oldhamSyntheticBiologyMapping2018], so rather than rebuild a
+worse version we started from his curated set. Using a pre-cleaned public dataset also keeps the
+step reproducible.
+
+From there we did our own processing, keyed to geography. Patents list inventors with addresses, so
+we resolved each patent to the cities of its inventors. Two choices matter. First, geocoding is
+fractional: a patent with inventors in three cities counts a third toward each, which follows
+standard practice in patent geography and avoids overcrediting a meaningless lead-inventor slot.
+Second, we restricted to USPTO filings. The practical reason is that US grant records give every
+inventor an address to geocode. The substantive reason is legal: under 35 U.S.C. §102(b)(1) an
+inventor's own disclosure in the year before filing is not prior art against them, so a US academic
+can publish a result and still patent it. In Europe, publishing first destroys the patent. The
+USPTO therefore captures exactly the publish-then-patent behavior this project looks for. The
+patents should be read as a well-curated sample of synthetic biology's commercial edge, not a
+complete census of it.
+
+## Papers
+
+The papers came from [OpenAlex](https://openalex.org), an open bibliographic database. OpenAlex fit
+for reasons beyond convenience: it is open, so the corpus can be rebuilt without a paywall, and it
+resolves author affiliations to institutions with coordinates, so a paper can be geocoded straight
+from the record. The final corpus runs to 10,319 works spanning 2000 to 2026.
+
+Choosing how to query took experiment. Citation expansion, starting from a seed of known papers and
+following what they cite, grew the corpus fast but drifted: within a step or two the set filled with
+general molecular biology, the same boundary bleed that sank an earlier Lens.org patent attempt. A
+keyword search tuned to the field's vocabulary held the boundary better, so we kept it as the
+primary method (the exact query is in the manuscript appendix). The choice trades some recall for
+precision, and it usually broke toward a cleaner, smaller corpus over a larger, noisier one.
+
+## Projects
+
+The student projects came from iGEM directly. API queries pulled the roster for every year, giving
+4,606 teams spanning 2009 to 2025. The roster is only the skeleton, though: the closest thing to an
+abstract is the project description a team writes on its public wiki. A lightweight scraper visited
+each team's wiki and copied that description into the schema's text field. Teams with missing or
+empty wikis were dropped, since a project with no text cannot be embedded.
+
+Geocoding the teams was the hardest part of the collection. iGEM records an institution and country,
+but only recent years pin teams to a city, and the teams are a large international mix, many named as
+acronyms that map to no obvious place. An early attempt with Nominatim failed badly, once placing a
+Tokyo institution next to a similarly named restaurant in the United States. So we built a multi-tier
+approach, cheapest reliable method first: teams matching a known city were coded directly, the rest
+went to the OpenAlex institutions API, then to the Research Organization Registry (which caught many
+Chinese high-school teams OpenAlex missed), and only the residue went to a language model. Each tier
+caught what the previous could not. The two cheapest tiers resolved the vast majority.
+
+One concern deserves naming: students choose universities partly by research strength, so some local
+alignment could reflect sorting rather than a property of cities. The data cannot rule this out. But
+pure sorting predicts a pattern the results do not show. It would produce alignment equally at all
+city sizes, not alignment that grows with a city's corpus depth, and it predicts no temporal offset
+rather than the lead-lag peak the bipartite analysis found. Selection is likely a partial
+contributor, but it would push the measured alignment down, which makes the positive result more
+conservative, not less.
+
+## Parts
+
+We also pulled the whole BioBrick registry, roughly 89,000 parts. Each record carries the DNA
+sequence, a short description, a functional class (promoter, coding sequence, reporter, terminator,
+ribosome binding site, composite, and others), the depositing team, and often a link to the paper
+the sequence came from. Where a project is a whole year's work, a part is a single reusable genetic
+function, so the registry is a finer-grained geographic record of what students actually built. That
+record is what the Mantel test in the [Results](results.qmd) reads.
+
+The most surprising links run from published papers back to the parts. There is no accepted way to
+cite an open parts registry in a journal, so these connections are recorded nowhere and had to be
+found. We searched the full text of open-access papers on PubMed Central for `BBa_` identifiers and
+found 683 papers that name a registry part directly, a firm lower bound on a much larger true
+influence. The Uppsala case is one of these hits: the 2014 cyanobacteria paper turned up because it
+names the team's own promoter. We added these part-citing papers to the corpus, a rare case where
+following citations sharpened the set instead of blurring it.
+
+## Linking the layers and fine-tuning
+
+Put the link sources together and the corpus becomes a network. Projects connect to papers through
+wiki citations and shared parts; parts connect to papers through source citations and full-text
+mentions; papers connect to patents through the Marx patent-paper pairs
+[@marxFuegiRelianceScience2020]; parts connect to each other through composition. No single source is
+complete, but together they lace the three artifact types into one graph. That connective tissue is
+what makes the next step possible: a model can only learn how different artifact types relate if it
+is shown examples of them relating.
+
+SPECTER2 was trained on paper-to-paper citations and had never seen a patent or a wiki. Fine-tuning
+nudges it toward our setting by training a small adapter on our own cross-type links, using a triplet
+loss. For an anchor document, a genuinely linked positive, and a hard negative (a document that is
+topically similar but not actually linked), the model is trained to keep the linked document closer
+than the unlinked one by a margin. Hard negatives are chosen deliberately, because easy ones (a
+genetics patent versus a paper on climate history) would train the model on a problem already solved.
+We assembled roughly 100,000 training pairs and held out about 10,000 for validation.
+
+A caution belongs here. Fine-tuning on links we selected could, in principle, manufacture the very
+relatedness the project then claims to find. We address it by running the main results on both the
+fine-tuned adapter and the base SPECTER2. The central result survives on the base model, and
+fine-tuning attenuates it slightly rather than inflating it, which is the pattern you expect when
+adaptation improves signal-to-noise but does not create the signal. The adapter sharpens the picture;
+it does not paint one that was not there.
+
+![The data pipeline. Three independent streams are geocoded, then linked through cross-type citation
+pairs for fine-tuning. The fine-tuned model embeds all 17,826 artifacts into one 768-dimensional
+space, projected and clustered into 80 topics; city-level overlap is computed for the 387 cities with
+at least two co-present artifact types.](assets/figures/data_provenance.png){#fig-provenance}
+
+## Embedding, projection, and clustering
+
+With the corpus assembled and the model fine-tuned, we embedded everything. Each artifact becomes a
+vector of 768 numbers standing for its meaning, and from this point on a student project and a patent
+are two points in the same space, with a computable distance between them. The whole corpus becomes
+one cloud of points, and every question that follows is a question about the shape of that cloud.
+
+A 768-dimensional cloud is not something we can look at or cluster reliably. As dimensions grow, all
+pairwise distances converge toward the same value, so "near" and "far" stop carrying information.
+This is the curse of dimensionality [@bellmanDynamicProgramming1957]. We reduce the dimensions first
+with UMAP, which learns a low-dimensional map that keeps each point's near neighbors close while
+spreading out points that were far apart [@mcinnesUMAP2018]. We reduce to about sixty dimensions for
+clustering (well-behaved geometry, but still enough to separate similar subfields) and all the way to
+two dimensions for the map below.
+
+![The corpus in two dimensions. Every project, paper, and patent is a point, placed by UMAP so that
+semantically similar artifacts fall near one another. Colour marks the artifact
+type.](assets/figures/tripartite_map.png){#fig-map}
+
+To turn the visible structure into something countable, we clustered by topic with HDBSCAN, which
+groups points that crowd together densely and, importantly, leaves genuinely scattered points
+unassigned rather than forcing every document into a group [@campelloHDBSCAN2013]. Run on the reduced
+embeddings, it found 80 clusters: dense knots of projects, papers, and patents that share a subject.
+A cluster here is an empirical topic, discovered from the text rather than imposed from a list.
+
+Each cluster arrives as a numbered bag of documents with no name. For each, we passed the titles and
+abstracts of its most representative documents to a language model and asked what they had in common;
+a human then checked and, where needed, corrected the label. Of the 80 labels, roughly a quarter
+needed correcting, usually where the model latched onto vocabulary that fit the cluster's core but
+not its edges. This mirrors the whole method in miniature: the machine reads at a scale no person
+could, and the human supplies the judgment to catch where it overfit. Neither alone would do it well.
+
+![The same map with topic clusters labelled. The cyanobacterial and fermentation clusters that make
+up the carbon-capture case study sit close together.](assets/figures/tripartite_topic_map.png){#fig-topicmap}
+
+With the corpus built, embedded, clustered, and tagged, the data is finally ready to be questioned.
+The [Results](results.qmd) do the questioning.

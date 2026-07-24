@@ -1,0 +1,134 @@
+---
+title: "Background"
+---
+
+## Biology learns to write
+
+For most of human history the natural world looked like a fixed backdrop. That model no longer
+holds. Human activity is now the dominant driver of change in Earth's natural systems, enough
+that scientists have proposed we live in a new geological epoch, the Anthropocene
+[@crutzen2006anthropocene]. We are terraforming our own planet, mostly by accident. There is a
+hard shard of hope in that. A species that can warm a planet with no shared intent has proven
+something about its reach; the same collective power, aimed on purpose, might move things back.
+
+Biology is one of the tools for aiming it. A genetic sequence can be treated as a function
+written in the programming language of life, standardized and snapped together with others into
+genetic circuits [@wayIntegratingBiologicalRedesign2014]. Synthetic biology is descriptive
+biology picking up the pen. Cells can be engineered to make fuels without a drill, or to pull
+carbon back out of the air. The same command over living systems can also be turned toward harm,
+and the dual-use worry is real and widely discussed [@delisiRoleSyntheticBiology2020]. This is a
+technology with enormous potential to help, genuine potential to harm, and a trajectory that is
+still being set.
+
+Two falling cost curves drive the field. DNA sequencing has dropped faster than computing's
+Moore's Law: the human genome cost about three billion dollars to sequence in 2003 and a few
+hundred today. DNA synthesis, writing a sequence from scratch, has followed. As both get
+cheaper, more people can design and test biological systems, and what Drew Endy called the
+"foundations" of a new engineering discipline in 2005 has been built out into an industry
+[@endyFoundationsEngineeringBiology2005].
+
+## A field that is hard to see
+
+Policymakers cannot fund what they cannot find, and synthetic biology is unusually hard to see
+from the outside. It grew out of molecular biology and shares much of its vocabulary. A
+researcher studying the metabolic pathways of *E. coli* with no intention of engineering them
+uses the same words as a synthetic biologist who does. Oldham and colleagues hit exactly this
+wall building systematic maps of the field: any keyword query drags in a large mass of
+descriptive molecular biology [@oldhamSyntheticBiologyMapping2018].
+
+Keyword drift makes it worse. The field names its methods as it discovers them, so today's
+central technique was yesterday's obscure acronym. CRISPR was a little-known term long before it
+meant gene editing; a query written in 2010 would miss the root of nearly all the modern
+genome-editing literature. Drawing a clean, stable boundary around synthetic biology is a
+genuine problem, and it shaped many choices in this project.
+
+This matters because young fields are where good early decisions have the most leverage.
+Government acts not only as a funder but as an early customer and partner that helps a technology
+cross from lab to market [@doblingerGovernmentsPartners2019]. The catch is the shape of the
+problem for policy: the fields with the most to gain from early steering are the ones we can see
+least clearly. A synthetic biology that is easy to measure will already be a mature one, with its
+trajectory mostly set.
+
+## iGEM and the BioBrick registry
+
+Synthetic biology comes with a data source most young fields lack. The International Genetically
+Engineered Machine competition, iGEM, is a worldwide student contest somewhere between a science
+fair and a startup accelerator. Teams, usually hosted by a university, spend most of a year
+building an original project from a standardized kit of DNA parts, and they document it in an
+open format on public wikis [@santoliniIGEMModelSystem2023]. For many students this is the
+on-ramp into the field. By collecting thousands of these projects, we get a detailed, open record
+of a field composing itself.
+
+The kit is the BioBrick registry. A BioBrick is a genetic part in a common physical format:
+flanking restriction sites let any BioBrick-compatible part slot into any BioBrick-compatible
+vector [@shettyEngineeringBioBrickVectors2008]. It is LEGO logic for genetics. A promoter
+deposited by a team in Uppsala is, in principle, combinable with a part deposited by a team in
+Auckland. The registry has grown to roughly 89,000 parts, each tagged with a stable `BBa_`
+identifier, a functional class, and often a link back to the paper the sequence came from. That
+standardization is what turns a pile of one-off sequences into a genuine shared toolkit, and it
+is what lets us treat the parts as a second, independent record of what students actually built.
+
+## Booze Bugs: one thread, start to finish
+
+The whole project fits inside one story. In 2009 the Uppsala iGEM team built *Booze Bugs: Sun to
+Alcohol*, engineering *Synechocystis* cyanobacteria (blue-green algae) to turn sunlight and
+carbon dioxide into ethanol and butanol. Two team members later carried that line of work into a
+research lab, and a 2014 publication on cyanobacterial promoters cites the team's own BioBrick,
+a copper-inducible promoter, by its registry code [@camsundLacIRepressedPromoters2014]. A
+competition project became peer-reviewed science, in the same city, traceable through a single
+physical part. That thread, from student bench to publication, is the thesis in miniature, and
+iGEM produces threads like it all over the world.
+
+Cyanobacteria earn their place here twice. They are among the oldest photosynthesizers on Earth,
+and they are a favorite chassis for engineered carbon capture: cells that eat sunlight and CO₂
+and can be tuned to make fuel. They are also a topic that unites students, academic labs, and
+patent-filing firms in the same cities. Carbon capture is the case study threaded through this
+whole project, the place where we watch the general method land on something concrete. It is also
+the proof that the pen can heal as well as harm.
+
+## The geography of innovation
+
+Research is not spread evenly across the map, and it does not move at random. A place tends to
+branch into activities related to what it already does, because the skills and knowledge carry
+over [@neffkeSkillRelatednessFirm2013a]. This is the principle of relatedness: as a city builds
+capability in one technology, it grows its advantage in nearby ones
+[@hidalgoPrincipleRelatedness2018; @hidalgoProductSpaceConditions2007]. A city scaling industrial
+fermentation of ethanol is better positioned to move into other biofuels than a city with no such
+base.
+
+Why would student and academic work align locally at all? A few mechanisms could do it. The same
+faculty advise students and run labs, so their shared interests pull both toward the same topics.
+A city's firms, funders, and institutions form a common information environment that shapes what
+everyone works on. And students sort into universities partly by research strength. These are not
+mutually exclusive, and this data cannot cleanly separate them. Boschma's proximity framework is
+the useful frame here: sharing a neighborhood creates the potential for knowledge exchange, but
+sharing a knowledge base is what makes the exchange productive [@boschmaProximityInnovationCritical2005].
+Cognitive proximity, not just geographic proximity, is what we are after.
+
+## Measuring relatedness in a young field
+
+Economic geography usually measures relatedness with labor flows, product similarity, or
+co-patent networks. Those tools were built for large, mature industries and need data, worker
+mobility, product co-export, that simply do not exist for a student-to-academia-to-industry
+pipeline in an emerging field. Local knowledge spillovers are known to be geographically sticky
+[@breschiKnowledgeSpilloversLocal2001], but measuring them across three such different artifact
+types calls for a different instrument.
+
+The instrument is semantic distance. A language model reads the title and abstract of a document
+and turns it into a vector, a list of numbers that encodes meaning. Represent those vectors as
+points in a high-dimensional space, and documents about similar things land near one another,
+whatever words they use. We use SPECTER2, a model trained to predict which papers cite one
+another, so semantic closeness stands in for the kind of relatedness a citation would mark
+[@singhSciRepEvalMultiFormat2023]. That is the core beneath every comparison here, and the reason
+we can put a student wiki, a journal abstract, and a patent claim on the same map.
+
+There is an honest caveat. SPECTER2 was trained on academic papers and had never seen a patent or
+a student wiki. Precedent from patent-domain embedding work suggests the model transfers, and we
+fine-tune it on links between our own artifact types to close the gap. The [Methods](methods.qmd)
+page describes how, and the [Results](results.qmd) show that the central finding survives even on
+the base model, before any fine-tuning.
+
+![The hypothesis, drawn as a ladder. Student projects introduce early designs; academic papers
+develop them; patents mark downstream commercial work, all inside a shared local environment
+whose role is what this project studies. The sequence is what we test, not what we
+assume.](assets/figures/pipeline_concept.png){#fig-pipeline}

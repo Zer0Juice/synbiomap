@@ -1,187 +1,55 @@
 ---
-title: "Patents, Papers, Parts & Planet: Mapping Local Innovation Trajectories in Synthetic Biology"
-subtitle: "Master's Thesis — Complexity Science Hub Vienna"
-author: "Supervised by Frank Neffke (CSH) and Claudia Doblinger (TU Munich)"
+title: "The manuscript"
+subtitle: "Patents, Papers, Parts, and Planet — Exploration of the Innovation Space in Synthetic Biology"
 ---
+
+The full master's thesis, by Zakhary Roth, advised by Frank Neffke (Complexity Science Hub) and
+Claudia Doblinger (TU Munich). The manuscript covers the full argument, all methodological choices
+with their justifications and citations, the complete results with robustness tables, the
+carbon-capture case study, limitations, and a statement on how AI tools were used to build the
+project.
+
+[Download the manuscript (PDF)](assets/downloads/manuscript.pdf){.btn .btn-primary role="button"}
+&nbsp;
+[View the slides](slides.qmd){.btn .btn-outline-secondary role="button"}
 
 ## Abstract
 
-This paper examines whether iGEM student projects and academic publications in synthetic biology tend toward the same topical areas within the same cities. Using a corpus of 13,335 artifacts — 8,720 papers from OpenAlex and 4,615 iGEM Registry projects — we compute SPECTER2 embeddings and measure city-level semantic alignment as the cosine similarity between a city's paper centroid and its project centroid. Across 379 cities, alignment is positively correlated with the volume of both artifact types and with the number of years a city has had active iGEM participation, together accounting for 63% of the variance in an OLS regression. The range of the measure is narrow (0.80–0.99), and the size effects may partly reflect a statistical property of centroid averaging rather than genuine topical co-specialization; interpretation requires caution. As a worked illustration, we examine carbon capture in synthetic biology, finding seven cities with sufficient data for subgroup analysis, all showing high alignment. A patent arm of the analysis was not completed due to geocoding failures. We discuss what the measure can and cannot establish, and propose specific steps that would strengthen the inference in follow-up work.
-
----
-
-## 1. Introduction
-
-Synthetic biology is an engineering discipline that treats cells as programmable systems. Using standardized genetic parts, researchers design and build novel biological functions: sensors, metabolic pathways, therapeutic circuits. The field has grown since the mid-2000s, generating academic publications, commercial patents, and a type of artifact that does not fit neatly into either category: the iGEM project.
-
-The International Genetically Engineered Machine (iGEM) competition is a global student competition in synthetic biology, founded at MIT in 2004. Competing teams design and build biological projects over a year, document their work on a public wiki, and deposit their genetic parts into an open registry. The result is a large, documented dataset of student-led work that sits at the edge of academic research and open-source engineering practice.
-
-This paper asks whether cities where iGEM teams are active also tend to produce academic papers in related areas of synthetic biology. More precisely: is the topical distribution of a city's iGEM projects similar to the topical distribution of its synthetic biology papers?
-
-The motivation comes from regional innovation research. Boschma (2005) and Neffke and Henning (2013) argue that cities develop coherent knowledge specializations — capabilities built in one area tend to foster development in adjacent areas. If this logic applies to synthetic biology, we might expect cities to show alignment across artifact types, not random mixing. iGEM adds a specific institutional angle: it is a globally standardized competition, but it runs through local university teams, who draw on local faculty, lab infrastructure, and academic culture. Whether that local embeddedness produces topical alignment with the city's academic output is an open question.
-
-These observations motivate a *local innovation trajectory* hypothesis: that student projects, academic research, and patents in a city tend to follow related thematic paths over time, with each layer reflecting and reinforcing the others. This paper cannot test that hypothesis directly. The analysis is cross-sectional, patent data is absent, and the temporal ordering of project and paper activity cannot be recovered from this design. What the paper can do is test a necessary condition: do cities show greater-than-random topical overlap between their project and paper output? If they do not, the trajectory hypothesis has a difficult starting point. If they do, the result is consistent with the hypothesis — though consistent with several other explanations too.
-
-We do not claim iGEM activity causes related publications, or that publications drive student projects. Both likely reflect shared underlying factors: research infrastructure, faculty specialization, available equipment. We use the language of association and co-location throughout.
-
-The primary case study is **carbon capture in synthetic biology** — engineering microorganisms to fix atmospheric CO₂ or produce low-carbon fuels. This subfield appears in both artifact types, is policy-relevant, and is specific enough to test whether the measure picks up something beyond generic synthetic biology alignment.
-
----
-
-## 2. Data
-
-### 2.1 Academic Papers
-
-Papers were retrieved from [OpenAlex](https://openalex.org), a free scientific literature index. We queried for papers matching core synthetic biology keywords (*synthetic biology*, *synthetic genomics*, *synthetic genome*, *BioBrick*) and subfield terms (*synthetic gene circuit*, *synthetic cell*, *minimal genome*, *repressilator*, *xenobiology*, *cell-free synthetic biology*). This two-layer approach follows Shapira et al. (2017), who used a similar strategy to bound the synthetic biology literature and reduce both under-inclusion (missing papers that avoid the explicit term) and over-inclusion (technical terms that appear in unrelated fields).
-
-The paper corpus contains **8,720 papers** from 2000–2026, geocoded to **1,146 cities**. Each paper was assigned to the city of the first author's institution using OpenAlex institution metadata.
-
-### 2.2 iGEM Projects
-
-iGEM project data came from the [iGEM Registry API](https://parts.igem.org). Each record includes the team name, host institution, competition year, and project wiki abstract. Project text was the concatenation of team name and abstract. Teams were geocoded using a three-stage pipeline: (1) institution lookup against OpenAlex for recognized universities; (2) Research Organization Registry (ROR) for remaining cases; (3) Claude Haiku (Anthropic) for teams not resolved by either registry. The third stage is the least reliable: it involves an LLM making geographic assignments from institution name strings with no structured validation. How many teams fell to this stage, and at what accuracy, was not independently checked — a gap noted in Section 6.
-
-This yielded **4,615 projects** across 626 cities, spanning 2009–2025.
-
-### 2.3 Carbon-Capture Subset
-
-Artifacts were flagged as carbon-capture relevant if their text contained at least one of the following keywords: *carbon capture*, *carbon sequestration*, *CO₂ fixation*, *carbon dioxide reduction*, *carbon neutral*, *biofuel*, *carbon fixation*, *carbon cycle*, *autotrophic*, *RuBisCO*, *Calvin cycle*, *carboxylase*, *carbon concentrating mechanism*, *photorespiration*. This yielded 234 papers and 141 projects (375 total, about 2.8% of the corpus).
-
-The keyword list is intentionally broad, but some terms carry contamination risk. "Biofuel" covers a large literature only partly concerned with carbon fixation. "Autotrophic" and "carbon cycle" appear in ecology papers with no engineering intent. The carbon-capture subset should be read as a thematically adjacent cluster rather than a clean partition.
-
-### 2.4 What Was Not Included
-
-Patent data was excluded from the final analysis. An initial attempt to retrieve synthetic biology patents from Lens.org using IPC codes (C12N, C12P, C12Q) combined with keyword filtering produced too few records with usable city-level geocoding. Without patents, the downstream-translation step of the innovation trajectory cannot be tested. This is the most consequential gap in the study.
-
----
-
-## 3. Methods
-
-### 3.1 Embeddings
-
-All artifacts were encoded as 768-dimensional vectors using **SPECTER2** (Lo et al., 2020), a transformer model pre-trained on scientific text using citation-informed contrastive learning. The *proximity adapter* variant was used — the variant trained for symmetric document-to-document similarity, appropriate for comparing documents to each other rather than to a query.
-
-Each document was encoded from its title and abstract (or project name and wiki abstract for iGEM), truncated to 256 tokens. The embedding is the `[CLS]` token from the final layer. Embeddings were generated on Apple Silicon (MPS backend) and cached to disk.
-
-**Domain mismatch:** SPECTER2 was trained on scientific paper abstracts. iGEM project descriptions are shorter, less formal, and written by undergraduates rather than researchers. This mismatch may pull project embeddings closer to the paper distribution than a domain-neutral model would, artificially compressing the distance between the two artifact types. The effect likely inflates overlap scores, especially for short or generic project descriptions.
-
-### 3.2 Dimensionality Reduction and Clustering
-
-Embeddings were reduced to 30 dimensions using UMAP (McInnes et al., 2018) for clustering, and separately to 2D for visualization. Parameters: `n_neighbors=10`, `min_dist=0.05`, `metric=cosine`. Clusters were assigned using HDBSCAN (Campello et al., 2013) on the 30D coordinates (`min_cluster_size=10`, `min_samples=1`), yielding 347 clusters. These parameter choices were not systematically varied; alternative settings would yield different cluster structures.
-
-The 25 largest clusters were labeled by submitting the 20 titles nearest each cluster centroid to Claude Haiku with a prompt requesting a 3–6 word topic label. Labels such as "CRISPR-Cas genome editing systems" and "biofuel and fine chemical production" are legible, which provides a basic sanity check on the pipeline before the city-level analysis.
-
-### 3.3 City-Level Semantic Overlap
-
-For each city $i$ with at least one embedded paper and at least one embedded project, we computed:
-
-$$\text{semantic\_overlap}_i = \cos\left(\bar{e}^{\text{papers}}_i,\; \bar{e}^{\text{projects}}_i\right)$$
-
-where $\bar{e}$ is the L2-normalised centroid of all embedded documents of that type in city $i$. When embeddings are unit-normalised, centroid cosine similarity equals mean pairwise cosine similarity across all paper-project pairs in that city (Turney & Pantel, 2010).
-
-**A structural concern about this measure.** Centroid similarity has a size-dependent property: as the number of documents increases, the centroid moves toward the mean of the embedding space. In a homogeneous corpus like this one — all documents are in synthetic biology — the overall mean sits in a generic synthetic biology region. Two large cities with diverse programs across many subfields may both have centroids pulled toward this mean, producing high mutual similarity not because their programs are thematically aligned but because both are averaging over the same overall distribution. This would produce exactly the pattern observed: large cities with high overlap, a compressed range, and a positive regression coefficient on document counts. Without a permutation null — constructed by randomly reassigning city labels and recomputing the overlap distribution — the range of 0.80 to 0.99 is difficult to interpret. This null was not run, which is an important omission.
-
-The measure ranges from −1 to 1; in practice, given corpus homogeneity, values sit near 1.
-
-### 3.4 Regression
-
-We estimated OLS:
-
-$$\text{overlap}_i = \alpha + \beta_1 \log(n\_papers_i) + \beta_2 \log(n\_projects_i) + \beta_3 \cdot \text{year\_span}_i + \varepsilon_i$$
-
-across three specifications that progressively add temporal and carbon-capture share controls. Count variables are log-transformed to address right-skewed city-size distributions. Standard errors are HC3 heteroskedasticity-robust (White, 1980).
-
----
-
-## 4. Results
-
-### 4.1 Semantic Space Structure
-
-The UMAP projection shows papers and iGEM projects distributed across the same semantic regions rather than separating into two distinct zones. This is expected: both artifact types draw on the same scientific vocabulary, and SPECTER2 places documents with similar scientific content close together regardless of artifact type. Carbon-capture artifacts (Figure 1, green diamonds) spread across several adjacent regions, which is consistent with carbon capture being a cross-cutting application rather than a single coherent subfield.
-
-The 25 named clusters cover interpretable areas: bacteriophage engineering, CRISPR tools, biofuel production, cancer therapeutics, minimal genome design, DNA assembly. That the labels are legible is a necessary condition for the approach to work; it does not establish that the clusters are well-separated or that city-level centroids carry meaningful information.
-
-### 4.2 City-Level Semantic Overlap
-
-Across 379 cities with both papers and projects, overlap ranges from 0.80 to 0.99 (mean 0.94, SD 0.04). The distribution is left-skewed — a long tail of lower-overlap cities and a compressed upper end.
-
-Top cities by overlap include Cambridge (US, 0.99), Shanghai (0.99), Tianjin (0.99), Berkeley (0.99), and Boston (0.99). These are large, well-established synthetic biology centers with active iGEM programs. But this is precisely the problem: very large cities top the ranking, which is what the centroid compression argument would also predict. Without a permutation baseline, we cannot determine whether a city at 0.99 has genuinely aligned programs or simply has enough documents that both centroids have been pulled to the corpus mean.
-
-The gap between 0.80 and 0.99 is real in a statistical sense — and may reflect genuine topical divergence at the low end, where cities have few documents and those documents happen to cover different areas. But the upper portion of the range may be largely artifactual.
-
-### 4.3 Regression Results
-
-| Variable | (1) Size only | (2) + Temporal | (3) + Carbon |
-|---|:---:|:---:|:---:|
-| log(papers) | 0.0168\*\*\* (0.0015) | 0.0165\*\*\* (0.0015) | 0.0167\*\*\* (0.0015) |
-| log(projects) | 0.0187\*\*\* (0.0018) | 0.0102\*\*\* (0.0030) | 0.0102\*\*\* (0.0030) |
-| iGEM year span | — | 0.0016\*\*\* (0.0004) | 0.0016\*\*\* (0.0004) |
-| CC paper share | — | — | 0.0188 (0.0157) |
-| CC project share | — | — | −0.0086 (0.0188) |
-| R² | 0.620 | 0.634 | 0.638 |
-| N | 379 | 379 | 379 |
-
-*Robust (HC3) standard errors in parentheses. \*\*\* p < 0.01.*
-
-Cities with more papers and more projects show statistically higher semantic overlap. A doubling of papers corresponds to roughly 0.012 increase in overlap; a doubling of projects to about 0.013. Whether these coefficients reflect genuine specialization alignment or the centroid compression mechanism described in Section 3.3 is ambiguous, and cannot be resolved without the permutation test.
-
-The year-span coefficient is the most interpretively interesting result. Cities where iGEM teams have returned across more years show higher paper-project alignment, even after controlling for total project count. A 10-year span of iGEM engagement is associated with about 0.016 higher overlap. This cannot be a pure counting artifact — year span and project count are different things, and the effect survives their joint inclusion. One interpretation: cities that sustain iGEM participation over time tend to be the same cities with focused, cumulative research programs, and that cumulative depth produces tighter thematic alignment between student and faculty work. This is speculative, but it is at least not explained away by the centroid compression concern.
-
-Carbon-capture shares are not significant in Model 3. The interpretation is unclear — it could mean that carbon-capture activity does not drive alignment above and beyond city size, or it could mean the keyword-defined subset is too noisy to produce a clean signal.
-
----
-
-## 5. Case Study: Carbon Capture
-
-Seven cities have at least two carbon-capture papers and two carbon-capture projects, the minimum threshold chosen for a stable centroid estimate. These are: San Diego (CC overlap: 0.963), Wuhan (0.959), Beijing (0.956), Shanghai (0.948), Guangzhou (0.935), Madison (0.929), and Austin (0.923).
-
-The cities are recognizable synthetic biology centers, which could mean the measure is picking up subfield-specific alignment, or it could mean that large, active cities naturally clear the two-artifact threshold and inherit high overlap from their overall size. The paper does not compare these cities' carbon-capture overlap to their overall overlap, so it is not possible to say whether the carbon-capture subset tells us anything not already captured by the main analysis.
-
-The case study also does not test whether carbon capture is the *reason* for alignment in these cities, or a coincident label on a cluster that would have appeared for any well-chosen subfield keyword. With seven cities and no within-subfield counterfactual, the section is illustrative rather than confirmatory.
-
-One genuine observation: carbon-capture iGEM projects appear from 2015 onward, while academic papers in the subfield are present from at least 2005. Papers accelerate sharply after 2018, around the time net-zero targets entered mainstream policy. Whether that acceleration in academic output preceded or followed the growth in student projects cannot be determined from aggregate trends alone — it would require city-year panel data.
-
----
-
-## 6. Limitations
-
-**No patents.** The original design called for a three-way comparison — student projects, academic papers, and patents — to probe the full local innovation trajectory. The patent pipeline failed at the geocoding stage. Without patents, the "downstream translation" question cannot be examined, and the title's ambition exceeds what was delivered.
-
-**No permutation baseline.** The semantic overlap measure is difficult to interpret without a null distribution. A permutation test — randomly reassigning city labels and recomputing the full distribution — would establish whether observed overlap values are greater than chance and whether the size effects survive. This test was not run.
-
-**The iGEM-paper connection is assumed, not verified.** The paper assumes that a city's iGEM teams and its synthetic biology faculty are connected in some way — through supervision, shared lab space, or local academic culture. This assumption was not checked. It is plausible that some universities run strong iGEM programs managed by undergraduates with little connection to the faculty who write the synthetic biology papers captured by OpenAlex. If this is common, the city-level co-location conflates two separate communities and the co-location result loses much of its meaning.
-
-**SPECTER2 domain mismatch.** SPECTER2 was trained on academic abstracts. iGEM project descriptions are shorter and more informal, written by undergraduates rather than researchers. The mismatch may pull project embeddings artificially close to the paper distribution, inflating overlap scores — particularly for brief or generic project descriptions.
-
-**Cross-sectional design.** All years are pooled. The data cannot establish whether projects precede papers or vice versa in a given city. Cities with sustained iGEM engagement and high semantic overlap may simply be cities where a strong research culture drives both.
-
-**Geocoding reliability.** The third geocoding stage for iGEM teams used an LLM (Claude Haiku) for institutions not in OpenAlex or ROR. The fraction of the 626 cities resolved at this stage, and its error rate, were not assessed. Papers are geocoded through the more reliable OpenAlex institution metadata. If geocoding error in iGEM projects is correlated with city size or geography, regression coefficients could be affected.
-
-**Keyword sensitivity.** Both the synthetic biology corpus and the carbon-capture subset are defined by keyword lists. The carbon-capture list includes broad terms ("autotrophic," "carbon cycle," "biofuel") that match papers outside the intended scope. Alternative keyword choices would yield different corpora and potentially different results.
-
----
-
-## 7. Conclusion
-
-iGEM student projects and academic papers in synthetic biology show consistent topical alignment at the city level. This alignment is stronger in cities with more of both artifact types and in cities with longer histories of iGEM participation. That much is supported by the data.
-
-The interpretation is harder. The size effects may be a structural property of centroid averaging rather than a signal of genuine co-specialization. The year-span result is more interesting because it cannot easily be attributed to this artifact — but it remains a cross-sectional association, and the mechanism is unknown. The carbon-capture section illustrates that the measure produces interpretable subgroup results, though with only seven cities it does not test the specialization hypothesis independently.
-
-The primary contribution is a working pipeline: corpus construction from open sources, SPECTER2 embeddings, city-level aggregation, and a regression framework. The pipeline is reproducible and could be applied to other fields where multiple artifact types coexist. What it requires to become a reliable measurement instrument is a validated null model, an established connection between the iGEM and academic communities at the city level, and a longitudinal panel design that can speak to temporal ordering.
-
-Future work should prioritize: (1) adding patent data via PatentsView, which has more reliable geocoding than Lens.org; (2) running a permutation test to establish what the overlap distribution looks like under random city assignment; (3) verifying, for a sample of cities, whether iGEM teams and academic paper authors are from the same departments or whether they are largely separate populations; and (4) building a city-year panel to test whether project activity at time $t$ predicts paper activity at time $t+k$.
-
----
-
-## References
-
-- Boschma, R. (2005). Proximity and innovation: A critical assessment. *Regional Studies*.
-- Campello, R., Moulavi, D., & Sander, J. (2013). Density-based clustering. *ECML PKDD*.
-- Cohan, A., et al. (2020). SPECTER: Document-level representation learning using citation-informed transformers. *ACL 2020*.
-- Lo, K., et al. (2020). S2ORC: The semantic scholar open research corpus. *ACL 2020*.
-- McInnes, L., Healy, J., & Melville, J. (2018). UMAP: Uniform manifold approximation and projection. *arXiv:1802.03426*.
-- Neffke, F., & Henning, M. (2013). Skill relatedness and firm diversification. *Strategic Management Journal*.
-- Santolini, M., et al. (2023). The iGEM competition as a model system for studying scientific collaboration and knowledge dissemination. *(in prep.)*
-- Shapira, P., et al. (2017). Mapping synthetic biology. *New Biotechnology*.
-- Turney, P. D., & Pantel, P. (2010). From frequency to meaning: Vector space models of semantics. *JAIR*.
-- White, H. (1980). A heteroskedasticity-consistent covariance matrix estimator. *Econometrica*.
-- Wooldridge, J. M. (2019). *Introductory Econometrics*. Cengage.
+Science and technology has advanced to the point where we can treat DNA as a programming language
+and living organisms as hardware. With standardized genetic parts and widely used assembly
+protocols, life itself has become a series of tools to optimize production. This project studies
+different forms of research in synthetic biology, student projects, academic publications, and
+patents, to see if geography plays a role in determining the focus of research.
+
+Are students, academics, and private industry researching the same topics in the cities they live
+and work? The International Genetically Engineered Machine competition, iGEM, is a nonprofit that
+advances synthetic biology education through an annual student research competition, and its data
+is a wealth of insight into how the field innovates. We compare the corpus of iGEM projects against
+academic publications and patents to test whether geographically-influenced semantic relatedness can
+be established. Relatedness between iGEM projects, academic research, and patent abstracts is
+calculated, established, and empirically tested. Clusters are identified in the semantic space, and
+those related to carbon capture are inspected in depth. The research landscapes of cities are
+compared, and policy suggestions are made.
+
+## What the thesis argues
+
+The project builds a corpus that did not exist, 17,826 geocoded artifacts across three artifact
+types, embeds them in one fine-tuned semantic space, and tests whether a city's projects, papers,
+and patents share specific topics more than chance allows.
+
+- A naive centroid measure of city alignment is a size artifact and is discarded.
+- A topic co-membership measure, tested against a within-country permutation null, shows real,
+  size-independent local relatedness between a city's projects and papers, and between its papers
+  and patents.
+- The direct project-to-patent link never reaches significance: the field is shaped like a star with
+  papers at the hub, not a triangle.
+- The pattern survives dropping any country, changing the cluster resolution, varying the depth
+  threshold, and using the base embedding model before any fine-tuning.
+- It is anchored outside the language model entirely: a Mantel test finds that the mix of physical
+  BioBrick parts a city's students build agrees with its semantic topic profile.
+- The result is descriptive. It documents relatedness and co-location; it does not identify a causal
+  mechanism.
+
+For the narrative in full, read the [Background](background.qmd); for the methods, see
+[Methods & data](methods.qmd); for the complete analysis, see the [Results](results.qmd) and the
+[carbon-capture case study](case-study.qmd).

@@ -485,7 +485,9 @@
    *
    * Papers:   id is an OpenAlex URL → link directly to OpenAlex, which
    *           shows the DOI and links to the publisher page.
-   * Patents:  id is a Lens.org lens_id → link to lens.org/{id}.
+   * Patents:  id is an opaque internal hash from Paul Oldham's curated set
+   *           (not a resolvable public identifier), so we return no link
+   *           rather than build a broken URL.
    * Projects: id is "igem_{team}_{year}" → iGEM wiki URL.
    *           Format: https://{year}.igem.org/Team:{team}
    */
@@ -494,12 +496,7 @@
       return { url: a.id, label: "View on OpenAlex →" };
     }
 
-    if (a.type === "patent" && a.id && !a.id.startsWith("http")) {
-      // Lens IDs look like "000-123-456-789-X"
-      return { url: `https://lens.org/${encodeURIComponent(a.id)}`, label: "View on Lens.org →" };
-    }
-
-    if ((a.type === "project" || a.type === "part") && a.id && a.id.startsWith("igem_")) {
+    if (a.type === "project" && a.id && a.id.startsWith("igem_")) {
       const url = igem_wiki_url(a.id);
       if (url) return { url, label: "iGEM Wiki →" };
     }
