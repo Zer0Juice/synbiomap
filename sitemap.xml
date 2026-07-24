@@ -1,35 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://zer0juice.github.io/synbiomap/methods.html</loc>
-    <lastmod>2026-04-30T12:06:37.590Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zer0juice.github.io/synbiomap/results.html</loc>
-    <lastmod>2026-04-30T13:01:30.705Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zer0juice.github.io/synbiomap/slides.html</loc>
-    <lastmod>2026-04-30T12:09:13.214Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zer0juice.github.io/synbiomap/explorer.html</loc>
-    <lastmod>2026-04-08T11:14:45.875Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zer0juice.github.io/synbiomap/case-study.html</loc>
-    <lastmod>2026-04-30T13:02:05.548Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zer0juice.github.io/synbiomap/paper.html</loc>
-    <lastmod>2026-04-30T13:34:48.805Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zer0juice.github.io/synbiomap/reproducibility.html</loc>
-    <lastmod>2026-07-14T23:32:38.082Z</lastmod>
+    <loc>https://zer0juice.github.io/synbiomap/references.html</loc>
+    <lastmod>2026-07-19T12:58:56.944Z</lastmod>
   </url>
   <url>
     <loc>https://zer0juice.github.io/synbiomap/index.html</loc>
-    <lastmod>2026-04-30T13:01:11.005Z</lastmod>
+    <lastmod>2026-07-16T01:20:45.322Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zer0juice.github.io/synbiomap/reproducibility.html</loc>
+    <lastmod>2026-07-19T13:00:07.791Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zer0juice.github.io/synbiomap/paper.html</loc>
+    <lastmod>2026-07-19T12:58:48.425Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zer0juice.github.io/synbiomap/background.html</loc>
+    <lastmod>2026-07-16T01:33:47.578Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zer0juice.github.io/synbiomap/case-study.html</loc>
+    <lastmod>2026-07-19T12:57:54.469Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zer0juice.github.io/synbiomap/explorer.html</loc>
+    <lastmod>2026-07-19T13:00:16.786Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zer0juice.github.io/synbiomap/slides.html</loc>
+    <lastmod>2026-07-19T12:59:41.063Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zer0juice.github.io/synbiomap/results.html</loc>
+    <lastmod>2026-07-19T12:57:02.047Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zer0juice.github.io/synbiomap/methods.html</loc>
+    <lastmod>2026-07-19T05:38:44.291Z</lastmod>
   </url>
 </urlset>

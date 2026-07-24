@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Case Study: Carbon Capture in Synthetic Biology – Patents, Papers, Parts &amp; Planet</title>
+<title>Case study: carbon capture – Patents, Papers, Parts &amp; Planet</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -68,6 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./assets/favicon.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -106,6 +107,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -130,33 +160,62 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./results.html"> 
-<span class="menu-text">Results</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-the-study" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">The Study</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-the-study">    
+        <li>
+    <a class="dropdown-item" href="./background.html">
+ <span class="dropdown-text">Background</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link active" href="./case-study.html" aria-current="page"> 
-<span class="menu-text">Carbon Capture</span></a>
+        <li>
+    <a class="dropdown-item" href="./methods.html">
+ <span class="dropdown-text">Methods &amp; Data</span></a>
   </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-findings" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Findings</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-findings">    
+        <li>
+    <a class="dropdown-item" href="./results.html">
+ <span class="dropdown-text">Results</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./case-study.html">
+ <span class="dropdown-text">Case Study: Carbon Capture</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="./explorer.html"> 
 <span class="menu-text">Explorer</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./methods.html"> 
-<span class="menu-text">Methods &amp; Data</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-paper" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Paper</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-paper">    
+        <li>
+    <a class="dropdown-item" href="./paper.html">
+ <span class="dropdown-text">Summary &amp; PDF</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./paper.html"> 
-<span class="menu-text">Paper</span></a>
+        <li>
+    <a class="dropdown-item" href="./references.html">
+ <span class="dropdown-text">References</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./slides.html">
+ <span class="dropdown-text">Slides</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="./reproducibility.html"> 
 <span class="menu-text">Reproducibility</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./slides.html"> 
-<span class="menu-text">Slides</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -174,11 +233,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#carbon-capture-corpus-snapshot" id="toc-carbon-capture-corpus-snapshot" class="nav-link active" data-scroll-target="#carbon-capture-corpus-snapshot">Carbon-capture corpus snapshot</a></li>
-  <li><a href="#where-carbon-capture-artifacts-sit-in-semantic-space" id="toc-where-carbon-capture-artifacts-sit-in-semantic-space" class="nav-link" data-scroll-target="#where-carbon-capture-artifacts-sit-in-semantic-space">Where carbon-capture artifacts sit in semantic space</a></li>
-  <li><a href="#activity-over-time" id="toc-activity-over-time" class="nav-link" data-scroll-target="#activity-over-time">Activity over time</a></li>
-  <li><a href="#city-level-carbon-capture-overlap" id="toc-city-level-carbon-capture-overlap" class="nav-link" data-scroll-target="#city-level-carbon-capture-overlap">City-level carbon-capture overlap</a></li>
-  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation">Interpretation</a></li>
+  <li><a href="#three-clusters-one-ladder" id="toc-three-clusters-one-ladder" class="nav-link active" data-scroll-target="#three-clusters-one-ladder">Three clusters, one ladder</a></li>
+  <li><a href="#the-alignment-holds-inside-the-subfield" id="toc-the-alignment-holds-inside-the-subfield" class="nav-link" data-scroll-target="#the-alignment-holds-inside-the-subfield">The alignment holds inside the subfield</a></li>
+  <li><a href="#the-network-and-its-centres" id="toc-the-network-and-its-centres" class="nav-link" data-scroll-target="#the-network-and-its-centres">The network and its centres</a></li>
+  <li><a href="#where-cyanobacterial-carbon-capture-has-taken-root" id="toc-where-cyanobacterial-carbon-capture-has-taken-root" class="nav-link" data-scroll-target="#where-cyanobacterial-carbon-capture-has-taken-root">Where cyanobacterial carbon capture has taken root</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -187,7 +245,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Case Study: Carbon Capture in Synthetic Biology</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">Case study: carbon capture</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -204,156 +262,134 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Carbon capture is the primary worked example for this project. It refers to using engineered microorganisms to fix atmospheric CO₂ — for example, by optimising RuBisCO activity, engineering the Calvin cycle, or producing carbon-neutral biofuels. This subfield is large enough to find examples in both iGEM projects and academic papers, and the keyword list below is specific enough to be meaningful.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>What counts as “carbon capture” here?
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>An artifact is flagged as carbon-capture if its title or abstract contains at least one of: <em>carbon capture · carbon sequestration · CO₂ fixation · carbon dioxide reduction · carbon neutral · biofuel · carbon cycle · autotrophic · RuBisCO · Calvin cycle · carboxylase · carbon concentrating mechanism · photorespiration.</em></p>
-<p>The keyword list was designed conservatively to avoid over-inclusion of tangential content.</p>
-</div>
-</div>
-<section id="carbon-capture-corpus-snapshot" class="level2">
-<h2 class="anchored" data-anchor-id="carbon-capture-corpus-snapshot">Carbon-capture corpus snapshot</h2>
+<p>The <a href="./results.html">Results</a> are about relatedness across the whole field. This page narrows to one subfield and one set of cities: engineering microbes to pull carbon dioxide out of the air and turn it into fuel. Carbon capture is the case study threaded through the project because it is where the general method lands on something concrete, and because it is the proof that synthetic biology’s pen can heal as well as harm.</p>
+<section id="three-clusters-one-ladder" class="level2">
+<h2 class="anchored" data-anchor-id="three-clusters-one-ladder">Three clusters, one ladder</h2>
+<p>The carbon-capture work concentrates in three adjacent clusters on the map, and together they trace the exact arc the project is about.</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 31%">
+<col style="width: 18%">
+<col style="width: 31%">
+<col style="width: 18%">
+</colgroup>
 <thead>
 <tr class="header">
-<th>Artifact type</th>
-<th style="text-align: right;">Count</th>
-<th style="text-align: center;">Year range</th>
+<th style="text-align: center;">Cluster</th>
+<th>Topic</th>
+<th style="text-align: center;">Documents</th>
+<th>Dominated by</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Papers</td>
-<td style="text-align: right;">234</td>
-<td style="text-align: center;">2005–2026</td>
+<td style="text-align: center;">7</td>
+<td>Cyanobacterial Metabolic Engineering</td>
+<td style="text-align: center;">58</td>
+<td>student projects (48)</td>
 </tr>
 <tr class="even">
-<td>iGEM projects</td>
-<td style="text-align: right;">141</td>
-<td style="text-align: center;">2011–2025</td>
+<td style="text-align: center;">8</td>
+<td>Cyanobacterial Chassis Development</td>
+<td style="text-align: center;">135</td>
+<td>papers (120)</td>
 </tr>
 <tr class="odd">
-<td><strong>Total</strong></td>
-<td style="text-align: right;"><strong>375</strong></td>
-<td style="text-align: center;"><strong>2005–2026</strong></td>
+<td style="text-align: center;">62</td>
+<td>Industrial Fermentation</td>
+<td style="text-align: center;">259</td>
+<td>patents (211)</td>
 </tr>
 </tbody>
 </table>
-<p>Carbon-capture artifacts make up <strong>2.7%</strong> of papers and <strong>3.1%</strong> of projects in the full corpus.</p>
-<hr>
+<p>Cluster 7 is where the students work, the descendants of Uppsala’s <em>Booze Bugs</em> among them. Its near neighbor, cluster 8, is the academic literature on engineering these organisms. Cluster 62 is the commercial work on turning waste gases into fuels and chemicals. Student projects, academic papers, and patents, sitting in three tight adjacent clusters, arranged almost exactly along the project-to-paper-to-patent path. A city that appears across all three is one where the full chain, from student education to academic research to commercial filing, has taken root around a single theme. Those are the cities the policy question is really about.</p>
 </section>
-<section id="where-carbon-capture-artifacts-sit-in-semantic-space" class="level2">
-<h2 class="anchored" data-anchor-id="where-carbon-capture-artifacts-sit-in-semantic-space">Where carbon-capture artifacts sit in semantic space</h2>
-<p>The figure below shows only the 375 carbon-capture flagged artifacts, coloured by the cluster they belong to. Most fall into clusters related to metabolic engineering, biofuels, and photosynthesis — consistent with the keyword filter. A small number appear in adjacent clusters (e.g.&nbsp;biosensors, DNA assembly), reflecting the interdisciplinary nature of carbon-capture research.</p>
-<iframe src="assets/figures/fig2_umap_cc.html" width="100%" height="620px" frameborder="0" style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
-</iframe>
-<p>Carbon-capture artifacts do <strong>not</strong> form a single isolated region in semantic space. Instead they appear across several clusters that are adjacent in the UMAP projection. Carbon capture cuts across subfields — metabolic engineering, cell-free systems, biosensing — so a scattered distribution makes sense.</p>
-<hr>
+<section id="the-alignment-holds-inside-the-subfield" class="level2">
+<h2 class="anchored" data-anchor-id="the-alignment-holds-inside-the-subfield">The alignment holds inside the subfield</h2>
+<p>Before asking which cities lead, it is worth checking that the field-wide result applies here specifically. If carbon capture were an unusual corner of the data, its local alignment could behave differently. We ran the project-level alignment test on the carbon-capture projects, comparing each to same-cluster papers in its own city against same-cluster papers elsewhere. The alignment is as strong as the field-wide one: mean <span class="math inline">\(\bar\delta_{CC} = +0.0140\)</span>, with 90.1% of carbon-capture projects showing positive local alignment (<span class="math inline">\(t = 9.50\)</span>, clustered by city). The pattern is not something that dilutes when we zoom in on the case study; it is at least as pronounced within carbon capture as across the whole corpus.</p>
 </section>
-<section id="activity-over-time" class="level2">
-<h2 class="anchored" data-anchor-id="activity-over-time">Activity over time</h2>
-<p>The figure below shows the number of carbon-capture papers and iGEM projects per year, aggregated across all cities. Use the dropdown to zoom in on individual cities.</p>
-<iframe src="assets/figures/fig4_cc_timeline.html" width="100%" height="520px" frameborder="0" style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
-</iframe>
-<p>Carbon-capture activity in iGEM has grown steadily since around 2015. Academic papers in the subfield were present earlier (from 2005) and show a sharper uptick post-2018 — around the same time net-zero targets became mainstream policy conversation, though whether that drove the papers or just coincided with them is hard to say.</p>
-<hr>
+<section id="the-network-and-its-centres" class="level2">
+<h2 class="anchored" data-anchor-id="the-network-and-its-centres">The network and its centres</h2>
+<p>To see the structure, we build a network of the carbon-capture artifacts. Nodes are the projects, papers, and patents in the three clusters; edges are the concrete links recovered while building the corpus, a project citing a paper, a paper naming a BioBrick, a patent paired with a paper it builds on. The result is not an even mesh. It has a backbone of well-connected documents surrounded by more loosely attached ones, and the cyanobacteria work forms a visibly distinct, tightly linked region.</p>
+<div id="fig-ccnet" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ccnet-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="assets/figures/cc_citation_network.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ccnet-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: The carbon-capture network. Projects, papers, and patents in the case-study clusters, linked by the citations and BioBrick connections recovered during corpus construction. The cyanobacterial work forms a distinct, tightly connected core.
+</figcaption>
+</figure>
+</div>
+<p>A network lets us ask which cities are central in a precise sense: how well-connected a city’s carbon-capture work is to everyone else’s, not just how much of it there is. Volume and centrality usually travel together but not always, and the cities that score high are the ones whose output is both substantial and wired into the rest. A small group of cyanobacteria-focused cities dominates.</p>
+<div id="fig-cccentrality" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cccentrality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="assets/figures/cc_city_centrality.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cccentrality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: City centrality in carbon capture. Cities ranked by how connected their carbon-capture work is within the network, rather than by volume alone.
+</figcaption>
+</figure>
+</div>
 </section>
-<section id="city-level-carbon-capture-overlap" class="level2">
-<h2 class="anchored" data-anchor-id="city-level-carbon-capture-overlap">City-level carbon-capture overlap</h2>
-<p>For cities with at least 2 carbon-capture papers <strong>and</strong> at least 2 carbon-capture projects, we computed a carbon-capture specific semantic overlap score — the cosine similarity between the centroid of CC papers and the centroid of CC projects in that city.</p>
-<p>Only 7 cities meet the minimum document threshold (2 of each type):</p>
+<section id="where-cyanobacterial-carbon-capture-has-taken-root" class="level2">
+<h2 class="anchored" data-anchor-id="where-cyanobacterial-carbon-capture-has-taken-root">Where cyanobacterial carbon capture has taken root</h2>
+<p>Counting artifacts across the three clusters gives a leaderboard of cities, and the top of it is telling.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>City</th>
-<th>Country</th>
-<th style="text-align: right;">CC Papers</th>
-<th style="text-align: right;">CC Projects</th>
-<th style="text-align: right;">CC Semantic Overlap</th>
+<th style="text-align: center;">Carbon-capture artifacts</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>Auckland</td>
+<td style="text-align: center;">19</td>
+</tr>
+<tr class="even">
+<td>Uppsala</td>
+<td style="text-align: center;">18</td>
+</tr>
+<tr class="odd">
+<td>Daejeon</td>
+<td style="text-align: center;">15</td>
+</tr>
+<tr class="even">
 <td>San Diego</td>
-<td>US</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0.963</td>
-</tr>
-<tr class="even">
-<td>Wuhan</td>
-<td>CN</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">0.959</td>
+<td style="text-align: center;">14</td>
 </tr>
 <tr class="odd">
-<td>Beijing</td>
-<td>CN</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0.956</td>
+<td>Gainesville</td>
+<td style="text-align: center;">13</td>
 </tr>
 <tr class="even">
-<td>Shanghai</td>
-<td>CN</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">0.948</td>
+<td>Los Angeles</td>
+<td style="text-align: center;">9</td>
 </tr>
 <tr class="odd">
-<td>Guangzhou</td>
-<td>CN</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0.935</td>
+<td>St Louis</td>
+<td style="text-align: center;">9</td>
 </tr>
 <tr class="even">
-<td>Madison</td>
-<td>US</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0.929</td>
-</tr>
-<tr class="odd">
-<td>Austin</td>
-<td>US</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0.923</td>
+<td>Tianjin</td>
+<td style="text-align: center;">8</td>
 </tr>
 </tbody>
 </table>
-<p>The small sample (7 cities) means these results should be interpreted with caution. That said, the overlap scores for these cities are consistently high (0.92–0.96), and they include expected hubs: Beijing and Shanghai are major synthetic biology centres; San Diego and Madison host strong biotechnology research communities.</p>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<p>Auckland and Uppsala lead, the two cities most heavily invested in engineering cyanobacteria to turn light and carbon dioxide into fuel, exactly the line of work <em>Booze Bugs</em> began in 2009. Behind them come Daejeon, San Diego, and Gainesville, each a known centre of microbial and algal biotechnology. This is not a ranking of who does carbon capture best. It is a map of where this specific line of synthetic biology has taken root across student, academic, and commercial work at once, assembled from the bottom up out of thousands of individual documents, without anyone deciding in advance which cities mattered. If a policymaker asked where to look for cyanobacterial carbon capture, this table is a defensible first answer.</p>
+<div id="fig-ccleaderboard" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ccleaderboard-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="assets/figures/cc_city_leaderboard.png" class="img-fluid figure-img">
 </div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Limitation: small CC sample
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ccleaderboard-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: The carbon-capture city leaderboard: cities with the most artifacts in the three case-study clusters, counting projects, papers, and patents together.
+</figcaption>
+</figure>
 </div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The carbon-capture subset is too small for a meaningful regression. With only 7 qualifying cities, any statistical test would be severely underpowered. The results above are descriptive only.</p>
-</div>
-</div>
-<hr>
-</section>
-<section id="interpretation" class="level2">
-<h2 class="anchored" data-anchor-id="interpretation">Interpretation</h2>
-<p>Three observations from the carbon-capture case study:</p>
-<p><strong>1. Geographic concentration.</strong> The 7 cities are split between the US and China — the same split you see across the full corpus. Nothing specific to carbon capture here, just the underlying geography of synthetic biology research.</p>
-<p><strong>2. High semantic overlap.</strong> Carbon-capture papers and projects in these cities are topically close (0.92–0.96), in line with the corpus-wide mean (0.94). In these cities, students working on carbon capture and academic researchers working on the same area seem to be drawing from the same pool of ideas — though that’s exactly what you’d expect if both groups are embedded in the same local research environment.</p>
-<p><strong>3. No temporal precedence claim.</strong> This is cross-sectional data. We cannot tell whether the student projects came first, or the papers did, or whether both just reflect a city’s existing specialisation in bioenergy research.</p>
+<p>The story that began with one iGEM team in Uppsala turning sunlight into alcohol ends here, as a map of the cities where students, academics, and inventors are all working on the same idea at once. To search these cities yourself, and to filter to the carbon-capture subset directly, use the <a href="./explorer.html">Explorer</a>.</p>
 
 
 <!-- -->
@@ -813,126 +849,97 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Case Study: Carbon Capture in Synthetic Biology"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Case study: carbon capture"</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Carbon capture is the primary worked example for this project. It refers to using engineered</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>microorganisms to fix atmospheric CO₂ — for example, by optimising RuBisCO activity,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>engineering the Calvin cycle, or producing carbon-neutral biofuels. This subfield is large</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>enough to find examples in both iGEM projects and academic papers, and the keyword list</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>below is specific enough to be meaningful.</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">Results</span><span class="co">](results.qmd)</span> are about relatedness across the whole field. This page narrows to one</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>subfield and one set of cities: engineering microbes to pull carbon dioxide out of the air and turn</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>it into fuel. Carbon capture is the case study threaded through the project because it is where the</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>general method lands on something concrete, and because it is the proof that synthetic biology's pen</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>can heal as well as harm.</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## What counts as "carbon capture" here?</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>An artifact is flagged as carbon-capture if its title or abstract contains at least one of:</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>*carbon capture · carbon sequestration · CO₂ fixation · carbon dioxide reduction ·</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>carbon neutral · biofuel · carbon cycle · autotrophic · RuBisCO · Calvin cycle · carboxylase ·</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>carbon concentrating mechanism · photorespiration.*</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>The keyword list was designed conservatively to avoid over-inclusion of tangential content.</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">## Carbon-capture corpus snapshot</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Artifact type <span class="pp">|</span> Count <span class="pp">|</span> Year range <span class="pp">|</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------------|------:|:----------:|</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Papers <span class="pp">|</span> 234 <span class="pp">|</span> 2005–2026 <span class="pp">|</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> iGEM projects <span class="pp">|</span> 141 <span class="pp">|</span> 2011–2025 <span class="pp">|</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total** | **375** | **2005–2026** <span class="pp">|</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>Carbon-capture artifacts make up **2.7%** of papers and **3.1%** of projects in the full corpus.</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Where carbon-capture artifacts sit in semantic space</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>The figure below shows only the 375 carbon-capture flagged artifacts, coloured by the</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>cluster they belong to. Most fall into clusters related to metabolic engineering, biofuels,</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>and photosynthesis — consistent with the keyword filter. A small number appear in adjacent</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>clusters (e.g. biosensors, DNA assembly), reflecting the interdisciplinary nature of</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>carbon-capture research.</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## Three clusters, one ladder</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>The carbon-capture work concentrates in three adjacent clusters on the map, and together they trace</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>the exact arc the project is about.</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Cluster <span class="pp">|</span> Topic <span class="pp">|</span> Documents <span class="pp">|</span> Dominated by <span class="pp">|</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---:|---|:---:|---|</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 7 <span class="pp">|</span> Cyanobacterial Metabolic Engineering <span class="pp">|</span> 58 <span class="pp">|</span> student projects (48) <span class="pp">|</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 8 <span class="pp">|</span> Cyanobacterial Chassis Development <span class="pp">|</span> 135 <span class="pp">|</span> papers (120) <span class="pp">|</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 62 <span class="pp">|</span> Industrial Fermentation <span class="pp">|</span> 259 <span class="pp">|</span> patents (211) <span class="pp">|</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>Cluster 7 is where the students work, the descendants of Uppsala's *Booze Bugs* among them. Its near</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>neighbor, cluster 8, is the academic literature on engineering these organisms. Cluster 62 is the</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>commercial work on turning waste gases into fuels and chemicals. Student projects, academic papers,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>and patents, sitting in three tight adjacent clusters, arranged almost exactly along the</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>project-to-paper-to-patent path. A city that appears across all three is one where the full chain,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>from student education to academic research to commercial filing, has taken root around a single</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>theme. Those are the cities the policy question is really about.</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">## The alignment holds inside the subfield</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>Before asking which cities lead, it is worth checking that the field-wide result applies here</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>specifically. If carbon capture were an unusual corner of the data, its local alignment could behave</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>differently. We ran the project-level alignment test on the carbon-capture projects, comparing each to</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>same-cluster papers in its own city against same-cluster papers elsewhere. The alignment is as strong</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>as the field-wide one: mean $\bar\delta_{CC} = +0.0140$, with 90.1% of carbon-capture projects showing</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>positive local alignment ($t = 9.50$, clustered by city). The pattern is not something that dilutes</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>when we zoom in on the case study; it is at least as pronounced within carbon capture as across the</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>whole corpus.</span>
 <span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;iframe src="assets/figures/fig2_umap_cc.html"</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="in">        width="100%" height="620px" frameborder="0"</span></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="in">        style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);"&gt;</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/iframe&gt;</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>Carbon-capture artifacts do **not** form a single isolated region in semantic space.</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>Instead they appear across several clusters that are adjacent in the UMAP projection.</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>Carbon capture cuts across subfields — metabolic engineering, cell-free systems, biosensing</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>— so a scattered distribution makes sense.</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## The network and its centres</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>To see the structure, we build a network of the carbon-capture artifacts. Nodes are the projects,</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>papers, and patents in the three clusters; edges are the concrete links recovered while building the</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>corpus, a project citing a paper, a paper naming a BioBrick, a patent paired with a paper it builds on.</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>The result is not an even mesh. It has a backbone of well-connected documents surrounded by more loosely</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>attached ones, and the cyanobacteria work forms a visibly distinct, tightly linked region.</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>![The carbon-capture network. Projects, papers, and patents in the case-study clusters, linked by the</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>citations and BioBrick connections recovered during corpus construction. The cyanobacterial work forms</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>a distinct, tightly connected core.](assets/figures/cc_citation_network.png){#fig-ccnet}</span>
 <span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="fu">## Activity over time</span></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>The figure below shows the number of carbon-capture papers and iGEM projects per year,</span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>aggregated across all cities. Use the dropdown to zoom in on individual cities.</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;iframe src="assets/figures/fig4_cc_timeline.html"</span></span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="in">        width="100%" height="520px" frameborder="0"</span></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="in">        style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);"&gt;</span></span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/iframe&gt;</span></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>Carbon-capture activity in iGEM has grown steadily since around 2015. Academic papers in</span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>the subfield were present earlier (from 2005) and show a sharper uptick post-2018 — around</span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>the same time net-zero targets became mainstream policy conversation, though whether that</span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>drove the papers or just coincided with them is hard to say.</span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="fu">## City-level carbon-capture overlap</span></span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>For cities with at least 2 carbon-capture papers **and** at least 2 carbon-capture projects,</span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>we computed a carbon-capture specific semantic overlap score — the cosine similarity between</span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>the centroid of CC papers and the centroid of CC projects in that city.</span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>Only 7 cities meet the minimum document threshold (2 of each type):</span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> City <span class="pp">|</span> Country <span class="pp">|</span> CC Papers <span class="pp">|</span> CC Projects <span class="pp">|</span> CC Semantic Overlap <span class="pp">|</span></span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|---------|----------:|------------:|--------------------:|</span></span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> San Diego <span class="pp">|</span> US <span class="pp">|</span> 3 <span class="pp">|</span> 3 <span class="pp">|</span> 0.963 <span class="pp">|</span></span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Wuhan <span class="pp">|</span> CN <span class="pp">|</span> 2 <span class="pp">|</span> 5 <span class="pp">|</span> 0.959 <span class="pp">|</span></span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Beijing <span class="pp">|</span> CN <span class="pp">|</span> 10 <span class="pp">|</span> 2 <span class="pp">|</span> 0.956 <span class="pp">|</span></span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Shanghai <span class="pp">|</span> CN <span class="pp">|</span> 2 <span class="pp">|</span> 6 <span class="pp">|</span> 0.948 <span class="pp">|</span></span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Guangzhou <span class="pp">|</span> CN <span class="pp">|</span> 2 <span class="pp">|</span> 2 <span class="pp">|</span> 0.935 <span class="pp">|</span></span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Madison <span class="pp">|</span> US <span class="pp">|</span> 3 <span class="pp">|</span> 2 <span class="pp">|</span> 0.929 <span class="pp">|</span></span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Austin <span class="pp">|</span> US <span class="pp">|</span> 2 <span class="pp">|</span> 2 <span class="pp">|</span> 0.923 <span class="pp">|</span></span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>The small sample (7 cities) means these results should be interpreted with caution.</span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>That said, the overlap scores for these cities are consistently high (0.92–0.96), and</span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>they include expected hubs: Beijing and Shanghai are major synthetic biology centres;</span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>San Diego and Madison host strong biotechnology research communities.</span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="fu">## Limitation: small CC sample</span></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>The carbon-capture subset is too small for a meaningful regression. With only 7 qualifying</span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>cities, any statistical test would be severely underpowered. The results above are descriptive only.</span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretation</span></span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>Three observations from the carbon-capture case study:</span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>**1. Geographic concentration.** The 7 cities are split between the US and China — the same</span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>split you see across the full corpus. Nothing specific to carbon capture here, just the</span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>underlying geography of synthetic biology research.</span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>**2. High semantic overlap.** Carbon-capture papers and projects in these cities are</span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>topically close (0.92–0.96), in line with the corpus-wide mean (0.94). In these cities,</span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>students working on carbon capture and academic researchers working on the same area seem</span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>to be drawing from the same pool of ideas — though that's exactly what you'd expect if</span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>both groups are embedded in the same local research environment.</span>
-<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>**3. No temporal precedence claim.** This is cross-sectional data. We cannot tell whether</span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>the student projects came first, or the papers did, or whether both just reflect a city's</span>
-<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>existing specialisation in bioenergy research.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>A network lets us ask which cities are central in a precise sense: how well-connected a city's</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>carbon-capture work is to everyone else's, not just how much of it there is. Volume and centrality</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>usually travel together but not always, and the cities that score high are the ones whose output is both</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>substantial and wired into the rest. A small group of cyanobacteria-focused cities dominates.</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>![City centrality in carbon capture. Cities ranked by how connected their carbon-capture work is within</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>the network, rather than by volume alone.](assets/figures/cc_city_centrality.png){#fig-cccentrality}</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## Where cyanobacterial carbon capture has taken root</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>Counting artifacts across the three clusters gives a leaderboard of cities, and the top of it is</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>telling.</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> City <span class="pp">|</span> Carbon-capture artifacts <span class="pp">|</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|:---:|</span></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Auckland <span class="pp">|</span> 19 <span class="pp">|</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Uppsala <span class="pp">|</span> 18 <span class="pp">|</span></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Daejeon <span class="pp">|</span> 15 <span class="pp">|</span></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> San Diego <span class="pp">|</span> 14 <span class="pp">|</span></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Gainesville <span class="pp">|</span> 13 <span class="pp">|</span></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Los Angeles <span class="pp">|</span> 9 <span class="pp">|</span></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> St Louis <span class="pp">|</span> 9 <span class="pp">|</span></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Tianjin <span class="pp">|</span> 8 <span class="pp">|</span></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>Auckland and Uppsala lead, the two cities most heavily invested in engineering cyanobacteria to turn</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>light and carbon dioxide into fuel, exactly the line of work *Booze Bugs* began in 2009. Behind them</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>come Daejeon, San Diego, and Gainesville, each a known centre of microbial and algal biotechnology.</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>This is not a ranking of who does carbon capture best. It is a map of where this specific line of</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>synthetic biology has taken root across student, academic, and commercial work at once, assembled from</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>the bottom up out of thousands of individual documents, without anyone deciding in advance which cities</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>mattered. If a policymaker asked where to look for cyanobacterial carbon capture, this table is a</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>defensible first answer.</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>![The carbon-capture city leaderboard: cities with the most artifacts in the three case-study</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>clusters, counting projects, papers, and patents together.](assets/figures/cc_city_leaderboard.png){#fig-ccleaderboard}</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>The story that began with one iGEM team in Uppsala turning sunlight into alcohol ends here, as a map of</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>the cities where students, academics, and inventors are all working on the same idea at once. To search</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>these cities yourself, and to filter to the carbon-capture subset directly, use the</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Explorer</span><span class="co">](explorer.qmd)</span>.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

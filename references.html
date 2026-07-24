@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Patents, Papers, Parts &amp; Planet</title>
+<title>References – Patents, Papers, Parts &amp; Planet</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -58,7 +58,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -128,7 +147,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -199,24 +218,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The question</a></li>
-  <li><a href="#the-corpus-in-numbers" id="toc-the-corpus-in-numbers" class="nav-link" data-scroll-target="#the-corpus-in-numbers">The corpus in numbers</a></li>
-  <li><a href="#where-to-go-next" id="toc-where-to-go-next" class="nav-link" data-scroll-target="#where-to-go-next">Where to go next</a></li>
-  </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Patents, Papers, Parts &amp; Planet</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-<p class="subtitle lead">Do a city’s students, academics, and inventors in synthetic biology work on the same things?</p>
+<div class="quarto-title-block"><div><h1 class="title">References</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -233,103 +243,166 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>For most of its history, biology read nature. It broke life into organs, then cells, then the genes beneath them, and slowly worked out the rules that hold a living thing together. Synthetic biology is the moment biology starts to write. We now compose new biological systems from standardized genetic parts, treating DNA as code and cells as hardware. The same power that has been reshaping the planet by accident could, aimed on purpose, help repair it. Engineered microbes can already pull carbon dioxide out of the air and turn it into fuel.</p>
-<p>The students in <a href="https://igem.org">iGEM</a> are learning to hold that pen. Every year, thousands of them design and build a project from a shared kit of interchangeable DNA parts, and they write it all up on a public wiki. That makes iGEM something most young fields never get: an open, geotagged record of a field composing itself. This project asks what that record can tell us about where synthetic biology is putting down roots.</p>
-<section id="the-question" class="level2">
-<h2 class="anchored" data-anchor-id="the-question">The question</h2>
-<p>Do cities whose students research a topic in synthetic biology also produce academic papers, and patents, in related areas? We put student projects, academic papers, and patents into one shared semantic space and test whether a city’s three kinds of work land on the same specific topics more often than chance allows.</p>
-<p>The short answer is a qualified yes, with a specific shape. A city’s papers line up with its projects, and its papers line up with its patents, but its projects and its patents stay further apart. Academic research is the middle link. The field is shaped like a star, with papers at the hub, not a triangle.</p>
-</section>
-<section id="the-corpus-in-numbers" class="level2">
-<h2 class="anchored" data-anchor-id="the-corpus-in-numbers">The corpus in numbers</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Artifact type</th>
-<th style="text-align: right;">Count</th>
-<th style="text-align: center;">Years</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Academic papers (OpenAlex)</td>
-<td style="text-align: right;">10,319</td>
-<td style="text-align: center;">2000–2026</td>
-</tr>
-<tr class="even">
-<td>iGEM student projects</td>
-<td style="text-align: right;">4,606</td>
-<td style="text-align: center;">2009–2025</td>
-</tr>
-<tr class="odd">
-<td>USPTO patents (Oldham set)</td>
-<td style="text-align: right;">2,901</td>
-<td style="text-align: center;">—</td>
-</tr>
-<tr class="even">
-<td><strong>Total artifacts</strong></td>
-<td style="text-align: right;"><strong>17,826</strong></td>
-<td style="text-align: center;"></td>
-</tr>
-</tbody>
-</table>
-<p>All three are geocoded to a city and embedded into the same 768-dimensional space with a fine-tuned <a href="https://huggingface.co/allenai/specter2">SPECTER2</a> model, then grouped into 80 topic clusters. 156 cities carry all three artifact types at once.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<p>The works cited across this site and in the manuscript. The full bibliography is drawn from the project’s reference databases (<code>references.bib</code> and <code>references_extra.bib</code> in the <a href="https://github.com/Zer0Juice/synbiomap">repository</a>).</p>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-bacciniGlobalExploratoryComparison2023" class="csl-entry" role="listitem">
+Baccini, Alberto, and Eugenio Petrovich. 2023. <span>“A Global Exploratory Comparison of Country Self-Citations 1996-2019.”</span> <em>PLOS ONE</em> 18 (12): e0294669. <a href="https://doi.org/10.1371/journal.pone.0294669">https://doi.org/10.1371/journal.pone.0294669</a>.
 </div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>A note on language
+<div id="ref-ballandComplexEconomicActivities2020" class="csl-entry" role="listitem">
+Balland, Pierre-Alexandre, Cristian Jara-Figueroa, Sergio G. Petralia, Mathieu P. A. Steijn, David L. Rigby, and César A. Hidalgo. 2020. <span>“<span class="nocase">Complex economic activities concentrate in large cities</span>.”</span> <em>Nature Human Behaviour</em> 4 (3): 248–54. <a href="https://doi.org/10.1038/s41562-019-0803-3">https://doi.org/10.1038/s41562-019-0803-3</a>.
+</div>
+<div id="ref-bekamiriPatentSBERTa2024" class="csl-entry" role="listitem">
+Bekamiri, Hamid, Daniel S. Hain, and Roman Jurowetzki. 2024. <span>“<span class="nocase">PatentSBERTa: A deep NLP based hybrid model for patent distance and classification using augmented SBERT</span>.”</span> <em>Technological Forecasting and Social Change</em> 206: 123536. <a href="https://doi.org/10.1016/j.techfore.2024.123536">https://doi.org/10.1016/j.techfore.2024.123536</a>.
+</div>
+<div id="ref-bellmanDynamicProgramming1957" class="csl-entry" role="listitem">
+Bellman, Richard. 1957. <em><span>Dynamic Programming</span></em>. Princeton University Press.
+</div>
+<div id="ref-bleiLatentDirichletAllocation2003" class="csl-entry" role="listitem">
+Blei, David M., Andrew Y. Ng, and Michael I. Jordan. 2003. <span>“<span>Latent Dirichlet Allocation</span>.”</span> <em>Journal of Machine Learning Research</em> 3: 993–1022.
+</div>
+<div id="ref-boschmaProximityInnovationCritical2005" class="csl-entry" role="listitem">
+Boschma, Ron. 2005. <span>“<span class="nocase">Proximity and Innovation: A Critical Assessment</span>.”</span> <em>Regional Studies</em> 39 (1): 61–74. <a href="https://doi.org/10.1080/0034340052000320887">https://doi.org/10.1080/0034340052000320887</a>.
+</div>
+<div id="ref-boschmaScientificKnowledgeDynamics2014" class="csl-entry" role="listitem">
+Boschma, Ron, Gaston Heimeriks, and Pierre-Alexandre Balland. 2014. <span>“Scientific Knowledge Dynamics and Relatedness in Biotech Cities.”</span> <em>Research Policy</em> 43 (1): 107–14. <a href="https://doi.org/10.1016/j.respol.2013.07.009">https://doi.org/10.1016/j.respol.2013.07.009</a>.
+</div>
+<div id="ref-breschiKnowledgeSpilloversLocal2001" class="csl-entry" role="listitem">
+Breschi, Stefano, and Francesco Lissoni. 2001. <span>“<span class="nocase">Knowledge spillovers and local innovation systems: a critical survey</span>.”</span> <em>Industrial and Corporate Change</em> 10 (4): 975–1005. <a href="https://doi.org/10.1093/icc/10.4.975">https://doi.org/10.1093/icc/10.4.975</a>.
+</div>
+<div id="ref-bushScienceEndlessFrontier1945" class="csl-entry" role="listitem">
+Bush, Vannevar. 1945. <em><span class="nocase">Science, the Endless Frontier: A Report to the President</span></em>. United States Government Printing Office.
+</div>
+<div id="ref-campelloHDBSCAN2013" class="csl-entry" role="listitem">
+Campello, Ricardo J. G. B., Davoud Moulavi, and Jörg Sander. 2013. <span>“<span class="nocase">Density-Based Clustering Based on Hierarchical Density Estimates</span>.”</span> <em>Advances in Knowledge Discovery and Data Mining (PAKDD 2013)</em>, 160–72. <a href="https://doi.org/10.1007/978-3-642-37456-2_14">https://doi.org/10.1007/978-3-642-37456-2_14</a>.
+</div>
+<div id="ref-camsundLacIRepressedPromoters2014" class="csl-entry" role="listitem">
+Camsund, Daniel, Thorsten Heidorn, and Peter Lindblad. 2014. <span>“<span class="nocase">Design and analysis of LacI-repressed promoters and DNA-looping in a cyanobacterium</span>.”</span> <em>Journal of Biological Engineering</em> 8: 4. <a href="https://doi.org/10.1186/1754-1611-8-4">https://doi.org/10.1186/1754-1611-8-4</a>.
+</div>
+<div id="ref-cohanDocumentlevelRepresentation2020" class="csl-entry" role="listitem">
+Cohan, Arman, Sergey Feldman, Iz Beltagy, Doug Downey, and Daniel Weld. 2020. <span>“<span>SPECTER</span>: <span class="nocase">Document-level Representation Learning</span> Using <span class="nocase">Citation-informed Transformers</span>.”</span> In <em>Proceedings of the 58th <span>Annual Meeting</span> of the <span>Association</span> for <span>Computational Linguistics</span></em>, edited by Dan Jurafsky, Joyce Chai, Natalie Schluter, and Joel Tetreault. Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/2020.acl-main.207">https://doi.org/10.18653/v1/2020.acl-main.207</a>.
+</div>
+<div id="ref-crutzen2006anthropocene" class="csl-entry" role="listitem">
+Crutzen, Paul J. 2006. <span>“The <span>‘Anthropocene’</span>.”</span> In <em>Earth System Science in the Anthropocene</em>, edited by Eckart Ehlers and Thomas Krafft. Springer. <a href="https://doi.org/10.1007/3-540-26590-2_3">https://doi.org/10.1007/3-540-26590-2_3</a>.
+</div>
+<div id="ref-deerwesterIndexingLatentSemantic1990" class="csl-entry" role="listitem">
+Deerwester, Scott, Susan T. Dumais, George W. Furnas, Thomas K. Landauer, and Richard Harshman. 1990. <span>“<span class="nocase">Indexing by Latent Semantic Analysis</span>.”</span> <em>Journal of the American Society for Information Science</em> 41 (6): 391–407. <a href="https://doi.org/10.1002/(SICI)1097-4571(199009)41:6<391::AID-ASI1>3.0.CO;2-9">https://doi.org/10.1002/(SICI)1097-4571(199009)41:6&lt;391::AID-ASI1&gt;3.0.CO;2-9</a>.
+</div>
+<div id="ref-delisiRoleSyntheticBiology2020" class="csl-entry" role="listitem">
+DeLisi, Charles, Aristides Patrinos, Michael MacCracken, et al. 2020. <span>“<span class="nocase">The Role of Synthetic Biology in Atmospheric Greenhouse Gas Reduction: Prospects and Challenges</span>.”</span> <em>BioDesign Research</em> 2020: 1016207. <a href="https://doi.org/10.34133/2020/1016207">https://doi.org/10.34133/2020/1016207</a>.
+</div>
+<div id="ref-devlinBERTPretrainingDeep2019" class="csl-entry" role="listitem">
+Devlin, Jacob, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2019. <span>“<span class="nocase">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</span>.”</span> In <em>Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers)</em>, edited by Jill Burstein, Christy Doran, and Thamar Solorio. Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/N19-1423">https://doi.org/10.18653/v1/N19-1423</a>.
+</div>
+<div id="ref-doblingerGovernmentsPartners2019" class="csl-entry" role="listitem">
+Doblinger, Claudia, Kavita Surana, and Laura Diaz Anadon. 2019. <span>“<span class="nocase">Governments as partners: The role of alliances in U.S. cleantech startup innovation</span>.”</span> <em>Research Policy</em> 48 (6): 1458–75. <a href="https://doi.org/10.1016/j.respol.2019.02.006">https://doi.org/10.1016/j.respol.2019.02.006</a>.
+</div>
+<div id="ref-durantonMicroFoundationsUrban2004" class="csl-entry" role="listitem">
+Duranton, Gilles, and Diego Puga. 2004. <span>“<span class="nocase">Micro-Foundations of Urban Agglomeration Economies</span>.”</span> <em>Handbook of Regional and Urban Economics</em> 4: 2063–117. <a href="https://doi.org/10.1016/S1574-0080(04)80005-1">https://doi.org/10.1016/S1574-0080(04)80005-1</a>.
+</div>
+<div id="ref-endyFoundationsEngineeringBiology2005" class="csl-entry" role="listitem">
+Endy, Drew. 2005. <span>“<span class="nocase">Foundations for engineering biology</span>.”</span> <em>Nature</em> 438 (7067): 449–53. <a href="https://doi.org/10.1038/nature04342">https://doi.org/10.1038/nature04342</a>.
+</div>
+<div id="ref-evansScience2025" class="csl-entry" role="listitem">
+Evans, James, and Eamon Duede. 2025. <span>“<span class="nocase">After science</span>.”</span> <em>Science</em> 390 (6774): eaec7650. <a href="https://doi.org/10.1126/science.aec7650">https://doi.org/10.1126/science.aec7650</a>.
+</div>
+<div id="ref-fengBuildingBlocksSoftware" class="csl-entry" role="listitem">
+Feng, Xiangnan, Johannes Wachs, Simone Daniotti, and Frank Neffke. n.d. <em><span class="nocase">The building blocks of software work explain coding careers and language popularity</span></em>. n.d.
+</div>
+<div id="ref-firthSynopsisLinguisticTheory1957" class="csl-entry" role="listitem">
+Firth, John Rupert. 1957. <span>“<span class="nocase">A Synopsis of Linguistic Theory, 1930–1955</span>.”</span> In <em>Studies in Linguistic Analysis</em>. Blackwell.
+</div>
+<div id="ref-gleizerConversionEscherichiaColi2019" class="csl-entry" role="listitem">
+Gleizer, Shmuel, Roee Ben-Nissan, Yinon M. Bar-On, et al. 2019. <span>“<span class="nocase">Conversion of Escherichia coli to Generate All Biomass Carbon from CO2</span>.”</span> <em>Cell</em> 179 (6): 1255–1263.e12. <a href="https://doi.org/10.1016/j.cell.2019.11.009">https://doi.org/10.1016/j.cell.2019.11.009</a>.
+</div>
+<div id="ref-grootendorstBERTopic2022" class="csl-entry" role="listitem">
+Grootendorst, Maarten. 2022. <span>“<span class="nocase">BERTopic: Neural topic modeling with a class-based TF-IDF procedure</span>.”</span> <em>arXiv Preprint arXiv:2203.05794</em>, ahead of print. <a href="https://doi.org/10.48550/arXiv.2203.05794">https://doi.org/10.48550/arXiv.2203.05794</a>.
+</div>
+<div id="ref-haoArtificialIntelligenceTools2026" class="csl-entry" role="listitem">
+Hao, Qianyue, Fengli Xu, Yong Li, and James Evans. 2026. <span>“<span class="nocase">Artificial intelligence tools expand scientists’ impact but contract science’s focus</span>.”</span> <em>Nature</em> 649 (8099): 1237–43. <a href="https://doi.org/10.1038/s41586-025-09922-y">https://doi.org/10.1038/s41586-025-09922-y</a>.
+</div>
+<div id="ref-harrisDistributionalStructure1954" class="csl-entry" role="listitem">
+Harris, Zellig S. 1954. <span>“<span>Distributional Structure</span>.”</span> <em>Word</em> 10 (2–3): 146–62. <a href="https://doi.org/10.1080/00437956.1954.11659520">https://doi.org/10.1080/00437956.1954.11659520</a>.
+</div>
+<div id="ref-hidalgoProductSpaceConditions2007" class="csl-entry" role="listitem">
+Hidalgo, C. A., B. Klinger, A.-L. Barabási, and R. Hausmann. 2007. <span>“<span class="nocase">The Product Space Conditions the Development of Nations</span>.”</span> <em>Science</em> 317 (5837): 482–87. <a href="https://doi.org/10.1126/science.1144581">https://doi.org/10.1126/science.1144581</a>.
+</div>
+<div id="ref-hidalgoPrincipleRelatedness2018" class="csl-entry" role="listitem">
+Hidalgo, César A., Pierre-Alexandre Balland, Ron Boschma, et al. 2018. <span>“The <span>Principle</span> of <span>Relatedness</span>.”</span> In <em>Unifying <span>Themes</span> in <span>Complex Systems IX</span></em>, edited by Alfredo J. Morales, Carlos Gershenson, Dan Braha, Ali A. Minai, and Yaneer Bar-Yam. Springer International Publishing. <a href="https://doi.org/10.1007/978-3-319-96661-8_46">https://doi.org/10.1007/978-3-319-96661-8_46</a>.
+</div>
+<div id="ref-hidalgoBuildingBlocksEconomic2009" class="csl-entry" role="listitem">
+Hidalgo, César A., and Ricardo Hausmann. 2009. <span>“<span class="nocase">The building blocks of economic complexity</span>.”</span> <em>Proceedings of the National Academy of Sciences</em> 106 (26): 10570–75. <a href="https://doi.org/10.1073/pnas.0900943106">https://doi.org/10.1073/pnas.0900943106</a>.
+</div>
+<div id="ref-jacobsEconomyCities1969" class="csl-entry" role="listitem">
+Jacobs, Jane. 1969. <em><span class="nocase">The Economy of Cities</span></em>. Random House.
+</div>
+<div id="ref-jiangNaturalLanguageProcessing2025" class="csl-entry" role="listitem">
+Jiang, Lekang, and Stephan Goetz. 2025. <span>“Natural <span>Language Processing</span> in the <span>Patent Domain</span>: <span>A Survey</span>.”</span> <em>Artificial Intelligence Review</em> 58 (7): 214. <a href="https://doi.org/10.1007/s10462-025-11168-z">https://doi.org/10.1007/s10462-025-11168-z</a>.
+</div>
+<div id="ref-liEvaluatingPrincipleRelatedness2023" class="csl-entry" role="listitem">
+Li, Yang, and Frank Neffke. 2023. <em><span class="nocase">Evaluating the principle of relatedness: Estimation, drivers and implications for policy</span></em>. arXiv. <a href="https://doi.org/10.48550/arXiv.2205.02942">https://doi.org/10.48550/arXiv.2205.02942</a>.
+</div>
+<div id="ref-marshallPrinciplesEconomics1890" class="csl-entry" role="listitem">
+Marshall, Alfred. 1890. <em><span class="nocase">Principles of Economics</span></em>. Macmillan.
+</div>
+<div id="ref-marxFuegiRelianceScience2020" class="csl-entry" role="listitem">
+Marx, Matt, and Aaron Fuegi. 2020. <span>“<span class="nocase">Reliance on science: Worldwide front-page patent citations to scientific articles</span>.”</span> <em>Strategic Management Journal</em> 41 (9): 1572–94. <a href="https://doi.org/10.1002/smj.3145">https://doi.org/10.1002/smj.3145</a>.
+</div>
+<div id="ref-mcinnesUMAP2018" class="csl-entry" role="listitem">
+McInnes, Leland, John Healy, and James Melville. 2018. <span>“<span class="nocase">UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction</span>.”</span> <em>arXiv Preprint arXiv:1802.03426</em>, ahead of print. <a href="https://doi.org/10.48550/arXiv.1802.03426">https://doi.org/10.48550/arXiv.1802.03426</a>.
+</div>
+<div id="ref-mealyEconomicComplexityGreen2022" class="csl-entry" role="listitem">
+Mealy, Penny, and Alexander Teytelboym. 2022. <span>“<span class="nocase">Economic complexity and the green economy</span>.”</span> <em>Research Policy</em>, Special issue on economic complexity, vol. 51 (8): 103948. <a href="https://doi.org/10.1016/j.respol.2020.103948">https://doi.org/10.1016/j.respol.2020.103948</a>.
+</div>
+<div id="ref-mikolovEfficientEstimationWord2013" class="csl-entry" role="listitem">
+Mikolov, Tomas, Kai Chen, Greg Corrado, and Jeffrey Dean. 2013. <span>“<span class="nocase">Efficient Estimation of Word Representations in Vector Space</span>.”</span> <em>arXiv Preprint arXiv:1301.3781</em>, ahead of print. <a href="https://doi.org/10.48550/arXiv.1301.3781">https://doi.org/10.48550/arXiv.1301.3781</a>.
+</div>
+<div id="ref-narinIncreasingLinkage1997" class="csl-entry" role="listitem">
+Narin, Francis, Kimberly S. Hamilton, and Dominic Olivastro. 1997. <span>“<span class="nocase">The increasing linkage between U.S. technology and public science</span>.”</span> <em>Research Policy</em> 26 (3): 317–30. <a href="https://doi.org/10.1016/S0048-7333(97)00013-9">https://doi.org/10.1016/S0048-7333(97)00013-9</a>.
+</div>
+<div id="ref-neffkeSkillRelatednessFirm2013a" class="csl-entry" role="listitem">
+Neffke, Frank, and Martin Henning. 2013b. <span>“Skill Relatedness and Firm Diversification.”</span> <em>Strategic Management Journal</em> 34 (3): 297–316. <a href="https://doi.org/10.1002/smj.2014">https://doi.org/10.1002/smj.2014</a>.
+</div>
+<div id="ref-neffkeSkillRelatednessFirm2013" class="csl-entry" role="listitem">
+Neffke, Frank, and Martin Henning. 2013a. <span>“<span class="nocase">Skill relatedness and firm diversification</span>.”</span> <em>Strategic Management Journal</em> 34 (3): 297–316. <a href="https://doi.org/10.1002/smj.2014">https://doi.org/10.1002/smj.2014</a>.
+</div>
+<div id="ref-oldhamSyntheticBiologyMapping2018" class="csl-entry" role="listitem">
+Oldham, Paul, and Stephen Hall. 2018. <em><span class="nocase">Synthetic Biology - Mapping the Patent Landscape</span></em>. Synthetic Biology. <a href="https://doi.org/10.1101/483826">https://doi.org/10.1101/483826</a>.
+</div>
+<div id="ref-raimbaultMappingEmergenceSynthetic2016" class="csl-entry" role="listitem">
+Raimbault, Benjamin, Jean-Philippe Cointet, and Pierre-Benoît Joly. 2016. <span>“<span class="nocase">Mapping the Emergence of Synthetic Biology</span>.”</span> <em>PLOS ONE</em> 11 (9): e0161522. <a href="https://doi.org/10.1371/journal.pone.0161522">https://doi.org/10.1371/journal.pone.0161522</a>.
+</div>
+<div id="ref-reimersSentenceBERT2019" class="csl-entry" role="listitem">
+Reimers, Nils, and Iryna Gurevych. 2019. <span>“<span class="nocase">Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks</span>.”</span> <em>Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)</em>, 3982–92. <a href="https://doi.org/10.18653/v1/D19-1410">https://doi.org/10.18653/v1/D19-1410</a>.
+</div>
+<div id="ref-santoliniIGEMModelSystem2023" class="csl-entry" role="listitem">
+Santolini, Marc, Leo Blondel, Megan J. Palmer, et al. 2023. <em><span class="nocase">iGEM: a model system for team science and innovation</span></em>. arXiv. <a href="https://doi.org/10.48550/arXiv.2310.19858">https://doi.org/10.48550/arXiv.2310.19858</a>.
+</div>
+<div id="ref-shapiraTrackingEmergenceSynthetic2017" class="csl-entry" role="listitem">
+Shapira, Philip, Seokbeom Kwon, and Jan Youtie. 2017. <span>“<span class="nocase">Tracking the emergence of synthetic biology</span>.”</span> <em>Scientometrics</em> 112 (3): 1439–69. <a href="https://doi.org/10.1007/s11192-017-2452-5">https://doi.org/10.1007/s11192-017-2452-5</a>.
+</div>
+<div id="ref-shettyEngineeringBioBrickVectors2008" class="csl-entry" role="listitem">
+Shetty, Reshma P., Drew Endy, and Thomas F. Knight. 2008. <span>“<span class="nocase">Engineering BioBrick vectors from BioBrick parts</span>.”</span> <em>Journal of Biological Engineering</em> 2: 5. <a href="https://doi.org/10.1186/1754-1611-2-5">https://doi.org/10.1186/1754-1611-2-5</a>.
+</div>
+<div id="ref-singhSciRepEvalMultiFormat2023" class="csl-entry" role="listitem">
+Singh, Amanpreet, Mike D’Arcy, Arman Cohan, Doug Downey, and Sergey Feldman. 2023. <span>“<span class="nocase">SciRepEval: A Multi-Format Benchmark for Scientific Document Representations</span>.”</span> <em>Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing</em>. <a href="https://doi.org/10.18653/v1/2023.emnlp-main.338">https://doi.org/10.18653/v1/2023.emnlp-main.338</a>.
+</div>
+<div id="ref-suranaEffectsTechnologyComplexity2020" class="csl-entry" role="listitem">
+Surana, Kavita, Claudia Doblinger, Laura Diaz Anadon, and Nathan Hultman. 2020. <span>“<span class="nocase">Effects of technology complexity on the emergence and evolution of wind industry manufacturing locations along global value chains</span>.”</span> <em>Nature Energy</em> 5 (10): 811–21. <a href="https://doi.org/10.1038/s41560-020-00685-6">https://doi.org/10.1038/s41560-020-00685-6</a>.
+</div>
+<div id="ref-vaswaniAttentionAllYou2017" class="csl-entry" role="listitem">
+Vaswani, Ashish, Noam Shazeer, Niki Parmar, et al. 2017. <span>“<span>Attention Is All You Need</span>.”</span> <em>Advances in Neural Information Processing Systems</em> 30.
+</div>
+<div id="ref-wayIntegratingBiologicalRedesign2014" class="csl-entry" role="listitem">
+Way, Collins, Keasling, and Silver. 2014. <span>“<span class="nocase">Integrating Biological Redesign: Where Synthetic Biology Came From and Where It Needs to Go</span>.”</span> <em>Cell</em>, ahead of print. <a href="https://doi.org/10.1016/j.cell.2014.02.039">https://doi.org/10.1016/j.cell.2014.02.039</a>.
+</div>
+<div id="ref-wuLargeTeamsDevelop2019" class="csl-entry" role="listitem">
+Wu, Lingfei, Dashun Wang, and James A. Evans. 2019. <span>“<span class="nocase">Large teams develop and small teams disrupt science and technology</span>.”</span> <em>Nature</em> 566 (7744): 378–82. <a href="https://doi.org/10.1038/s41586-019-0941-9">https://doi.org/10.1038/s41586-019-0941-9</a>.
 </div>
 </div>
-<div class="callout-body-container callout-body">
-<p>This work is descriptive. We measure relatedness and co-location, and we test them hard, but we do not claim that student projects cause later papers or that papers cause patents. The three share many local causes, and observational data like this cannot separate them.</p>
-</div>
-</div>
-</section>
-<section id="where-to-go-next" class="level2">
-<h2 class="anchored" data-anchor-id="where-to-go-next">Where to go next</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Page</th>
-<th>What you will find</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="./background.html">Background</a></td>
-<td>Why a young field is hard to see, and why iGEM is a rare window into it</td>
-</tr>
-<tr class="even">
-<td><a href="./methods.html">Methods &amp; data</a></td>
-<td>How the corpus was built, geocoded, embedded, and clustered</td>
-</tr>
-<tr class="odd">
-<td><a href="./results.html">Results</a></td>
-<td>The full analysis: the measure that failed, the one that worked, and every attempt to break it</td>
-</tr>
-<tr class="even">
-<td><a href="./case-study.html">Case study: carbon capture</a></td>
-<td>Engineering cyanobacteria to turn light and CO₂ into fuel, city by city</td>
-</tr>
-<tr class="odd">
-<td><a href="./explorer.html">Explorer</a></td>
-<td>Search any city and see its projects, papers, and patents in the shared space</td>
-</tr>
-<tr class="even">
-<td><a href="./paper.html">Paper &amp; slides</a></td>
-<td>The full manuscript and the talk</td>
-</tr>
-</tbody>
-</table>
-<p>All code and data are on <a href="https://github.com/Zer0Juice/synbiomap">GitHub</a>. The pipeline is built to be rebuilt: see <a href="./reproducibility.html">Reproducibility</a>.</p>
 
 
 <!-- -->
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -784,69 +857,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Patents, Papers, Parts &amp; Planet"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Do a city's students, academics, and inventors in synthetic biology work on the same things?"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>For most of its history, biology read nature. It broke life into organs, then cells, then</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>the genes beneath them, and slowly worked out the rules that hold a living thing together.</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Synthetic biology is the moment biology starts to write. We now compose new biological</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>systems from standardized genetic parts, treating DNA as code and cells as hardware. The</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>same power that has been reshaping the planet by accident could, aimed on purpose, help</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>repair it. Engineered microbes can already pull carbon dioxide out of the air and turn it</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>into fuel.</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>The students in <span class="co">[</span><span class="ot">iGEM</span><span class="co">](https://igem.org)</span> are learning to hold that pen. Every year, thousands</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>of them design and build a project from a shared kit of interchangeable DNA parts, and they</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>write it all up on a public wiki. That makes iGEM something most young fields never get: an</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>open, geotagged record of a field composing itself. This project asks what that record can</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>tell us about where synthetic biology is putting down roots.</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## The question</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>Do cities whose students research a topic in synthetic biology also produce academic papers,</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>and patents, in related areas? We put student projects, academic papers, and patents into one</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>shared semantic space and test whether a city's three kinds of work land on the same specific</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>topics more often than chance allows.</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>The short answer is a qualified yes, with a specific shape. A city's papers line up with its</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>projects, and its papers line up with its patents, but its projects and its patents stay</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>further apart. Academic research is the middle link. The field is shaped like a star, with</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>papers at the hub, not a triangle.</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## The corpus in numbers</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Artifact type <span class="pp">|</span> Count <span class="pp">|</span> Years <span class="pp">|</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---:|:---:|</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Academic papers (OpenAlex) <span class="pp">|</span> 10,319 <span class="pp">|</span> 2000–2026 <span class="pp">|</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> iGEM student projects <span class="pp">|</span> 4,606 <span class="pp">|</span> 2009–2025 <span class="pp">|</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> USPTO patents (Oldham set) <span class="pp">|</span> 2,901 <span class="pp">|</span> — <span class="pp">|</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total artifacts** | **17,826** <span class="pp">|</span> <span class="pp">|</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>All three are geocoded to a city and embedded into the same 768-dimensional space with a</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>fine-tuned <span class="co">[</span><span class="ot">SPECTER2</span><span class="co">](https://huggingface.co/allenai/specter2)</span> model, then grouped into 80</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>topic clusters. 156 cities carry all three artifact types at once.</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## A note on language</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>This work is descriptive. We measure relatedness and co-location, and we test them hard, but</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>we do not claim that student projects cause later papers or that papers cause patents. The</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>three share many local causes, and observational data like this cannot separate them.</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="fu">## Where to go next</span></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Page <span class="pp">|</span> What you will find <span class="pp">|</span></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|-------------------|</span></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Background</span><span class="co">](background.qmd)</span> <span class="pp">|</span> Why a young field is hard to see, and why iGEM is a rare window into it <span class="pp">|</span></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Methods &amp; data</span><span class="co">](methods.qmd)</span> <span class="pp">|</span> How the corpus was built, geocoded, embedded, and clustered <span class="pp">|</span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Results</span><span class="co">](results.qmd)</span> <span class="pp">|</span> The full analysis: the measure that failed, the one that worked, and every attempt to break it <span class="pp">|</span></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Case study: carbon capture</span><span class="co">](case-study.qmd)</span> <span class="pp">|</span> Engineering cyanobacteria to turn light and CO₂ into fuel, city by city <span class="pp">|</span></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Explorer</span><span class="co">](explorer.qmd)</span> <span class="pp">|</span> Search any city and see its projects, papers, and patents in the shared space <span class="pp">|</span></span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Paper &amp; slides</span><span class="co">](paper.qmd)</span> <span class="pp">|</span> The full manuscript and the talk <span class="pp">|</span></span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>All code and data are on <span class="co">[</span><span class="ot">GitHub</span><span class="co">](https://github.com/Zer0Juice/synbiomap)</span>. The pipeline is</span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>built to be rebuilt: see <span class="co">[</span><span class="ot">Reproducibility</span><span class="co">](reproducibility.qmd)</span>.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "References"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">nocite:</span><span class="co"> |</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">  @*</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>The works cited across this site and in the manuscript. The full bibliography is drawn from the</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>project's reference databases (<span class="in">`references.bib`</span> and <span class="in">`references_extra.bib`</span> in the</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">repository</span><span class="co">](https://github.com/Zer0Juice/synbiomap)</span>).</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>::: {#refs}</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
@@ -856,7 +877,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">

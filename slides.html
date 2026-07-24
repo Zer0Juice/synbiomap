@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head>
+<link href="./assets/favicon.png" rel="icon" type="image/png">
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-html/tabby.min.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -9,7 +10,7 @@
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-a06763021a52c43c40a351ac8b799b8f.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.9.36">
 
-  <meta name="author" content="CSH Thesis · Supervised by Frank Neffke &amp; Claudia Doblinger">
+  <meta name="author" content="Zakhary Roth · Complexity Science Hub · advised by Frank Neffke &amp; Claudia Doblinger">
   <title>Patents, Papers, Parts &amp; Planet</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -131,12 +132,12 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">Patents, Papers, Parts &amp; Planet</h1>
-  <p class="subtitle">Mapping Local Innovation Trajectories in Synthetic Biology</p>
+  <p class="subtitle">Local innovation trajectories in synthetic biology</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-CSH Thesis · Supervised by Frank Neffke &amp; Claudia Doblinger 
+Zakhary Roth · Complexity Science Hub · advised by Frank Neffke &amp; Claudia Doblinger 
 </div>
 </div>
 </div>
@@ -144,20 +145,21 @@ CSH Thesis · Supervised by Frank Neffke &amp; Claudia Doblinger
 </section>
 <section id="the-question" class="slide level2">
 <h2>The question</h2>
-<p><strong>Do iGEM student projects and academic papers in synthetic biology cluster together semantically — in the same cities?</strong></p>
+<p><strong>Do a city’s students, academics, and inventors in synthetic biology work on the same things?</strong></p>
 <div class="columns">
-<div class="column" style="width:60%;">
+<div class="column" style="width:58%;">
 <ul>
-<li>Synthetic biology is a rapidly growing field</li>
-<li>Innovation is not evenly distributed geographically</li>
-<li>Cities tend to specialize in related knowledge domains</li>
-<li><strong>iGEM</strong> introduces a novel artifact: open-science student competition projects</li>
+<li>Biology moved from <em>reading</em> life to <em>writing</em> it</li>
+<li>Innovation is local: places branch into related work</li>
+<li>iGEM is a rare open, geotagged record of students learning the field</li>
+<li>We put three artifact types in one semantic space and test for shared topics, city by city</li>
 </ul>
-</div><div class="column" style="width:40%;">
-<p><strong>Three artifact types:</strong></p>
-<p>🧬 iGEM projects (4,615)</p>
-<p>📄 Academic papers (8,720)</p>
-<p>📋 <del>Patents</del> <em>(not available)</em></p>
+</div><div class="column" style="width:42%;">
+<p><strong>Three artifact types</strong></p>
+<p>🧬 iGEM projects — 4,606</p>
+<p>📄 Academic papers — 10,319</p>
+<p>📋 USPTO patents — 2,901</p>
+<p><strong>17,826 artifacts · 80 topics</strong></p>
 </div></div>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
@@ -168,278 +170,164 @@ CSH Thesis · Supervised by Frank Neffke &amp; Claudia Doblinger
 <p><strong>Note</strong></p>
 </div>
 <div class="callout-content">
-<p>We test <strong>semantic relatedness</strong>, not causation. Both artifact types may reflect the same underlying city-level specialisation.</p>
+<p>We test semantic relatedness and co-location, not causation.</p>
 </div>
 </div>
 </div>
 </section>
-<section id="why-igem" class="slide level2">
-<h2>Why iGEM?</h2>
-<p>iGEM (International Genetically Engineered Machine) is a global student competition founded at MIT in 2004.</p>
+<section id="why-igem-and-biobricks" class="slide level2">
+<h2>Why iGEM and BioBricks</h2>
 <ul>
-<li>Teams design biological systems using open-source “BioBrick” parts</li>
-<li>All parts deposited in a public registry (~90,000 parts total)</li>
-<li>Projects documented on public wikis</li>
-<li>Hosted at universities → embedded in local academic culture</li>
+<li>iGEM: a worldwide student competition, projects built from a shared kit of standard DNA parts</li>
+<li>~89,000 BioBricks in an open registry, each with a stable <code>BBa_</code> id and a functional class</li>
+<li>LEGO logic: a part from Uppsala combines with a part from Auckland</li>
+<li>The parts are a second, independent record of what students actually built</li>
 </ul>
 <blockquote>
-<p>“Do cities that produce focused iGEM activity also produce focused academic output in the same synthetic biology subfield?”</p>
+<p>Uppsala 2009’s <em>Booze Bugs</em> engineered cyanobacteria to make alcohol from sunlight; a 2014 paper cites the team’s own BioBrick. One thread, competition to publication.</p>
 </blockquote>
 </section>
-<section id="data" class="slide level2">
-<h2>Data</h2>
+<section id="building-the-corpus" class="slide level2">
+<h2>Building the corpus</h2>
 <table class="caption-top">
 <thead>
 <tr class="header">
 <th>Source</th>
 <th style="text-align: right;">Records</th>
-<th style="text-align: right;">Years</th>
-<th style="text-align: right;">Cities</th>
+<th>Geocoded to</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>OpenAlex (papers)</td>
-<td style="text-align: right;">8,720</td>
-<td style="text-align: right;">2000–2026</td>
-<td style="text-align: right;">1,146</td>
+<td>OpenAlex (keyword)</td>
+<td style="text-align: right;">10,319 papers</td>
+<td>institution city</td>
 </tr>
 <tr class="even">
-<td>iGEM Registry (projects)</td>
-<td style="text-align: right;">4,615</td>
-<td style="text-align: right;">2009–2025</td>
-<td style="text-align: right;">626</td>
+<td>Oldham USPTO set</td>
+<td style="text-align: right;">2,901 patents</td>
+<td>inventor cities (fractional)</td>
 </tr>
 <tr class="odd">
-<td><strong>Both types</strong></td>
-<td style="text-align: right;"><strong>13,335</strong></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"><strong>379 shared</strong></td>
+<td>iGEM Registry + wikis</td>
+<td style="text-align: right;">4,606 projects</td>
+<td>team city (multi-tier)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Carbon capture case study:</strong></p>
 <ul>
-<li>234 papers + 141 projects flagged by keyword match</li>
-<li>Keywords: <em>carbon capture, CO₂ fixation, RuBisCO, biofuel, Calvin cycle,</em> …</li>
+<li>Shared schema: id · type · title · text · year · city · country · carbon-capture flag</li>
+<li>Fine-tuned SPECTER2 on ~100k cross-type links (wiki DOIs + Marx patent–paper pairs)</li>
+<li>UMAP → HDBSCAN → 80 human-reviewed topic clusters</li>
 </ul>
 </section>
-<section id="method-specter2-embeddings" class="slide level2">
-<h2>Method: SPECTER2 embeddings</h2>
-<p>Each artifact → 768-dimensional vector using <strong>SPECTER2</strong> (AllenAI, 2022)</p>
+<section id="the-measure-that-failed" class="slide level2">
+<h2>The measure that failed</h2>
+<p>Average a city’s projects and papers into two vectors, take the cosine.</p>
 <ul>
-<li>Trained on scientific papers with citation supervision</li>
-<li><em>Proximity adapter</em> optimised for document-to-document similarity</li>
-<li>More domain-appropriate than BERT or GPT for scientific text</li>
+<li>Looks great: similarity ≈ 0.95 almost everywhere</li>
+<li>But it correlates ~0.71 with city size → <strong>centroid collapse</strong></li>
+<li>It measures <em>how much</em> a city publishes, not <em>what</em> it publishes</li>
 </ul>
-<p>Then: <strong>UMAP</strong> to 30D (clustering) and 2D (visualization)</p>
-<p>Then: <strong>HDBSCAN</strong> → 347 clusters; top 25 labeled with Claude Haiku</p>
+<p>A useful negative result: the fix is to stop averaging and count topics.</p>
 </section>
-<section id="the-semantic-space" class="slide level2">
-<h2>The semantic space</h2>
-<p><em>Papers (blue) and iGEM projects (orange) interleave across semantic space</em></p>
-<p><em>Carbon-capture artifacts (green ◆) span several adjacent subfield clusters</em></p>
-<p>→ See <a href="./results.html">interactive figure</a> on the Results page</p>
-</section>
-<section id="thematic-clusters-top-10-by-size" class="slide level2">
-<h2>Thematic clusters (top 10 by size)</h2>
+<section id="the-measure-that-worked" class="slide level2">
+<h2>The measure that worked</h2>
+<p>Represent each city as a profile over the 80 topics. Read the cosine overlap of two types, then test it against a <strong>within-country permutation null</strong> (shuffle which city pairs with which, holding size and topic popularity fixed).</p>
 <table class="caption-top">
 <thead>
 <tr class="header">
-<th>Cluster</th>
-<th style="text-align: right;">Size</th>
+<th>Pair</th>
+<th style="text-align: center;">Cities</th>
+<th style="text-align: center;">Excess</th>
+<th style="text-align: center;"><em>p</em></th>
+<th style="text-align: center;">Beats null?</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Plastic degradation and biodegradation</td>
-<td style="text-align: right;">191</td>
+<td>Project × paper</td>
+<td style="text-align: center;">120</td>
+<td style="text-align: center;">+0.0102</td>
+<td style="text-align: center;">0.0077</td>
+<td style="text-align: center;">✅</td>
 </tr>
 <tr class="even">
-<td>Antimicrobial peptides for crop protection</td>
-<td style="text-align: right;">189</td>
+<td>Paper × patent</td>
+<td style="text-align: center;">44</td>
+<td style="text-align: center;">+0.0352</td>
+<td style="text-align: center;">0.0055</td>
+<td style="text-align: center;">✅</td>
 </tr>
 <tr class="odd">
-<td>Bacteriophage therapy and engineering</td>
-<td style="text-align: right;">115</td>
-</tr>
-<tr class="even">
-<td>Microbial chassis and metabolic engineering</td>
-<td style="text-align: right;">114</td>
-</tr>
-<tr class="odd">
-<td>Engineered bacteria for cancer therapy</td>
-<td style="text-align: right;">110</td>
-</tr>
-<tr class="even">
-<td>CRISPR-Cas genome editing systems</td>
-<td style="text-align: right;">90</td>
-</tr>
-<tr class="odd">
-<td>Biofuel and fine chemical production</td>
-<td style="text-align: right;">79</td>
-</tr>
-<tr class="even">
-<td>Minimal genome design and essentiality</td>
-<td style="text-align: right;">75</td>
-</tr>
-<tr class="odd">
-<td>DNA assembly automation standards</td>
-<td style="text-align: right;">73</td>
-</tr>
-<tr class="even">
-<td>Biosensor / point-of-care detection</td>
-<td style="text-align: right;">55</td>
+<td>Project × patent</td>
+<td style="text-align: center;">28</td>
+<td style="text-align: center;">+0.0041</td>
+<td style="text-align: center;">0.24</td>
+<td style="text-align: center;">❌</td>
 </tr>
 </tbody>
 </table>
+<p><strong>Papers are the hub. The field is a star, not a triangle.</strong></p>
 </section>
-<section id="city-level-semantic-overlap" class="slide level2">
-<h2>City-level semantic overlap</h2>
-<p>For each city with papers <strong>and</strong> projects:</p>
-<p><span class="math display">\[\text{overlap}_i = \cos\left(\bar{e}^{\text{papers}}_i,\; \bar{e}^{\text{projects}}_i\right)\]</span></p>
-<p><strong>379 cities</strong> · Range: 0.80 – 0.99 · Mean: 0.94</p>
-<p>Top cities: Cambridge, Shanghai, Tianjin, Berkeley, Boston</p>
-<p>→ High-overlap cities are large, focused synthetic biology centres</p>
+<section id="trying-to-break-it" class="slide level2">
+<h2>Trying to break it</h2>
+<ul>
+<li><strong>Drop any country</strong> — result barely moves (drop US: paper×patent <em>p</em> = 0.001)</li>
+<li><strong>Change cluster count</strong> — project×paper and paper×patent significant across the whole k-sweep; project×patent never</li>
+<li><strong>Vary the depth threshold</strong> — excess persists, cleaner in deeper cities</li>
+<li><strong>Base vs fine-tuned model</strong> — survives on base SPECTER2; fine-tuning sharpens, does not invent</li>
+</ul>
 </section>
-<section id="regression-results" class="slide level2">
-<h2>Regression results</h2>
-<table class="caption-top">
-<thead>
-<tr class="header">
-<th>Variable</th>
-<th style="text-align: center;">(1)</th>
-<th style="text-align: center;">(2)</th>
-<th style="text-align: center;">(3)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>log(papers)</td>
-<td style="text-align: center;">0.017***</td>
-<td style="text-align: center;">0.017***</td>
-<td style="text-align: center;">0.017***</td>
-</tr>
-<tr class="even">
-<td>log(projects)</td>
-<td style="text-align: center;">0.019***</td>
-<td style="text-align: center;">0.010***</td>
-<td style="text-align: center;">0.010***</td>
-</tr>
-<tr class="odd">
-<td>iGEM year span</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">0.002***</td>
-<td style="text-align: center;">0.002***</td>
-</tr>
-<tr class="even">
-<td>CC paper share</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">0.019</td>
-</tr>
-<tr class="odd">
-<td>CC project share</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">−0.009</td>
-</tr>
-<tr class="even">
-<td><strong>R²</strong></td>
-<td style="text-align: center;"><strong>0.62</strong></td>
-<td style="text-align: center;"><strong>0.63</strong></td>
-<td style="text-align: center;"><strong>0.64</strong></td>
-</tr>
-</tbody>
-</table>
-<p><em>*** p &lt; 0.01, HC3 robust SE, N = 379</em></p>
-<p><strong>Key finding:</strong> More papers + more projects + longer iGEM engagement → higher semantic alignment</p>
+<section id="the-parts-agree-mantel" class="slide level2">
+<h2>The parts agree (Mantel)</h2>
+<p>Is it all just an artifact of how SPECTER2 reads text? Check the semantic structure against something the model never saw.</p>
+<ul>
+<li>Build a city-by-city distance matrix from the mix of <strong>BioBrick part classes</strong></li>
+<li>Compare it to the semantic topic-distance matrix</li>
+<li><span class="math inline">\(r_M = 0.127\)</span>, <span class="math inline">\(p = 0.0005\)</span> across 164 cities</li>
+</ul>
+<p>Two independent windows, one made of words and one of DNA parts, see the same shape. The strongest single piece of evidence the relatedness is real.</p>
+</section>
+<section id="a-dynamic-trace" class="slide level2">
+<h2>A dynamic trace</h2>
+<p>Difference-in-differences, within a city and topic, after differencing out each city’s baseline and each topic’s trend:</p>
+<ul>
+<li><strong>Paper → patent:</strong> <span class="math inline">\(\hat\beta = +0.355\)</span>, <span class="math inline">\(p = 0.028\)</span> (<span class="math inline">\(N = 44\)</span>) — academic output predicts later patenting in the same topic</li>
+<li><strong>Project → paper:</strong> significant in the larger bipartite sample (<span class="math inline">\(N = 161\)</span>), underpowered in the tripartite one</li>
+<li>Lead-lag ordering: a null at this sample size (bipartite found a +3-year peak)</li>
+</ul>
 </section>
 <section id="case-study-carbon-capture" class="slide level2">
-<h2>Case study: Carbon capture</h2>
-<p>7 cities with ≥2 CC papers and ≥2 CC projects:</p>
-<table class="caption-top">
-<thead>
-<tr class="header">
-<th>City</th>
-<th style="text-align: right;">CC Papers</th>
-<th style="text-align: right;">CC Projects</th>
-<th style="text-align: right;">CC Overlap</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>San Diego</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0.963</td>
-</tr>
-<tr class="even">
-<td>Wuhan</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">0.959</td>
-</tr>
-<tr class="odd">
-<td>Beijing</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0.956</td>
-</tr>
-<tr class="even">
-<td>Shanghai</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">0.948</td>
-</tr>
-<tr class="odd">
-<td>Madison</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0.929</td>
-</tr>
-<tr class="even">
-<td>Austin</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0.923</td>
-</tr>
-</tbody>
-</table>
-<p>→ Small sample, but expected hubs. Consistently high overlap (0.92–0.96).</p>
-</section>
-<section id="limitations" class="slide level2">
-<h2>Limitations</h2>
-<ol type="1">
-<li><strong>No patents</strong> — the downstream translation step cannot be tested</li>
-<li><strong>SPECTER2 domain mismatch</strong> — trained on papers, not project descriptions</li>
-<li><strong>Cross-sectional</strong> — cannot determine temporal ordering within cities</li>
-<li><strong>Single-institution geocoding</strong> — multi-city collaborations not captured</li>
-<li><strong>Carbon-capture sample is small</strong> — 7 cities limits statistical power</li>
-</ol>
-</section>
-<section id="conclusion" class="slide level2">
-<h2>Conclusion</h2>
-<p><strong>Cities with larger, more sustained synthetic biology footprints show higher semantic alignment between their iGEM projects and academic papers.</strong></p>
+<h2>Case study: carbon capture</h2>
+<p>Three adjacent clusters trace the ladder:</p>
 <ul>
-<li>R² ≈ 0.62 from size alone; temporal engagement adds further explanatory power</li>
-<li>Carbon capture case study identifies the expected geographic hubs</li>
-<li>Results are <em>descriptive</em>: both artifact types likely reflect the same underlying city-level specialisation</li>
+<li><strong>Cluster 7</strong> Cyanobacterial Metabolic Engineering — projects</li>
+<li><strong>Cluster 8</strong> Cyanobacterial Chassis Development — papers</li>
+<li><strong>Cluster 62</strong> Industrial Fermentation — patents</li>
 </ul>
-<p><strong>Next steps:</strong> - Add patent data (PatentsView, better geocoding) - Longitudinal analysis: does project activity in year <span class="math inline">\(t\)</span> predict paper activity in <span class="math inline">\(t+k\)</span>? - Extend to other synthetic biology subfields beyond carbon capture</p>
+<p>Leaderboard: <strong>Auckland (19), Uppsala (18), Daejeon (15), San Diego (14), Gainesville (13)</strong> — where students, academics, and inventors all work on engineering cyanobacteria at once.</p>
+<p>Alignment inside the subfield is as strong as field-wide (<span class="math inline">\(\bar\delta = +0.0140\)</span>, 90% positive).</p>
+</section>
+<section id="what-it-shows-and-what-it-cant" class="slide level2">
+<h2>What it shows, and what it can’t</h2>
+<p><strong>Establishes:</strong> real, size-independent local relatedness between a city’s projects and papers, and papers and patents; robust to country, cluster count, threshold, and model; anchored in physical parts.</p>
+<p><strong>Does not establish:</strong> causation. The three share many local causes — same universities, mentors, funders. We document the pattern; we do not identify the mechanism.</p>
+<p><strong>Policy:</strong> where students cluster is a signal of where a field is putting down roots. Funding student science and open tools is an early investment in the field.</p>
 </section>
 <section id="thank-you" class="slide level2">
 <h2>Thank you</h2>
-<p><strong>Full website:</strong> <a href="https://zer0juice.github.io/synbiomap">zer0juice.github.io/synbiomap</a></p>
-<p><strong>Code:</strong> <a href="https://github.com/Zer0Juice/synbiomap">github.com/Zer0Juice/synbiomap</a></p>
-<p><strong>Supervisors:</strong> Frank Neffke (CSH) · Claudia Doblinger (TU Munich)</p>
+<p><strong>Website:</strong> <a href="https://zer0juice.github.io/synbiomap">zer0juice.github.io/synbiomap</a></p>
+<p><strong>Code &amp; data:</strong> <a href="https://github.com/Zer0Juice/synbiomap">github.com/Zer0Juice/synbiomap</a></p>
+<p><strong>Manuscript &amp; this deck as PDF:</strong> on the <a href="./paper.html">Paper</a> page</p>
+<p>Advised by Frank Neffke (CSH) · Claudia Doblinger (TU Munich)</p>
 
 
 </section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
-<p>Patents, Papers, Parts &amp; Planet — CSH Thesis</p>
+<p>Patents, Papers, Parts &amp; Planet</p>
 </div>
 </div></div>
 

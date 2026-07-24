@@ -68,6 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./assets/favicon.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -106,6 +107,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -130,33 +160,62 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link active" href="./results.html" aria-current="page"> 
-<span class="menu-text">Results</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-the-study" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">The Study</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-the-study">    
+        <li>
+    <a class="dropdown-item" href="./background.html">
+ <span class="dropdown-text">Background</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./case-study.html"> 
-<span class="menu-text">Carbon Capture</span></a>
+        <li>
+    <a class="dropdown-item" href="./methods.html">
+ <span class="dropdown-text">Methods &amp; Data</span></a>
   </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-findings" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Findings</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-findings">    
+        <li>
+    <a class="dropdown-item" href="./results.html">
+ <span class="dropdown-text">Results</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./case-study.html">
+ <span class="dropdown-text">Case Study: Carbon Capture</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="./explorer.html"> 
 <span class="menu-text">Explorer</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./methods.html"> 
-<span class="menu-text">Methods &amp; Data</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-paper" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Paper</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-paper">    
+        <li>
+    <a class="dropdown-item" href="./paper.html">
+ <span class="dropdown-text">Summary &amp; PDF</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./paper.html"> 
-<span class="menu-text">Paper</span></a>
+        <li>
+    <a class="dropdown-item" href="./references.html">
+ <span class="dropdown-text">References</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./slides.html">
+ <span class="dropdown-text">Slides</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="./reproducibility.html"> 
 <span class="menu-text">Reproducibility</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./slides.html"> 
-<span class="menu-text">Slides</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -174,10 +233,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#semantic-space" id="toc-semantic-space" class="nav-link active" data-scroll-target="#semantic-space">Semantic space</a></li>
-  <li><a href="#thematic-clusters" id="toc-thematic-clusters" class="nav-link" data-scroll-target="#thematic-clusters">Thematic clusters</a></li>
-  <li><a href="#city-level-semantic-overlap" id="toc-city-level-semantic-overlap" class="nav-link" data-scroll-target="#city-level-semantic-overlap">City-level semantic overlap</a></li>
-  <li><a href="#regression-what-predicts-higher-overlap" id="toc-regression-what-predicts-higher-overlap" class="nav-link" data-scroll-target="#regression-what-predicts-higher-overlap">Regression: what predicts higher overlap?</a></li>
+  <li><a href="#the-obvious-measure-and-why-it-fails" id="toc-the-obvious-measure-and-why-it-fails" class="nav-link active" data-scroll-target="#the-obvious-measure-and-why-it-fails">The obvious measure, and why it fails</a></li>
+  <li><a href="#the-real-test-shared-topics" id="toc-the-real-test-shared-topics" class="nav-link" data-scroll-target="#the-real-test-shared-topics">The real test: shared topics</a></li>
+  <li><a href="#three-ways-to-try-to-break-it" id="toc-three-ways-to-try-to-break-it" class="nav-link" data-scroll-target="#three-ways-to-try-to-break-it">Three ways to try to break it</a></li>
+  <li><a href="#do-the-parts-agree" id="toc-do-the-parts-agree" class="nav-link" data-scroll-target="#do-the-parts-agree">Do the parts agree?</a></li>
+  <li><a href="#dynamic-coupling" id="toc-dynamic-coupling" class="nav-link" data-scroll-target="#dynamic-coupling">Dynamic coupling</a></li>
+  <li><a href="#what-it-shows-and-what-it-cant" id="toc-what-it-shows-and-what-it-cant" class="nav-link" data-scroll-target="#what-it-shows-and-what-it-cant">What it shows, and what it can’t</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -203,190 +264,171 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="semantic-space" class="level2">
-<h2 class="anchored" data-anchor-id="semantic-space">Semantic space</h2>
-<p>All 13,335 artifacts — 8,720 papers and 4,615 iGEM projects — were embedded with <a href="https://huggingface.co/allenai/specter2">SPECTER2</a> and projected to two dimensions using UMAP. The figure below shows the full projection. Blue points are papers; orange points are iGEM projects; green diamonds are carbon-capture flagged artifacts from either type.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<p>This page is the analytical heart of the project. It follows the same path as the <a href="https://github.com/Zer0Juice/synbiomap/blob/main/notebooks/02_tripartite_city_analysis.py">tripartite notebook</a>: build up a measure of whether a city’s projects, papers, and patents are related, watch the first one fail, replace it with one that holds, and then spend most of the effort trying to break the answer it gives. Everything runs on the shared semantic space from the <a href="./methods.html">Methods</a> page, where all 17,826 artifacts sit as points and 80 topic clusters mark the field’s dense regions.</p>
+<section id="the-obvious-measure-and-why-it-fails" class="level2">
+<h2 class="anchored" data-anchor-id="the-obvious-measure-and-why-it-fails">The obvious measure, and why it fails</h2>
+<p>Start with the simplest idea. Average each city’s projects into one vector, average its papers into another, and measure the angle between them with cosine similarity. High similarity should mean the students and academics point at the same part of the field.</p>
+<p>Taken at face value it looks like a resounding yes. The centroid similarity is high almost everywhere, on the order of 0.95. But it is high even for city pairs that share no obvious subject, which is the tell that the measure is reading something other than local relatedness. Regress the overlap on how many documents a city has, and the finding crumbles: overlap correlates about 0.71 with document count, so roughly half its variance is just city size.</p>
+<p>The mechanism is a known property of high-dimensional averaging, sometimes called centroid collapse. Each document vector lives near a dense core where the general vocabulary of synthetic biology concentrates. As a city accumulates more documents, its average is pulled toward that core, so large cities end up with centroids near each other and near the global mean, whether or not their students and academics actually work on the same things. The centroid measure answers how much a city publishes, dressed up as a question about what it publishes. It was the project’s first real result, and it was a negative one, but the mechanism pointed straight at the fix.</p>
+<div id="fig-centroid" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-centroid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="assets/figures/centroid_size_artifact.png" class="img-fluid figure-img">
 </div>
-<div class="callout-title-container flex-fill">
-Note
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-centroid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Why the centroid measure fails. Project-to-paper centroid overlap climbs with the number of documents a city has, so it mostly tracks city size rather than local relatedness.
+</figcaption>
+</figure>
 </div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Use the legend to toggle artifact types on and off. Hover over any point to see the title, city, and year.</p>
-</div>
-</div>
-<iframe src="assets/figures/fig1_umap_all.html" width="100%" height="620px" frameborder="0" style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
-</iframe>
-<p><strong>What the projection shows.</strong> Papers and iGEM projects interleave across the semantic space rather than splitting into two distinct blobs. The topics of student projects and academic papers aren’t that far apart — which makes sense, given that students are building from the same scientific literature their advisors write.</p>
-<hr>
 </section>
-<section id="thematic-clusters" class="level2">
-<h2 class="anchored" data-anchor-id="thematic-clusters">Thematic clusters</h2>
-<p>HDBSCAN identified 347 local clusters in the embedding space. The 25 largest named clusters (covering about 2,200 artifacts) include:</p>
+<section id="the-real-test-shared-topics" class="level2">
+<h2 class="anchored" data-anchor-id="the-real-test-shared-topics">The real test: shared topics</h2>
+<p>The failure was averaging. So stop averaging and count topics instead. Represent each city not as one vector but as a profile across the 80 clusters: which topics do its projects fall into, and which do its papers fall into? Relatedness becomes a sharper question. Not “do the two point the same way on average?” but “do they co-invest in the same specific subjects?” A city can be huge and productive across the whole field, earning a high centroid similarity with everyone, while its students and academics work on entirely different corners. The topic-profile measure separates that case from a city where both genuinely concentrate on the same handful of clusters.</p>
+<p>For each pair of artifact types in a city, we take the L2-normalized cluster-frequency vectors and read off their cosine overlap. That raw number means nothing until it is held against a baseline, and the baseline is the whole game. We build it with a within-country permutation test: inside each country, shuffle which city’s paper profile is paired with which city’s project profile, thousands of times, and recompute the mean overlap. Every shuffle keeps each city’s document counts and every cluster’s popularity fixed, so any excess that survives must come from the specific co-location of topics, not from size or from some topics being universally popular.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># src/analyze/relatedness.py — the core of the decisive test (abridged)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_city_type_vectors(clustered, k_clusters):</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># one L2-normalized cluster-frequency vector per (type, city)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pair_permutation(vecs, type_a, type_b, cities, country_of, n_perm<span class="op">=</span><span class="dv">2000</span>):</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    va, vb <span class="op">=</span> vecs[type_a], vecs[type_b]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    observed <span class="op">=</span> np.mean([np.dot(va[c], vb[c]) <span class="cf">for</span> c <span class="kw">in</span> cities])   <span class="co"># real pairing</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    null <span class="op">=</span> []</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_perm):</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># inside each country, break only the local city-to-city pairing</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        shuffled <span class="op">=</span> repair_within_country(cities, country_of)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        null.append(np.mean([np.dot(va[c], vb[s]) <span class="cf">for</span> c, s <span class="kw">in</span> shuffled]))</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    excess <span class="op">=</span> observed <span class="op">-</span> np.mean(null)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> (np.<span class="bu">sum</span>(np.array(null) <span class="op">&gt;=</span> observed) <span class="op">+</span> <span class="dv">1</span>) <span class="op">/</span> (n_perm <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"excess"</span>: excess, <span class="st">"p"</span>: p}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The real cities beat the null. Running the test for all three ordered pairs gives a clear and uneven picture.</p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 29%">
-<col style="width: 19%">
-<col style="width: 51%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Cluster</th>
-<th style="text-align: right;">Size</th>
-<th>Example topics</th>
+<th>Pair</th>
+<th style="text-align: center;">Cities</th>
+<th style="text-align: center;">Excess overlap</th>
+<th style="text-align: center;"><em>p</em></th>
+<th style="text-align: center;">Lift</th>
+<th style="text-align: center;">Beats null?</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Plastic degradation and biodegradation</td>
-<td style="text-align: right;">191</td>
-<td>PET, polyhydroxyalkanoates</td>
+<td>Project × paper</td>
+<td style="text-align: center;">120</td>
+<td style="text-align: center;">+0.0102</td>
+<td style="text-align: center;">0.0077</td>
+<td style="text-align: center;">1.30×</td>
+<td style="text-align: center;">yes</td>
 </tr>
 <tr class="even">
-<td>Antimicrobial peptides for crop protection</td>
-<td style="text-align: right;">189</td>
-<td>bacteriocins, plant immunity</td>
+<td>Paper × patent</td>
+<td style="text-align: center;">44</td>
+<td style="text-align: center;">+0.0352</td>
+<td style="text-align: center;">0.0055</td>
+<td style="text-align: center;">1.27×</td>
+<td style="text-align: center;">yes</td>
 </tr>
 <tr class="odd">
-<td>Bacteriophage therapy and engineering</td>
-<td style="text-align: right;">115</td>
-<td>phage display, lytic cycles</td>
-</tr>
-<tr class="even">
-<td>Microbial chassis and metabolic engineering</td>
-<td style="text-align: right;">114</td>
-<td><em>E. coli</em>, <em>B. subtilis</em> chassis</td>
-</tr>
-<tr class="odd">
-<td>Engineered bacteria for cancer therapy</td>
-<td style="text-align: right;">110</td>
-<td>tumor-targeting microbes</td>
-</tr>
-<tr class="even">
-<td>Engineered living materials and assembly</td>
-<td style="text-align: right;">105</td>
-<td>biofilms, curli fibres</td>
-</tr>
-<tr class="odd">
-<td>CRISPR-Cas genome editing systems</td>
-<td style="text-align: right;">90</td>
-<td>Cas9, base editing</td>
-</tr>
-<tr class="even">
-<td>Biofuel and fine chemical production</td>
-<td style="text-align: right;">79</td>
-<td>ethanol, terpenes, fatty acids</td>
-</tr>
-<tr class="odd">
-<td>Minimal genome design and essentiality</td>
-<td style="text-align: right;">75</td>
-<td>JCVI-syn3, essential genes</td>
-</tr>
-<tr class="even">
-<td>DNA assembly automation standards</td>
-<td style="text-align: right;">73</td>
-<td>Golden Gate, BioBricks, MoClo</td>
+<td>Project × patent</td>
+<td style="text-align: center;">28</td>
+<td style="text-align: center;">+0.0041</td>
+<td style="text-align: center;">0.24</td>
+<td style="text-align: center;">0.98×</td>
+<td style="text-align: center;">no</td>
 </tr>
 </tbody>
 </table>
-<p>The remaining ~11,000 artifacts fall into smaller thematic clusters (each ≤ 54 artifacts) collectively labelled “Other”.</p>
-<hr>
+<p>Once city size and topic popularity are held fixed, a city’s projects and papers share specific topics more often than chance allows, and so do its papers and patents. Its projects and patents do not. That gap is not a hole in the analysis; it is the finding. The three artifact types are not equally related, and academic research sits in the middle. A joint three-way test on the 28 cities with all three types is significant (excess +0.016, <em>p</em> = 0.007), but it is carried entirely by the two paper links.</p>
+<div id="fig-perm" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-perm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="assets/figures/tripartite_permutation.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-perm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: The central result. The observed rate at which a city’s artifact types share topics (marked line) sits above the distribution from reshuffling within countries (histogram), which holds size and topic popularity fixed. The gap is the size-independent local relatedness. Project × paper and paper × patent clear the null; project × patent does not.
+</figcaption>
+</figure>
+</div>
 </section>
-<section id="city-level-semantic-overlap" class="level2">
-<h2 class="anchored" data-anchor-id="city-level-semantic-overlap">City-level semantic overlap</h2>
-<p>For each of the 379 cities with both papers and iGEM projects, we computed the <strong>cosine similarity</strong> between the average (centroid) SPECTER2 embedding of that city’s papers and the average embedding of its projects. Higher values mean the city’s papers and projects are topically closer.</p>
-<iframe src="assets/figures/fig3_city_overlap.html" width="100%" height="720px" frameborder="0" style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
-</iframe>
-<p>Overlap scores range from <strong>0.80 to 0.99</strong> (mean 0.94). The range is narrow because all artifacts are drawn from a single field (synthetic biology), so SPECTER2 places even diverse documents fairly close together. Variation within this range is nonetheless real and interpretable: cities at the high end have papers and projects that are genuinely more co-topical than cities at the low end.</p>
-<p><strong>Top cities</strong> include Cambridge (US), Shanghai, Tianjin, Berkeley, and Boston — all major synthetic biology research centres with large, focused iGEM programmes.</p>
-<hr>
+<section id="three-ways-to-try-to-break-it" class="level2">
+<h2 class="anchored" data-anchor-id="three-ways-to-try-to-break-it">Three ways to try to break it</h2>
+<p>A single clean result is a hypothesis until it has been attacked. The permutation test rules out size and topic popularity, but it rests on choices made before the test ran: which countries are in the sample, how many clusters HDBSCAN produced, and how deep a city’s corpus has to be to count. Each could, in principle, have manufactured the result, so we varied each in turn.</p>
+<p><strong>Drop a whole country.</strong> Remove each country and rerun. The result barely moves. Removing the United States, which supplies a large share of both teams and papers, leaves the paper × patent excess intact (<em>p</em> = 0.001 on the remaining cities) and softens project × paper only to <em>p</em> = 0.068. Removing China leaves it essentially unchanged. No single national system drives the finding.</p>
+<p><strong>Change the number of topics.</strong> Replace the HDBSCAN clusters with k-means at resolutions from fine to coarse, and recompute all three pairwise excesses at each. Project × paper stays significant at every reasonable resolution. Paper × patent stays significant across the sweep. Project × patent never crosses the threshold at any <em>k</em>. The ladder is stable: projects relate to papers, papers relate to patents, and the direct project-to-patent link never achieves significance regardless of how finely the field is sliced.</p>
+<p><strong>Starve the sample.</strong> Vary the minimum documents a city needs to be included. The excess persists across the range. It shows more cleanly in deeper cities, exactly what a real signal does as measurement improves; a spurious result would not reliably strengthen when the data get richer.</p>
+<div id="fig-kcurve" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-kcurve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="assets/figures/robust_kcurve.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-kcurve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Left: the leave-one-country-out check leaves the excess essentially unchanged. Right: across the full k-sweep, project × paper and paper × patent stay significant while project × patent never crosses the line, establishing the ladder in which papers mediate between projects and patents.
+</figcaption>
+</figure>
+</div>
+<p>The k-sweep also settles whether fine-tuning inflated the result. Run side by side, the base SPECTER2 and the fine-tuned adapter both produce significant paper × project excesses at every resolution. The fine-tuned model shows somewhat larger paper × patent excesses, which is expected, since the training data included patent-paper pairs and the adapter was built to bring those closer. Neither model produces a stable project × patent link. The finding is present without fine-tuning; the adapter sharpens it rather than inventing it.</p>
 </section>
-<section id="regression-what-predicts-higher-overlap" class="level2">
-<h2 class="anchored" data-anchor-id="regression-what-predicts-higher-overlap">Regression: what predicts higher overlap?</h2>
-<p>We regressed city-level semantic overlap on city size (log papers, log projects), temporal engagement (year span of iGEM activity), and carbon-capture shares. Standard errors are HC3 heteroskedasticity-robust.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 16%">
-<col style="width: 27%">
-<col style="width: 27%">
-<col style="width: 27%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Variable</th>
-<th style="text-align: center;">(1) Size only</th>
-<th style="text-align: center;">(2) + Temporal</th>
-<th style="text-align: center;">(3) + Carbon</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>log(papers)</td>
-<td style="text-align: center;">0.0168*** (0.0015)</td>
-<td style="text-align: center;">0.0165*** (0.0015)</td>
-<td style="text-align: center;">0.0167*** (0.0015)</td>
-</tr>
-<tr class="even">
-<td>log(projects)</td>
-<td style="text-align: center;">0.0187*** (0.0018)</td>
-<td style="text-align: center;">0.0102*** (0.0030)</td>
-<td style="text-align: center;">0.0102*** (0.0030)</td>
-</tr>
-<tr class="odd">
-<td>iGEM year span</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">0.0016*** (0.0004)</td>
-<td style="text-align: center;">0.0016*** (0.0004)</td>
-</tr>
-<tr class="even">
-<td>CC paper share</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">0.0188 (0.0157)</td>
-</tr>
-<tr class="odd">
-<td>CC project share</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">−0.0086 (0.0188)</td>
-</tr>
-<tr class="even">
-<td>R²</td>
-<td style="text-align: center;">0.620</td>
-<td style="text-align: center;">0.634</td>
-<td style="text-align: center;">0.638</td>
-</tr>
-<tr class="odd">
-<td>N</td>
-<td style="text-align: center;">379</td>
-<td style="text-align: center;">379</td>
-<td style="text-align: center;">379</td>
-</tr>
-</tbody>
-</table>
-<p><em>*** p &lt; 0.01; ** p &lt; 0.05; * p &lt; 0.1. Robust standard errors in parentheses.</em></p>
-<p><strong>What the regression says:</strong></p>
-<p>Cities with more papers <em>and</em> more projects have higher overlap (Models 1–3). Bigger synthetic biology footprints tend to be more focused ones — scale and specialisation go together.</p>
-<p>Longer iGEM engagement also predicts higher overlap (Models 2–3), even after controlling for total project count. Cities where teams keep coming back year after year are also the cities with deep, focused research programmes — the two seem to track each other.</p>
-<p>The carbon-capture shares (Model 3) add nothing once size and time are in the model. This isn’t surprising given how small the CC subset is (375 artifacts, 7 qualifying cities).</p>
-<p>Size alone (log papers + log projects) accounts for about 62% of the variance in city-level overlap. That’s the main story.</p>
+<section id="do-the-parts-agree" class="level2">
+<h2 class="anchored" data-anchor-id="do-the-parts-agree">Do the parts agree?</h2>
+<p>Every result so far lives inside the semantic space, which invites the deepest objection: what if the whole thing is an artifact of how SPECTER2 reads text? If the model imposed some systematic structure, every check would agree with every other for purely internal reasons, and we would have measured a property of the model rather than of the cities. The only clean way to rule this out is to check the semantic structure against something the model never touched.</p>
+<p>The BioBricks give us exactly that. Each part carries a functional class, promoter, coding sequence, reporter, terminator, and so on, and a city’s students leave a fingerprint in the registry: the mix of part classes they built and deposited. That fingerprint is made of physical genetic components and functional labels, not of any language the model could read. We build one city-by-city distance matrix from the semantic topic profiles and a second from the BioBrick class mixes, then ask whether they agree with a Mantel test, which permutes city labels to get a valid null.</p>
+<p>They line up. Across the 164 cities with enough data in both registers, the correlation is <span class="math inline">\(r_M = 0.127\)</span> (<span class="math inline">\(p = 0.0005\)</span>): cities whose students build similar mixes of genetic parts also tend to have similar topic profiles across their projects, papers, and patents. The magnitude is moderate, and honestly so, because a city’s toolkit and its topics are related but not identical. What matters is that two independent windows onto the same cities, one built from words and one built from DNA parts, see the same shape. A structure imposed by the language model would have no reason to match the distribution of promoters and coding sequences across cities. That it does is the single strongest piece of evidence that the relatedness is real, not a property of the measuring tool.</p>
+<div id="fig-mantel" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-mantel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="assets/figures/mantel_parts_vs_topics.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mantel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Two independent views agree. City-pair similarity from the mix of BioBrick part classes (never seen by the model) correlates with city-pair similarity from semantic topic profiles. The relatedness is anchored outside the embedding space.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="dynamic-coupling" class="level2">
+<h2 class="anchored" data-anchor-id="dynamic-coupling">Dynamic coupling</h2>
+<p>The permutation test shows the alignment is real, but it is static: it cannot say whether the alignment is a living year-to-year coupling or a structural feature baked into each city’s long-run specialization. A difference-in-differences design separates the two. Split time into five-year periods and ask, within a single city and topic, whether a rise in one artifact type’s share is accompanied by a rise in the downstream type’s share, after differencing out each city’s standing profile and each topic’s global trend.</p>
+<p>Within the tripartite sample (44 to 46 cities, far smaller than the 161 in the bipartite project-paper analysis), the paper → patent link is positive and significant: <span class="math inline">\(\hat\beta = +0.355\)</span> (<span class="math inline">\(p = 0.028\)</span>, <span class="math inline">\(N = 44\)</span>). Inside a city and topic, a five-year stretch of elevated academic output predicts elevated patenting in the same topic, beyond what the city’s history or the topic’s commercial trend would predict. The project → paper link is not significant in this smaller sample (<span class="math inline">\(p = 0.19\)</span>, <span class="math inline">\(N = 46\)</span>), which contrasts with the positive and significant bipartite result (<span class="math inline">\(\hat\beta = +0.0026\)</span>, <span class="math inline">\(t = 4.06\)</span>, <span class="math inline">\(N = 161\)</span>); the difference is most simply explained by power, since the tripartite sample is under a third the size. The project → patent link, on only ten cities, is not interpretable.</p>
+<div id="fig-did" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-did-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="assets/figures/tripartite_did.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-did-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Tripartite difference-in-differences, with 95% city-clustered confidence intervals. Paper → patent is positive and significant; project → paper is not significant in this smaller sample; project → patent uses too few cities to interpret.
+</figcaption>
+</figure>
+</div>
+<p>A natural follow-up asks whether that coupling has a preferred direction across years: do projects tend to precede papers, and papers precede patents? We built annual topic-frequency vectors per city and measured how similarity changes as one type is offset against the other by up to three years. Both profiles come out flat, with overlapping confidence intervals, and a within-city year-shuffle permutation test finds no significant asymmetry (<em>p</em>-values from 0.51 to 0.93). This is a null result for this sample size, not a demonstration that ordering is absent: the larger bipartite analysis did find a significant lead-lag peak at the same lags. When all three artifact types must be present at once, the sample gets small and selective, and the modest annual signal is below what it can resolve.</p>
+<div id="fig-leadlag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-leadlag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="assets/figures/tripartite_lead_lag.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-leadlag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Lead-lag profiles for the two adjacent pairs, with bootstrap confidence intervals. Both are flat across lags; the permutation tests find no statistically significant temporal asymmetry at this sample size.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="what-it-shows-and-what-it-cant" class="level2">
+<h2 class="anchored" data-anchor-id="what-it-shows-and-what-it-cant">What it shows, and what it can’t</h2>
+<p>The work is shaped like a star, not a triangle. Papers are the hub: a city’s papers relate to its projects, and its papers relate to its patents, but its projects and patents are the most distant pair. The chain is strongest between neighbors and weakest across the full span from student bench to commercial filing, which is what you would expect if capabilities travel in steps with academic research as the middle link. The pattern is size-independent, survives dropping any country, holds across cluster resolutions and depth thresholds, appears in the base model before any fine-tuning, and is anchored in the physical parts the students built through the Mantel test.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Causal interpretation
+<span class="screen-reader-only">Warning</span>No causal claim
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>These associations cannot be interpreted causally. Cities with more papers and more projects are likely the same cities with stronger research infrastructure, more specialised universities, and larger synthetic biology communities — all factors that independently drive both outcomes.</p>
+<p>None of this shows that student projects cause later papers, or that papers cause patents. The three artifact types share many local causes: the same universities host teams and labs, the same mentors advise students and run labs, the same firms and funders shape what everyone works on. Any of these common causes could produce the pattern with no direct flow of ideas between artifact types. What the data establish is real and size-independent local relatedness. What they cannot establish is which mechanism produces it.</p>
 </div>
 </div>
+<p>The <a href="./case-study.html">carbon-capture case study</a> narrows this general result to one subfield and one set of cities, and the <a href="./explorer.html">Explorer</a> lets you search any city and see its projects, papers, and patents in the shared space.</p>
 
 
 <!-- -->
@@ -845,124 +887,220 @@ Note
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Results"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Semantic space</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>All 13,335 artifacts — 8,720 papers and 4,615 iGEM projects — were embedded with</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">SPECTER2</span><span class="co">](https://huggingface.co/allenai/specter2)</span> and projected to two dimensions</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>using UMAP. The figure below shows the full projection. Blue points are papers;</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>orange points are iGEM projects; green diamonds are carbon-capture flagged artifacts</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>from either type.</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>Use the legend to toggle artifact types on and off. Hover over any point to see the title, city, and year.</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;iframe src="assets/figures/fig1_umap_all.html"</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="in">        width="100%" height="620px" frameborder="0"</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="in">        style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);"&gt;</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/iframe&gt;</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>**What the projection shows.** Papers and iGEM projects interleave across the semantic</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>space rather than splitting into two distinct blobs. The topics of student projects and</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>academic papers aren't that far apart — which makes sense, given that students are building</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>from the same scientific literature their advisors write.</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## Thematic clusters</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>HDBSCAN identified 347 local clusters in the embedding space. The 25 largest</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>named clusters (covering about 2,200 artifacts) include:</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Cluster <span class="pp">|</span> Size <span class="pp">|</span> Example topics <span class="pp">|</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-----:|----------------|</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Plastic degradation and biodegradation <span class="pp">|</span> 191 <span class="pp">|</span> PET, polyhydroxyalkanoates <span class="pp">|</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Antimicrobial peptides for crop protection <span class="pp">|</span> 189 <span class="pp">|</span> bacteriocins, plant immunity <span class="pp">|</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Bacteriophage therapy and engineering <span class="pp">|</span> 115 <span class="pp">|</span> phage display, lytic cycles <span class="pp">|</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Microbial chassis and metabolic engineering <span class="pp">|</span> 114 <span class="pp">|</span> *E. coli*, *B. subtilis* chassis <span class="pp">|</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Engineered bacteria for cancer therapy <span class="pp">|</span> 110 <span class="pp">|</span> tumor-targeting microbes <span class="pp">|</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Engineered living materials and assembly <span class="pp">|</span> 105 <span class="pp">|</span> biofilms, curli fibres <span class="pp">|</span></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CRISPR-Cas genome editing systems <span class="pp">|</span> 90 <span class="pp">|</span> Cas9, base editing <span class="pp">|</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Biofuel and fine chemical production <span class="pp">|</span> 79 <span class="pp">|</span> ethanol, terpenes, fatty acids <span class="pp">|</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Minimal genome design and essentiality <span class="pp">|</span> 75 <span class="pp">|</span> JCVI-syn3, essential genes <span class="pp">|</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> DNA assembly automation standards <span class="pp">|</span> 73 <span class="pp">|</span> Golden Gate, BioBricks, MoClo <span class="pp">|</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>The remaining ~11,000 artifacts fall into smaller thematic clusters (each ≤ 54 artifacts)</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>collectively labelled "Other".</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="fu">## City-level semantic overlap</span></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>For each of the 379 cities with both papers and iGEM projects, we computed the</span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>**cosine similarity** between the average (centroid) SPECTER2 embedding of that city's</span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>papers and the average embedding of its projects. Higher values mean the city's papers</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>and projects are topically closer.</span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;iframe src="assets/figures/fig3_city_overlap.html"</span></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="in">        width="100%" height="720px" frameborder="0"</span></span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="in">        style="border-radius:4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);"&gt;</span></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/iframe&gt;</span></span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>Overlap scores range from **0.80 to 0.99** (mean 0.94). The range is narrow because</span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>all artifacts are drawn from a single field (synthetic biology), so SPECTER2 places</span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>even diverse documents fairly close together. Variation within this range is nonetheless</span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>real and interpretable: cities at the high end have papers and projects that are</span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>genuinely more co-topical than cities at the low end.</span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>**Top cities** include Cambridge (US), Shanghai, Tianjin, Berkeley, and Boston — all</span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>major synthetic biology research centres with large, focused iGEM programmes.</span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regression: what predicts higher overlap?</span></span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>We regressed city-level semantic overlap on city size (log papers, log projects),</span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>temporal engagement (year span of iGEM activity), and carbon-capture shares.</span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>Standard errors are HC3 heteroskedasticity-robust.</span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Variable <span class="pp">|</span> (1) Size only <span class="pp">|</span> (2) + Temporal <span class="pp">|</span> (3) + Carbon <span class="pp">|</span></span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|:---:|:---:|:---:|</span></span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> log(papers) <span class="pp">|</span> 0.0168<span class="sc">\*\*\*</span> (0.0015) <span class="pp">|</span> 0.0165<span class="sc">\*\*\*</span> (0.0015) <span class="pp">|</span> 0.0167<span class="sc">\*\*\*</span> (0.0015) <span class="pp">|</span></span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> log(projects) <span class="pp">|</span> 0.0187<span class="sc">\*\*\*</span> (0.0018) <span class="pp">|</span> 0.0102<span class="sc">\*\*\*</span> (0.0030) <span class="pp">|</span> 0.0102<span class="sc">\*\*\*</span> (0.0030) <span class="pp">|</span></span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> iGEM year span <span class="pp">|</span> — <span class="pp">|</span> 0.0016<span class="sc">\*\*\*</span> (0.0004) <span class="pp">|</span> 0.0016<span class="sc">\*\*\*</span> (0.0004) <span class="pp">|</span></span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CC paper share <span class="pp">|</span> — <span class="pp">|</span> — <span class="pp">|</span> 0.0188 (0.0157) <span class="pp">|</span></span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CC project share <span class="pp">|</span> — <span class="pp">|</span> — <span class="pp">|</span> −0.0086 (0.0188) <span class="pp">|</span></span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> R² <span class="pp">|</span> 0.620 <span class="pp">|</span> 0.634 <span class="pp">|</span> 0.638 <span class="pp">|</span></span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> N <span class="pp">|</span> 379 <span class="pp">|</span> 379 <span class="pp">|</span> 379 <span class="pp">|</span></span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>*\*\*\* p &lt; 0.01; \*\* p &lt; 0.05; \* p &lt; 0.1. Robust standard errors in parentheses.*</span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>**What the regression says:**</span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>Cities with more papers *and* more projects have higher overlap (Models 1–3). Bigger</span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>synthetic biology footprints tend to be more focused ones — scale and specialisation go</span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>together.</span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>Longer iGEM engagement also predicts higher overlap (Models 2–3), even after controlling</span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>for total project count. Cities where teams keep coming back year after year are also the</span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>cities with deep, focused research programmes — the two seem to track each other.</span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>The carbon-capture shares (Model 3) add nothing once size and time are in the model. This</span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>isn't surprising given how small the CC subset is (375 artifacts, 7 qualifying cities).</span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>Size alone (log papers + log projects) accounts for about 62% of the variance in</span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>city-level overlap. That's the main story.</span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="fu">## Causal interpretation</span></span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>These associations cannot be interpreted causally. Cities with more papers and more projects</span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>are likely the same cities with stronger research infrastructure, more specialised universities,</span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>and larger synthetic biology communities — all factors that independently drive both outcomes.</span>
-<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Results"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>This page is the analytical heart of the project. It follows the same path as the</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">tripartite notebook</span><span class="co">](https://github.com/Zer0Juice/synbiomap/blob/main/notebooks/02_tripartite_city_analysis.py)</span>:</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>build up a measure of whether a city's projects, papers, and patents are related, watch the first</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>one fail, replace it with one that holds, and then spend most of the effort trying to break the</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>answer it gives. Everything runs on the shared semantic space from the <span class="co">[</span><span class="ot">Methods</span><span class="co">](methods.qmd)</span> page,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>where all 17,826 artifacts sit as points and 80 topic clusters mark the field's dense regions.</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## The obvious measure, and why it fails</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>Start with the simplest idea. Average each city's projects into one vector, average its papers into</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>another, and measure the angle between them with cosine similarity. High similarity should mean the</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>students and academics point at the same part of the field.</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>Taken at face value it looks like a resounding yes. The centroid similarity is high almost</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>everywhere, on the order of 0.95. But it is high even for city pairs that share no obvious subject,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>which is the tell that the measure is reading something other than local relatedness. Regress the</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>overlap on how many documents a city has, and the finding crumbles: overlap correlates about 0.71</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>with document count, so roughly half its variance is just city size.</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>The mechanism is a known property of high-dimensional averaging, sometimes called centroid collapse.</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>Each document vector lives near a dense core where the general vocabulary of synthetic biology</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>concentrates. As a city accumulates more documents, its average is pulled toward that core, so large</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>cities end up with centroids near each other and near the global mean, whether or not their students</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>and academics actually work on the same things. The centroid measure answers how much a city</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>publishes, dressed up as a question about what it publishes. It was the project's first real result,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>and it was a negative one, but the mechanism pointed straight at the fix.</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>![Why the centroid measure fails. Project-to-paper centroid overlap climbs with the number of</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>documents a city has, so it mostly tracks city size rather than local</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>relatedness.](assets/figures/centroid_size_artifact.png){#fig-centroid}</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## The real test: shared topics</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>The failure was averaging. So stop averaging and count topics instead. Represent each city not as one</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>vector but as a profile across the 80 clusters: which topics do its projects fall into, and which do</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>its papers fall into? Relatedness becomes a sharper question. Not "do the two point the same way on</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>average?" but "do they co-invest in the same specific subjects?" A city can be huge and productive</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>across the whole field, earning a high centroid similarity with everyone, while its students and</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>academics work on entirely different corners. The topic-profile measure separates that case from a</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>city where both genuinely concentrate on the same handful of clusters.</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>For each pair of artifact types in a city, we take the L2-normalized cluster-frequency vectors and</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>read off their cosine overlap. That raw number means nothing until it is held against a baseline, and</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>the baseline is the whole game. We build it with a within-country permutation test: inside each</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>country, shuffle which city's paper profile is paired with which city's project profile, thousands of</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>times, and recompute the mean overlap. Every shuffle keeps each city's document counts and every</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>cluster's popularity fixed, so any excess that survives must come from the specific co-location of</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>topics, not from size or from some topics being universally popular.</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="co"># src/analyze/relatedness.py — the core of the decisive test (abridged)</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_city_type_vectors(clustered, k_clusters):</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>    <span class="co"># one L2-normalized cluster-frequency vector per (type, city)</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pair_permutation(vecs, type_a, type_b, cities, country_of, n_perm<span class="op">=</span><span class="dv">2000</span>):</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>    va, vb <span class="op">=</span> vecs[type_a], vecs[type_b]</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    observed <span class="op">=</span> np.mean([np.dot(va[c], vb[c]) <span class="cf">for</span> c <span class="kw">in</span> cities])   <span class="co"># real pairing</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    null <span class="op">=</span> []</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_perm):</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>        <span class="co"># inside each country, break only the local city-to-city pairing</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>        shuffled <span class="op">=</span> repair_within_country(cities, country_of)</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>        null.append(np.mean([np.dot(va[c], vb[s]) <span class="cf">for</span> c, s <span class="kw">in</span> shuffled]))</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>    excess <span class="op">=</span> observed <span class="op">-</span> np.mean(null)</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> (np.<span class="bu">sum</span>(np.array(null) <span class="op">&gt;=</span> observed) <span class="op">+</span> <span class="dv">1</span>) <span class="op">/</span> (n_perm <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"excess"</span>: excess, <span class="st">"p"</span>: p}</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>The real cities beat the null. Running the test for all three ordered pairs gives a clear and uneven</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>picture.</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Pair <span class="pp">|</span> Cities <span class="pp">|</span> Excess overlap <span class="pp">|</span> *p* <span class="pp">|</span> Lift <span class="pp">|</span> Beats null? <span class="pp">|</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|:---:|:---:|:---:|:---:|:---:|</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Project × paper <span class="pp">|</span> 120 <span class="pp">|</span> +0.0102 <span class="pp">|</span> 0.0077 <span class="pp">|</span> 1.30× <span class="pp">|</span> yes <span class="pp">|</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Paper × patent <span class="pp">|</span> 44 <span class="pp">|</span> +0.0352 <span class="pp">|</span> 0.0055 <span class="pp">|</span> 1.27× <span class="pp">|</span> yes <span class="pp">|</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Project × patent <span class="pp">|</span> 28 <span class="pp">|</span> +0.0041 <span class="pp">|</span> 0.24 <span class="pp">|</span> 0.98× <span class="pp">|</span> no <span class="pp">|</span></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>Once city size and topic popularity are held fixed, a city's projects and papers share specific</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>topics more often than chance allows, and so do its papers and patents. Its projects and patents do</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>not. That gap is not a hole in the analysis; it is the finding. The three artifact types are not</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>equally related, and academic research sits in the middle. A joint three-way test on the 28 cities</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>with all three types is significant (excess +0.016, *p* = 0.007), but it is carried entirely by the</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>two paper links.</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>![The central result. The observed rate at which a city's artifact types share topics (marked line)</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>sits above the distribution from reshuffling within countries (histogram), which holds size and topic</span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>popularity fixed. The gap is the size-independent local relatedness. Project × paper and paper ×</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>patent clear the null; project × patent does not.](assets/figures/tripartite_permutation.png){#fig-perm}</span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a><span class="fu">## Three ways to try to break it</span></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>A single clean result is a hypothesis until it has been attacked. The permutation test rules out size</span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>and topic popularity, but it rests on choices made before the test ran: which countries are in the</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>sample, how many clusters HDBSCAN produced, and how deep a city's corpus has to be to count. Each</span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>could, in principle, have manufactured the result, so we varied each in turn.</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>**Drop a whole country.** Remove each country and rerun. The result barely moves. Removing the United</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>States, which supplies a large share of both teams and papers, leaves the paper × patent excess</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>intact (*p* = 0.001 on the remaining cities) and softens project × paper only to *p* = 0.068. Removing</span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>China leaves it essentially unchanged. No single national system drives the finding.</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>**Change the number of topics.** Replace the HDBSCAN clusters with k-means at resolutions from fine to</span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>coarse, and recompute all three pairwise excesses at each. Project × paper stays significant at every</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>reasonable resolution. Paper × patent stays significant across the sweep. Project × patent never</span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>crosses the threshold at any *k*. The ladder is stable: projects relate to papers, papers relate to</span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>patents, and the direct project-to-patent link never achieves significance regardless of how finely</span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>the field is sliced.</span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>**Starve the sample.** Vary the minimum documents a city needs to be included. The excess persists</span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>across the range. It shows more cleanly in deeper cities, exactly what a real signal does as</span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>measurement improves; a spurious result would not reliably strengthen when the data get richer.</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>![Left: the leave-one-country-out check leaves the excess essentially unchanged. Right: across the</span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>full k-sweep, project × paper and paper × patent stay significant while project × patent never crosses</span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>the line, establishing the ladder in which papers mediate between projects and</span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>patents.](assets/figures/robust_kcurve.png){#fig-kcurve}</span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>The k-sweep also settles whether fine-tuning inflated the result. Run side by side, the base SPECTER2</span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>and the fine-tuned adapter both produce significant paper × project excesses at every resolution. The</span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>fine-tuned model shows somewhat larger paper × patent excesses, which is expected, since the training</span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>data included patent-paper pairs and the adapter was built to bring those closer. Neither model</span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>produces a stable project × patent link. The finding is present without fine-tuning; the adapter</span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>sharpens it rather than inventing it.</span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a><span class="fu">## Do the parts agree?</span></span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>Every result so far lives inside the semantic space, which invites the deepest objection: what if the</span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>whole thing is an artifact of how SPECTER2 reads text? If the model imposed some systematic structure,</span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>every check would agree with every other for purely internal reasons, and we would have measured a</span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>property of the model rather than of the cities. The only clean way to rule this out is to check the</span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>semantic structure against something the model never touched.</span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>The BioBricks give us exactly that. Each part carries a functional class, promoter, coding sequence,</span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>reporter, terminator, and so on, and a city's students leave a fingerprint in the registry: the mix of</span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>part classes they built and deposited. That fingerprint is made of physical genetic components and</span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>functional labels, not of any language the model could read. We build one city-by-city distance matrix</span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a>from the semantic topic profiles and a second from the BioBrick class mixes, then ask whether they</span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>agree with a Mantel test, which permutes city labels to get a valid null.</span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>They line up. Across the 164 cities with enough data in both registers, the correlation is</span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a>$r_M = 0.127$ ($p = 0.0005$): cities whose students build similar mixes of genetic parts also tend to</span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>have similar topic profiles across their projects, papers, and patents. The magnitude is moderate, and</span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>honestly so, because a city's toolkit and its topics are related but not identical. What matters is</span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>that two independent windows onto the same cities, one built from words and one built from DNA parts,</span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>see the same shape. A structure imposed by the language model would have no reason to match the</span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>distribution of promoters and coding sequences across cities. That it does is the single strongest</span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>piece of evidence that the relatedness is real, not a property of the measuring tool.</span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>![Two independent views agree. City-pair similarity from the mix of BioBrick part classes (never seen</span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>by the model) correlates with city-pair similarity from semantic topic profiles. The relatedness is</span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a>anchored outside the embedding space.](assets/figures/mantel_parts_vs_topics.png){#fig-mantel}</span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dynamic coupling</span></span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a>The permutation test shows the alignment is real, but it is static: it cannot say whether the alignment</span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>is a living year-to-year coupling or a structural feature baked into each city's long-run</span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a>specialization. A difference-in-differences design separates the two. Split time into five-year periods</span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a>and ask, within a single city and topic, whether a rise in one artifact type's share is accompanied by</span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a>a rise in the downstream type's share, after differencing out each city's standing profile and each</span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>topic's global trend.</span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a>Within the tripartite sample (44 to 46 cities, far smaller than the 161 in the bipartite project-paper</span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a>analysis), the paper → patent link is positive and significant: $\hat\beta = +0.355$ ($p = 0.028$,</span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a>$N = 44$). Inside a city and topic, a five-year stretch of elevated academic output predicts elevated</span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a>patenting in the same topic, beyond what the city's history or the topic's commercial trend would</span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>predict. The project → paper link is not significant in this smaller sample ($p = 0.19$, $N = 46$),</span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a>which contrasts with the positive and significant bipartite result ($\hat\beta = +0.0026$, $t = 4.06$,</span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a>$N = 161$); the difference is most simply explained by power, since the tripartite sample is under a</span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a>third the size. The project → patent link, on only ten cities, is not interpretable.</span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a>![Tripartite difference-in-differences, with 95% city-clustered confidence intervals. Paper → patent</span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>is positive and significant; project → paper is not significant in this smaller sample; project →</span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a>patent uses too few cities to interpret.](assets/figures/tripartite_did.png){#fig-did}</span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>A natural follow-up asks whether that coupling has a preferred direction across years: do projects tend</span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a>to precede papers, and papers precede patents? We built annual topic-frequency vectors per city and</span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a>measured how similarity changes as one type is offset against the other by up to three years. Both</span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>profiles come out flat, with overlapping confidence intervals, and a within-city year-shuffle</span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>permutation test finds no significant asymmetry (*p*-values from 0.51 to 0.93). This is a null result</span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a>for this sample size, not a demonstration that ordering is absent: the larger bipartite analysis did</span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>find a significant lead-lag peak at the same lags. When all three artifact types must be present at</span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a>once, the sample gets small and selective, and the modest annual signal is below what it can resolve.</span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a>![Lead-lag profiles for the two adjacent pairs, with bootstrap confidence intervals. Both are flat</span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a>across lags; the permutation tests find no statistically significant temporal asymmetry at this sample</span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a>size.](assets/figures/tripartite_lead_lag.png){#fig-leadlag}</span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a><span class="fu">## What it shows, and what it can't</span></span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a>The work is shaped like a star, not a triangle. Papers are the hub: a city's papers relate to its</span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a>projects, and its papers relate to its patents, but its projects and patents are the most distant pair.</span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a>The chain is strongest between neighbors and weakest across the full span from student bench to</span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a>commercial filing, which is what you would expect if capabilities travel in steps with academic</span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a>research as the middle link. The pattern is size-independent, survives dropping any country, holds</span>
+<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a>across cluster resolutions and depth thresholds, appears in the base model before any fine-tuning, and</span>
+<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a>is anchored in the physical parts the students built through the Mantel test.</span>
+<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a><span class="fu">## No causal claim</span></span>
+<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a>None of this shows that student projects cause later papers, or that papers cause patents. The three</span>
+<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a>artifact types share many local causes: the same universities host teams and labs, the same mentors</span>
+<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a>advise students and run labs, the same firms and funders shape what everyone works on. Any of these</span>
+<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a>common causes could produce the pattern with no direct flow of ideas between artifact types. What the</span>
+<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a>data establish is real and size-independent local relatedness. What they cannot establish is which</span>
+<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a>mechanism produces it.</span>
+<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">carbon-capture case study</span><span class="co">](case-study.qmd)</span> narrows this general result to one subfield and one set</span>
+<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a>of cities, and the <span class="co">[</span><span class="ot">Explorer</span><span class="co">](explorer.qmd)</span> lets you search any city and see its projects, papers, and</span>
+<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a>patents in the shared space.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

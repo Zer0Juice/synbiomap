@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Supervised by Frank Neffke (CSH) and Claudia Doblinger (TU Munich)">
 
-<title>Patents, Papers, Parts &amp; Planet: Mapping Local Innovation Trajectories in Synthetic Biology – Patents, Papers, Parts &amp; Planet</title>
+<title>The manuscript – Patents, Papers, Parts &amp; Planet</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -69,6 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./assets/favicon.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -107,35 +107,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -160,33 +131,62 @@ window.Quarto = {
     <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./results.html"> 
-<span class="menu-text">Results</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-the-study" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">The Study</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-the-study">    
+        <li>
+    <a class="dropdown-item" href="./background.html">
+ <span class="dropdown-text">Background</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./case-study.html"> 
-<span class="menu-text">Carbon Capture</span></a>
+        <li>
+    <a class="dropdown-item" href="./methods.html">
+ <span class="dropdown-text">Methods &amp; Data</span></a>
   </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-findings" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Findings</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-findings">    
+        <li>
+    <a class="dropdown-item" href="./results.html">
+ <span class="dropdown-text">Results</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./case-study.html">
+ <span class="dropdown-text">Case Study: Carbon Capture</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="./explorer.html"> 
 <span class="menu-text">Explorer</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./methods.html"> 
-<span class="menu-text">Methods &amp; Data</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-paper" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Paper</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-paper">    
+        <li>
+    <a class="dropdown-item" href="./paper.html">
+ <span class="dropdown-text">Summary &amp; PDF</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link active" href="./paper.html" aria-current="page"> 
-<span class="menu-text">Paper</span></a>
+        <li>
+    <a class="dropdown-item" href="./references.html">
+ <span class="dropdown-text">References</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./slides.html">
+ <span class="dropdown-text">Slides</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="./reproducibility.html"> 
 <span class="menu-text">Reproducibility</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./slides.html"> 
-<span class="menu-text">Slides</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -205,31 +205,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract">Abstract</a></li>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">1. Introduction</a></li>
-  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">2. Data</a>
-  <ul class="collapse">
-  <li><a href="#academic-papers" id="toc-academic-papers" class="nav-link" data-scroll-target="#academic-papers">2.1 Academic Papers</a></li>
-  <li><a href="#igem-projects" id="toc-igem-projects" class="nav-link" data-scroll-target="#igem-projects">2.2 iGEM Projects</a></li>
-  <li><a href="#carbon-capture-subset" id="toc-carbon-capture-subset" class="nav-link" data-scroll-target="#carbon-capture-subset">2.3 Carbon-Capture Subset</a></li>
-  <li><a href="#what-was-not-included" id="toc-what-was-not-included" class="nav-link" data-scroll-target="#what-was-not-included">2.4 What Was Not Included</a></li>
-  </ul></li>
-  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">3. Methods</a>
-  <ul class="collapse">
-  <li><a href="#embeddings" id="toc-embeddings" class="nav-link" data-scroll-target="#embeddings">3.1 Embeddings</a></li>
-  <li><a href="#dimensionality-reduction-and-clustering" id="toc-dimensionality-reduction-and-clustering" class="nav-link" data-scroll-target="#dimensionality-reduction-and-clustering">3.2 Dimensionality Reduction and Clustering</a></li>
-  <li><a href="#city-level-semantic-overlap" id="toc-city-level-semantic-overlap" class="nav-link" data-scroll-target="#city-level-semantic-overlap">3.3 City-Level Semantic Overlap</a></li>
-  <li><a href="#regression" id="toc-regression" class="nav-link" data-scroll-target="#regression">3.4 Regression</a></li>
-  </ul></li>
-  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">4. Results</a>
-  <ul class="collapse">
-  <li><a href="#semantic-space-structure" id="toc-semantic-space-structure" class="nav-link" data-scroll-target="#semantic-space-structure">4.1 Semantic Space Structure</a></li>
-  <li><a href="#city-level-semantic-overlap-1" id="toc-city-level-semantic-overlap-1" class="nav-link" data-scroll-target="#city-level-semantic-overlap-1">4.2 City-Level Semantic Overlap</a></li>
-  <li><a href="#regression-results" id="toc-regression-results" class="nav-link" data-scroll-target="#regression-results">4.3 Regression Results</a></li>
-  </ul></li>
-  <li><a href="#case-study-carbon-capture" id="toc-case-study-carbon-capture" class="nav-link" data-scroll-target="#case-study-carbon-capture">5. Case Study: Carbon Capture</a></li>
-  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">6. Limitations</a></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">7. Conclusion</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#what-the-thesis-argues" id="toc-what-the-thesis-argues" class="nav-link" data-scroll-target="#what-the-thesis-argues">What the thesis argues</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -238,20 +214,14 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Patents, Papers, Parts &amp; Planet: Mapping Local Innovation Trajectories in Synthetic Biology</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-<p class="subtitle lead">Master’s Thesis — Complexity Science Hub Vienna</p>
+<div class="quarto-title-block"><div><h1 class="title">The manuscript</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">Patents, Papers, Parts, and Planet — Exploration of the Innovation Space in Synthetic Biology</p>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Supervised by Frank Neffke (CSH) and Claudia Doblinger (TU Munich) </p>
-          </div>
-  </div>
     
   
     
@@ -262,198 +232,25 @@ window.Quarto = {
 </header>
 
 
+<p>The full master’s thesis, by Zakhary Roth, advised by Frank Neffke (Complexity Science Hub) and Claudia Doblinger (TU Munich). The manuscript covers the full argument, all methodological choices with their justifications and citations, the complete results with robustness tables, the carbon-capture case study, limitations, and a statement on how AI tools were used to build the project.</p>
+<p><a href="assets/downloads/manuscript.pdf" class="btn btn-primary" role="button">Download the manuscript (PDF)</a> &nbsp; <a href="./slides.html" class="btn btn-outline-secondary" role="button">View the slides</a></p>
 <section id="abstract" class="level2">
 <h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
-<p>This paper examines whether iGEM student projects and academic publications in synthetic biology tend toward the same topical areas within the same cities. Using a corpus of 13,335 artifacts — 8,720 papers from OpenAlex and 4,615 iGEM Registry projects — we compute SPECTER2 embeddings and measure city-level semantic alignment as the cosine similarity between a city’s paper centroid and its project centroid. Across 379 cities, alignment is positively correlated with the volume of both artifact types and with the number of years a city has had active iGEM participation, together accounting for 63% of the variance in an OLS regression. The range of the measure is narrow (0.80–0.99), and the size effects may partly reflect a statistical property of centroid averaging rather than genuine topical co-specialization; interpretation requires caution. As a worked illustration, we examine carbon capture in synthetic biology, finding seven cities with sufficient data for subgroup analysis, all showing high alignment. A patent arm of the analysis was not completed due to geocoding failures. We discuss what the measure can and cannot establish, and propose specific steps that would strengthen the inference in follow-up work.</p>
-<hr>
+<p>Science and technology has advanced to the point where we can treat DNA as a programming language and living organisms as hardware. With standardized genetic parts and widely used assembly protocols, life itself has become a series of tools to optimize production. This project studies different forms of research in synthetic biology, student projects, academic publications, and patents, to see if geography plays a role in determining the focus of research.</p>
+<p>Are students, academics, and private industry researching the same topics in the cities they live and work? The International Genetically Engineered Machine competition, iGEM, is a nonprofit that advances synthetic biology education through an annual student research competition, and its data is a wealth of insight into how the field innovates. We compare the corpus of iGEM projects against academic publications and patents to test whether geographically-influenced semantic relatedness can be established. Relatedness between iGEM projects, academic research, and patent abstracts is calculated, established, and empirically tested. Clusters are identified in the semantic space, and those related to carbon capture are inspected in depth. The research landscapes of cities are compared, and policy suggestions are made.</p>
 </section>
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">1. Introduction</h2>
-<p>Synthetic biology is an engineering discipline that treats cells as programmable systems. Using standardized genetic parts, researchers design and build novel biological functions: sensors, metabolic pathways, therapeutic circuits. The field has grown since the mid-2000s, generating academic publications, commercial patents, and a type of artifact that does not fit neatly into either category: the iGEM project.</p>
-<p>The International Genetically Engineered Machine (iGEM) competition is a global student competition in synthetic biology, founded at MIT in 2004. Competing teams design and build biological projects over a year, document their work on a public wiki, and deposit their genetic parts into an open registry. The result is a large, documented dataset of student-led work that sits at the edge of academic research and open-source engineering practice.</p>
-<p>This paper asks whether cities where iGEM teams are active also tend to produce academic papers in related areas of synthetic biology. More precisely: is the topical distribution of a city’s iGEM projects similar to the topical distribution of its synthetic biology papers?</p>
-<p>The motivation comes from regional innovation research. Boschma (2005) and Neffke and Henning (2013) argue that cities develop coherent knowledge specializations — capabilities built in one area tend to foster development in adjacent areas. If this logic applies to synthetic biology, we might expect cities to show alignment across artifact types, not random mixing. iGEM adds a specific institutional angle: it is a globally standardized competition, but it runs through local university teams, who draw on local faculty, lab infrastructure, and academic culture. Whether that local embeddedness produces topical alignment with the city’s academic output is an open question.</p>
-<p>These observations motivate a <em>local innovation trajectory</em> hypothesis: that student projects, academic research, and patents in a city tend to follow related thematic paths over time, with each layer reflecting and reinforcing the others. This paper cannot test that hypothesis directly. The analysis is cross-sectional, patent data is absent, and the temporal ordering of project and paper activity cannot be recovered from this design. What the paper can do is test a necessary condition: do cities show greater-than-random topical overlap between their project and paper output? If they do not, the trajectory hypothesis has a difficult starting point. If they do, the result is consistent with the hypothesis — though consistent with several other explanations too.</p>
-<p>We do not claim iGEM activity causes related publications, or that publications drive student projects. Both likely reflect shared underlying factors: research infrastructure, faculty specialization, available equipment. We use the language of association and co-location throughout.</p>
-<p>The primary case study is <strong>carbon capture in synthetic biology</strong> — engineering microorganisms to fix atmospheric CO₂ or produce low-carbon fuels. This subfield appears in both artifact types, is policy-relevant, and is specific enough to test whether the measure picks up something beyond generic synthetic biology alignment.</p>
-<hr>
-</section>
-<section id="data" class="level2">
-<h2 class="anchored" data-anchor-id="data">2. Data</h2>
-<section id="academic-papers" class="level3">
-<h3 class="anchored" data-anchor-id="academic-papers">2.1 Academic Papers</h3>
-<p>Papers were retrieved from <a href="https://openalex.org">OpenAlex</a>, a free scientific literature index. We queried for papers matching core synthetic biology keywords (<em>synthetic biology</em>, <em>synthetic genomics</em>, <em>synthetic genome</em>, <em>BioBrick</em>) and subfield terms (<em>synthetic gene circuit</em>, <em>synthetic cell</em>, <em>minimal genome</em>, <em>repressilator</em>, <em>xenobiology</em>, <em>cell-free synthetic biology</em>). This two-layer approach follows Shapira et al.&nbsp;(2017), who used a similar strategy to bound the synthetic biology literature and reduce both under-inclusion (missing papers that avoid the explicit term) and over-inclusion (technical terms that appear in unrelated fields).</p>
-<p>The paper corpus contains <strong>8,720 papers</strong> from 2000–2026, geocoded to <strong>1,146 cities</strong>. Each paper was assigned to the city of the first author’s institution using OpenAlex institution metadata.</p>
-</section>
-<section id="igem-projects" class="level3">
-<h3 class="anchored" data-anchor-id="igem-projects">2.2 iGEM Projects</h3>
-<p>iGEM project data came from the <a href="https://parts.igem.org">iGEM Registry API</a>. Each record includes the team name, host institution, competition year, and project wiki abstract. Project text was the concatenation of team name and abstract. Teams were geocoded using a three-stage pipeline: (1) institution lookup against OpenAlex for recognized universities; (2) Research Organization Registry (ROR) for remaining cases; (3) Claude Haiku (Anthropic) for teams not resolved by either registry. The third stage is the least reliable: it involves an LLM making geographic assignments from institution name strings with no structured validation. How many teams fell to this stage, and at what accuracy, was not independently checked — a gap noted in Section 6.</p>
-<p>This yielded <strong>4,615 projects</strong> across 626 cities, spanning 2009–2025.</p>
-</section>
-<section id="carbon-capture-subset" class="level3">
-<h3 class="anchored" data-anchor-id="carbon-capture-subset">2.3 Carbon-Capture Subset</h3>
-<p>Artifacts were flagged as carbon-capture relevant if their text contained at least one of the following keywords: <em>carbon capture</em>, <em>carbon sequestration</em>, <em>CO₂ fixation</em>, <em>carbon dioxide reduction</em>, <em>carbon neutral</em>, <em>biofuel</em>, <em>carbon fixation</em>, <em>carbon cycle</em>, <em>autotrophic</em>, <em>RuBisCO</em>, <em>Calvin cycle</em>, <em>carboxylase</em>, <em>carbon concentrating mechanism</em>, <em>photorespiration</em>. This yielded 234 papers and 141 projects (375 total, about 2.8% of the corpus).</p>
-<p>The keyword list is intentionally broad, but some terms carry contamination risk. “Biofuel” covers a large literature only partly concerned with carbon fixation. “Autotrophic” and “carbon cycle” appear in ecology papers with no engineering intent. The carbon-capture subset should be read as a thematically adjacent cluster rather than a clean partition.</p>
-</section>
-<section id="what-was-not-included" class="level3">
-<h3 class="anchored" data-anchor-id="what-was-not-included">2.4 What Was Not Included</h3>
-<p>Patent data was excluded from the final analysis. An initial attempt to retrieve synthetic biology patents from Lens.org using IPC codes (C12N, C12P, C12Q) combined with keyword filtering produced too few records with usable city-level geocoding. Without patents, the downstream-translation step of the innovation trajectory cannot be tested. This is the most consequential gap in the study.</p>
-<hr>
-</section>
-</section>
-<section id="methods" class="level2">
-<h2 class="anchored" data-anchor-id="methods">3. Methods</h2>
-<section id="embeddings" class="level3">
-<h3 class="anchored" data-anchor-id="embeddings">3.1 Embeddings</h3>
-<p>All artifacts were encoded as 768-dimensional vectors using <strong>SPECTER2</strong> (Lo et al., 2020), a transformer model pre-trained on scientific text using citation-informed contrastive learning. The <em>proximity adapter</em> variant was used — the variant trained for symmetric document-to-document similarity, appropriate for comparing documents to each other rather than to a query.</p>
-<p>Each document was encoded from its title and abstract (or project name and wiki abstract for iGEM), truncated to 256 tokens. The embedding is the <code>[CLS]</code> token from the final layer. Embeddings were generated on Apple Silicon (MPS backend) and cached to disk.</p>
-<p><strong>Domain mismatch:</strong> SPECTER2 was trained on scientific paper abstracts. iGEM project descriptions are shorter, less formal, and written by undergraduates rather than researchers. This mismatch may pull project embeddings closer to the paper distribution than a domain-neutral model would, artificially compressing the distance between the two artifact types. The effect likely inflates overlap scores, especially for short or generic project descriptions.</p>
-</section>
-<section id="dimensionality-reduction-and-clustering" class="level3">
-<h3 class="anchored" data-anchor-id="dimensionality-reduction-and-clustering">3.2 Dimensionality Reduction and Clustering</h3>
-<p>Embeddings were reduced to 30 dimensions using UMAP (McInnes et al., 2018) for clustering, and separately to 2D for visualization. Parameters: <code>n_neighbors=10</code>, <code>min_dist=0.05</code>, <code>metric=cosine</code>. Clusters were assigned using HDBSCAN (Campello et al., 2013) on the 30D coordinates (<code>min_cluster_size=10</code>, <code>min_samples=1</code>), yielding 347 clusters. These parameter choices were not systematically varied; alternative settings would yield different cluster structures.</p>
-<p>The 25 largest clusters were labeled by submitting the 20 titles nearest each cluster centroid to Claude Haiku with a prompt requesting a 3–6 word topic label. Labels such as “CRISPR-Cas genome editing systems” and “biofuel and fine chemical production” are legible, which provides a basic sanity check on the pipeline before the city-level analysis.</p>
-</section>
-<section id="city-level-semantic-overlap" class="level3">
-<h3 class="anchored" data-anchor-id="city-level-semantic-overlap">3.3 City-Level Semantic Overlap</h3>
-<p>For each city <span class="math inline">\(i\)</span> with at least one embedded paper and at least one embedded project, we computed:</p>
-<p><span class="math display">\[\text{semantic\_overlap}_i = \cos\left(\bar{e}^{\text{papers}}_i,\; \bar{e}^{\text{projects}}_i\right)\]</span></p>
-<p>where <span class="math inline">\(\bar{e}\)</span> is the L2-normalised centroid of all embedded documents of that type in city <span class="math inline">\(i\)</span>. When embeddings are unit-normalised, centroid cosine similarity equals mean pairwise cosine similarity across all paper-project pairs in that city (Turney &amp; Pantel, 2010).</p>
-<p><strong>A structural concern about this measure.</strong> Centroid similarity has a size-dependent property: as the number of documents increases, the centroid moves toward the mean of the embedding space. In a homogeneous corpus like this one — all documents are in synthetic biology — the overall mean sits in a generic synthetic biology region. Two large cities with diverse programs across many subfields may both have centroids pulled toward this mean, producing high mutual similarity not because their programs are thematically aligned but because both are averaging over the same overall distribution. This would produce exactly the pattern observed: large cities with high overlap, a compressed range, and a positive regression coefficient on document counts. Without a permutation null — constructed by randomly reassigning city labels and recomputing the overlap distribution — the range of 0.80 to 0.99 is difficult to interpret. This null was not run, which is an important omission.</p>
-<p>The measure ranges from −1 to 1; in practice, given corpus homogeneity, values sit near 1.</p>
-</section>
-<section id="regression" class="level3">
-<h3 class="anchored" data-anchor-id="regression">3.4 Regression</h3>
-<p>We estimated OLS:</p>
-<p><span class="math display">\[\text{overlap}_i = \alpha + \beta_1 \log(n\_papers_i) + \beta_2 \log(n\_projects_i) + \beta_3 \cdot \text{year\_span}_i + \varepsilon_i\]</span></p>
-<p>across three specifications that progressively add temporal and carbon-capture share controls. Count variables are log-transformed to address right-skewed city-size distributions. Standard errors are HC3 heteroskedasticity-robust (White, 1980).</p>
-<hr>
-</section>
-</section>
-<section id="results" class="level2">
-<h2 class="anchored" data-anchor-id="results">4. Results</h2>
-<section id="semantic-space-structure" class="level3">
-<h3 class="anchored" data-anchor-id="semantic-space-structure">4.1 Semantic Space Structure</h3>
-<p>The UMAP projection shows papers and iGEM projects distributed across the same semantic regions rather than separating into two distinct zones. This is expected: both artifact types draw on the same scientific vocabulary, and SPECTER2 places documents with similar scientific content close together regardless of artifact type. Carbon-capture artifacts (Figure 1, green diamonds) spread across several adjacent regions, which is consistent with carbon capture being a cross-cutting application rather than a single coherent subfield.</p>
-<p>The 25 named clusters cover interpretable areas: bacteriophage engineering, CRISPR tools, biofuel production, cancer therapeutics, minimal genome design, DNA assembly. That the labels are legible is a necessary condition for the approach to work; it does not establish that the clusters are well-separated or that city-level centroids carry meaningful information.</p>
-</section>
-<section id="city-level-semantic-overlap-1" class="level3">
-<h3 class="anchored" data-anchor-id="city-level-semantic-overlap-1">4.2 City-Level Semantic Overlap</h3>
-<p>Across 379 cities with both papers and projects, overlap ranges from 0.80 to 0.99 (mean 0.94, SD 0.04). The distribution is left-skewed — a long tail of lower-overlap cities and a compressed upper end.</p>
-<p>Top cities by overlap include Cambridge (US, 0.99), Shanghai (0.99), Tianjin (0.99), Berkeley (0.99), and Boston (0.99). These are large, well-established synthetic biology centers with active iGEM programs. But this is precisely the problem: very large cities top the ranking, which is what the centroid compression argument would also predict. Without a permutation baseline, we cannot determine whether a city at 0.99 has genuinely aligned programs or simply has enough documents that both centroids have been pulled to the corpus mean.</p>
-<p>The gap between 0.80 and 0.99 is real in a statistical sense — and may reflect genuine topical divergence at the low end, where cities have few documents and those documents happen to cover different areas. But the upper portion of the range may be largely artifactual.</p>
-</section>
-<section id="regression-results" class="level3">
-<h3 class="anchored" data-anchor-id="regression-results">4.3 Regression Results</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 16%">
-<col style="width: 27%">
-<col style="width: 27%">
-<col style="width: 27%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Variable</th>
-<th style="text-align: center;">(1) Size only</th>
-<th style="text-align: center;">(2) + Temporal</th>
-<th style="text-align: center;">(3) + Carbon</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>log(papers)</td>
-<td style="text-align: center;">0.0168*** (0.0015)</td>
-<td style="text-align: center;">0.0165*** (0.0015)</td>
-<td style="text-align: center;">0.0167*** (0.0015)</td>
-</tr>
-<tr class="even">
-<td>log(projects)</td>
-<td style="text-align: center;">0.0187*** (0.0018)</td>
-<td style="text-align: center;">0.0102*** (0.0030)</td>
-<td style="text-align: center;">0.0102*** (0.0030)</td>
-</tr>
-<tr class="odd">
-<td>iGEM year span</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">0.0016*** (0.0004)</td>
-<td style="text-align: center;">0.0016*** (0.0004)</td>
-</tr>
-<tr class="even">
-<td>CC paper share</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">0.0188 (0.0157)</td>
-</tr>
-<tr class="odd">
-<td>CC project share</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">—</td>
-<td style="text-align: center;">−0.0086 (0.0188)</td>
-</tr>
-<tr class="even">
-<td>R²</td>
-<td style="text-align: center;">0.620</td>
-<td style="text-align: center;">0.634</td>
-<td style="text-align: center;">0.638</td>
-</tr>
-<tr class="odd">
-<td>N</td>
-<td style="text-align: center;">379</td>
-<td style="text-align: center;">379</td>
-<td style="text-align: center;">379</td>
-</tr>
-</tbody>
-</table>
-<p><em>Robust (HC3) standard errors in parentheses. *** p &lt; 0.01.</em></p>
-<p>Cities with more papers and more projects show statistically higher semantic overlap. A doubling of papers corresponds to roughly 0.012 increase in overlap; a doubling of projects to about 0.013. Whether these coefficients reflect genuine specialization alignment or the centroid compression mechanism described in Section 3.3 is ambiguous, and cannot be resolved without the permutation test.</p>
-<p>The year-span coefficient is the most interpretively interesting result. Cities where iGEM teams have returned across more years show higher paper-project alignment, even after controlling for total project count. A 10-year span of iGEM engagement is associated with about 0.016 higher overlap. This cannot be a pure counting artifact — year span and project count are different things, and the effect survives their joint inclusion. One interpretation: cities that sustain iGEM participation over time tend to be the same cities with focused, cumulative research programs, and that cumulative depth produces tighter thematic alignment between student and faculty work. This is speculative, but it is at least not explained away by the centroid compression concern.</p>
-<p>Carbon-capture shares are not significant in Model 3. The interpretation is unclear — it could mean that carbon-capture activity does not drive alignment above and beyond city size, or it could mean the keyword-defined subset is too noisy to produce a clean signal.</p>
-<hr>
-</section>
-</section>
-<section id="case-study-carbon-capture" class="level2">
-<h2 class="anchored" data-anchor-id="case-study-carbon-capture">5. Case Study: Carbon Capture</h2>
-<p>Seven cities have at least two carbon-capture papers and two carbon-capture projects, the minimum threshold chosen for a stable centroid estimate. These are: San Diego (CC overlap: 0.963), Wuhan (0.959), Beijing (0.956), Shanghai (0.948), Guangzhou (0.935), Madison (0.929), and Austin (0.923).</p>
-<p>The cities are recognizable synthetic biology centers, which could mean the measure is picking up subfield-specific alignment, or it could mean that large, active cities naturally clear the two-artifact threshold and inherit high overlap from their overall size. The paper does not compare these cities’ carbon-capture overlap to their overall overlap, so it is not possible to say whether the carbon-capture subset tells us anything not already captured by the main analysis.</p>
-<p>The case study also does not test whether carbon capture is the <em>reason</em> for alignment in these cities, or a coincident label on a cluster that would have appeared for any well-chosen subfield keyword. With seven cities and no within-subfield counterfactual, the section is illustrative rather than confirmatory.</p>
-<p>One genuine observation: carbon-capture iGEM projects appear from 2015 onward, while academic papers in the subfield are present from at least 2005. Papers accelerate sharply after 2018, around the time net-zero targets entered mainstream policy. Whether that acceleration in academic output preceded or followed the growth in student projects cannot be determined from aggregate trends alone — it would require city-year panel data.</p>
-<hr>
-</section>
-<section id="limitations" class="level2">
-<h2 class="anchored" data-anchor-id="limitations">6. Limitations</h2>
-<p><strong>No patents.</strong> The original design called for a three-way comparison — student projects, academic papers, and patents — to probe the full local innovation trajectory. The patent pipeline failed at the geocoding stage. Without patents, the “downstream translation” question cannot be examined, and the title’s ambition exceeds what was delivered.</p>
-<p><strong>No permutation baseline.</strong> The semantic overlap measure is difficult to interpret without a null distribution. A permutation test — randomly reassigning city labels and recomputing the full distribution — would establish whether observed overlap values are greater than chance and whether the size effects survive. This test was not run.</p>
-<p><strong>The iGEM-paper connection is assumed, not verified.</strong> The paper assumes that a city’s iGEM teams and its synthetic biology faculty are connected in some way — through supervision, shared lab space, or local academic culture. This assumption was not checked. It is plausible that some universities run strong iGEM programs managed by undergraduates with little connection to the faculty who write the synthetic biology papers captured by OpenAlex. If this is common, the city-level co-location conflates two separate communities and the co-location result loses much of its meaning.</p>
-<p><strong>SPECTER2 domain mismatch.</strong> SPECTER2 was trained on academic abstracts. iGEM project descriptions are shorter and more informal, written by undergraduates rather than researchers. The mismatch may pull project embeddings artificially close to the paper distribution, inflating overlap scores — particularly for brief or generic project descriptions.</p>
-<p><strong>Cross-sectional design.</strong> All years are pooled. The data cannot establish whether projects precede papers or vice versa in a given city. Cities with sustained iGEM engagement and high semantic overlap may simply be cities where a strong research culture drives both.</p>
-<p><strong>Geocoding reliability.</strong> The third geocoding stage for iGEM teams used an LLM (Claude Haiku) for institutions not in OpenAlex or ROR. The fraction of the 626 cities resolved at this stage, and its error rate, were not assessed. Papers are geocoded through the more reliable OpenAlex institution metadata. If geocoding error in iGEM projects is correlated with city size or geography, regression coefficients could be affected.</p>
-<p><strong>Keyword sensitivity.</strong> Both the synthetic biology corpus and the carbon-capture subset are defined by keyword lists. The carbon-capture list includes broad terms (“autotrophic,” “carbon cycle,” “biofuel”) that match papers outside the intended scope. Alternative keyword choices would yield different corpora and potentially different results.</p>
-<hr>
-</section>
-<section id="conclusion" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion">7. Conclusion</h2>
-<p>iGEM student projects and academic papers in synthetic biology show consistent topical alignment at the city level. This alignment is stronger in cities with more of both artifact types and in cities with longer histories of iGEM participation. That much is supported by the data.</p>
-<p>The interpretation is harder. The size effects may be a structural property of centroid averaging rather than a signal of genuine co-specialization. The year-span result is more interesting because it cannot easily be attributed to this artifact — but it remains a cross-sectional association, and the mechanism is unknown. The carbon-capture section illustrates that the measure produces interpretable subgroup results, though with only seven cities it does not test the specialization hypothesis independently.</p>
-<p>The primary contribution is a working pipeline: corpus construction from open sources, SPECTER2 embeddings, city-level aggregation, and a regression framework. The pipeline is reproducible and could be applied to other fields where multiple artifact types coexist. What it requires to become a reliable measurement instrument is a validated null model, an established connection between the iGEM and academic communities at the city level, and a longitudinal panel design that can speak to temporal ordering.</p>
-<p>Future work should prioritize: (1) adding patent data via PatentsView, which has more reliable geocoding than Lens.org; (2) running a permutation test to establish what the overlap distribution looks like under random city assignment; (3) verifying, for a sample of cities, whether iGEM teams and academic paper authors are from the same departments or whether they are largely separate populations; and (4) building a city-year panel to test whether project activity at time <span class="math inline">\(t\)</span> predicts paper activity at time <span class="math inline">\(t+k\)</span>.</p>
-<hr>
-</section>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
+<section id="what-the-thesis-argues" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-thesis-argues">What the thesis argues</h2>
+<p>The project builds a corpus that did not exist, 17,826 geocoded artifacts across three artifact types, embeds them in one fine-tuned semantic space, and tests whether a city’s projects, papers, and patents share specific topics more than chance allows.</p>
 <ul>
-<li>Boschma, R. (2005). Proximity and innovation: A critical assessment. <em>Regional Studies</em>.</li>
-<li>Campello, R., Moulavi, D., &amp; Sander, J. (2013). Density-based clustering. <em>ECML PKDD</em>.</li>
-<li>Cohan, A., et al.&nbsp;(2020). SPECTER: Document-level representation learning using citation-informed transformers. <em>ACL 2020</em>.</li>
-<li>Lo, K., et al.&nbsp;(2020). S2ORC: The semantic scholar open research corpus. <em>ACL 2020</em>.</li>
-<li>McInnes, L., Healy, J., &amp; Melville, J. (2018). UMAP: Uniform manifold approximation and projection. <em>arXiv:1802.03426</em>.</li>
-<li>Neffke, F., &amp; Henning, M. (2013). Skill relatedness and firm diversification. <em>Strategic Management Journal</em>.</li>
-<li>Santolini, M., et al.&nbsp;(2023). The iGEM competition as a model system for studying scientific collaboration and knowledge dissemination. <em>(in prep.)</em></li>
-<li>Shapira, P., et al.&nbsp;(2017). Mapping synthetic biology. <em>New Biotechnology</em>.</li>
-<li>Turney, P. D., &amp; Pantel, P. (2010). From frequency to meaning: Vector space models of semantics. <em>JAIR</em>.</li>
-<li>White, H. (1980). A heteroskedasticity-consistent covariance matrix estimator. <em>Econometrica</em>.</li>
-<li>Wooldridge, J. M. (2019). <em>Introductory Econometrics</em>. Cengage.</li>
+<li>A naive centroid measure of city alignment is a size artifact and is discarded.</li>
+<li>A topic co-membership measure, tested against a within-country permutation null, shows real, size-independent local relatedness between a city’s projects and papers, and between its papers and patents.</li>
+<li>The direct project-to-patent link never reaches significance: the field is shaped like a star with papers at the hub, not a triangle.</li>
+<li>The pattern survives dropping any country, changing the cluster resolution, varying the depth threshold, and using the base embedding model before any fine-tuning.</li>
+<li>It is anchored outside the language model entirely: a Mantel test finds that the mix of physical BioBrick parts a city’s students build agrees with its semantic topic profile.</li>
+<li>The result is descriptive. It documents relatedness and co-location; it does not identify a causal mechanism.</li>
 </ul>
+<p>For the narrative in full, read the <a href="./background.html">Background</a>; for the methods, see <a href="./methods.html">Methods &amp; data</a>; for the complete analysis, see the <a href="./results.html">Results</a> and the <a href="./case-study.html">carbon-capture case study</a>.</p>
 
 
 <!-- -->
@@ -913,192 +710,60 @@ window.Quarto = {
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Patents, Papers, Parts &amp; Planet: Mapping Local Innovation Trajectories in Synthetic Biology"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Master's Thesis — Complexity Science Hub Vienna"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Supervised by Frank Neffke (CSH) and Claudia Doblinger (TU Munich)"</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Abstract</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>This paper examines whether iGEM student projects and academic publications in synthetic biology tend toward the same topical areas within the same cities. Using a corpus of 13,335 artifacts — 8,720 papers from OpenAlex and 4,615 iGEM Registry projects — we compute SPECTER2 embeddings and measure city-level semantic alignment as the cosine similarity between a city's paper centroid and its project centroid. Across 379 cities, alignment is positively correlated with the volume of both artifact types and with the number of years a city has had active iGEM participation, together accounting for 63% of the variance in an OLS regression. The range of the measure is narrow (0.80–0.99), and the size effects may partly reflect a statistical property of centroid averaging rather than genuine topical co-specialization; interpretation requires caution. As a worked illustration, we examine carbon capture in synthetic biology, finding seven cities with sufficient data for subgroup analysis, all showing high alignment. A patent arm of the analysis was not completed due to geocoding failures. We discuss what the measure can and cannot establish, and propose specific steps that would strengthen the inference in follow-up work.</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Introduction</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Synthetic biology is an engineering discipline that treats cells as programmable systems. Using standardized genetic parts, researchers design and build novel biological functions: sensors, metabolic pathways, therapeutic circuits. The field has grown since the mid-2000s, generating academic publications, commercial patents, and a type of artifact that does not fit neatly into either category: the iGEM project.</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>The International Genetically Engineered Machine (iGEM) competition is a global student competition in synthetic biology, founded at MIT in 2004. Competing teams design and build biological projects over a year, document their work on a public wiki, and deposit their genetic parts into an open registry. The result is a large, documented dataset of student-led work that sits at the edge of academic research and open-source engineering practice.</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>This paper asks whether cities where iGEM teams are active also tend to produce academic papers in related areas of synthetic biology. More precisely: is the topical distribution of a city's iGEM projects similar to the topical distribution of its synthetic biology papers?</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>The motivation comes from regional innovation research. Boschma (2005) and Neffke and Henning (2013) argue that cities develop coherent knowledge specializations — capabilities built in one area tend to foster development in adjacent areas. If this logic applies to synthetic biology, we might expect cities to show alignment across artifact types, not random mixing. iGEM adds a specific institutional angle: it is a globally standardized competition, but it runs through local university teams, who draw on local faculty, lab infrastructure, and academic culture. Whether that local embeddedness produces topical alignment with the city's academic output is an open question.</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>These observations motivate a *local innovation trajectory* hypothesis: that student projects, academic research, and patents in a city tend to follow related thematic paths over time, with each layer reflecting and reinforcing the others. This paper cannot test that hypothesis directly. The analysis is cross-sectional, patent data is absent, and the temporal ordering of project and paper activity cannot be recovered from this design. What the paper can do is test a necessary condition: do cities show greater-than-random topical overlap between their project and paper output? If they do not, the trajectory hypothesis has a difficult starting point. If they do, the result is consistent with the hypothesis — though consistent with several other explanations too.</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>We do not claim iGEM activity causes related publications, or that publications drive student projects. Both likely reflect shared underlying factors: research infrastructure, faculty specialization, available equipment. We use the language of association and co-location throughout.</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>The primary case study is **carbon capture in synthetic biology** — engineering microorganisms to fix atmospheric CO₂ or produce low-carbon fuels. This subfield appears in both artifact types, is policy-relevant, and is specific enough to test whether the measure picks up something beyond generic synthetic biology alignment.</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Data</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2.1 Academic Papers</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>Papers were retrieved from <span class="co">[</span><span class="ot">OpenAlex</span><span class="co">](https://openalex.org)</span>, a free scientific literature index. We queried for papers matching core synthetic biology keywords (*synthetic biology*, *synthetic genomics*, *synthetic genome*, *BioBrick*) and subfield terms (*synthetic gene circuit*, *synthetic cell*, *minimal genome*, *repressilator*, *xenobiology*, *cell-free synthetic biology*). This two-layer approach follows Shapira et al. (2017), who used a similar strategy to bound the synthetic biology literature and reduce both under-inclusion (missing papers that avoid the explicit term) and over-inclusion (technical terms that appear in unrelated fields).</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>The paper corpus contains **8,720 papers** from 2000–2026, geocoded to **1,146 cities**. Each paper was assigned to the city of the first author's institution using OpenAlex institution metadata.</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2.2 iGEM Projects</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>iGEM project data came from the <span class="co">[</span><span class="ot">iGEM Registry API</span><span class="co">](https://parts.igem.org)</span>. Each record includes the team name, host institution, competition year, and project wiki abstract. Project text was the concatenation of team name and abstract. Teams were geocoded using a three-stage pipeline: (1) institution lookup against OpenAlex for recognized universities; (2) Research Organization Registry (ROR) for remaining cases; (3) Claude Haiku (Anthropic) for teams not resolved by either registry. The third stage is the least reliable: it involves an LLM making geographic assignments from institution name strings with no structured validation. How many teams fell to this stage, and at what accuracy, was not independently checked — a gap noted in Section 6.</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>This yielded **4,615 projects** across 626 cities, spanning 2009–2025.</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2.3 Carbon-Capture Subset</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>Artifacts were flagged as carbon-capture relevant if their text contained at least one of the following keywords: *carbon capture*, *carbon sequestration*, *CO₂ fixation*, *carbon dioxide reduction*, *carbon neutral*, *biofuel*, *carbon fixation*, *carbon cycle*, *autotrophic*, *RuBisCO*, *Calvin cycle*, *carboxylase*, *carbon concentrating mechanism*, *photorespiration*. This yielded 234 papers and 141 projects (375 total, about 2.8% of the corpus).</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>The keyword list is intentionally broad, but some terms carry contamination risk. "Biofuel" covers a large literature only partly concerned with carbon fixation. "Autotrophic" and "carbon cycle" appear in ecology papers with no engineering intent. The carbon-capture subset should be read as a thematically adjacent cluster rather than a clean partition.</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2.4 What Was Not Included</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "The manuscript"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Patents, Papers, Parts, and Planet — Exploration of the Innovation Space in Synthetic Biology"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>The full master's thesis, by Zakhary Roth, advised by Frank Neffke (Complexity Science Hub) and</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Claudia Doblinger (TU Munich). The manuscript covers the full argument, all methodological choices</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>with their justifications and citations, the complete results with robustness tables, the</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>carbon-capture case study, limitations, and a statement on how AI tools were used to build the</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>project.</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Download the manuscript (PDF)</span><span class="co">](assets/downloads/manuscript.pdf)</span>{.btn .btn-primary role="button"}</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="dv">&amp;nbsp;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">View the slides</span><span class="co">](slides.qmd)</span>{.btn .btn-outline-secondary role="button"}</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## Abstract</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>Science and technology has advanced to the point where we can treat DNA as a programming language</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>and living organisms as hardware. With standardized genetic parts and widely used assembly</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>protocols, life itself has become a series of tools to optimize production. This project studies</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>different forms of research in synthetic biology, student projects, academic publications, and</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>patents, to see if geography plays a role in determining the focus of research.</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>Are students, academics, and private industry researching the same topics in the cities they live</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>and work? The International Genetically Engineered Machine competition, iGEM, is a nonprofit that</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>advances synthetic biology education through an annual student research competition, and its data</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>is a wealth of insight into how the field innovates. We compare the corpus of iGEM projects against</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>academic publications and patents to test whether geographically-influenced semantic relatedness can</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>be established. Relatedness between iGEM projects, academic research, and patent abstracts is</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>calculated, established, and empirically tested. Clusters are identified in the semantic space, and</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>those related to carbon capture are inspected in depth. The research landscapes of cities are</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>compared, and policy suggestions are made.</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">## What the thesis argues</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>The project builds a corpus that did not exist, 17,826 geocoded artifacts across three artifact</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>types, embeds them in one fine-tuned semantic space, and tests whether a city's projects, papers,</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>and patents share specific topics more than chance allows.</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A naive centroid measure of city alignment is a size artifact and is discarded.</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A topic co-membership measure, tested against a within-country permutation null, shows real,</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  size-independent local relatedness between a city's projects and papers, and between its papers</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  and patents.</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The direct project-to-patent link never reaches significance: the field is shaped like a star with</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  papers at the hub, not a triangle.</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The pattern survives dropping any country, changing the cluster resolution, varying the depth</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  threshold, and using the base embedding model before any fine-tuning.</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>It is anchored outside the language model entirely: a Mantel test finds that the mix of physical</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  BioBrick parts a city's students build agrees with its semantic topic profile.</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The result is descriptive. It documents relatedness and co-location; it does not identify a causal</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>  mechanism.</span>
 <span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>Patent data was excluded from the final analysis. An initial attempt to retrieve synthetic biology patents from Lens.org using IPC codes (C12N, C12P, C12Q) combined with keyword filtering produced too few records with usable city-level geocoding. Without patents, the downstream-translation step of the innovation trajectory cannot be tested. This is the most consequential gap in the study.</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Methods</span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.1 Embeddings</span></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>All artifacts were encoded as 768-dimensional vectors using **SPECTER2** (Lo et al., 2020), a transformer model pre-trained on scientific text using citation-informed contrastive learning. The *proximity adapter* variant was used — the variant trained for symmetric document-to-document similarity, appropriate for comparing documents to each other rather than to a query.</span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>Each document was encoded from its title and abstract (or project name and wiki abstract for iGEM), truncated to 256 tokens. The embedding is the <span class="in">`[CLS]`</span> token from the final layer. Embeddings were generated on Apple Silicon (MPS backend) and cached to disk.</span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>**Domain mismatch:** SPECTER2 was trained on scientific paper abstracts. iGEM project descriptions are shorter, less formal, and written by undergraduates rather than researchers. This mismatch may pull project embeddings closer to the paper distribution than a domain-neutral model would, artificially compressing the distance between the two artifact types. The effect likely inflates overlap scores, especially for short or generic project descriptions.</span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.2 Dimensionality Reduction and Clustering</span></span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>Embeddings were reduced to 30 dimensions using UMAP (McInnes et al., 2018) for clustering, and separately to 2D for visualization. Parameters: <span class="in">`n_neighbors=10`</span>, <span class="in">`min_dist=0.05`</span>, <span class="in">`metric=cosine`</span>. Clusters were assigned using HDBSCAN (Campello et al., 2013) on the 30D coordinates (<span class="in">`min_cluster_size=10`</span>, <span class="in">`min_samples=1`</span>), yielding 347 clusters. These parameter choices were not systematically varied; alternative settings would yield different cluster structures.</span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>The 25 largest clusters were labeled by submitting the 20 titles nearest each cluster centroid to Claude Haiku with a prompt requesting a 3–6 word topic label. Labels such as "CRISPR-Cas genome editing systems" and "biofuel and fine chemical production" are legible, which provides a basic sanity check on the pipeline before the city-level analysis.</span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.3 City-Level Semantic Overlap</span></span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>For each city $i$ with at least one embedded paper and at least one embedded project, we computed:</span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>$$\text{semantic<span class="sc">\_</span>overlap}_i = \cos\left(\bar{e}^{\text{papers}}_i,\; \bar{e}^{\text{projects}}_i\right)$$</span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>where $\bar{e}$ is the L2-normalised centroid of all embedded documents of that type in city $i$. When embeddings are unit-normalised, centroid cosine similarity equals mean pairwise cosine similarity across all paper-project pairs in that city (Turney &amp; Pantel, 2010).</span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>**A structural concern about this measure.** Centroid similarity has a size-dependent property: as the number of documents increases, the centroid moves toward the mean of the embedding space. In a homogeneous corpus like this one — all documents are in synthetic biology — the overall mean sits in a generic synthetic biology region. Two large cities with diverse programs across many subfields may both have centroids pulled toward this mean, producing high mutual similarity not because their programs are thematically aligned but because both are averaging over the same overall distribution. This would produce exactly the pattern observed: large cities with high overlap, a compressed range, and a positive regression coefficient on document counts. Without a permutation null — constructed by randomly reassigning city labels and recomputing the overlap distribution — the range of 0.80 to 0.99 is difficult to interpret. This null was not run, which is an important omission.</span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>The measure ranges from −1 to 1; in practice, given corpus homogeneity, values sit near 1.</span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.4 Regression</span></span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>We estimated OLS:</span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>$$\text{overlap}_i = \alpha + \beta_1 \log(n<span class="sc">\_</span>papers_i) + \beta_2 \log(n<span class="sc">\_</span>projects_i) + \beta_3 \cdot \text{year<span class="sc">\_</span>span}_i + \varepsilon_i$$</span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>across three specifications that progressively add temporal and carbon-capture share controls. Count variables are log-transformed to address right-skewed city-size distributions. Standard errors are HC3 heteroskedasticity-robust (White, 1980).</span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Results</span></span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4.1 Semantic Space Structure</span></span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>The UMAP projection shows papers and iGEM projects distributed across the same semantic regions rather than separating into two distinct zones. This is expected: both artifact types draw on the same scientific vocabulary, and SPECTER2 places documents with similar scientific content close together regardless of artifact type. Carbon-capture artifacts (Figure 1, green diamonds) spread across several adjacent regions, which is consistent with carbon capture being a cross-cutting application rather than a single coherent subfield.</span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>The 25 named clusters cover interpretable areas: bacteriophage engineering, CRISPR tools, biofuel production, cancer therapeutics, minimal genome design, DNA assembly. That the labels are legible is a necessary condition for the approach to work; it does not establish that the clusters are well-separated or that city-level centroids carry meaningful information.</span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4.2 City-Level Semantic Overlap</span></span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>Across 379 cities with both papers and projects, overlap ranges from 0.80 to 0.99 (mean 0.94, SD 0.04). The distribution is left-skewed — a long tail of lower-overlap cities and a compressed upper end.</span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>Top cities by overlap include Cambridge (US, 0.99), Shanghai (0.99), Tianjin (0.99), Berkeley (0.99), and Boston (0.99). These are large, well-established synthetic biology centers with active iGEM programs. But this is precisely the problem: very large cities top the ranking, which is what the centroid compression argument would also predict. Without a permutation baseline, we cannot determine whether a city at 0.99 has genuinely aligned programs or simply has enough documents that both centroids have been pulled to the corpus mean.</span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>The gap between 0.80 and 0.99 is real in a statistical sense — and may reflect genuine topical divergence at the low end, where cities have few documents and those documents happen to cover different areas. But the upper portion of the range may be largely artifactual.</span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4.3 Regression Results</span></span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Variable <span class="pp">|</span> (1) Size only <span class="pp">|</span> (2) + Temporal <span class="pp">|</span> (3) + Carbon <span class="pp">|</span></span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|:---:|:---:|:---:|</span></span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> log(papers) <span class="pp">|</span> 0.0168<span class="sc">\*\*\*</span> (0.0015) <span class="pp">|</span> 0.0165<span class="sc">\*\*\*</span> (0.0015) <span class="pp">|</span> 0.0167<span class="sc">\*\*\*</span> (0.0015) <span class="pp">|</span></span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> log(projects) <span class="pp">|</span> 0.0187<span class="sc">\*\*\*</span> (0.0018) <span class="pp">|</span> 0.0102<span class="sc">\*\*\*</span> (0.0030) <span class="pp">|</span> 0.0102<span class="sc">\*\*\*</span> (0.0030) <span class="pp">|</span></span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> iGEM year span <span class="pp">|</span> — <span class="pp">|</span> 0.0016<span class="sc">\*\*\*</span> (0.0004) <span class="pp">|</span> 0.0016<span class="sc">\*\*\*</span> (0.0004) <span class="pp">|</span></span>
-<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CC paper share <span class="pp">|</span> — <span class="pp">|</span> — <span class="pp">|</span> 0.0188 (0.0157) <span class="pp">|</span></span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> CC project share <span class="pp">|</span> — <span class="pp">|</span> — <span class="pp">|</span> −0.0086 (0.0188) <span class="pp">|</span></span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> R² <span class="pp">|</span> 0.620 <span class="pp">|</span> 0.634 <span class="pp">|</span> 0.638 <span class="pp">|</span></span>
-<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> N <span class="pp">|</span> 379 <span class="pp">|</span> 379 <span class="pp">|</span> 379 <span class="pp">|</span></span>
-<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>*Robust (HC3) standard errors in parentheses. \*\*\* p &lt; 0.01.*</span>
-<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>Cities with more papers and more projects show statistically higher semantic overlap. A doubling of papers corresponds to roughly 0.012 increase in overlap; a doubling of projects to about 0.013. Whether these coefficients reflect genuine specialization alignment or the centroid compression mechanism described in Section 3.3 is ambiguous, and cannot be resolved without the permutation test.</span>
-<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>The year-span coefficient is the most interpretively interesting result. Cities where iGEM teams have returned across more years show higher paper-project alignment, even after controlling for total project count. A 10-year span of iGEM engagement is associated with about 0.016 higher overlap. This cannot be a pure counting artifact — year span and project count are different things, and the effect survives their joint inclusion. One interpretation: cities that sustain iGEM participation over time tend to be the same cities with focused, cumulative research programs, and that cumulative depth produces tighter thematic alignment between student and faculty work. This is speculative, but it is at least not explained away by the centroid compression concern.</span>
-<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>Carbon-capture shares are not significant in Model 3. The interpretation is unclear — it could mean that carbon-capture activity does not drive alignment above and beyond city size, or it could mean the keyword-defined subset is too noisy to produce a clean signal.</span>
-<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5. Case Study: Carbon Capture</span></span>
-<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>Seven cities have at least two carbon-capture papers and two carbon-capture projects, the minimum threshold chosen for a stable centroid estimate. These are: San Diego (CC overlap: 0.963), Wuhan (0.959), Beijing (0.956), Shanghai (0.948), Guangzhou (0.935), Madison (0.929), and Austin (0.923).</span>
-<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>The cities are recognizable synthetic biology centers, which could mean the measure is picking up subfield-specific alignment, or it could mean that large, active cities naturally clear the two-artifact threshold and inherit high overlap from their overall size. The paper does not compare these cities' carbon-capture overlap to their overall overlap, so it is not possible to say whether the carbon-capture subset tells us anything not already captured by the main analysis.</span>
-<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>The case study also does not test whether carbon capture is the *reason* for alignment in these cities, or a coincident label on a cluster that would have appeared for any well-chosen subfield keyword. With seven cities and no within-subfield counterfactual, the section is illustrative rather than confirmatory.</span>
-<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>One genuine observation: carbon-capture iGEM projects appear from 2015 onward, while academic papers in the subfield are present from at least 2005. Papers accelerate sharply after 2018, around the time net-zero targets entered mainstream policy. Whether that acceleration in academic output preceded or followed the growth in student projects cannot be determined from aggregate trends alone — it would require city-year panel data.</span>
-<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6. Limitations</span></span>
-<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>**No patents.** The original design called for a three-way comparison — student projects, academic papers, and patents — to probe the full local innovation trajectory. The patent pipeline failed at the geocoding stage. Without patents, the "downstream translation" question cannot be examined, and the title's ambition exceeds what was delivered.</span>
-<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>**No permutation baseline.** The semantic overlap measure is difficult to interpret without a null distribution. A permutation test — randomly reassigning city labels and recomputing the full distribution — would establish whether observed overlap values are greater than chance and whether the size effects survive. This test was not run.</span>
-<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>**The iGEM-paper connection is assumed, not verified.** The paper assumes that a city's iGEM teams and its synthetic biology faculty are connected in some way — through supervision, shared lab space, or local academic culture. This assumption was not checked. It is plausible that some universities run strong iGEM programs managed by undergraduates with little connection to the faculty who write the synthetic biology papers captured by OpenAlex. If this is common, the city-level co-location conflates two separate communities and the co-location result loses much of its meaning.</span>
-<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>**SPECTER2 domain mismatch.** SPECTER2 was trained on academic abstracts. iGEM project descriptions are shorter and more informal, written by undergraduates rather than researchers. The mismatch may pull project embeddings artificially close to the paper distribution, inflating overlap scores — particularly for brief or generic project descriptions.</span>
-<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>**Cross-sectional design.** All years are pooled. The data cannot establish whether projects precede papers or vice versa in a given city. Cities with sustained iGEM engagement and high semantic overlap may simply be cities where a strong research culture drives both.</span>
-<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>**Geocoding reliability.** The third geocoding stage for iGEM teams used an LLM (Claude Haiku) for institutions not in OpenAlex or ROR. The fraction of the 626 cities resolved at this stage, and its error rate, were not assessed. Papers are geocoded through the more reliable OpenAlex institution metadata. If geocoding error in iGEM projects is correlated with city size or geography, regression coefficients could be affected.</span>
-<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>**Keyword sensitivity.** Both the synthetic biology corpus and the carbon-capture subset are defined by keyword lists. The carbon-capture list includes broad terms ("autotrophic," "carbon cycle," "biofuel") that match papers outside the intended scope. Alternative keyword choices would yield different corpora and potentially different results.</span>
-<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7. Conclusion</span></span>
-<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>iGEM student projects and academic papers in synthetic biology show consistent topical alignment at the city level. This alignment is stronger in cities with more of both artifact types and in cities with longer histories of iGEM participation. That much is supported by the data.</span>
-<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>The interpretation is harder. The size effects may be a structural property of centroid averaging rather than a signal of genuine co-specialization. The year-span result is more interesting because it cannot easily be attributed to this artifact — but it remains a cross-sectional association, and the mechanism is unknown. The carbon-capture section illustrates that the measure produces interpretable subgroup results, though with only seven cities it does not test the specialization hypothesis independently.</span>
-<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>The primary contribution is a working pipeline: corpus construction from open sources, SPECTER2 embeddings, city-level aggregation, and a regression framework. The pipeline is reproducible and could be applied to other fields where multiple artifact types coexist. What it requires to become a reliable measurement instrument is a validated null model, an established connection between the iGEM and academic communities at the city level, and a longitudinal panel design that can speak to temporal ordering.</span>
-<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>Future work should prioritize: (1) adding patent data via PatentsView, which has more reliable geocoding than Lens.org; (2) running a permutation test to establish what the overlap distribution looks like under random city assignment; (3) verifying, for a sample of cities, whether iGEM teams and academic paper authors are from the same departments or whether they are largely separate populations; and (4) building a city-year panel to test whether project activity at time $t$ predicts paper activity at time $t+k$.</span>
-<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a><span class="fu">## References</span></span>
-<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Boschma, R. (2005). Proximity and innovation: A critical assessment. *Regional Studies*.</span>
-<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Campello, R., Moulavi, D., &amp; Sander, J. (2013). Density-based clustering. *ECML PKDD*.</span>
-<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Cohan, A., et al. (2020). SPECTER: Document-level representation learning using citation-informed transformers. *ACL 2020*.</span>
-<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Lo, K., et al. (2020). S2ORC: The semantic scholar open research corpus. *ACL 2020*.</span>
-<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>McInnes, L., Healy, J., &amp; Melville, J. (2018). UMAP: Uniform manifold approximation and projection. *arXiv:1802.03426*.</span>
-<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Neffke, F., &amp; Henning, M. (2013). Skill relatedness and firm diversification. *Strategic Management Journal*.</span>
-<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Santolini, M., et al. (2023). The iGEM competition as a model system for studying scientific collaboration and knowledge dissemination. *(in prep.)*</span>
-<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Shapira, P., et al. (2017). Mapping synthetic biology. *New Biotechnology*.</span>
-<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Turney, P. D., &amp; Pantel, P. (2010). From frequency to meaning: Vector space models of semantics. *JAIR*.</span>
-<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>White, H. (1980). A heteroskedasticity-consistent covariance matrix estimator. *Econometrica*.</span>
-<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Wooldridge, J. M. (2019). *Introductory Econometrics*. Cengage.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>For the narrative in full, read the <span class="co">[</span><span class="ot">Background</span><span class="co">](background.qmd)</span>; for the methods, see</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Methods &amp; data</span><span class="co">](methods.qmd)</span>; for the complete analysis, see the <span class="co">[</span><span class="ot">Results</span><span class="co">](results.qmd)</span> and the</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">carbon-capture case study</span><span class="co">](case-study.qmd)</span>.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
