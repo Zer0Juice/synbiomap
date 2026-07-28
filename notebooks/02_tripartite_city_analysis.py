@@ -1212,13 +1212,13 @@ def _(arts, K, np, pd):
         cnt["share"] = cnt["count"] / cnt["total"]
         return cnt[["city_key", "period", "cluster_label", "share"]]
 
-    _shares = {t: cluster_shares_long(_a, t) for t in ["project", "paper", "patent"]}
+    shares = {t: cluster_shares_long(_a, t) for t in ["project", "paper", "patent"]}
 
-    return annual_vecs, cluster_shares_long, _shares
+    return annual_vecs, cluster_shares_long, shares
 
 
 @app.cell
-def _(_shares, np, pd):
+def _(shares, np, pd):
     import statsmodels.formula.api as smf
 
     # ── Tripartite DiD: cluster-share panel regression ────────────────────────
@@ -1249,7 +1249,7 @@ def _(_shares, np, pd):
 
     did_results = {}
     for _ta, _tb, _lbl in _pairs:
-        _mod, _nc, _n = run_did_pair(_shares[_ta], _shares[_tb])
+        _mod, _nc, _n = run_did_pair(shares[_ta], shares[_tb])
         did_results[(_ta, _tb)] = {
             "label": _lbl, "model": _mod,
             "beta": _mod.params["share_a"],
