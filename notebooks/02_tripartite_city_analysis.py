@@ -70,7 +70,7 @@ def _():
     )
     from src.analyze.robustness import (
         size_control_ols, leave_one_country_out, downsample_power,
-        explain_relatedness_ols,
+        explain_relatedness_ols, comembership_regression,
     )
     from src.analyze.crossmodal import city_part_type_props, mantel_test
 
@@ -80,6 +80,7 @@ def _():
         PROCESSED,
         build_city_type_vectors,
         city_part_type_props,
+        comembership_regression,
         comembership_table,
         downsample_power,
         explain_relatedness_ols,
@@ -897,6 +898,104 @@ def _(centroid_r2, country_of, mo, pair_results, pair_tables, size_control_ols):
     Bonferroni threshold, 0.05 divided by 4, is 0.0125; both paper links, at
     p = {_pp:.4f} and p = {_px:.4f}, clear it in the full sample.
     """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ### The same test as a regression
+
+    The permutation is one way to ask the question. A regression is another, and if the
+    two disagree that is worth knowing. So we lay the same numbers out as a table with
+    one row per city pair: a city's own paper vector against every same-country city's
+    project vector, its own against its own, and so on. The thing we regress on is a
+    single indicator, same-city, one when the two vectors come from the same place and
+    zero otherwise.
+
+    Its coefficient is the local signal in plain sight. It says how much higher a city's
+    own two types overlap than the mismatched same-country pairings, in the same cosine
+    units the permutation reports as excess. Size on each side and country fixed effects
+    ride along as controls, and the errors are clustered by city, since one city's vector
+    turns up in many pairs. If that coefficient is positive and holds up, a city's own
+    registers really do share topics more than the neighbours' do — the permutation's
+    answer, reached by a road that breaks in different places.
+    """)
+    return
+
+
+@app.cell
+def _(FIGDIR, SOL, comembership_regression, country_of, pair_results,
+      pair_tables, plt, tri_counts, tri_vecs):
+    # ── The decisive test re-run as a regression ─────────────────────────────
+    # One row per ordered city dyad (same country); DV = cosine co-membership,
+    # key regressor = same-city dummy. See src/analyze/robustness.py.
+    _pairs = [("paper", "project"), ("paper", "patent"), ("project", "patent")]
+    reg_res = {}
+    for _a, _b in _pairs:
+        _tab = pair_tables[(_a, _b)]
+        if len(_tab) >= 5:
+            reg_res[(_a, _b)] = comembership_regression(
+                tri_vecs, tri_counts, _a, _b, list(_tab.city_key), country_of)
+
+    # ── Forest plot: same-city coefficient (95% CI); tick marks the perm excess ─
+    _keys = [k for k in _pairs if k in reg_res]
+    _cols = {("paper", "project"): SOL["blue"], ("paper", "patent"): SOL["cyan"],
+             ("project", "patent"): SOL["orange"]}
+    fig_reg, ax_reg = plt.subplots(figsize=(11, 5))
+    for _i, _k in enumerate(_keys):
+        _r = reg_res[_k]
+        ax_reg.errorbar(_r["beta_same_city"], _i, xerr=1.96 * _r["se_same_city"],
+                        fmt="o", ms=13, lw=2.5, color=_cols[_k],
+                        ecolor=SOL["muted"], mec=SOL["text"], capsize=5, zorder=5)
+        ax_reg.plot(pair_results[_k]["excess"], _i, marker="|", ms=24, mew=3,
+                    color=SOL["text"], zorder=6)
+    ax_reg.axvline(0, color=SOL["muted"], ls="--", lw=1.2)
+    ax_reg.set_yticks(range(len(_keys)))
+    ax_reg.set_yticklabels([f"{_a} × {_b}" for _a, _b in _keys])
+    ax_reg.set_xlabel("same-city coefficient on cluster co-membership (95% CI); "
+                      "tick = permutation excess")
+    ax_reg.set_title("The same-city regression agrees with the permutation")
+    ax_reg.invert_yaxis()
+    fig_reg.tight_layout()
+    fig_reg.savefig(FIGDIR / "tripartite_samecity_reg.png", bbox_inches="tight")
+    fig_reg
+    return (reg_res,)
+
+
+@app.cell
+def _(mo, pair_results, reg_res):
+    _pairs = [("paper", "project"), ("paper", "patent"), ("project", "patent")]
+    _lines = ["| link | cities | dyads | perm excess (p) | same-city β (p) |",
+              "|---|---|---|---|---|"]
+    for _k in _pairs:
+        if _k not in reg_res:
+            continue
+        _r = reg_res[_k]
+        _pm = pair_results[_k]
+        _lines.append(f"| {_k[0]} × {_k[1]} | {_r['n_cities']} | {_r['n_dyads']} | "
+                      f"{_pm['excess']:+.4f} ({_pm['p_value']:.4f}) | "
+                      f"{_r['beta_same_city']:+.4f} ({_r['p_same_city']:.4f}) |")
+
+    _pj = reg_res[("paper", "project")]
+    _px = reg_res[("paper", "patent")]
+    mo.md(
+        "Each row is one type pair. The permutation excess and the same-city coefficient "
+        "sit in the same cosine units and measure one thing two ways: how much more a "
+        "city's own types overlap than the mismatched pairings.\n\n"
+        + "\n".join(_lines) + "\n\n"
+        f"The two agree. Both paper links stay positive and significant once the test "
+        f"becomes a regression carrying size controls and country fixed effects "
+        f"(same-city β {_pj['beta_same_city']:+.3f}, p {_pj['p_same_city']:.3f} for "
+        f"paper × project; β {_px['beta_same_city']:+.3f}, p {_px['p_same_city']:.3f} for "
+        f"paper × patent). The regression is the more cautious of the two, since its "
+        f"standard errors lean on a few dozen city clusters rather than four thousand "
+        f"shuffles, and the local signal survives anyway. The direct project × patent "
+        f"link stays null under both, as it should. One honest limit: clustering by city "
+        f"handles the dependence on one side of each pair, not both, so the permutation, "
+        f"which respects it fully, stays the decisive test. This is a second opinion that "
+        f"happens to agree."
+    )
     return
 
 

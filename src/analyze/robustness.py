@@ -65,6 +65,96 @@ def size_control_ols(tab: pd.DataFrame, type_a: str, type_b: str, min_country: i
     return out
 
 
+def comembership_regression(
+    vecs: dict,
+    counts: dict,
+    type_a: str,
+    type_b: str,
+    cities: list,
+    country_of: dict,
+    within_country: bool = True,
+    city_names: dict | None = None,
+) -> dict:
+    """
+    Regression twin of the within-country pair permutation (relatedness.py). Instead
+    of shuffling the pairing, we lay every city-pair out as a row and let a same-city
+    indicator carry the local signal.
+
+    One row per ordered dyad: (city_i's type-A vector, city_j's type-B vector). With
+    within_country=True we keep only dyads whose two cities share a country, which
+    mirrors the permutation's within-country re-pairing exactly. The dependent
+    variable is the cosine co-membership of the two vectors, and the regressor of
+    interest is
+
+        same_city = 1 if i == j else 0
+
+    so its coefficient is how much higher a city's OWN two types overlap than that
+    city's type-A overlaps with other same-country cities' type-B. That is the
+    parametric analogue of (observed - null_mean) from the permutation, in the same
+    raw cosine units, which is why we do NOT standardise here. Log document counts on
+    each side and country fixed effects are controls; country FE also make singleton
+    countries drop out of the same_city estimate, just as they cancel in the
+    permutation. Standard errors are clustered by city_i, because one city's vector
+    appears in many dyads.
+
+    This is convergent evidence that fails differently from the permutation (parametric
+    SEs and explicit controls, not a shuffle), not a replacement for it. The permutation
+    remains the decisive test.
+
+    References: Boschma et al. (2014) on relatedness regressions; the own-vs-other
+    contrast in relatedness.own_vs_other; notebook 01 section 8.
+    """
+    import statsmodels.formula.api as smf
+
+    va, vb = vecs[type_a], vecs[type_b]
+    ca, cb = counts[type_a], counts[type_b]
+    rows = []
+    for i in cities:
+        if i not in va or i not in ca:
+            continue
+        for j in cities:
+            if j not in vb or j not in cb:
+                continue
+            if within_country and country_of.get(i) != country_of.get(j):
+                continue
+            rows.append({
+                "overlap":   float(np.dot(va[i], vb[j])),
+                "same_city": int(i == j),
+                "log_a":     float(np.log1p(ca[i])),
+                "log_b":     float(np.log1p(cb[j])),
+                "country":   country_of.get(i),
+                "city_i":    i,
+                "city_j":    j,
+            })
+    df = pd.DataFrame(rows)
+
+    # Country FE when the restriction leaves >= 2 countries; the within-country
+    # restriction already conditions on country, so FE just soak up per-country means.
+    has_fe = within_country and df["country"].nunique() >= 2
+    formula = "overlap ~ same_city + log_a + log_b" + (" + C(country)" if has_fe else "")
+    model = smf.ols(formula, data=df).fit(
+        cov_type="cluster", cov_kwds={"groups": df["city_i"]})
+
+    diag = df.loc[df.same_city == 1, "overlap"]
+    offd = df.loc[df.same_city == 0, "overlap"]
+    return {
+        "type_a": type_a, "type_b": type_b,
+        "n_dyads": int(len(df)), "n_cities": int(df["city_i"].nunique()),
+        "n_countries": int(df["country"].nunique()),
+        "beta_same_city": float(model.params["same_city"]),
+        "se_same_city":   float(model.bse["same_city"]),
+        "t_same_city":    float(model.tvalues["same_city"]),
+        "p_same_city":    float(model.pvalues["same_city"]),
+        "beta_log_a": float(model.params["log_a"]),
+        "beta_log_b": float(model.params["log_b"]),
+        "r2": float(model.rsquared),
+        "mean_own": float(diag.mean()) if len(diag) else float("nan"),
+        "mean_cross": float(offd.mean()) if len(offd) else float("nan"),
+        "within_country": bool(within_country),
+        "has_country_fe": bool(has_fe),
+    }
+
+
 def explain_relatedness_ols(
     vecs: dict,
     counts: dict,
