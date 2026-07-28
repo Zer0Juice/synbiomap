@@ -9,10 +9,11 @@
  *
  * The two views are linked:
  *   • Click an artifact in the semantic space  → its city lights up on the map.
+ *   • Click a cluster label                    → that topic's artifacts light up
+ *                                                in both the space and the map.
  *   • Click a city on the map                  → all of that city's artifacts
  *                                                light up in the semantic space.
- *   • Toolbar toggles show/hide each artifact type and narrow to carbon-capture
- *     work; both panels respond together.
+ *   • Toolbar toggles show/hide each artifact type; both panels respond together.
  *
  * Data files (in website/assets/data/):
  *   artifacts.json   — [{id, type, title, year, city, country, lat, lon,
@@ -105,16 +106,19 @@
     const itemById = {};
     for (const it of items) itemById[it.id] = it;
 
-    // City index — aggregate artifacts into city bubbles.
-    const cityIndex = buildCityIndex(items);
+    // City and cluster indexes — aggregate artifacts two ways.
+    const cityIndex    = buildCityIndex(items);
+    const clusterIndex = buildClusterIndex(items);
 
     // Which types are actually present, in the fixed order.
     const TYPES = TYPE_ORDER.filter(t => items.some(it => it.type === t));
     const typeTotals = {};
     for (const t of TYPES) typeTotals[t] = items.filter(it => it.type === t).length;
 
-    // Cluster label annotations (computed once; stable across selections).
-    const clusterAnnotations = buildClusterAnnotations(items);
+    // Clickable cluster labels (raw positions; styled per-draw). clusterLabels[i]
+    // shares its index with the Plotly annotation, so a click on annotation i
+    // maps straight back to clusterLabels[i].clusterId.
+    const clusterLabels = buildClusterLabels(items);
 
     // ─── Shell ──────────────────────────────────────────────────────────────
     root.innerHTML = buildShell(TYPES, typeTotals);
@@ -125,10 +129,21 @@
     // ─── State ──────────────────────────────────────────────────────────────
     const state = {
       types: Object.fromEntries(TYPES.map(t => [t, true])),
-      cityKey: null,      // a city is in focus (dims the semantic space to it)
+      cityKey: null,      // a city is in focus (dims the space to its artifacts)
+      clusterId: null,    // a topic cluster is in focus (dims to its artifacts)
       artifactId: null,   // a single artifact is pinned (ring + city highlight)
     };
     let umapReady = false, mapReady = false;
+
+    // The current focus (a city OR a cluster), as a predicate over items, or null.
+    // City and cluster focus are mutually exclusive; selecting one clears the other.
+    function currentFocus() {
+      if (state.cityKey && cityIndex[state.cityKey])
+        return { kind: "city", test: it => it.ckey === state.cityKey };
+      if (state.clusterId != null && clusterIndex[state.clusterId])
+        return { kind: "cluster", test: it => it.cluster === state.clusterId };
+      return null;
+    }
 
     // ─── Filtering ──────────────────────────────────────────────────────────
     function passesFilter(it) {
@@ -147,14 +162,20 @@
     function redraw() { drawUMAP(); drawMap(); renderDetail(); }
 
     function drawUMAP() {
-      const traces = umapTraces(filteredItems(), state, itemById);
-      const layout = umapLayout(clusterAnnotations);
+      const focus = currentFocus();
+      const traces = umapTraces(filteredItems(), focus, state, itemById);
+      const layout = umapLayout(styledAnnotations(clusterLabels, state.clusterId));
       if (!umapReady) {
         Plotly.newPlot(umapDiv, traces, layout,
           { responsive: true, displayModeBar: false, scrollZoom: true });
         umapDiv.on("plotly_click", ev => {
           const pt = ev.points && ev.points[0];
           if (pt && pt.customdata) onArtifactSelect(pt.customdata);
+        });
+        umapDiv.on("plotly_clickannotation", ev => {
+          const lbl = clusterLabels[ev.index];
+          if (lbl) onClusterSelect(lbl.clusterId);
+          return false;   // suppress Plotly's default annotation handling
         });
         umapReady = true;
       } else {
@@ -163,7 +184,13 @@
     }
 
     function drawMap() {
-      const traces = mapTraces(cityIndex, filteredItems(), TYPES, highlightCityKey());
+      const focus = currentFocus();
+      let vis = filteredItems(), context = null;
+      if (focus && focus.kind === "cluster") {
+        context = vis;                 // whole corpus fades to grey underneath…
+        vis = vis.filter(focus.test);  // …while the cluster's cities stay coloured
+      }
+      const traces = mapTraces(cityIndex, vis, TYPES, highlightCityKey(), context);
       const layout = mapLayout();
       if (!mapReady) {
         Plotly.newPlot(mapDiv, traces, layout,
@@ -180,8 +207,16 @@
 
     // ─── Selection handlers ─────────────────────────────────────────────────
     function onCitySelect(cityKey) {
-      if (state.cityKey === cityKey) { state.cityKey = null; state.artifactId = null; }
-      else { state.cityKey = cityKey; state.artifactId = null; }
+      state.cityKey = state.cityKey === cityKey ? null : cityKey;
+      state.clusterId = null;
+      state.artifactId = null;
+      redraw();
+    }
+
+    function onClusterSelect(clusterId) {
+      state.clusterId = state.clusterId === clusterId ? null : clusterId;
+      state.cityKey = null;
+      state.artifactId = null;
       redraw();
     }
 
@@ -193,7 +228,9 @@
       getAbstracts().then(() => { if (state.artifactId === id) renderDetail(); });
     }
 
-    function clearSelection() { state.cityKey = null; state.artifactId = null; redraw(); }
+    function clearSelection() {
+      state.cityKey = null; state.clusterId = null; state.artifactId = null; redraw();
+    }
 
     // ─── Detail strip ───────────────────────────────────────────────────────
     function renderDetail() {
@@ -205,15 +242,25 @@
       }
       if (state.cityKey && cityIndex[state.cityKey]) {
         detailDiv.innerHTML = cityCard(cityIndex[state.cityKey], passesFilter);
-        detailDiv.querySelectorAll(".exp-art-row").forEach(el =>
-          el.addEventListener("click", () => onArtifactSelect(el.dataset.id)));
+        wireArtifactRows();
+        return;
+      }
+      if (state.clusterId != null && clusterIndex[state.clusterId]) {
+        detailDiv.innerHTML = clusterCard(clusterIndex[state.clusterId], passesFilter);
+        wireArtifactRows();
         return;
       }
       detailDiv.innerHTML = `
         <div style="padding:16px 18px;color:${SOL.base1};font-size:0.88rem;line-height:1.6;">
-          Click a point in the semantic space to pin an artifact and find its city, or click a city
-          on the map to light up everything it contributed. Toggles above show or hide each type.
+          Click a point to pin an artifact and find its city, a <strong>cluster label</strong> to
+          light up a whole topic across both views, or a <strong>city</strong> on the map to light up
+          its work in the semantic space. Toggles above show or hide each artifact type.
         </div>`;
+
+      function wireArtifactRows() {
+        detailDiv.querySelectorAll(".exp-art-row").forEach(el =>
+          el.addEventListener("click", () => onArtifactSelect(el.dataset.id)));
+      }
     }
 
     // ─── Wire toolbar ─────────────────────────────────────────────────────────
@@ -241,42 +288,70 @@
     return index;
   }
 
+  // ─── Cluster index ─────────────────────────────────────────────────────────
+  function buildClusterIndex(items) {
+    const index = {};
+    for (const it of items) {
+      if (it.cluster == null || it.cluster < 0) continue;   // skip the noise cluster
+      if (!index[it.cluster]) {
+        index[it.cluster] = { clusterId: it.cluster,
+                              name: it.clusterName || `Cluster ${it.cluster}`, items: [] };
+      }
+      index[it.cluster].items.push(it);
+    }
+    return index;
+  }
 
-  // ─── Cluster label annotations ─────────────────────────────────────────────
-  // Label only the larger clusters (median position of their points) so the
-  // semantic space stays readable rather than swamped by 80 overlapping tags.
-  function buildClusterAnnotations(items) {
+
+  // ─── Cluster labels ─────────────────────────────────────────────────────────
+  // Label only the larger clusters (at the median position of their points) so
+  // the semantic space stays readable rather than swamped by 80 overlapping tags.
+  // Returns raw {clusterId, name, x, y}; styledAnnotations() turns these into
+  // Plotly annotation objects, emphasising whichever cluster is selected.
+  function buildClusterLabels(items) {
     const byCluster = {};
     for (const it of items) {
       if (it.cluster == null || it.cluster < 0 || !it.clusterName) continue;
-      (byCluster[it.cluster] = byCluster[it.cluster] || { name: it.clusterName, xs: [], ys: [] });
+      (byCluster[it.cluster] = byCluster[it.cluster] ||
+        { clusterId: it.cluster, name: it.clusterName, xs: [], ys: [] });
       byCluster[it.cluster].xs.push(it.x);
       byCluster[it.cluster].ys.push(it.y);
     }
-    const top = Object.values(byCluster)
+    return Object.values(byCluster)
       .sort((a, b) => b.xs.length - a.xs.length)
-      .slice(0, MAX_CLUSTER_LABELS);
-    return top.map(c => ({
-      x: median(c.xs), y: median(c.ys), text: c.name,
-      showarrow: false, font: { size: 9.5, color: SOL.base01 },
-      bgcolor: "rgba(253,246,227,0.6)", borderpad: 1,
-      captureevents: false,
-    }));
+      .slice(0, MAX_CLUSTER_LABELS)
+      .map(c => ({ clusterId: c.clusterId, name: c.name, x: median(c.xs), y: median(c.ys) }));
+  }
+
+  // Turn raw labels into Plotly annotations. All are clickable (captureevents);
+  // the selected cluster is drawn dark and bold so it reads as "active".
+  function styledAnnotations(labels, selectedClusterId) {
+    return labels.map(l => {
+      const on = l.clusterId === selectedClusterId;
+      return {
+        x: l.x, y: l.y,
+        text: on ? `<b>${l.name}</b>` : l.name,
+        showarrow: false,
+        font: { size: on ? 11 : 9.5, color: on ? SOL.base3 : SOL.base01 },
+        bgcolor: on ? SOL.base01 : "rgba(253,246,227,0.6)",
+        borderpad: on ? 3 : 1,
+        captureevents: true,
+      };
+    });
   }
 
 
   // ─── Semantic-space traces ─────────────────────────────────────────────────
-  function umapTraces(vis, state, itemById) {
+  function umapTraces(vis, focus, state, itemById) {
     const traces = [];
-    const cityFocus = !!state.cityKey;
 
-    if (cityFocus) {
-      // Everything else fades to context; the selected city's points stay lit.
+    if (focus) {
+      // Everything else fades to context; the focused set (city or cluster) stays lit.
       const bgX = [], bgY = [];
-      const focus = {};   // type -> {x,y,text,ids}
+      const grp = {};   // type -> {x,y,text,ids}
       for (const it of vis) {
-        if (it.ckey === state.cityKey) {
-          const b = (focus[it.type] = focus[it.type] || { x: [], y: [], text: [], ids: [] });
+        if (focus.test(it)) {
+          const b = (grp[it.type] = grp[it.type] || { x: [], y: [], text: [], ids: [] });
           b.x.push(it.x); b.y.push(it.y);
           b.text.push(`${esc(it.title || it.id)} (${it.year || "?"})`);
           b.ids.push(it.id);
@@ -284,11 +359,11 @@
       }
       traces.push(bgTrace(bgX, bgY, 3));
       for (const t of TYPE_ORDER) {
-        if (!focus[t]) continue;
-        traces.push(pointTrace(focus[t], t, 8));
+        if (!grp[t]) continue;
+        traces.push(pointTrace(grp[t], t, 8));
       }
     } else {
-      // No city in focus: colour every visible point by type.
+      // No focus: colour every visible point by type.
       const byType = {};
       for (const it of vis) {
         const b = (byType[it.type] = byType[it.type] || { x: [], y: [], text: [], ids: [] });
@@ -305,7 +380,7 @@
     // Pinned-artifact ring (only if the artifact is currently visible).
     if (state.artifactId && itemById[state.artifactId]) {
       const a = itemById[state.artifactId];
-      const shown = cityFocus ? a.ckey === state.cityKey : true;
+      const shown = focus ? focus.test(a) : true;
       if (shown && state.types[a.type]) {
         traces.push({
           x: [a.x], y: [a.y], type: "scatter", mode: "markers",
@@ -354,29 +429,36 @@
 
 
   // ─── Map traces ────────────────────────────────────────────────────────────
-  function mapTraces(cityIndex, vis, TYPES, hlKey) {
-    // Aggregate the currently-visible artifacts back into per-city, per-type counts.
-    const agg = {};   // ckey -> {city, country, lat, lon, counts:{type:n}}
-    for (const it of vis) {
-      const c = (agg[it.ckey] = agg[it.ckey] ||
-        { city: it.city, country: it.country, lat: it.lat, lon: it.lon, counts: {} });
-      c.counts[it.type] = (c.counts[it.type] || 0) + 1;
-    }
-    const cities = Object.entries(agg).map(([key, c]) => ({ key, ...c }));
+  function mapTraces(cityIndex, vis, TYPES, hlKey, context) {
+    const traces = [];
 
-    const traces = TYPES.map(t => {
+    // Optional grey context layer (used in cluster focus): the whole corpus,
+    // faded, so the cluster's coloured cities read against the global backdrop.
+    if (context && context.length) {
+      const ctx = aggregateCities(context);
+      traces.push({
+        type: "scattergeo", name: "context", showlegend: false, hoverinfo: "skip",
+        lat: ctx.map(c => c.lat), lon: ctx.map(c => c.lon),
+        marker: { size: ctx.map(c => Math.sqrt(c.total) * 1.6 + 3),
+                  color: DIM_COLOR, opacity: 0.45, line: { width: 0.3, color: SOL.base3 } },
+      });
+    }
+
+    // Coloured per-type bubbles for the visible (or focused) artifacts.
+    const cities = aggregateCities(vis);
+    for (const t of TYPES) {
       const pts = cities.filter(c => (c.counts[t] || 0) > 0);
-      return {
-        type: "scattergeo", name: TYPE_LABEL[t] || t,
+      traces.push({
+        type: "scattergeo", name: TYPE_LABEL[t] || t, showlegend: false,
         lat: pts.map(c => c.lat), lon: pts.map(c => c.lon),
         customdata: pts.map(c => c.key),
         text: pts.map(c => `<b>${esc(c.city)}, ${esc(c.country)}</b><br>${TYPE_LABEL[t]}: ${c.counts[t]}`),
         marker: { size: pts.map(c => Math.sqrt(c.counts[t]) * 2.2 + 4),
                   color: TYPE_COLOR[t] || SOL.cyan, opacity: 0.6,
                   line: { width: 0.5, color: SOL.base3 } },
-        hovertemplate: "%{text}<extra></extra>", showlegend: false,
-      };
-    });
+        hovertemplate: "%{text}<extra></extra>",
+      });
+    }
 
     // Selected-city ring on top.
     if (hlKey && cityIndex[hlKey]) {
@@ -390,6 +472,19 @@
       });
     }
     return traces;
+  }
+
+  // Aggregate items into per-city bubbles with per-type counts and a total.
+  function aggregateCities(items) {
+    const agg = {};
+    for (const it of items) {
+      const c = (agg[it.ckey] = agg[it.ckey] ||
+        { key: it.ckey, city: it.city, country: it.country,
+          lat: it.lat, lon: it.lon, counts: {}, total: 0 });
+      c.counts[it.type] = (c.counts[it.type] || 0) + 1;
+      c.total += 1;
+    }
+    return Object.values(agg);
   }
 
   function mapLayout() {
@@ -454,7 +549,7 @@
         </div>
 
         <div style="display:flex;flex-wrap:wrap;gap:10px;">
-          ${panel("exp-umap", "Semantic space", "Click a point to pin an artifact")}
+          ${panel("exp-umap", "Semantic space", "Click a point, or a cluster label")}
           ${panel("exp-map",  "World map",      "Click a city to light up its work")}
         </div>
 
@@ -484,21 +579,7 @@
       </div>`).join("");
 
     const sorted = [...arts].sort((a, b) => (b.year || 0) - (a.year || 0));
-    const rows = sorted.slice(0, 120).map(a => {
-      const dot = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;
-        background:${TYPE_COLOR[a.type] || SOL.cyan};margin-right:7px;flex-shrink:0;margin-top:3px;"></span>`;
-      const cc = a.cc ? `<span style="font-size:0.62rem;background:${CC_COLOR};color:#fff;
-        padding:1px 4px;border-radius:3px;margin-left:5px;white-space:nowrap;">CC</span>` : "";
-      return `<div class="exp-art-row" data-id="${esc(a.id)}"
-        style="display:flex;align-items:flex-start;padding:6px 16px;cursor:pointer;
-               border-bottom:1px solid ${SOL.base2};font-size:0.8rem;color:${SOL.base02};"
-        onmouseenter="this.style.background='${SOL.base2}'"
-        onmouseleave="this.style.background='transparent'">
-        ${dot}<span style="flex:1;min-width:0;"><strong>${esc(a.title || a.id)}</strong>${cc}</span>
-        <span style="margin-left:8px;color:${SOL.base1};font-size:0.75rem;white-space:nowrap;flex-shrink:0;">${a.year || "?"}</span>
-      </div>`;
-    }).join("");
-
+    const rows = sorted.slice(0, 120).map(artifactRow).join("");
     const more = arts.length > 120
       ? `<div style="padding:8px 16px;font-size:0.75rem;color:${SOL.base1};">Showing 120 of ${arts.length}.</div>`
       : "";
@@ -514,6 +595,72 @@
       <div style="padding:6px 16px 4px;font-size:0.68rem;font-weight:600;letter-spacing:0.07em;
                   text-transform:uppercase;color:${SOL.base1};">Artifacts — click to open</div>
       ${rows}${more}`;
+  }
+
+
+  // ─── Cluster detail card ────────────────────────────────────────────────────
+  function clusterCard(cluster, passesFilter) {
+    const arts    = cluster.items.filter(passesFilter);
+    const counts  = countByType(arts);
+    const ccCount = arts.filter(a => a.cc).length;
+
+    const statCards = [
+      ["Papers", counts.paper || 0, SOL.blue],
+      ["Patents", counts.patent || 0, SOL.orange],
+      ["iGEM Projects", counts.project || 0, TYPE_COLOR.project],
+      ["Carbon capture", ccCount, CC_COLOR],
+    ].map(([label, val, color]) => `
+      <div style="flex:1;min-width:70px;padding:9px 12px;background:${SOL.base3};
+                  border:1px solid ${SOL.base2};border-radius:5px;text-align:center;">
+        <div style="font-size:1.3rem;font-weight:700;color:${color};">${val}</div>
+        <div style="font-size:0.68rem;color:${SOL.base1};margin-top:2px;">${label}</div>
+      </div>`).join("");
+
+    // The cities that contribute most to this topic.
+    const cityCounts = {};
+    for (const a of arts) {
+      const k = a.country ? `${a.city}, ${a.country}` : a.city;
+      cityCounts[k] = (cityCounts[k] || 0) + 1;
+    }
+    const topCities = Object.entries(cityCounts)
+      .sort((a, b) => b[1] - a[1]).slice(0, 8)
+      .map(([name, n]) => `${esc(name)} <span style="color:${SOL.base1};">(${n})</span>`).join(" · ");
+
+    const sorted = [...arts].sort((a, b) => (b.year || 0) - (a.year || 0));
+    const rows = sorted.slice(0, 120).map(artifactRow).join("");
+    const more = arts.length > 120
+      ? `<div style="padding:8px 16px;font-size:0.75rem;color:${SOL.base1};">Showing 120 of ${arts.length}.</div>`
+      : "";
+
+    return `
+      <div style="padding:14px 16px 8px;">
+        <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.07em;
+                    text-transform:uppercase;color:${SOL.base1};">Topic cluster</div>
+        <div style="font-size:1.05rem;font-weight:700;color:${SOL.base02};margin-top:1px;">${esc(cluster.name)}</div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">${statCards}</div>
+        ${topCities ? `<div style="margin-top:10px;font-size:0.78rem;color:${SOL.base00};line-height:1.6;">
+          <span style="color:${SOL.base1};font-weight:600;">Top cities:</span> ${topCities}</div>` : ""}
+      </div>
+      <div style="padding:6px 16px 4px;font-size:0.68rem;font-weight:600;letter-spacing:0.07em;
+                  text-transform:uppercase;color:${SOL.base1};">Artifacts — click to open</div>
+      ${rows}${more}`;
+  }
+
+
+  // ─── Shared artifact list row ───────────────────────────────────────────────
+  function artifactRow(a) {
+    const dot = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;
+      background:${TYPE_COLOR[a.type] || SOL.cyan};margin-right:7px;flex-shrink:0;margin-top:3px;"></span>`;
+    const cc = a.cc ? `<span style="font-size:0.62rem;background:${CC_COLOR};color:#fff;
+      padding:1px 4px;border-radius:3px;margin-left:5px;white-space:nowrap;">CC</span>` : "";
+    return `<div class="exp-art-row" data-id="${esc(a.id)}"
+      style="display:flex;align-items:flex-start;padding:6px 16px;cursor:pointer;
+             border-bottom:1px solid ${SOL.base2};font-size:0.8rem;color:${SOL.base02};"
+      onmouseenter="this.style.background='${SOL.base2}'"
+      onmouseleave="this.style.background='transparent'">
+      ${dot}<span style="flex:1;min-width:0;"><strong>${esc(a.title || a.id)}</strong>${cc}</span>
+      <span style="margin-left:8px;color:${SOL.base1};font-size:0.75rem;white-space:nowrap;flex-shrink:0;">${a.year || "?"}</span>
+    </div>`;
   }
 
 

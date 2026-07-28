@@ -9,9 +9,10 @@ format:
 Two linked views of the whole corpus. On the **left**, every iGEM project, paper, and patent sits in
 the shared semantic space, coloured by type, with the larger topic clusters labelled. On the
 **right**, the same artifacts are aggregated by city on a world map. The panels talk to each other:
-click a point in the semantic space to pin an artifact and find its city on the map, or click a city
-on the map to light up everything it contributed in the semantic space. Use the toggles to show or
-hide each artifact type. Carbon-capture artifacts carry a red badge.
+click a point in the semantic space to pin an artifact and find its city on the map, click a **cluster
+label** to light up a whole topic across both views, or click a **city** on the map to light up
+everything it contributed in the semantic space. Use the toggles to show or hide each artifact type.
+Carbon-capture artifacts carry a red badge.
 
 ```{=html}
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
