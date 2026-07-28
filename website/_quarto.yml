@@ -5,6 +5,7 @@ project:
     - assets/data/**
     - assets/figures/**
     - assets/downloads/**
+    - assets/js/**
 
 website:
   title: "Patents, Papers, Parts & Planet"
@@ -18,6 +19,8 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: overview.qmd
+        text: Overview
       - text: "The Study"
         menu:
           - href: background.qmd
