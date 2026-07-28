@@ -1,7 +1,8 @@
 ---
 title: "Patents, Papers, Parts & Planet"
-subtitle: "Local innovation trajectories in synthetic biology"
+subtitle: "Do a city's students, academics, and inventors work on the same things?"
 author: "Zakhary Roth · Complexity Science Hub · advised by Frank Neffke & Claudia Doblinger"
+date: "July 2026"
 format:
   revealjs:
     theme: simple
@@ -18,146 +19,176 @@ format:
 
 ## The question
 
-**Do a city's students, academics, and inventors in synthetic biology work on the same things?**
+Biology used to read life. Now it writes it. Synthetic biology engineers organisms, among them microbes that pull carbon back out of the air. The field is young and unevenly spread: a handful of cities do most of the work, and it is hard to watch from outside.
 
-::: {.columns}
-::: {.column width="58%"}
-- Biology moved from *reading* life to *writing* it
-- Innovation is local: places branch into related work
-- iGEM is a rare open, geotagged record of students learning the field
-- We put three artifact types in one semantic space and test for shared topics, city by city
-:::
-::: {.column width="42%"}
-**Three artifact types**
+iGEM is a way in. Each year students around the world build synthetic-biology projects, register their DNA parts in an open catalogue, and post a public wiki. It is a rare, geotagged record of people learning the field.
 
-🧬 iGEM projects — 4,606
-
-📄 Academic papers — 10,319
-
-📋 USPTO patents — 2,901
-
-**17,826 artifacts · 80 topics**
-:::
-:::
+**Do a city's students, academics, and inventors work on the same things?**
 
 ::: {.callout-note}
 We test semantic relatedness and co-location, not causation.
 :::
 
----
-
-## Why iGEM and BioBricks
-
-- iGEM: a worldwide student competition, projects built from a shared kit of standard DNA parts
-- ~89,000 BioBricks in an open registry, each with a stable `BBa_` id and a functional class
-- LEGO logic: a part from Uppsala combines with a part from Auckland
-- The parts are a second, independent record of what students actually built
-
-> Uppsala 2009's *Booze Bugs* engineered cyanobacteria to make alcohol from sunlight; a 2014 paper cites the team's own BioBrick. One thread, competition to publication.
-
----
-
 ## Building the corpus
+
+Four kinds of record, one shared schema, every document pinned to a city.
 
 | Source | Records | Geocoded to |
 |---|--:|---|
+| iGEM registry + wikis | 4,606 projects | team city |
 | OpenAlex (keyword) | 10,319 papers | institution city |
-| Oldham USPTO set | 2,901 patents | inventor cities (fractional) |
-| iGEM Registry + wikis | 4,606 projects | team city (multi-tier) |
+| Oldham USPTO set | 2,901 patents | inventor cities (Breschi & Lissoni 2001) |
+| iGEM parts registry | ~89,000 BioBricks | team city |
 
-- Shared schema: id · type · title · text · year · city · country · carbon-capture flag
-- Fine-tuned SPECTER2 on ~100k cross-type links (wiki DOIs + Marx patent–paper pairs)
-- UMAP → HDBSCAN → 80 human-reviewed topic clusters
+**17,826 documents across the three text types.** Each carries id, type, title, text, year, city, country, and a carbon-capture flag.
 
----
+## Reading meaning as numbers
 
-## The measure that failed
+- SPECTER2 reads a title and abstract and returns 768 numbers. Work about the same thing lands close together, so relatedness is just cosine distance.
+- We fine-tuned it on ~100,000 cross-type links: iGEM wikis citing DOIs, and patent–paper pairs.
+- Projects, papers, and patents share one space, so a student wiki and a patent are directly comparable.
 
-Average a city's projects and papers into two vectors, take the cosine.
+The result survives on the plain, un-tuned model too. Fine-tuning sharpens the signal; it does not create it.
 
-- Looks great: similarity ≈ 0.95 almost everywhere
-- But it correlates ~0.71 with city size → **centroid collapse**
-- It measures *how much* a city publishes, not *what* it publishes
+## The map of the field
 
-A useful negative result: the fix is to stop averaging and count topics.
+![](assets/figures/tripartite_topic_map.png){width="60%" fig-align="center"}
 
----
+One UMAP of all 17,826 documents, sorted by HDBSCAN into 80 topics (labels drafted by an LLM, checked by hand). Papers cover the whole field; projects and patents each gather in their own corners, and both sit against the papers.
 
-## The measure that worked
+## The measure that fails
 
-Represent each city as a profile over the 80 topics. Read the cosine overlap of two types, then test it against a **within-country permutation null** (shuffle which city pairs with which, holding size and topic popularity fixed).
+::: {.columns}
+::: {.column width="55%"}
+![](assets/figures/centroid_size_artifact.png){width="100%"}
+:::
+::: {.column width="45%"}
+Average a city's projects into one vector, its papers into another, take the cosine.
 
-| Pair | Cities | Excess | *p* | Beats null? |
-|---|:--:|:--:|:--:|:--:|
-| Project × paper | 120 | +0.0102 | 0.0077 | ✅ |
-| Paper × patent | 44 | +0.0352 | 0.0055 | ✅ |
-| Project × patent | 28 | +0.0041 | 0.24 | ❌ |
+- Similarity ≈ 0.95 almost everywhere
+- But it tracks city size: **r = 0.71**, about half the variance
+- It measures how much a city publishes, not what
 
-**Papers are the hub. The field is a star, not a triangle.**
+Keep it as a yardstick and count topics instead.
+:::
+:::
 
----
+## The measure that works
+
+Give each city a profile over the 80 topics, scaled to unit length. The overlap of two artifact types is the cosine of their profiles:
+
+`overlap = Σ over topics of (paper share) × (project share)`
+
+Large when the two types weight the same topics, small when they scatter. City size cancels.
+
+One number means nothing on its own, so we test it against a **within-country permutation null**: shuffle which city's papers pair with which city's projects, holding every country's sizes and topic popularity fixed. The *p*-value is the share of shuffles that match or beat the real overlap.
+
+## Papers are the hub
+
+| link | cities | excess | *p* | same-topic lift | beats null? |
+|---|:--:|:--:|:--:|:--:|:--:|
+| paper × project | 120 | +0.0102 | 0.0065 | 1.30× | ✅ |
+| paper × patent | 44 | +0.0347 | 0.0065 | 1.27× | ✅ |
+| project × patent | 28 | +0.0043 | 0.227 | 0.99× | ❌ |
+
+A city's papers share topics with both its projects and its patents. The straight project-to-patent link does not survive once country and size are held fixed.
+
+**The science a city publishes is the common ground its students and its inventors both build on.**
 
 ## Trying to break it
 
-- **Drop any country** — result barely moves (drop US: paper×patent *p* = 0.001)
-- **Change cluster count** — project×paper and paper×patent significant across the whole k-sweep; project×patent never
-- **Vary the depth threshold** — excess persists, cleaner in deeper cities
-- **Base vs fine-tuned model** — survives on base SPECTER2; fine-tuning sharpens, does not invent
+- **Drop a whole country.** Paper × patent survives losing the US (*p* ≈ 0.001). Paper × project leans on the US and China; without the US it softens to *p* = 0.069. We say so plainly.
+- **Change the topic count.** From 10 to 120 clusters, both paper links stay significant; project × patent never does.
+- **Starve the sample.** Squeeze a working link down to 28 cities and it often reads as noise. At 28 cities the project–patent leg is simply undetected — too little data to call it either way.
+- **Drop the fine-tuning.** The signal holds on base SPECTER2.
 
----
+## The parts agree
 
-## The parts agree (Mantel)
+::: {.columns}
+::: {.column width="52%"}
+![](assets/figures/mantel_parts_vs_topics.png){width="100%"}
+:::
+::: {.column width="48%"}
+Is this only an artifact of how the model reads text? Check it against something the model never saw.
 
-Is it all just an artifact of how SPECTER2 reads text? Check the semantic structure against something the model never saw.
+- One city-by-city distance from the mix of **BioBrick part classes** (promoter, CDS, terminator, …)
+- Compare to the semantic topic distance
+- Mantel **r = 0.127**, **p = 0.0005**, 164 cities
 
-- Build a city-by-city distance matrix from the mix of **BioBrick part classes**
-- Compare it to the semantic topic-distance matrix
-- $r_M = 0.127$, $p = 0.0005$ across 164 cities
-
-Two independent windows, one made of words and one of DNA parts, see the same shape. The strongest single piece of evidence the relatedness is real.
-
----
+Two windows, one of words and one of DNA parts, see the same shape.
+:::
+:::
 
 ## A dynamic trace
 
-Difference-in-differences, within a city and topic, after differencing out each city's baseline and each topic's trend:
+::: {.columns}
+::: {.column width="55%"}
+![](assets/figures/tripartite_did.png){width="100%"}
+:::
+::: {.column width="45%"}
+Difference-in-differences within a city and topic, after removing each city's baseline and each topic's global trend.
 
-- **Paper → patent:** $\hat\beta = +0.355$, $p = 0.028$ ($N = 44$) — academic output predicts later patenting in the same topic
-- **Project → paper:** significant in the larger bipartite sample ($N = 161$), underpowered in the tripartite one
-- Lead-lag ordering: a null at this sample size (bipartite found a +3-year peak)
+- **Paper → patent:** β = +0.355, *p* = 0.028 (N = 44). Academic work moves with later patenting in the same topic.
+- **Project → paper:** clear in the larger two-type sample, underpowered with all three.
 
----
+This is co-movement in time, not proof of cause.
+:::
+:::
 
-## Case study: carbon capture
+## Carbon capture, city by city
 
-Three adjacent clusters trace the ladder:
+Three neighbouring topics trace one ladder:
 
-- **Cluster 7** Cyanobacterial Metabolic Engineering — projects
-- **Cluster 8** Cyanobacterial Chassis Development — papers
-- **Cluster 62** Industrial Fermentation — patents
+- **Cyanobacterial metabolic engineering** — where the projects sit
+- **Cyanobacterial chassis development** — where the papers sit
+- **Industrial fermentation** — where the patents sit
 
-Leaderboard: **Auckland (19), Uppsala (18), Daejeon (15), San Diego (14), Gainesville (13)** — where students, academics, and inventors all work on engineering cyanobacteria at once.
-
-Alignment inside the subfield is as strong as field-wide ($\bar\delta = +0.0140$, 90% positive).
-
----
+The cities doing all three at once: **Auckland, Uppsala, Daejeon, San Diego, Gainesville.** Inside this one subfield the local alignment is about as strong as it is across the whole field.
 
 ## What it shows, and what it can't
 
-**Establishes:** real, size-independent local relatedness between a city's projects and papers, and papers and patents; robust to country, cluster count, threshold, and model; anchored in physical parts.
+**Shows.** Real, size-independent local relatedness between a city's projects and its papers, and its papers and its patents. It holds when we drop countries, change the topic count, and drop the fine-tuning, and the physical parts agree.
 
-**Does not establish:** causation. The three share many local causes — same universities, mentors, funders. We document the pattern; we do not identify the mechanism.
+**Can't.** Cause. The three grow from the same soil: the same universities, mentors, and funders. We map the pattern; we do not name the mechanism.
 
-**Policy:** where students cluster is a signal of where a field is putting down roots. Funding student science and open tools is an early investment in the field.
-
----
+**So what.** Where students cluster marks where a field is putting down roots. Funding student science and open tools is consistent with an early bet on where the work will grow.
 
 ## Thank you
 
-**Website:** [zer0juice.github.io/synbiomap](https://zer0juice.github.io/synbiomap)
+**Website** — [zer0juice.github.io/synbiomap](https://zer0juice.github.io/synbiomap)
 
-**Code & data:** [github.com/Zer0Juice/synbiomap](https://github.com/Zer0Juice/synbiomap)
+**Code & data** — [github.com/Zer0Juice/synbiomap](https://github.com/Zer0Juice/synbiomap)
 
-**Manuscript & this deck as PDF:** on the [Paper](paper.qmd) page
+**Manuscript & this deck (PDF)** — on the [Paper](paper.qmd) page
 
-Advised by Frank Neffke (CSH) · Claudia Doblinger (TU Munich)
+Advised by Frank Neffke (CSH) and Claudia Doblinger (TU Munich)
+
+# Backup {visibility="uncounted"}
+
+## Projects and papers in time {visibility="uncounted"}
+
+![](assets/figures/tripartite_lead_lag.png){width="58%" fig-align="center"}
+
+In the two-type sample the project–paper similarity peaks when papers come about three years after projects. With all three types the profile flattens toward a null, so treat the ordering as suggestive rather than settled.
+
+## The permutation nulls {visibility="uncounted"}
+
+![](assets/figures/tripartite_permutation.png){width="46%" fig-align="center"}
+
+Each grey histogram is the range of overlaps the within-country shuffle produces; the orange line is the real value. The two paper links sit out in the tail; project × patent sits inside the noise.
+
+## Robustness across topic counts {visibility="uncounted"}
+
+![](assets/figures/robust_kcurve.png){width="70%" fig-align="center"}
+
+From 10 to 120 topics, paper × project and paper × patent stay significant; project × patent never crosses. The result is not an accident of one clustering choice.
+
+## Base vs fine-tuned SPECTER2 {visibility="uncounted"}
+
+- The co-membership result reproduces on base SPECTER2 across the whole topic-count sweep.
+- Fine-tuning on cross-type citation links tightens the excess and lowers the *p*-values; it does not manufacture the effect.
+- This answers the worry that the signal is an artifact of training the model on the same links we then test.
+
+## A worked thread: Uppsala {visibility="uncounted"}
+
+Uppsala 2009's *Booze Bugs* engineered cyanobacteria to make alcohol from sunlight and registered the parts. A 2014 paper cites the team's own BioBrick. One city, competition to publication, in a single traceable thread.
