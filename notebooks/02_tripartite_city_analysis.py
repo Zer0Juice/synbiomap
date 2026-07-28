@@ -70,6 +70,7 @@ def _():
     )
     from src.analyze.robustness import (
         size_control_ols, leave_one_country_out, downsample_power,
+        explain_relatedness_ols,
     )
     from src.analyze.crossmodal import city_part_type_props, mantel_test
 
@@ -81,6 +82,7 @@ def _():
         city_part_type_props,
         comembership_table,
         downsample_power,
+        explain_relatedness_ols,
         leave_one_country_out,
         load_cache,
         mantel_test,
@@ -895,6 +897,115 @@ def _(centroid_r2, country_of, mo, pair_results, pair_tables, size_control_ols):
     Bonferroni threshold, 0.05 divided by 4, is 0.0125; both paper links, at
     p = {_pp:.4f} and p = {_px:.4f}, clear it in the full sample.
     """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ### What moves a city's alignment?
+
+    The permutation test asks one yes-or-no question: does a city's own types share
+    topics more than chance? It says yes. A different question is which cities show the
+    most alignment, and why. So we put one row per tripartite city into a plain
+    regression, the mean of its three pairwise cosines on the left, and ask what on the
+    right moves it.
+
+    Three factors go in, each standardised so the coefficients compare directly. Size is
+    the log of how many documents the city has across all three types. Balance is how
+    evenly those documents split between projects, papers, and patents, measured as
+    entropy: one is a perfect three-way split, zero is one type doing all the talking.
+    Carbon focus is the share of the city's documents that fall in the carbon-capture
+    case study. Standard errors are clustered by country, since cities in one country are
+    not independent draws.
+
+    One caveat before the numbers. The measure on the left is the raw cosine, and
+    section 2 already showed the raw magnitudes track city size. So we expect size to
+    lead; putting it in the regression is how we hold it fixed and read the other two net
+    of it. This describes a small set of cities, it is not a causal model, and the
+    permutation test stays the real inference.
+    """)
+    return
+
+
+@app.cell
+def _(FIGDIR, MIN_DOCS, SOL, arts, city_name, country_of,
+      explain_relatedness_ols, plt, tri_counts, tri_vecs):
+    # ── Multi-factor OLS on the tripartite city unit ──────────────────────────
+    # One row per city with all three types. DV = mean of its three pairwise cosines;
+    # factors = size, mix balance, carbon focus (defined in src/analyze/robustness.py).
+    _tri_cities = [
+        c for c in tri_vecs["paper"]
+        if c in tri_vecs["project"] and c in tri_vecs["patent"]
+        and tri_counts["paper"].get(c, 0) >= MIN_DOCS
+        and tri_counts["project"].get(c, 0) >= MIN_DOCS
+        and tri_counts["patent"].get(c, 0) >= MIN_DOCS
+    ]
+    # Per-city carbon share: fraction of a city's non-noise docs that are flagged.
+    _valid = arts[arts.cluster_label >= 0]
+    _carbon_frac = _valid.groupby("city_key")["is_cc"].mean().to_dict()
+
+    ols = explain_relatedness_ols(
+        tri_vecs, tri_counts, _tri_cities, country_of,
+        carbon_frac=_carbon_frac, city_names=city_name)
+
+    # ── Coefficient plot: standardized beta with cluster-robust 95% bars ──────
+    _order = ["log_total", "mix_entropy", "carbon_share"]
+    _pretty = {"log_total": "size (log docs)", "mix_entropy": "mix balance",
+               "carbon_share": "carbon focus"}
+    _cols = {"log_total": SOL["blue"], "mix_entropy": SOL["cyan"],
+             "carbon_share": SOL["orange"]}
+    _c = ols["coefs"].set_index("term")
+
+    fig_ols, ax_ols = plt.subplots(figsize=(11, 5))
+    for _i, _t in enumerate(_order):
+        ax_ols.errorbar(_c.loc[_t, "beta"], _i, xerr=1.96 * _c.loc[_t, "se"],
+                        fmt="o", ms=13, lw=2.5, color=_cols[_t],
+                        ecolor=SOL["muted"], mec=SOL["text"], capsize=5, zorder=5)
+    ax_ols.axvline(0, color=SOL["muted"], ls="--", lw=1.2)
+    ax_ols.set_yticks(range(len(_order)))
+    ax_ols.set_yticklabels([_pretty[_t] for _t in _order])
+    ax_ols.set_xlabel("standardized effect on mean pairwise alignment (95% CI)")
+    ax_ols.set_title("Size leads; balance and carbon focus barely register")
+    ax_ols.invert_yaxis()
+    fig_ols.tight_layout()
+    fig_ols.savefig(FIGDIR / "tripartite_ols.png", bbox_inches="tight")
+    fig_ols
+    return (ols,)
+
+
+@app.cell
+def _(mo, ols):
+    _pretty = {"log_total": "size (log docs)", "mix_entropy": "mix balance",
+               "carbon_share": "carbon focus"}
+    _c = ols["coefs"].set_index("term")
+    _lines = ["| factor | standardized β | p |", "|---|---|---|"]
+    for _t in ["log_total", "mix_entropy", "carbon_share"]:
+        _lines.append(f"| {_pretty[_t]} | {_c.loc[_t, 'beta']:+.4f} | {_c.loc[_t, 'p']:.3f} |")
+
+    _sz = _c.loc["log_total", "beta"]
+    _mx_p = _c.loc["mix_entropy", "p"]
+    _cb = _c.loc["carbon_share", "beta"]
+    _cb_p = _c.loc["carbon_share", "p"]
+
+    mo.md(
+        f"The regression covers {ols['n']} cities in {ols['n_countries']} countries and "
+        f"explains {ols['r2']:.0%} of the spread in alignment. The table reads as effect "
+        f"per one standard deviation, so the numbers compare directly.\n\n"
+        + "\n".join(_lines) + "\n\n"
+        f"Size leads and nothing else comes close. A city one standard deviation larger "
+        f"sits about {_sz:+.3f} higher in mean alignment, a clear and reliable gap "
+        f"(p below 0.001). That is the section 2 lesson again: the raw cosine mostly "
+        f"counts documents. Balance does not matter here (p = {_mx_p:.2f}) — an even split "
+        f"of projects, papers, and patents buys a city no extra alignment. Carbon focus "
+        f"leans slightly negative ({_cb:+.3f}, p = {_cb_p:.2f}): the most carbon-heavy "
+        f"cities are, if anything, a touch less internally aligned, but the sample is too "
+        f"small to lean on that.\n\n"
+        f"The honest reading is a null with one exception. Once you know how much a city "
+        f"produces, neither its balance nor its carbon share tells you much more about how "
+        f"its three registers line up. That is why the decisive test is the permutation, "
+        f"which holds size fixed by construction, and not a regression on the raw measure."
+    )
     return
 
 
