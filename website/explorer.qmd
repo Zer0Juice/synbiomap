@@ -11,7 +11,7 @@ the shared semantic space, coloured by type, with the larger topic clusters labe
 **right**, the same artifacts are aggregated by city on a world map. The panels talk to each other:
 click a point in the semantic space to pin an artifact and find its city on the map, or click a city
 on the map to light up everything it contributed in the semantic space. Use the toggles to show or
-hide each artifact type, or narrow to carbon-capture work. Carbon-capture artifacts carry a red badge.
+hide each artifact type. Carbon-capture artifacts carry a red badge.
 
 ```{=html}
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>

@@ -34,8 +34,9 @@
     blue:   "#268bd2", cyan:   "#2aa198", green: "#859900",
   };
 
+  const PROJECT_GREEN = "#2ecc40";          // bright green for iGEM projects
   const TYPE_COLOR = {
-    paper: SOL.blue, patent: SOL.orange, project: SOL.green, part: SOL.magenta,
+    paper: SOL.blue, patent: SOL.orange, project: PROJECT_GREEN, part: SOL.magenta,
   };
   const TYPE_LABEL = {
     paper: "Papers", patent: "Patents", project: "iGEM Projects", part: "iGEM Parts",
@@ -124,7 +125,6 @@
     // ─── State ──────────────────────────────────────────────────────────────
     const state = {
       types: Object.fromEntries(TYPES.map(t => [t, true])),
-      ccOnly: false,
       cityKey: null,      // a city is in focus (dims the semantic space to it)
       artifactId: null,   // a single artifact is pinned (ring + city highlight)
     };
@@ -132,9 +132,7 @@
 
     // ─── Filtering ──────────────────────────────────────────────────────────
     function passesFilter(it) {
-      if (!state.types[it.type]) return false;
-      if (state.ccOnly && !it.cc) return false;
-      return true;
+      return !!state.types[it.type];
     }
     function filteredItems() { return items.filter(passesFilter); }
 
@@ -223,8 +221,6 @@
       const cb = document.getElementById(`exp-toggle-${t}`);
       cb.addEventListener("change", () => { state.types[t] = cb.checked; redraw(); });
     });
-    const ccBox = document.getElementById("exp-toggle-cc");
-    ccBox.addEventListener("change", () => { state.ccOnly = ccBox.checked; redraw(); });
     document.getElementById("exp-clear").addEventListener("click", clearSelection);
 
     // First paint.
@@ -310,7 +306,7 @@
     if (state.artifactId && itemById[state.artifactId]) {
       const a = itemById[state.artifactId];
       const shown = cityFocus ? a.ckey === state.cityKey : true;
-      if (shown && state.types[a.type] && (!state.ccOnly || a.cc)) {
+      if (shown && state.types[a.type]) {
         traces.push({
           x: [a.x], y: [a.y], type: "scatter", mode: "markers",
           name: "Selected", showlegend: false, hoverinfo: "skip",
@@ -428,19 +424,6 @@
         <span style="color:${SOL.base1};font-size:0.76rem;">${typeTotals[t].toLocaleString()}</span>
       </label>`).join("");
 
-    const ccToggle = `
-      <label for="exp-toggle-cc" style="
-        display:inline-flex;align-items:center;gap:7px;
-        padding:6px 10px;cursor:pointer;
-        border:1px solid ${SOL.base2};border-radius:6px;background:${SOL.base3};
-        font-size:0.82rem;color:${SOL.base02};
-      ">
-        <input type="checkbox" id="exp-toggle-cc"
-               style="accent-color:${CC_COLOR};width:15px;height:15px;cursor:pointer;">
-        <span style="width:10px;height:10px;border-radius:50%;background:${CC_COLOR};flex-shrink:0;"></span>
-        <span style="font-weight:600;">Carbon capture only</span>
-      </label>`;
-
     const panel = (id, title, sub) => `
       <div style="
         flex:1 1 420px;min-width:300px;display:flex;flex-direction:column;
@@ -462,7 +445,6 @@
           <span style="font-size:0.7rem;font-weight:700;letter-spacing:0.07em;
                        text-transform:uppercase;color:${SOL.base1};margin-right:2px;">Show</span>
           ${toggles}
-          ${ccToggle}
           <button id="exp-clear" style="
             margin-left:auto;padding:6px 12px;cursor:pointer;
             border:1px solid ${SOL.base2};border-radius:6px;background:${SOL.base3};
@@ -492,7 +474,7 @@
     const statCards = [
       ["Papers", counts.paper || 0, SOL.blue],
       ["Patents", counts.patent || 0, SOL.orange],
-      ["iGEM Projects", counts.project || 0, SOL.green],
+      ["iGEM Projects", counts.project || 0, TYPE_COLOR.project],
       ["Carbon capture", ccCount, CC_COLOR],
     ].map(([label, val, color]) => `
       <div style="flex:1;min-width:70px;padding:9px 12px;background:${SOL.base3};
