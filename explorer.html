@@ -131,6 +131,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./overview.html"> 
+<span class="menu-text">Overview</span></a>
+  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-the-study" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">The Study</span>
@@ -222,20 +226,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Search for a city to see what it works on: which of the three artifact types are present, how its activity sits in the shared semantic space, and a list of the individual papers, patents, and iGEM projects from that location. Click any artifact to read its abstract; carbon-capture work is marked with a red badge.</p>
+<p>Two linked views of the whole corpus. On the <strong>left</strong>, every iGEM project, paper, and patent sits in the shared semantic space, coloured by type, with the larger topic clusters labelled. On the <strong>right</strong>, the same artifacts are aggregated by city on a world map. The panels talk to each other: click a point in the semantic space to pin an artifact and find its city on the map, click a <strong>cluster label</strong> to light up a whole topic across both views, or click a <strong>city</strong> on the map to light up everything it contributed in the semantic space. Use the toggles to show or hide each artifact type. Carbon-capture artifacts carry a red badge.</p>
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-<div id="city-explorer"></div>
+<div id="explorer-app"></div>
 <script src="assets/js/explorer.js"></script>
-<section id="geographic-overview" class="level2">
-<h2 class="anchored" data-anchor-id="geographic-overview">Geographic Overview</h2>
-<p>City-level map of total synthetic biology activity. Bubble size scales with the number of artifacts; hover for a breakdown by type.</p>
-<div id="geo-explorer" style="width:100%; height:520px; border:1px solid #ddd; border-radius:4px; margin-top:1em;"></div>
-<script src="assets/js/geo.js"></script>
 
 
 <!-- -->
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -697,26 +695,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: false</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Search for a city to see what it works on: which of the three artifact types are present, how its</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>activity sits in the shared semantic space, and a list of the individual papers, patents, and iGEM</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>projects from that location. Click any artifact to read its abstract; carbon-capture work is marked</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>with a red badge.</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;script src="https://cdn.plot.ly/plotly-2.27.0.min.js"&gt;&lt;/script&gt;</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;div id="city-explorer"&gt;&lt;/div&gt;</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;script src="assets/js/explorer.js"&gt;&lt;/script&gt;</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## Geographic Overview</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>City-level map of total synthetic biology activity.</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>Bubble size scales with the number of artifacts; hover for a breakdown by type.</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;div id="geo-explorer" style="width:100%; height:520px; border:1px solid #ddd; border-radius:4px; margin-top:1em;"&gt;&lt;/div&gt;</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;script src="assets/js/geo.js"&gt;&lt;/script&gt;</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Two linked views of the whole corpus. On the **left**, every iGEM project, paper, and patent sits in</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>the shared semantic space, coloured by type, with the larger topic clusters labelled. On the</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>**right**, the same artifacts are aggregated by city on a world map. The panels talk to each other:</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>click a point in the semantic space to pin an artifact and find its city on the map, click a **cluster</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>label** to light up a whole topic across both views, or click a **city** on the map to light up</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>everything it contributed in the semantic space. Use the toggles to show or hide each artifact type.</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Carbon-capture artifacts carry a red badge.</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;script src="https://cdn.plot.ly/plotly-2.27.0.min.js"&gt;&lt;/script&gt;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;div id="explorer-app"&gt;&lt;/div&gt;</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;script src="assets/js/explorer.js"&gt;&lt;/script&gt;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

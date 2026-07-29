@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Scroll through the talk: do a city’s students, academics, and inventors in synthetic biology work on the same things?">
 
 <title>Patents, Papers, Parts &amp; Planet</title>
 <style>
@@ -131,6 +132,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link active" href="./index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./overview.html"> 
+<span class="menu-text">Overview</span></a>
+  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-the-study" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">The Study</span>
@@ -196,140 +201,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#the-question" id="toc-the-question" class="nav-link active" data-scroll-target="#the-question">The question</a></li>
-  <li><a href="#the-corpus-in-numbers" id="toc-the-corpus-in-numbers" class="nav-link" data-scroll-target="#the-corpus-in-numbers">The corpus in numbers</a></li>
-  <li><a href="#where-to-go-next" id="toc-where-to-go-next" class="nav-link" data-scroll-target="#where-to-go-next">Where to go next</a></li>
-  </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
-    </div>
+    
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Patents, Papers, Parts &amp; Planet</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-<p class="subtitle lead">Do a city’s students, academics, and inventors in synthetic biology work on the same things?</p>
-</div>
+<main class="content column-page" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><h1 class="title display-7"></h1></header><div class="quarto-title-block"><div class="quarto-title-tools-only"><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 
 
 
-<div class="quarto-title-meta">
 
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<p>For most of its history, biology read nature. It broke life into organs, then cells, then the genes beneath them, and slowly worked out the rules that hold a living thing together. Synthetic biology is the moment biology starts to write. We now compose new biological systems from standardized genetic parts, treating DNA as code and cells as hardware. The same power that has been reshaping the planet by accident could, aimed on purpose, help repair it. Engineered microbes can already pull carbon dioxide out of the air and turn it into fuel.</p>
-<p>The students in <a href="https://igem.org">iGEM</a> are learning to hold that pen. Every year, thousands of them design and build a project from a shared kit of interchangeable DNA parts, and they write it all up on a public wiki. That makes iGEM something most young fields never get: an open, geotagged record of a field composing itself. This project asks what that record can tell us about where synthetic biology is putting down roots.</p>
-<section id="the-question" class="level2">
-<h2 class="anchored" data-anchor-id="the-question">The question</h2>
-<p>Do cities whose students research a topic in synthetic biology also produce academic papers, and patents, in related areas? We put student projects, academic papers, and patents into one shared semantic space and test whether a city’s three kinds of work land on the same specific topics more often than chance allows.</p>
-<p>The short answer is a qualified yes, with a specific shape. A city’s papers line up with its projects, and its papers line up with its patents, but its projects and its patents stay further apart. Academic research is the middle link. The field is shaped like a star, with papers at the hub, not a triangle.</p>
-</section>
-<section id="the-corpus-in-numbers" class="level2">
-<h2 class="anchored" data-anchor-id="the-corpus-in-numbers">The corpus in numbers</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Artifact type</th>
-<th style="text-align: right;">Count</th>
-<th style="text-align: center;">Years</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Academic papers (OpenAlex)</td>
-<td style="text-align: right;">10,319</td>
-<td style="text-align: center;">2000–2026</td>
-</tr>
-<tr class="even">
-<td>iGEM student projects</td>
-<td style="text-align: right;">4,606</td>
-<td style="text-align: center;">2009–2025</td>
-</tr>
-<tr class="odd">
-<td>USPTO patents (Oldham set)</td>
-<td style="text-align: right;">2,901</td>
-<td style="text-align: center;">—</td>
-</tr>
-<tr class="even">
-<td><strong>Total artifacts</strong></td>
-<td style="text-align: right;"><strong>17,826</strong></td>
-<td style="text-align: center;"></td>
-</tr>
-</tbody>
-</table>
-<p>All three are geocoded to a city and embedded into the same 768-dimensional space with a fine-tuned <a href="https://huggingface.co/allenai/specter2">SPECTER2</a> model, then grouped into 80 topic clusters. 156 cities carry all three artifact types at once.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>A note on language
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This work is descriptive. We measure relatedness and co-location, and we test them hard, but we do not claim that student projects cause later papers or that papers cause patents. The three share many local causes, and observational data like this cannot separate them.</p>
-</div>
-</div>
-</section>
-<section id="where-to-go-next" class="level2">
-<h2 class="anchored" data-anchor-id="where-to-go-next">Where to go next</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Page</th>
-<th>What you will find</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="./background.html">Background</a></td>
-<td>Why a young field is hard to see, and why iGEM is a rare window into it</td>
-</tr>
-<tr class="even">
-<td><a href="./methods.html">Methods &amp; data</a></td>
-<td>How the corpus was built, geocoded, embedded, and clustered</td>
-</tr>
-<tr class="odd">
-<td><a href="./results.html">Results</a></td>
-<td>The full analysis: the measure that failed, the one that worked, and every attempt to break it</td>
-</tr>
-<tr class="even">
-<td><a href="./case-study.html">Case study: carbon capture</a></td>
-<td>Engineering cyanobacteria to turn light and CO₂ into fuel, city by city</td>
-</tr>
-<tr class="odd">
-<td><a href="./explorer.html">Explorer</a></td>
-<td>Search any city and see its projects, papers, and patents in the shared space</td>
-</tr>
-<tr class="even">
-<td><a href="./paper.html">Paper &amp; slides</a></td>
-<td>The full manuscript and the talk</td>
-</tr>
-</tbody>
-</table>
-<p>All code and data are on <a href="https://github.com/Zer0Juice/synbiomap">GitHub</a>. The pipeline is built to be rebuilt: see <a href="./reproducibility.html">Reproducibility</a>.</p>
+<style>
+  /* Full-bleed: break the deck out of Quarto's content column so it spans
+     the entire browser width, edge to edge, and fills the window height. */
+  html, body { overflow-x: hidden; }
+  #talk-embed {
+    position: relative;
+    left: 50%;
+    right: 50%;
+    width: 100vw;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: -0.5rem;
+    height: calc(100vh - 60px);
+    min-height: 480px;
+    border: 0;
+    display: block;
+    background: #fdf6e3; /* solarized-light paper, avoids a white flash while loading */
+  }
+  #talk-caption {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin: 0.6rem 0 0;
+  }
+</style>
+<iframe id="talk-embed" src="slides.html?view=scroll" title="Patents, Papers, Parts &amp; Planet — scrolling talk" allowfullscreen="" loading="eager"></iframe>
+<p id="talk-caption">Scroll through the talk above · <a href="slides.html" target="_blank" rel="noopener">open the full-screen deck ↗</a> · <a href="overview.html">read the write-up →</a></p>
 
 
 <!-- -->
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -784,69 +696,45 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Patents, Papers, Parts &amp; Planet"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Do a city's students, academics, and inventors in synthetic biology work on the same things?"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>For most of its history, biology read nature. It broke life into organs, then cells, then</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>the genes beneath them, and slowly worked out the rules that hold a living thing together.</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Synthetic biology is the moment biology starts to write. We now compose new biological</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>systems from standardized genetic parts, treating DNA as code and cells as hardware. The</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>same power that has been reshaping the planet by accident could, aimed on purpose, help</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>repair it. Engineered microbes can already pull carbon dioxide out of the air and turn it</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>into fuel.</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>The students in <span class="co">[</span><span class="ot">iGEM</span><span class="co">](https://igem.org)</span> are learning to hold that pen. Every year, thousands</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>of them design and build a project from a shared kit of interchangeable DNA parts, and they</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>write it all up on a public wiki. That makes iGEM something most young fields never get: an</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>open, geotagged record of a field composing itself. This project asks what that record can</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>tell us about where synthetic biology is putting down roots.</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## The question</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>Do cities whose students research a topic in synthetic biology also produce academic papers,</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>and patents, in related areas? We put student projects, academic papers, and patents into one</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>shared semantic space and test whether a city's three kinds of work land on the same specific</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>topics more often than chance allows.</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>The short answer is a qualified yes, with a specific shape. A city's papers line up with its</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>projects, and its papers line up with its patents, but its projects and its patents stay</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>further apart. Academic research is the middle link. The field is shaped like a star, with</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>papers at the hub, not a triangle.</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## The corpus in numbers</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Artifact type <span class="pp">|</span> Count <span class="pp">|</span> Years <span class="pp">|</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---:|:---:|</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Academic papers (OpenAlex) <span class="pp">|</span> 10,319 <span class="pp">|</span> 2000–2026 <span class="pp">|</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> iGEM student projects <span class="pp">|</span> 4,606 <span class="pp">|</span> 2009–2025 <span class="pp">|</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> USPTO patents (Oldham set) <span class="pp">|</span> 2,901 <span class="pp">|</span> — <span class="pp">|</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total artifacts** | **17,826** <span class="pp">|</span> <span class="pp">|</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>All three are geocoded to a city and embedded into the same 768-dimensional space with a</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>fine-tuned <span class="co">[</span><span class="ot">SPECTER2</span><span class="co">](https://huggingface.co/allenai/specter2)</span> model, then grouped into 80</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>topic clusters. 156 cities carry all three artifact types at once.</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## A note on language</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>This work is descriptive. We measure relatedness and co-location, and we test them hard, but</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>we do not claim that student projects cause later papers or that papers cause patents. The</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>three share many local causes, and observational data like this cannot separate them.</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="fu">## Where to go next</span></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Page <span class="pp">|</span> What you will find <span class="pp">|</span></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|-------------------|</span></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Background</span><span class="co">](background.qmd)</span> <span class="pp">|</span> Why a young field is hard to see, and why iGEM is a rare window into it <span class="pp">|</span></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Methods &amp; data</span><span class="co">](methods.qmd)</span> <span class="pp">|</span> How the corpus was built, geocoded, embedded, and clustered <span class="pp">|</span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Results</span><span class="co">](results.qmd)</span> <span class="pp">|</span> The full analysis: the measure that failed, the one that worked, and every attempt to break it <span class="pp">|</span></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Case study: carbon capture</span><span class="co">](case-study.qmd)</span> <span class="pp">|</span> Engineering cyanobacteria to turn light and CO₂ into fuel, city by city <span class="pp">|</span></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Explorer</span><span class="co">](explorer.qmd)</span> <span class="pp">|</span> Search any city and see its projects, papers, and patents in the shared space <span class="pp">|</span></span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="co">[</span><span class="ot">Paper &amp; slides</span><span class="co">](paper.qmd)</span> <span class="pp">|</span> The full manuscript and the talk <span class="pp">|</span></span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>All code and data are on <span class="co">[</span><span class="ot">GitHub</span><span class="co">](https://github.com/Zer0Juice/synbiomap)</span>. The pipeline is</span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>built to be rebuilt: see <span class="co">[</span><span class="ot">Reproducibility</span><span class="co">](reproducibility.qmd)</span>.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">pagetitle:</span><span class="co"> "Patents, Papers, Parts &amp; Planet"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Scroll through the talk: do a city's students, academics, and inventors in synthetic biology work on the same things?"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">page-layout:</span><span class="co"> full</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> false</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;style&gt;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="in">  /* Full-bleed: break the deck out of Quarto's content column so it spans</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="in">     the entire browser width, edge to edge, and fills the window height. */</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="in">  html, body { overflow-x: hidden; }</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="in">  #talk-embed {</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="in">    position: relative;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="in">    left: 50%;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="in">    right: 50%;</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="in">    width: 100vw;</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="in">    margin-left: -50vw;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="in">    margin-right: -50vw;</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="in">    margin-top: -0.5rem;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="in">    height: calc(100vh - 60px);</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="in">    min-height: 480px;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="in">    border: 0;</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="in">    display: block;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="in">    background: #fdf6e3; /* solarized-light paper, avoids a white flash while loading */</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="in">  #talk-caption {</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="in">    text-align: center;</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="in">    font-size: 0.85rem;</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="in">    color: #6c757d;</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="in">    margin: 0.6rem 0 0;</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/style&gt;</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;iframe id="talk-embed"</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="in">        src="slides.html?view=scroll"</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="in">        title="Patents, Papers, Parts &amp; Planet — scrolling talk"</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="in">        allowfullscreen</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="in">        loading="eager"&gt;&lt;/iframe&gt;</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;p id="talk-caption"&gt;Scroll through the talk above &amp;middot; &lt;a href="slides.html" target="_blank" rel="noopener"&gt;open the full-screen deck ↗&lt;/a&gt; &amp;middot; &lt;a href="overview.html"&gt;read the write-up →&lt;/a&gt;&lt;/p&gt;</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
@@ -856,7 +744,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions"><ul><li><a href="https://github.com/Zer0Juice/synbiomap/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">

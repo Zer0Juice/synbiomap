@@ -10,7 +10,7 @@
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-a06763021a52c43c40a351ac8b799b8f.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.9.36">
 
-  <meta name="author" content="Zakhary Roth · Complexity Science Hub · advised by Frank Neffke &amp; Claudia Doblinger">
+  <meta name="author" content="Zakhary Roth">
   <title>Patents, Papers, Parts &amp; Planet</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -33,7 +33,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-0427d8d92a431aa6a6430e53ec02a470.css">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-2abc1c5b7b5c7eecd6137558e106e4c3.css">
   <link href="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -132,198 +132,378 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">Patents, Papers, Parts &amp; Planet</h1>
-  <p class="subtitle">Local innovation trajectories in synthetic biology</p>
+  <p class="subtitle">Mapping Innovation in Synthetic Biology</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Zakhary Roth · Complexity Science Hub · advised by Frank Neffke &amp; Claudia Doblinger 
+Zakhary Roth 
 </div>
 </div>
 </div>
 
 </section>
-<section id="the-question" class="slide level2">
-<h2>The question</h2>
-<p><strong>Do a city’s students, academics, and inventors in synthetic biology work on the same things?</strong></p>
-<div class="columns">
-<div class="column" style="width:58%;">
+<section id="motivation" class="slide level2">
+<h2>Motivation</h2>
 <ul>
-<li>Biology moved from <em>reading</em> life to <em>writing</em> it</li>
-<li>Innovation is local: places branch into related work</li>
-<li>iGEM is a rare open, geotagged record of students learning the field</li>
-<li>We put three artifact types in one semantic space and test for shared topics, city by city</li>
+<li>Climate Crisis</li>
+<li>Biology has become Synthetic</li>
+<li>Engineered cyanobacteria might be the answer</li>
+<li>SynBio is hard to study, certain regions dominate</li>
+<li>iGEM student projects may provide insights</li>
 </ul>
-</div><div class="column" style="width:42%;">
-<p><strong>Three artifact types</strong></p>
-<p>🧬 iGEM projects — 4,606</p>
-<p>📄 Academic papers — 10,319</p>
-<p>📋 USPTO patents — 2,901</p>
-<p><strong>17,826 artifacts · 80 topics</strong></p>
-</div></div>
-<div class="callout callout-note callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Note</strong></p>
-</div>
-<div class="callout-content">
-<p>We test semantic relatedness and co-location, not causation.</p>
-</div>
-</div>
-</div>
+<p><strong>Do a city’s students, academics, and inventors work on the same things?</strong></p>
 </section>
-<section id="why-igem-and-biobricks" class="slide level2">
-<h2>Why iGEM and BioBricks</h2>
-<ul>
-<li>iGEM: a worldwide student competition, projects built from a shared kit of standard DNA parts</li>
-<li>~89,000 BioBricks in an open registry, each with a stable <code>BBa_</code> id and a functional class</li>
-<li>LEGO logic: a part from Uppsala combines with a part from Auckland</li>
-<li>The parts are a second, independent record of what students actually built</li>
-</ul>
-<blockquote>
-<p>Uppsala 2009’s <em>Booze Bugs</em> engineered cyanobacteria to make alcohol from sunlight; a 2014 paper cites the team’s own BioBrick. One thread, competition to publication.</p>
-</blockquote>
-</section>
-<section id="building-the-corpus" class="slide level2">
-<h2>Building the corpus</h2>
+<section id="data" class="slide level2">
+<h2>Data</h2>
 <table class="caption-top">
 <thead>
 <tr class="header">
 <th>Source</th>
 <th style="text-align: right;">Records</th>
-<th>Geocoded to</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>OpenAlex (keyword)</td>
-<td style="text-align: right;">10,319 papers</td>
-<td>institution city</td>
+<td>iGEM registry + wikis</td>
+<td style="text-align: right;">4,606 projects</td>
 </tr>
 <tr class="even">
-<td>Oldham USPTO set</td>
-<td style="text-align: right;">2,901 patents</td>
-<td>inventor cities (fractional)</td>
+<td>OpenAlex (keyword)</td>
+<td style="text-align: right;">10,319 papers</td>
 </tr>
 <tr class="odd">
-<td>iGEM Registry + wikis</td>
-<td style="text-align: right;">4,606 projects</td>
-<td>team city (multi-tier)</td>
+<td>Oldham USPTO set</td>
+<td style="text-align: right;">2,901 patents</td>
+</tr>
+<tr class="even">
+<td>iGEM parts registry</td>
+<td style="text-align: right;">89,060 BioBricks</td>
 </tr>
 </tbody>
 </table>
+<p><strong>17,826 artifacts to be textually compared</strong></p>
+</section>
+<section id="language-embeddings" class="slide level2">
+<h2>Language Embeddings</h2>
 <ul>
-<li>Shared schema: id · type · title · text · year · city · country · carbon-capture flag</li>
-<li>Fine-tuned SPECTER2 on ~100k cross-type links (wiki DOIs + Marx patent–paper pairs)</li>
-<li>UMAP → HDBSCAN → 80 human-reviewed topic clusters</li>
+<li>NLP Models represent text through vectors</li>
+<li>SPECTER2 trained on title and abstract</li>
+<li>Relatedness = cosine distance between vectors</li>
+<li>Fine-tuned for this project on ~100,000 cross-type links</li>
 </ul>
 </section>
-<section id="the-measure-that-failed" class="slide level2">
-<h2>The measure that failed</h2>
-<p>Average a city’s projects and papers into two vectors, take the cosine.</p>
-<ul>
-<li>Looks great: similarity ≈ 0.95 almost everywhere</li>
-<li>But it correlates ~0.71 with city size → <strong>centroid collapse</strong></li>
-<li>It measures <em>how much</em> a city publishes, not <em>what</em> it publishes</li>
-</ul>
-<p>A useful negative result: the fix is to stop averaging and count topics.</p>
+<section id="mapping-the-field" class="slide level2">
+<h2>Mapping the Field</h2>
+<style>
+  /* Fit the linked explorer inside a slide and the scrolling deck. */
+  #explorer-app { font-size: 1rem; }
+  #exp-umap, #exp-map { height: min(500px, 50vh) !important; }
+  .exp-slide-caption { font-size: 0.6em; color: #586e75; margin: 0 0 0.4em; line-height: 1.35; }
+</style>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<div id="explorer-app"></div>
+<script src="assets/js/explorer.js"></script>
+<script>
+/* Plotly draws at 0x0 inside a hidden reveal slide. Re-fit the two panels
+   whenever this slide scrolls or flips into view (present mode + scroll view). */
+(function () {
+  function bump() {
+    ["exp-umap", "exp-map"].forEach(function (id) {
+      var d = document.getElementById(id);
+      if (d && window.Plotly && d.data) Plotly.Plots.resize(d);
+    });
+    window.dispatchEvent(new Event("resize"));
+  }
+  var app = document.getElementById("explorer-app");
+  if (app && "IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) setTimeout(bump, 80); });
+    }, { threshold: 0.05 }).observe(app);
+  }
+}());
+</script>
 </section>
-<section id="the-measure-that-worked" class="slide level2">
-<h2>The measure that worked</h2>
-<p>Represent each city as a profile over the 80 topics. Read the cosine overlap of two types, then test it against a <strong>within-country permutation null</strong> (shuffle which city pairs with which, holding size and topic popularity fixed).</p>
+<section id="calculating-relatedness" class="slide level2">
+<h2>Calculating Relatedness</h2>
+<p>Averaging a city’s projects into one vector, its papers into another, and taking cosine distance between the two vectors</p>
+<p><strong>90% of projects are semantically closer to their own city’s average paper than to a random city</strong></p>
+</section>
+<section id="the-problem-with-averaging-vectors" class="slide level2">
+<h2>The Problem with Averaging Vectors</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div style="font-size:0.72em">
 <table class="caption-top">
 <thead>
 <tr class="header">
-<th>Pair</th>
-<th style="text-align: center;">Cities</th>
-<th style="text-align: center;">Excess</th>
-<th style="text-align: center;"><em>p</em></th>
-<th style="text-align: center;">Beats null?</th>
+<th></th>
+<th style="text-align: center;">Relatedness Regressed on Number of Artifacts</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Project × paper</td>
-<td style="text-align: center;">120</td>
-<td style="text-align: center;">+0.0102</td>
-<td style="text-align: center;">0.0077</td>
-<td style="text-align: center;">✅</td>
+<td>log(papers)</td>
+<td style="text-align: center;">0.0164***</td>
 </tr>
 <tr class="even">
-<td>Paper × patent</td>
-<td style="text-align: center;">44</td>
-<td style="text-align: center;">+0.0352</td>
-<td style="text-align: center;">0.0055</td>
-<td style="text-align: center;">✅</td>
+<td></td>
+<td style="text-align: center;">(0.0015)</td>
 </tr>
 <tr class="odd">
-<td>Project × patent</td>
-<td style="text-align: center;">28</td>
-<td style="text-align: center;">+0.0041</td>
-<td style="text-align: center;">0.24</td>
-<td style="text-align: center;">❌</td>
+<td>log(projects)</td>
+<td style="text-align: center;">0.0190***</td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.0018)</td>
+</tr>
+<tr class="odd">
+<td><em>N</em> cities</td>
+<td style="text-align: center;">387</td>
+</tr>
+<tr class="even">
+<td><em>R²</em></td>
+<td style="text-align: center;"><strong>0.63</strong></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Papers are the hub. The field is a star, not a triangle.</strong></p>
-</section>
-<section id="trying-to-break-it" class="slide level2">
-<h2>Trying to break it</h2>
+</div>
 <ul>
-<li><strong>Drop any country</strong> — result barely moves (drop US: paper×patent <em>p</em> = 0.001)</li>
-<li><strong>Change cluster count</strong> — project×paper and paper×patent significant across the whole k-sweep; project×patent never</li>
-<li><strong>Vary the depth threshold</strong> — excess persists, cleaner in deeper cities</li>
-<li><strong>Base vs fine-tuned model</strong> — survives on base SPECTER2; fine-tuning sharpens, does not invent</li>
+<li>Size alone explains <strong>63%</strong> of relatedness</li>
+<li>Confounded by city size, need something more fine-grained</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div id="centroid-app"></div>
+<script src="assets/js/centroid.js"></script>
+</div></div>
+</section>
+<section id="topic-profiling" class="slide level2">
+<h2>Topic Profiling</h2>
+<p>Give each city a profile over the 80 topics, scaled to unit length. The overlap of two artifact types is the cosine of their profiles:</p>
+<p><code>overlap = Σ over topics of (paper share) × (project share)</code></p>
+<p>Large when the two types weight the same topics, small when they scatter</p>
+</section>
+<section id="papers-are-the-hub" class="slide level2">
+<h2>Papers are the hub</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>link</th>
+<th style="text-align: center;">cities</th>
+<th style="text-align: center;">excess</th>
+<th style="text-align: center;"><em>p</em></th>
+<th style="text-align: center;">same-topic lift</th>
+<th style="text-align: center;">beats null?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>paper × project</td>
+<td style="text-align: center;">120</td>
+<td style="text-align: center;">+0.0102</td>
+<td style="text-align: center;">0.0065</td>
+<td style="text-align: center;">1.30×</td>
+<td style="text-align: center;">Y</td>
+</tr>
+<tr class="even">
+<td>paper × patent</td>
+<td style="text-align: center;">44</td>
+<td style="text-align: center;">+0.0347</td>
+<td style="text-align: center;">0.0065</td>
+<td style="text-align: center;">1.27×</td>
+<td style="text-align: center;">Y</td>
+</tr>
+<tr class="odd">
+<td>project × patent</td>
+<td style="text-align: center;">28</td>
+<td style="text-align: center;">+0.0043</td>
+<td style="text-align: center;">0.227</td>
+<td style="text-align: center;">0.99×</td>
+<td style="text-align: center;">N</td>
+</tr>
+</tbody>
+</table>
+<p>A city’s papers share topics with its projects and patents. The project-to-patent link is not significant when country and size are held fixed fixed.</p>
+<p><strong>The science a city publishes is the common ground between student and Commercial Research</strong></p>
+</section>
+<section id="projects-enter-clusters-their-city-knows" class="slide level2">
+<h2>Projects enter clusters their city knows</h2>
+<div class="columns">
+<div class="column" style="width:54%;">
+<div style="font-size:0.72em">
+<p><code>in_known = 1[city c has a paper in cluster k before year y]</code></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: center;">value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>projects tested</td>
+<td style="text-align: center;">2,742</td>
+</tr>
+<tr class="even">
+<td>own-city entry rate</td>
+<td style="text-align: center;"><strong>7.8%</strong></td>
+</tr>
+<tr class="odd">
+<td>baseline (random city)</td>
+<td style="text-align: center;">1.4%</td>
+</tr>
+<tr class="even">
+<td>mean δ (own − baseline)</td>
+<td style="text-align: center;">+0.063</td>
+</tr>
+<tr class="odd">
+<td><em>t</em>-test (H₀: δ = 0)</td>
+<td style="text-align: center;"><em>t</em> = 12.6</td>
+</tr>
+<tr class="even">
+<td><em>p</em>-value</td>
+<td style="text-align: center;">&lt; 0.001</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div><div class="column" style="width:46%;">
+<p>For each non-noise project in cluster <em>k</em>, city <em>c</em>, year <em>y</em>, ask whether the city had already published in that cluster. An iGEM Project is</p>
+<p><span style="display:block;text-align:center;font-size:2.9em;font-weight:800;color:#268bd2;line-height:1.05;margin:0.15em 0 0;">≈ 5.5×</span> more likely to enter a cluster its city already publishes in</p>
+</div></div>
+</section>
+<section id="robustness-checks" class="slide level2">
+<h2>Robustness Checks</h2>
+<ul>
+<li><strong>Dropping large countries.</strong> Paper × patent survives losing the US (<em>p</em> ≈ 0.04, still below 0.05). Paper × project leans on the US; without it the link softens to <em>p</em> ≈ 0.07</li>
+<li><strong>Change the number of clusters.</strong> From 10 to 120 clusters, paper x patent and paper x project stay significant. project × patent never does.</li>
+<li><strong>Drop the fine-tuning.</strong> The signal holds on base SPECTER2.</li>
+<li><strong>Comparison with the BioBrick Space</strong>. Cities that specialize in the same research areas use similar tools. Cities close together in cluster co-occurence space are close in the biobrick co-occurence space</li>
 </ul>
 </section>
-<section id="the-parts-agree-mantel" class="slide level2">
-<h2>The parts agree (Mantel)</h2>
-<p>Is it all just an artifact of how SPECTER2 reads text? Check the semantic structure against something the model never saw.</p>
-<ul>
-<li>Build a city-by-city distance matrix from the mix of <strong>BioBrick part classes</strong></li>
-<li>Compare it to the semantic topic-distance matrix</li>
-<li><span class="math inline">\(r_M = 0.127\)</span>, <span class="math inline">\(p = 0.0005\)</span> across 164 cities</li>
-</ul>
-<p>Two independent windows, one made of words and one of DNA parts, see the same shape. The strongest single piece of evidence the relatedness is real.</p>
+<section id="which-reaches-a-citys-topic-first" class="slide level2">
+<h2>Which reaches a city’s topic first?</h2>
+<div class="columns">
+<div class="column" style="width:52%;">
+<div style="font-size:0.8em">
+<p>Head-to-head within the 2009–2018 overlap window, counting only city-topics where <strong>both</strong> types appear:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>in the same city-topic</th>
+<th style="text-align: left;">who’s first</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>project vs paper</td>
+<td style="text-align: left;"><strong>project — 76%</strong> · <em>p</em> &lt; 0.001</td>
+</tr>
+<tr class="even">
+<td>project vs patent</td>
+<td style="text-align: left;">project — 75% · <em>n</em> = 16 (ns)</td>
+</tr>
+<tr class="odd">
+<td>paper vs patent</td>
+<td style="text-align: left;">roughly tied</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div><div class="column" style="width:48%;">
+<p><span style="display:block;text-align:center;font-size:3em;font-weight:800;color:#268bd2;line-height:1;margin:0.1em 0 0;">76%</span> <span style="display:block;text-align:center;color:#586e75;font-size:0.9em;margin-bottom:0.5em;">of the time a city enters a cluster with an iGEM project before a paper</span></p>
+</div></div>
 </section>
-<section id="a-dynamic-trace" class="slide level2">
-<h2>A dynamic trace</h2>
-<p>Difference-in-differences, within a city and topic, after differencing out each city’s baseline and each topic’s trend:</p>
-<ul>
-<li><strong>Paper → patent:</strong> <span class="math inline">\(\hat\beta = +0.355\)</span>, <span class="math inline">\(p = 0.028\)</span> (<span class="math inline">\(N = 44\)</span>) — academic output predicts later patenting in the same topic</li>
-<li><strong>Project → paper:</strong> significant in the larger bipartite sample (<span class="math inline">\(N = 161\)</span>), underpowered in the tripartite one</li>
-<li>Lead-lag ordering: a null at this sample size (bipartite found a +3-year peak)</li>
-</ul>
-</section>
-<section id="case-study-carbon-capture" class="slide level2">
-<h2>Case study: carbon capture</h2>
-<p>Three adjacent clusters trace the ladder:</p>
-<ul>
-<li><strong>Cluster 7</strong> Cyanobacterial Metabolic Engineering — projects</li>
-<li><strong>Cluster 8</strong> Cyanobacterial Chassis Development — papers</li>
-<li><strong>Cluster 62</strong> Industrial Fermentation — patents</li>
-</ul>
-<p>Leaderboard: <strong>Auckland (19), Uppsala (18), Daejeon (15), San Diego (14), Gainesville (13)</strong> — where students, academics, and inventors all work on engineering cyanobacteria at once.</p>
-<p>Alignment inside the subfield is as strong as field-wide (<span class="math inline">\(\bar\delta = +0.0140\)</span>, 90% positive).</p>
-</section>
-<section id="what-it-shows-and-what-it-cant" class="slide level2">
-<h2>What it shows, and what it can’t</h2>
-<p><strong>Establishes:</strong> real, size-independent local relatedness between a city’s projects and papers, and papers and patents; robust to country, cluster count, threshold, and model; anchored in physical parts.</p>
-<p><strong>Does not establish:</strong> causation. The three share many local causes — same universities, mentors, funders. We document the pattern; we do not identify the mechanism.</p>
-<p><strong>Policy:</strong> where students cluster is a signal of where a field is putting down roots. Funding student science and open tools is an early investment in the field.</p>
+<section id="what-this-shows" class="slide level2">
+<h2>What this shows</h2>
+<p><strong>Real, size-independent local relatedness exists between a city’s iGEM projects and its papers, and its papers and its patents</strong></p>
+<p><strong>So what?</strong> Funding student science and open tools helps. iGEM projects can be used as a useful indicator of where a city’s research might be moving next</p>
 </section>
 <section id="thank-you" class="slide level2">
-<h2>Thank you</h2>
-<p><strong>Website:</strong> <a href="https://zer0juice.github.io/synbiomap">zer0juice.github.io/synbiomap</a></p>
-<p><strong>Code &amp; data:</strong> <a href="https://github.com/Zer0Juice/synbiomap">github.com/Zer0Juice/synbiomap</a></p>
-<p><strong>Manuscript &amp; this deck as PDF:</strong> on the <a href="./paper.html">Paper</a> page</p>
-<p>Advised by Frank Neffke (CSH) · Claudia Doblinger (TU Munich)</p>
-
+<h2>Thank you!</h2>
+<p><strong>Website</strong> — <a href="https://zer0juice.github.io/synbiomap">zer0juice.github.io/synbiomap</a></p>
+<p><strong>Code &amp; data</strong> — <a href="https://github.com/Zer0Juice/synbiomap">github.com/Zer0Juice/synbiomap</a></p>
+<p><strong>Manuscript &amp; this deck (PDF)</strong> — on the <a href="./paper.html">Paper</a> page</p>
+<p>Advised by Frank Neffke (CSH) and Claudia Doblinger (TU Munich)</p>
+</section>
+<section>
+<section id="backup" class="title-slide slide level1 center" data-visibility="uncounted">
+<h1>Backup</h1>
 
 </section>
+<section id="how-do-cities-specialize-over-time" class="slide level2" data-visibility="uncounted">
+<h2>How do cities specialize over time?</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<p><img data-src="assets/figures/tripartite_did.png" style="width:100.0%"></p>
+</div><div class="column" style="width:45%;">
+<p>Difference-in-differences within a city and topic, after removing each city’s baseline and each topic’s global trend.</p>
+<ul>
+<li><strong>Paper → patent:</strong> β = +0.355, <em>p</em> = 0.028 (N = 44). Academic work moves with later patenting in the same topic.</li>
+<li><strong>Project → paper:</strong> clear in the larger two-type sample, underpowered with all three.</li>
+</ul>
+<p>This is co-movement in time, not proof of cause.</p>
+</div></div>
+</section>
+<section id="projects-and-papers-in-time" class="slide level2" data-visibility="uncounted">
+<h2>Projects and papers in time</h2>
+
+<img data-src="assets/figures/tripartite_lead_lag.png" class="quarto-figure quarto-figure-center r-stretch" style="width:58.0%"><p>In the two-type sample the project–paper similarity peaks when papers come about three years after projects. With all three types the profile flattens toward a null, so treat the ordering as suggestive rather than settled.</p>
+</section>
+<section id="the-permutation-nulls" class="slide level2" data-visibility="uncounted">
+<h2>The permutation nulls</h2>
+
+<img data-src="assets/figures/tripartite_permutation.png" class="quarto-figure quarto-figure-center r-stretch" style="width:46.0%"><p>Each grey histogram is the range of overlaps the within-country shuffle produces; the orange line is the real value. The two paper links sit out in the tail; project × patent sits inside the noise.</p>
+</section>
+<section id="dropping-a-whole-country" class="slide level2" data-visibility="uncounted">
+<h2>Dropping a whole country</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img data-src="assets/figures/robust_leave_country.png" style="width:100.0%"></p>
+</div><div class="column" style="width:50%;">
+<p>Re-run the within-country permutation test after removing each large country in turn. Each bar is the link’s <em>p</em>-value once that country is gone; the dashed line is <em>p</em> = 0.05.</p>
+<ul>
+<li><strong>Paper × patent</strong> stays below 0.05 for every drop, including the US (≈0.04) — it leans on no single country.</li>
+<li><strong>Paper × project</strong> clears 0.05 in every case but one: drop the US and it softens to ≈0.07. We flag this openly.</li>
+</ul>
+<p>The red bar is dropping the US.</p>
+</div></div>
+</section>
+<section id="robustness-across-topic-counts" class="slide level2" data-visibility="uncounted">
+<h2>Robustness across topic counts</h2>
+
+<img data-src="assets/figures/robust_kcurve.png" class="quarto-figure quarto-figure-center r-stretch" style="width:70.0%"><p>From 10 to 120 topics, paper × project and paper × patent stay significant; project × patent never crosses. The result is not an accident of one clustering choice.</p>
+</section>
+<section id="base-vs-fine-tuned-specter2" class="slide level2" data-visibility="uncounted">
+<h2>Base vs fine-tuned SPECTER2</h2>
+<ul>
+<li>The co-membership result reproduces on base SPECTER2 across the whole topic-count sweep.</li>
+<li>Fine-tuning on cross-type citation links tightens the excess and lowers the <em>p</em>-values; it does not manufacture the effect.</li>
+<li>This answers the worry that the signal is an artifact of training the model on the same links we then test.</li>
+</ul>
+</section>
+<section id="is-this-reflected-by-the-biobricks" class="slide level2" data-visibility="uncounted">
+<h2>Is this reflected by the BioBricks?</h2>
+<div class="columns">
+<div class="column" style="width:52%;">
+<p><img data-src="assets/figures/mantel_parts_vs_topics.png" style="width:100.0%"></p>
+</div><div class="column" style="width:48%;">
+<p>Is this only an artifact of how the model reads text? Check it against something the model never saw.</p>
+<ul>
+<li>One city-by-city distance from the mix of <strong>BioBrick part classes</strong> (promoter, CDS, terminator, …)</li>
+<li>Compare to the semantic topic distance</li>
+<li>Mantel <strong>r = 0.127</strong>, <strong>p = 0.0005</strong>, 164 cities</li>
+</ul>
+<p>Two windows, one of words and one of DNA parts, see the same shape.</p>
+</div></div>
+</section>
+<section id="a-worked-thread-uppsala" class="slide level2" data-visibility="uncounted">
+<h2>A worked thread: Uppsala</h2>
+<p>Uppsala 2009’s <em>Booze Bugs</em> engineered cyanobacteria to make alcohol from sunlight and registered the parts. A 2014 paper cites the team’s own BioBrick. One city, competition to publication, in a single traceable thread.</p>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">

@@ -9,30 +9,9 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Patents, Papers, Parts & Planet",
+    "title": "",
     "section": "",
-    "text": "For most of its history, biology read nature. It broke life into organs, then cells, then the genes beneath them, and slowly worked out the rules that hold a living thing together. Synthetic biology is the moment biology starts to write. We now compose new biological systems from standardized genetic parts, treating DNA as code and cells as hardware. The same power that has been reshaping the planet by accident could, aimed on purpose, help repair it. Engineered microbes can already pull carbon dioxide out of the air and turn it into fuel.\nThe students in iGEM are learning to hold that pen. Every year, thousands of them design and build a project from a shared kit of interchangeable DNA parts, and they write it all up on a public wiki. That makes iGEM something most young fields never get: an open, geotagged record of a field composing itself. This project asks what that record can tell us about where synthetic biology is putting down roots."
-  },
-  {
-    "objectID": "index.html#the-question",
-    "href": "index.html#the-question",
-    "title": "Patents, Papers, Parts & Planet",
-    "section": "The question",
-    "text": "The question\nDo cities whose students research a topic in synthetic biology also produce academic papers, and patents, in related areas? We put student projects, academic papers, and patents into one shared semantic space and test whether a city’s three kinds of work land on the same specific topics more often than chance allows.\nThe short answer is a qualified yes, with a specific shape. A city’s papers line up with its projects, and its papers line up with its patents, but its projects and its patents stay further apart. Academic research is the middle link. The field is shaped like a star, with papers at the hub, not a triangle."
-  },
-  {
-    "objectID": "index.html#the-corpus-in-numbers",
-    "href": "index.html#the-corpus-in-numbers",
-    "title": "Patents, Papers, Parts & Planet",
-    "section": "The corpus in numbers",
-    "text": "The corpus in numbers\n\n\n\nArtifact type\nCount\nYears\n\n\n\n\nAcademic papers (OpenAlex)\n10,319\n2000–2026\n\n\niGEM student projects\n4,606\n2009–2025\n\n\nUSPTO patents (Oldham set)\n2,901\n—\n\n\nTotal artifacts\n17,826\n\n\n\n\nAll three are geocoded to a city and embedded into the same 768-dimensional space with a fine-tuned SPECTER2 model, then grouped into 80 topic clusters. 156 cities carry all three artifact types at once.\n\n\n\n\n\n\nNoteA note on language\n\n\n\nThis work is descriptive. We measure relatedness and co-location, and we test them hard, but we do not claim that student projects cause later papers or that papers cause patents. The three share many local causes, and observational data like this cannot separate them."
-  },
-  {
-    "objectID": "index.html#where-to-go-next",
-    "href": "index.html#where-to-go-next",
-    "title": "Patents, Papers, Parts & Planet",
-    "section": "Where to go next",
-    "text": "Where to go next\n\n\n\nPage\nWhat you will find\n\n\n\n\nBackground\nWhy a young field is hard to see, and why iGEM is a rare window into it\n\n\nMethods & data\nHow the corpus was built, geocoded, embedded, and clustered\n\n\nResults\nThe full analysis: the measure that failed, the one that worked, and every attempt to break it\n\n\nCase study: carbon capture\nEngineering cyanobacteria to turn light and CO₂ into fuel, city by city\n\n\nExplorer\nSearch any city and see its projects, papers, and patents in the shared space\n\n\nPaper & slides\nThe full manuscript and the talk\n\n\n\nAll code and data are on GitHub. The pipeline is built to be rebuilt: see Reproducibility."
+    "text": "Code\n\n\n\n\n\n\nScroll through the talk above · open the full-screen deck ↗ · read the write-up →"
   },
   {
     "objectID": "reproducibility.html",
@@ -161,6 +140,34 @@
     "text": "Measuring relatedness in a young field\nEconomic geography usually measures relatedness with labor flows, product similarity, or co-patent networks. Those tools were built for large, mature industries and need data, worker mobility, product co-export, that simply do not exist for a student-to-academia-to-industry pipeline in an emerging field. Local knowledge spillovers are known to be geographically sticky (Breschi and Lissoni 2001), but measuring them across three such different artifact types calls for a different instrument.\nThe instrument is semantic distance. A language model reads the title and abstract of a document and turns it into a vector, a list of numbers that encodes meaning. Represent those vectors as points in a high-dimensional space, and documents about similar things land near one another, whatever words they use. We use SPECTER2, a model trained to predict which papers cite one another, so semantic closeness stands in for the kind of relatedness a citation would mark (Singh et al. 2023). That is the core beneath every comparison here, and the reason we can put a student wiki, a journal abstract, and a patent claim on the same map.\nThere is an honest caveat. SPECTER2 was trained on academic papers and had never seen a patent or a student wiki. Precedent from patent-domain embedding work suggests the model transfers, and we fine-tune it on links between our own artifact types to close the gap. The Methods page describes how, and the Results show that the central finding survives even on the base model, before any fine-tuning.\n\n\n\n\n\n\nFigure 1: The hypothesis, drawn as a ladder. Student projects introduce early designs; academic papers develop them; patents mark downstream commercial work, all inside a shared local environment whose role is what this project studies. The sequence is what we test, not what we assume."
   },
   {
+    "objectID": "overview.html",
+    "href": "overview.html",
+    "title": "Overview",
+    "section": "",
+    "text": "For most of its history, biology read nature. It broke life into organs, then cells, then the genes beneath them, and slowly worked out the rules that hold a living thing together. Synthetic biology is the moment biology starts to write. We now compose new biological systems from standardized genetic parts, treating DNA as code and cells as hardware. The same power that has been reshaping the planet by accident could, aimed on purpose, help repair it. Engineered microbes can already pull carbon dioxide out of the air and turn it into fuel.\nThe students in iGEM are learning to hold that pen. Every year, thousands of them design and build a project from a shared kit of interchangeable DNA parts, and they write it all up on a public wiki. That makes iGEM something most young fields never get: an open, geotagged record of a field composing itself. This project asks what that record can tell us about where synthetic biology is putting down roots."
+  },
+  {
+    "objectID": "overview.html#the-question",
+    "href": "overview.html#the-question",
+    "title": "Overview",
+    "section": "The question",
+    "text": "The question\nDo cities whose students research a topic in synthetic biology also produce academic papers, and patents, in related areas? We put student projects, academic papers, and patents into one shared semantic space and test whether a city’s three kinds of work land on the same specific topics more often than chance allows.\nThe short answer is a qualified yes, with a specific shape. A city’s papers line up with its projects, and its papers line up with its patents, but its projects and its patents stay further apart. Academic research is the middle link. The field is shaped like a star, with papers at the hub, not a triangle."
+  },
+  {
+    "objectID": "overview.html#the-corpus-in-numbers",
+    "href": "overview.html#the-corpus-in-numbers",
+    "title": "Overview",
+    "section": "The corpus in numbers",
+    "text": "The corpus in numbers\n\n\n\nArtifact type\nCount\nYears\n\n\n\n\nAcademic papers (OpenAlex)\n10,319\n2000–2026\n\n\niGEM student projects\n4,606\n2009–2025\n\n\nUSPTO patents (Oldham set)\n2,901\n—\n\n\nTotal artifacts\n17,826\n\n\n\n\nAll three are geocoded to a city and embedded into the same 768-dimensional space with a fine-tuned SPECTER2 model, then grouped into 80 topic clusters. 156 cities carry all three artifact types at once.\n\n\n\n\n\n\nNoteA note on language\n\n\n\nThis work is descriptive. We measure relatedness and co-location, and we test them hard, but we do not claim that student projects cause later papers or that papers cause patents. The three share many local causes, and observational data like this cannot separate them."
+  },
+  {
+    "objectID": "overview.html#where-to-go-next",
+    "href": "overview.html#where-to-go-next",
+    "title": "Overview",
+    "section": "Where to go next",
+    "text": "Where to go next\n\n\n\nPage\nWhat you will find\n\n\n\n\nBackground\nWhy a young field is hard to see, and why iGEM is a rare window into it\n\n\nMethods & data\nHow the corpus was built, geocoded, embedded, and clustered\n\n\nResults\nThe full analysis: the measure that failed, the one that worked, and every attempt to break it\n\n\nCase study: carbon capture\nEngineering cyanobacteria to turn light and CO₂ into fuel, city by city\n\n\nExplorer\nSearch any city and see its projects, papers, and patents in the shared space\n\n\nPaper & slides\nThe full manuscript and the talk\n\n\n\nAll code and data are on GitHub. The pipeline is built to be rebuilt: see Reproducibility."
+  },
+  {
     "objectID": "case-study.html",
     "href": "case-study.html",
     "title": "Case study: carbon capture",
@@ -200,91 +207,154 @@
     "href": "explorer.html",
     "title": "Explorer",
     "section": "",
-    "text": "Search for a city to see what it works on: which of the three artifact types are present, how its activity sits in the shared semantic space, and a list of the individual papers, patents, and iGEM projects from that location. Click any artifact to read its abstract; carbon-capture work is marked with a red badge."
+    "text": "Two linked views of the whole corpus. On the left, every iGEM project, paper, and patent sits in the shared semantic space, coloured by type, with the larger topic clusters labelled. On the right, the same artifacts are aggregated by city on a world map. The panels talk to each other: click a point in the semantic space to pin an artifact and find its city on the map, click a cluster label to light up a whole topic across both views, or click a city on the map to light up everything it contributed in the semantic space. Use the toggles to show or hide each artifact type. Carbon-capture artifacts carry a red badge."
   },
   {
-    "objectID": "explorer.html#geographic-overview",
-    "href": "explorer.html#geographic-overview",
-    "title": "Explorer",
-    "section": "Geographic Overview",
-    "text": "Geographic Overview\nCity-level map of total synthetic biology activity. Bubble size scales with the number of artifacts; hover for a breakdown by type."
-  },
-  {
-    "objectID": "slides.html#the-question",
-    "href": "slides.html#the-question",
+    "objectID": "slides.html#motivation",
+    "href": "slides.html#motivation",
     "title": "Patents, Papers, Parts & Planet",
-    "section": "The question",
-    "text": "The question\nDo a city’s students, academics, and inventors in synthetic biology work on the same things?\n\n\n\nBiology moved from reading life to writing it\nInnovation is local: places branch into related work\niGEM is a rare open, geotagged record of students learning the field\nWe put three artifact types in one semantic space and test for shared topics, city by city\n\n\nThree artifact types\n🧬 iGEM projects — 4,606\n📄 Academic papers — 10,319\n📋 USPTO patents — 2,901\n17,826 artifacts · 80 topics\n\n\n\n\n\n\n\nNote\n\n\nWe test semantic relatedness and co-location, not causation."
+    "section": "Motivation",
+    "text": "Motivation\n\nClimate Crisis\nBiology has become Synthetic\nEngineered cyanobacteria might be the answer\nSynBio is hard to study, certain regions dominate\niGEM student projects may provide insights\n\nDo a city’s students, academics, and inventors work on the same things?"
   },
   {
-    "objectID": "slides.html#why-igem-and-biobricks",
-    "href": "slides.html#why-igem-and-biobricks",
+    "objectID": "slides.html#data",
+    "href": "slides.html#data",
     "title": "Patents, Papers, Parts & Planet",
-    "section": "Why iGEM and BioBricks",
-    "text": "Why iGEM and BioBricks\n\niGEM: a worldwide student competition, projects built from a shared kit of standard DNA parts\n~89,000 BioBricks in an open registry, each with a stable BBa_ id and a functional class\nLEGO logic: a part from Uppsala combines with a part from Auckland\nThe parts are a second, independent record of what students actually built\n\n\nUppsala 2009’s Booze Bugs engineered cyanobacteria to make alcohol from sunlight; a 2014 paper cites the team’s own BioBrick. One thread, competition to publication."
+    "section": "Data",
+    "text": "Data\n\n\n\nSource\nRecords\n\n\n\n\niGEM registry + wikis\n4,606 projects\n\n\nOpenAlex (keyword)\n10,319 papers\n\n\nOldham USPTO set\n2,901 patents\n\n\niGEM parts registry\n89,060 BioBricks\n\n\n\n17,826 artifacts to be textually compared"
   },
   {
-    "objectID": "slides.html#building-the-corpus",
-    "href": "slides.html#building-the-corpus",
+    "objectID": "slides.html#language-embeddings",
+    "href": "slides.html#language-embeddings",
     "title": "Patents, Papers, Parts & Planet",
-    "section": "Building the corpus",
-    "text": "Building the corpus\n\n\n\nSource\nRecords\nGeocoded to\n\n\n\n\nOpenAlex (keyword)\n10,319 papers\ninstitution city\n\n\nOldham USPTO set\n2,901 patents\ninventor cities (fractional)\n\n\niGEM Registry + wikis\n4,606 projects\nteam city (multi-tier)\n\n\n\n\nShared schema: id · type · title · text · year · city · country · carbon-capture flag\nFine-tuned SPECTER2 on ~100k cross-type links (wiki DOIs + Marx patent–paper pairs)\nUMAP → HDBSCAN → 80 human-reviewed topic clusters"
+    "section": "Language Embeddings",
+    "text": "Language Embeddings\n\nNLP Models represent text through vectors\nSPECTER2 trained on title and abstract\nRelatedness = cosine distance between vectors\nFine-tuned for this project on ~100,000 cross-type links"
   },
   {
-    "objectID": "slides.html#the-measure-that-failed",
-    "href": "slides.html#the-measure-that-failed",
+    "objectID": "slides.html#mapping-the-field",
+    "href": "slides.html#mapping-the-field",
     "title": "Patents, Papers, Parts & Planet",
-    "section": "The measure that failed",
-    "text": "The measure that failed\nAverage a city’s projects and papers into two vectors, take the cosine.\n\nLooks great: similarity ≈ 0.95 almost everywhere\nBut it correlates ~0.71 with city size → centroid collapse\nIt measures how much a city publishes, not what it publishes\n\nA useful negative result: the fix is to stop averaging and count topics."
+    "section": "Mapping the Field",
+    "text": "Mapping the Field"
   },
   {
-    "objectID": "slides.html#the-measure-that-worked",
-    "href": "slides.html#the-measure-that-worked",
+    "objectID": "slides.html#calculating-relatedness",
+    "href": "slides.html#calculating-relatedness",
     "title": "Patents, Papers, Parts & Planet",
-    "section": "The measure that worked",
-    "text": "The measure that worked\nRepresent each city as a profile over the 80 topics. Read the cosine overlap of two types, then test it against a within-country permutation null (shuffle which city pairs with which, holding size and topic popularity fixed).\n\n\n\nPair\nCities\nExcess\np\nBeats null?\n\n\n\n\nProject × paper\n120\n+0.0102\n0.0077\n✅\n\n\nPaper × patent\n44\n+0.0352\n0.0055\n✅\n\n\nProject × patent\n28\n+0.0041\n0.24\n❌\n\n\n\nPapers are the hub. The field is a star, not a triangle."
+    "section": "Calculating Relatedness",
+    "text": "Calculating Relatedness\nAveraging a city’s projects into one vector, its papers into another, and taking cosine distance between the two vectors\n90% of projects are semantically closer to their own city’s average paper than to a random city"
   },
   {
-    "objectID": "slides.html#trying-to-break-it",
-    "href": "slides.html#trying-to-break-it",
+    "objectID": "slides.html#the-problem-with-averaging-vectors",
+    "href": "slides.html#the-problem-with-averaging-vectors",
     "title": "Patents, Papers, Parts & Planet",
-    "section": "Trying to break it",
-    "text": "Trying to break it\n\nDrop any country — result barely moves (drop US: paper×patent p = 0.001)\nChange cluster count — project×paper and paper×patent significant across the whole k-sweep; project×patent never\nVary the depth threshold — excess persists, cleaner in deeper cities\nBase vs fine-tuned model — survives on base SPECTER2; fine-tuning sharpens, does not invent"
+    "section": "The Problem with Averaging Vectors",
+    "text": "The Problem with Averaging Vectors\n\n\n\n\n\n\n\nRelatedness Regressed on Number of Artifacts\n\n\n\n\nlog(papers)\n0.0164***\n\n\n\n(0.0015)\n\n\nlog(projects)\n0.0190***\n\n\n\n(0.0018)\n\n\nN cities\n387\n\n\nR²\n0.63\n\n\n\n\n\nSize alone explains 63% of relatedness\nConfounded by city size, need something more fine-grained"
   },
   {
-    "objectID": "slides.html#the-parts-agree-mantel",
-    "href": "slides.html#the-parts-agree-mantel",
+    "objectID": "slides.html#topic-profiling",
+    "href": "slides.html#topic-profiling",
     "title": "Patents, Papers, Parts & Planet",
-    "section": "The parts agree (Mantel)",
-    "text": "The parts agree (Mantel)\nIs it all just an artifact of how SPECTER2 reads text? Check the semantic structure against something the model never saw.\n\nBuild a city-by-city distance matrix from the mix of BioBrick part classes\nCompare it to the semantic topic-distance matrix\n\\(r_M = 0.127\\), \\(p = 0.0005\\) across 164 cities\n\nTwo independent windows, one made of words and one of DNA parts, see the same shape. The strongest single piece of evidence the relatedness is real."
+    "section": "Topic Profiling",
+    "text": "Topic Profiling\nGive each city a profile over the 80 topics, scaled to unit length. The overlap of two artifact types is the cosine of their profiles:\noverlap = Σ over topics of (paper share) × (project share)\nLarge when the two types weight the same topics, small when they scatter"
   },
   {
-    "objectID": "slides.html#a-dynamic-trace",
-    "href": "slides.html#a-dynamic-trace",
+    "objectID": "slides.html#papers-are-the-hub",
+    "href": "slides.html#papers-are-the-hub",
     "title": "Patents, Papers, Parts & Planet",
-    "section": "A dynamic trace",
-    "text": "A dynamic trace\nDifference-in-differences, within a city and topic, after differencing out each city’s baseline and each topic’s trend:\n\nPaper → patent: \\(\\hat\\beta = +0.355\\), \\(p = 0.028\\) (\\(N = 44\\)) — academic output predicts later patenting in the same topic\nProject → paper: significant in the larger bipartite sample (\\(N = 161\\)), underpowered in the tripartite one\nLead-lag ordering: a null at this sample size (bipartite found a +3-year peak)"
+    "section": "Papers are the hub",
+    "text": "Papers are the hub\n\n\n\nlink\ncities\nexcess\np\nsame-topic lift\nbeats null?\n\n\n\n\npaper × project\n120\n+0.0102\n0.0065\n1.30×\nY\n\n\npaper × patent\n44\n+0.0347\n0.0065\n1.27×\nY\n\n\nproject × patent\n28\n+0.0043\n0.227\n0.99×\nN\n\n\n\nA city’s papers share topics with its projects and patents. The project-to-patent link is not significant when country and size are held fixed fixed.\nThe science a city publishes is the common ground between student and Commercial Research"
   },
   {
-    "objectID": "slides.html#case-study-carbon-capture",
-    "href": "slides.html#case-study-carbon-capture",
+    "objectID": "slides.html#projects-enter-clusters-their-city-knows",
+    "href": "slides.html#projects-enter-clusters-their-city-knows",
     "title": "Patents, Papers, Parts & Planet",
-    "section": "Case study: carbon capture",
-    "text": "Case study: carbon capture\nThree adjacent clusters trace the ladder:\n\nCluster 7 Cyanobacterial Metabolic Engineering — projects\nCluster 8 Cyanobacterial Chassis Development — papers\nCluster 62 Industrial Fermentation — patents\n\nLeaderboard: Auckland (19), Uppsala (18), Daejeon (15), San Diego (14), Gainesville (13) — where students, academics, and inventors all work on engineering cyanobacteria at once.\nAlignment inside the subfield is as strong as field-wide (\\(\\bar\\delta = +0.0140\\), 90% positive)."
+    "section": "Projects enter clusters their city knows",
+    "text": "Projects enter clusters their city knows\n\n\n\nin_known = 1[city c has a paper in cluster k before year y]\n\n\n\n\nvalue\n\n\n\n\nprojects tested\n2,742\n\n\nown-city entry rate\n7.8%\n\n\nbaseline (random city)\n1.4%\n\n\nmean δ (own − baseline)\n+0.063\n\n\nt-test (H₀: δ = 0)\nt = 12.6\n\n\np-value\n&lt; 0.001\n\n\n\n\n\nFor each non-noise project in cluster k, city c, year y, ask whether the city had already published in that cluster. An iGEM Project is\n≈ 5.5× more likely to enter a cluster its city already publishes in"
   },
   {
-    "objectID": "slides.html#what-it-shows-and-what-it-cant",
-    "href": "slides.html#what-it-shows-and-what-it-cant",
+    "objectID": "slides.html#robustness-checks",
+    "href": "slides.html#robustness-checks",
     "title": "Patents, Papers, Parts & Planet",
-    "section": "What it shows, and what it can’t",
-    "text": "What it shows, and what it can’t\nEstablishes: real, size-independent local relatedness between a city’s projects and papers, and papers and patents; robust to country, cluster count, threshold, and model; anchored in physical parts.\nDoes not establish: causation. The three share many local causes — same universities, mentors, funders. We document the pattern; we do not identify the mechanism.\nPolicy: where students cluster is a signal of where a field is putting down roots. Funding student science and open tools is an early investment in the field."
+    "section": "Robustness Checks",
+    "text": "Robustness Checks\n\nDropping large countries. Paper × patent survives losing the US (p ≈ 0.04, still below 0.05). Paper × project leans on the US; without it the link softens to p ≈ 0.07\nChange the number of clusters. From 10 to 120 clusters, paper x patent and paper x project stay significant. project × patent never does.\nDrop the fine-tuning. The signal holds on base SPECTER2.\nComparison with the BioBrick Space. Cities that specialize in the same research areas use similar tools. Cities close together in cluster co-occurence space are close in the biobrick co-occurence space"
+  },
+  {
+    "objectID": "slides.html#which-reaches-a-citys-topic-first",
+    "href": "slides.html#which-reaches-a-citys-topic-first",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "Which reaches a city’s topic first?",
+    "text": "Which reaches a city’s topic first?\n\n\n\nHead-to-head within the 2009–2018 overlap window, counting only city-topics where both types appear:\n\n\n\nin the same city-topic\nwho’s first\n\n\n\n\nproject vs paper\nproject — 76% · p &lt; 0.001\n\n\nproject vs patent\nproject — 75% · n = 16 (ns)\n\n\npaper vs patent\nroughly tied\n\n\n\n\n\n76% of the time a city enters a cluster with an iGEM project before a paper"
+  },
+  {
+    "objectID": "slides.html#what-this-shows",
+    "href": "slides.html#what-this-shows",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "What this shows",
+    "text": "What this shows\nReal, size-independent local relatedness exists between a city’s iGEM projects and its papers, and its papers and its patents\nSo what? Funding student science and open tools helps. iGEM projects can be used as a useful indicator of where a city’s research might be moving next"
   },
   {
     "objectID": "slides.html#thank-you",
     "href": "slides.html#thank-you",
     "title": "Patents, Papers, Parts & Planet",
-    "section": "Thank you",
-    "text": "Thank you\nWebsite: zer0juice.github.io/synbiomap\nCode & data: github.com/Zer0Juice/synbiomap\nManuscript & this deck as PDF: on the Paper page\nAdvised by Frank Neffke (CSH) · Claudia Doblinger (TU Munich)"
+    "section": "Thank you!",
+    "text": "Thank you!\nWebsite — zer0juice.github.io/synbiomap\nCode & data — github.com/Zer0Juice/synbiomap\nManuscript & this deck (PDF) — on the Paper page\nAdvised by Frank Neffke (CSH) and Claudia Doblinger (TU Munich)"
+  },
+  {
+    "objectID": "slides.html#how-do-cities-specialize-over-time",
+    "href": "slides.html#how-do-cities-specialize-over-time",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "How do cities specialize over time?",
+    "text": "How do cities specialize over time?\n\n\n\n\nDifference-in-differences within a city and topic, after removing each city’s baseline and each topic’s global trend.\n\nPaper → patent: β = +0.355, p = 0.028 (N = 44). Academic work moves with later patenting in the same topic.\nProject → paper: clear in the larger two-type sample, underpowered with all three.\n\nThis is co-movement in time, not proof of cause."
+  },
+  {
+    "objectID": "slides.html#projects-and-papers-in-time",
+    "href": "slides.html#projects-and-papers-in-time",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "Projects and papers in time",
+    "text": "Projects and papers in time\n\nIn the two-type sample the project–paper similarity peaks when papers come about three years after projects. With all three types the profile flattens toward a null, so treat the ordering as suggestive rather than settled."
+  },
+  {
+    "objectID": "slides.html#the-permutation-nulls",
+    "href": "slides.html#the-permutation-nulls",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "The permutation nulls",
+    "text": "The permutation nulls\n\nEach grey histogram is the range of overlaps the within-country shuffle produces; the orange line is the real value. The two paper links sit out in the tail; project × patent sits inside the noise."
+  },
+  {
+    "objectID": "slides.html#dropping-a-whole-country",
+    "href": "slides.html#dropping-a-whole-country",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "Dropping a whole country",
+    "text": "Dropping a whole country\n\n\n\n\nRe-run the within-country permutation test after removing each large country in turn. Each bar is the link’s p-value once that country is gone; the dashed line is p = 0.05.\n\nPaper × patent stays below 0.05 for every drop, including the US (≈0.04) — it leans on no single country.\nPaper × project clears 0.05 in every case but one: drop the US and it softens to ≈0.07. We flag this openly.\n\nThe red bar is dropping the US."
+  },
+  {
+    "objectID": "slides.html#robustness-across-topic-counts",
+    "href": "slides.html#robustness-across-topic-counts",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "Robustness across topic counts",
+    "text": "Robustness across topic counts\n\nFrom 10 to 120 topics, paper × project and paper × patent stay significant; project × patent never crosses. The result is not an accident of one clustering choice."
+  },
+  {
+    "objectID": "slides.html#base-vs-fine-tuned-specter2",
+    "href": "slides.html#base-vs-fine-tuned-specter2",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "Base vs fine-tuned SPECTER2",
+    "text": "Base vs fine-tuned SPECTER2\n\nThe co-membership result reproduces on base SPECTER2 across the whole topic-count sweep.\nFine-tuning on cross-type citation links tightens the excess and lowers the p-values; it does not manufacture the effect.\nThis answers the worry that the signal is an artifact of training the model on the same links we then test."
+  },
+  {
+    "objectID": "slides.html#is-this-reflected-by-the-biobricks",
+    "href": "slides.html#is-this-reflected-by-the-biobricks",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "Is this reflected by the BioBricks?",
+    "text": "Is this reflected by the BioBricks?\n\n\n\n\nIs this only an artifact of how the model reads text? Check it against something the model never saw.\n\nOne city-by-city distance from the mix of BioBrick part classes (promoter, CDS, terminator, …)\nCompare to the semantic topic distance\nMantel r = 0.127, p = 0.0005, 164 cities\n\nTwo windows, one of words and one of DNA parts, see the same shape."
+  },
+  {
+    "objectID": "slides.html#a-worked-thread-uppsala",
+    "href": "slides.html#a-worked-thread-uppsala",
+    "title": "Patents, Papers, Parts & Planet",
+    "section": "A worked thread: Uppsala",
+    "text": "A worked thread: Uppsala\nUppsala 2009’s Booze Bugs engineered cyanobacteria to make alcohol from sunlight and registered the parts. A 2014 paper cites the team’s own BioBrick. One city, competition to publication, in a single traceable thread."
   },
   {
     "objectID": "results.html",
@@ -340,7 +410,7 @@
     "href": "methods.html",
     "title": "Methods & data",
     "section": "",
-    "text": "Answering the question meant building a corpus that did not exist: student projects, academic papers, and patents in synthetic biology, each geocoded to a city, tied to a year, and carrying text we could embed. The three come from different worlds and arrive in different shapes, so most of the work was in the collecting and the cleaning. This page walks through how each artifact type was gathered, linked, embedded, and clustered."
+    "text": "Answering the question meant building a corpus that did not exist: student projects, academic papers, and patents in synthetic biology, each geocoded to a city, tied to a year, and carrying text we could embed. The three come from different worlds and arrive in different shapes, so most of the work was in the collecting and the cleaning. This page walks through how each artifact type was gathered, linked, embedded, and clustered.\nGeographic distribution of the three artifact types on one map. Toggle a type on the left to see it alone. Projects are the most concentrated, following iGEM’s university-competition structure; papers reach more cities; patents are the sparsest, clustered in established biotech hubs."
   },
   {
     "objectID": "methods.html#a-shared-corpus",
@@ -382,13 +452,13 @@
     "href": "methods.html#linking-the-layers-and-fine-tuning",
     "title": "Methods & data",
     "section": "Linking the layers and fine-tuning",
-    "text": "Linking the layers and fine-tuning\nPut the link sources together and the corpus becomes a network. Projects connect to papers through wiki citations and shared parts; parts connect to papers through source citations and full-text mentions; papers connect to patents through the Marx patent-paper pairs (Marx and Fuegi 2020); parts connect to each other through composition. No single source is complete, but together they lace the three artifact types into one graph. That connective tissue is what makes the next step possible: a model can only learn how different artifact types relate if it is shown examples of them relating.\nSPECTER2 was trained on paper-to-paper citations and had never seen a patent or a wiki. Fine-tuning nudges it toward our setting by training a small adapter on our own cross-type links, using a triplet loss. For an anchor document, a genuinely linked positive, and a hard negative (a document that is topically similar but not actually linked), the model is trained to keep the linked document closer than the unlinked one by a margin. Hard negatives are chosen deliberately, because easy ones (a genetics patent versus a paper on climate history) would train the model on a problem already solved. We assembled roughly 100,000 training pairs and held out about 10,000 for validation.\nA caution belongs here. Fine-tuning on links we selected could, in principle, manufacture the very relatedness the project then claims to find. We address it by running the main results on both the fine-tuned adapter and the base SPECTER2. The central result survives on the base model, and fine-tuning attenuates it slightly rather than inflating it, which is the pattern you expect when adaptation improves signal-to-noise but does not create the signal. The adapter sharpens the picture; it does not paint one that was not there.\n\n\n\n\n\n\nFigure 2: The data pipeline. Three independent streams are geocoded, then linked through cross-type citation pairs for fine-tuning. The fine-tuned model embeds all 17,826 artifacts into one 768-dimensional space, projected and clustered into 80 topics; city-level overlap is computed for the 387 cities with at least two co-present artifact types."
+    "text": "Linking the layers and fine-tuning\nPut the link sources together and the corpus becomes a network. Projects connect to papers through wiki citations and shared parts; parts connect to papers through source citations and full-text mentions; papers connect to patents through the Marx patent-paper pairs (Marx and Fuegi 2020); parts connect to each other through composition. No single source is complete, but together they lace the three artifact types into one graph. That connective tissue is what makes the next step possible: a model can only learn how different artifact types relate if it is shown examples of them relating.\nSPECTER2 was trained on paper-to-paper citations and had never seen a patent or a wiki. Fine-tuning nudges it toward our setting by training a small adapter on our own cross-type links, using a triplet loss. For an anchor document, a genuinely linked positive, and a hard negative (a document that is topically similar but not actually linked), the model is trained to keep the linked document closer than the unlinked one by a margin. Hard negatives are chosen deliberately, because easy ones (a genetics patent versus a paper on climate history) would train the model on a problem already solved. We assembled roughly 100,000 training pairs and held out about 10,000 for validation.\nA caution belongs here. Fine-tuning on links we selected could, in principle, manufacture the very relatedness the project then claims to find. We address it by running the main results on both the fine-tuned adapter and the base SPECTER2. The central result survives on the base model, and fine-tuning attenuates it slightly rather than inflating it, which is the pattern you expect when adaptation improves signal-to-noise but does not create the signal. The adapter sharpens the picture; it does not paint one that was not there.\n\n\n\n\n\n\nFigure 1: The data pipeline. Three independent streams are geocoded, then linked through cross-type citation pairs for fine-tuning. The fine-tuned model embeds all 17,826 artifacts into one 768-dimensional space, projected and clustered into 80 topics; city-level overlap is computed for the 387 cities with at least two co-present artifact types."
   },
   {
     "objectID": "methods.html#embedding-projection-and-clustering",
     "href": "methods.html#embedding-projection-and-clustering",
     "title": "Methods & data",
     "section": "Embedding, projection, and clustering",
-    "text": "Embedding, projection, and clustering\nWith the corpus assembled and the model fine-tuned, we embedded everything. Each artifact becomes a vector of 768 numbers standing for its meaning, and from this point on a student project and a patent are two points in the same space, with a computable distance between them. The whole corpus becomes one cloud of points, and every question that follows is a question about the shape of that cloud.\nA 768-dimensional cloud is not something we can look at or cluster reliably. As dimensions grow, all pairwise distances converge toward the same value, so “near” and “far” stop carrying information. This is the curse of dimensionality (Bellman 1957). We reduce the dimensions first with UMAP, which learns a low-dimensional map that keeps each point’s near neighbors close while spreading out points that were far apart (McInnes et al. 2018). We reduce to about sixty dimensions for clustering (well-behaved geometry, but still enough to separate similar subfields) and all the way to two dimensions for the map below.\n\n\n\n\n\n\nFigure 3: The corpus in two dimensions. Every project, paper, and patent is a point, placed by UMAP so that semantically similar artifacts fall near one another. Colour marks the artifact type.\n\n\n\nTo turn the visible structure into something countable, we clustered by topic with HDBSCAN, which groups points that crowd together densely and, importantly, leaves genuinely scattered points unassigned rather than forcing every document into a group (Campello et al. 2013). Run on the reduced embeddings, it found 80 clusters: dense knots of projects, papers, and patents that share a subject. A cluster here is an empirical topic, discovered from the text rather than imposed from a list.\nEach cluster arrives as a numbered bag of documents with no name. For each, we passed the titles and abstracts of its most representative documents to a language model and asked what they had in common; a human then checked and, where needed, corrected the label. Of the 80 labels, roughly a quarter needed correcting, usually where the model latched onto vocabulary that fit the cluster’s core but not its edges. This mirrors the whole method in miniature: the machine reads at a scale no person could, and the human supplies the judgment to catch where it overfit. Neither alone would do it well.\n\n\n\n\n\n\nFigure 4: The same map with topic clusters labelled. The cyanobacterial and fermentation clusters that make up the carbon-capture case study sit close together.\n\n\n\nWith the corpus built, embedded, clustered, and tagged, the data is finally ready to be questioned. The Results do the questioning."
+    "text": "Embedding, projection, and clustering\nWith the corpus assembled and the model fine-tuned, we embedded everything. Each artifact becomes a vector of 768 numbers standing for its meaning, and from this point on a student project and a patent are two points in the same space, with a computable distance between them. The whole corpus becomes one cloud of points, and every question that follows is a question about the shape of that cloud.\nA 768-dimensional cloud is not something we can look at or cluster reliably. As dimensions grow, all pairwise distances converge toward the same value, so “near” and “far” stop carrying information. This is the curse of dimensionality (Bellman 1957). We reduce the dimensions first with UMAP, which learns a low-dimensional map that keeps each point’s near neighbors close while spreading out points that were far apart (McInnes et al. 2018). We reduce to about sixty dimensions for clustering (well-behaved geometry, but still enough to separate similar subfields) and all the way to two dimensions for the map below.\n\n\n\n\n\n\nFigure 2: The corpus in two dimensions. Every project, paper, and patent is a point, placed by UMAP so that semantically similar artifacts fall near one another. Colour marks the artifact type.\n\n\n\nTo turn the visible structure into something countable, we clustered by topic with HDBSCAN, which groups points that crowd together densely and, importantly, leaves genuinely scattered points unassigned rather than forcing every document into a group (Campello et al. 2013). Run on the reduced embeddings, it found 80 clusters: dense knots of projects, papers, and patents that share a subject. A cluster here is an empirical topic, discovered from the text rather than imposed from a list.\nEach cluster arrives as a numbered bag of documents with no name. For each, we passed the titles and abstracts of its most representative documents to a language model and asked what they had in common; a human then checked and, where needed, corrected the label. Of the 80 labels, roughly a quarter needed correcting, usually where the model latched onto vocabulary that fit the cluster’s core but not its edges. This mirrors the whole method in miniature: the machine reads at a scale no person could, and the human supplies the judgment to catch where it overfit. Neither alone would do it well.\n\n\n\n\n\n\nFigure 3: The same map with topic clusters labelled. The cyanobacterial and fermentation clusters that make up the carbon-capture case study sit close together.\n\n\n\nWith the corpus built, embedded, clustered, and tagged, the data is finally ready to be questioned. The Results do the questioning."
   }
 ]
