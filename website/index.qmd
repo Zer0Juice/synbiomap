@@ -7,20 +7,28 @@ toc: false
 
 ```{=html}
 <style>
-  /* Let the embedded deck fill the window under the navbar, wiki-style. */
+  /* Full-bleed: break the deck out of Quarto's content column so it spans
+     the entire browser width, edge to edge, and fills the window height. */
+  html, body { overflow-x: hidden; }
   #talk-embed {
-    width: 100%;
-    height: calc(100vh - 96px);
+    position: relative;
+    left: 50%;
+    right: 50%;
+    width: 100vw;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: -0.5rem;
+    height: calc(100vh - 60px);
     min-height: 480px;
-    border: 1px solid var(--bs-border-color, #dcdcdc);
-    border-radius: 8px;
+    border: 0;
+    display: block;
     background: #fdf6e3; /* solarized-light paper, avoids a white flash while loading */
   }
   #talk-caption {
     text-align: center;
     font-size: 0.85rem;
     color: #6c757d;
-    margin: 0.5rem 0 0;
+    margin: 0.6rem 0 0;
   }
 </style>
 <iframe id="talk-embed"
@@ -28,8 +36,5 @@ toc: false
         title="Patents, Papers, Parts & Planet — scrolling talk"
         allowfullscreen
         loading="eager"></iframe>
+<p id="talk-caption">Scroll through the talk above &middot; <a href="slides.html" target="_blank" rel="noopener">open the full-screen deck ↗</a> &middot; <a href="overview.html">read the write-up →</a></p>
 ```
-
-::: {style="text-align:center; font-size:0.85rem; color:#6c757d; margin-top:0.5rem;"}
-Scroll through the talk above &middot; [open the full-screen deck ↗](slides.qmd){target="_blank"} &middot; [read the write-up →](overview.qmd)
-:::
