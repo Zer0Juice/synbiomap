@@ -8,9 +8,15 @@ text we could embed. The three come from different worlds and arrive in differen
 of the work was in the collecting and the cleaning. This page walks through how each artifact type
 was gathered, linked, embedded, and clustered.
 
-![Geographic distribution of the three artifact types. Projects (left) are the most concentrated,
-following iGEM's university-competition structure; papers (centre) reach more cities; patents
-(right) are sparsest, clustered in established biotech hubs.](assets/figures/world_map.png){#fig-worldmap}
+```{=html}
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<div id="methods-geo-map"></div>
+<script src="assets/js/methods_map.js"></script>
+```
+
+Geographic distribution of the three artifact types on one map. Toggle a type on the left to see it
+alone. Projects are the most concentrated, following iGEM's university-competition structure; papers
+reach more cities; patents are the sparsest, clustered in established biotech hubs.
 
 ## A shared corpus
 

@@ -1,11 +1,10 @@
 ---
-title: "Patents, Papers, Parts & Planet"
-subtitle: "Do a city's students, academics, and inventors work on the same things?"
-author: "Zakhary Roth · Complexity Science Hub · advised by Frank Neffke & Claudia Doblinger"
-date: "July 2026"
+title: Patents, Papers, Parts & Planet
+subtitle: Mapping Innovation in Synthetic Biology
+author: Zakhary Roth · Complexity Science Hub · advised by Frank Neffke & Claudia Doblinger
 format:
   revealjs:
-    theme: simple
+    theme: serif
     slide-number: true
     controls: true
     progress: true
@@ -14,66 +13,92 @@ format:
     height: 700
     margin: 0.08
     highlight-style: github
-    footer: "Patents, Papers, Parts & Planet"
+    footer: Patents, Papers, Parts & Planet
 ---
 
-## The question
+## Motivation
 
-Biology used to read life. Now it writes it. Synthetic biology engineers organisms, among them microbes that pull carbon back out of the air. The field is young and unevenly spread: a handful of cities do most of the work, and it is hard to watch from outside.
-
-iGEM is a way in. Each year students around the world build synthetic-biology projects, register their DNA parts in an open catalogue, and post a public wiki. It is a rare, geotagged record of people learning the field.
+- Climate Crisis
+- Biology has become Synthetic
+- Engineered cyanobacteria might be the answer
+- SynBio is hard to study, certain regions dominate
+- iGEM student projects may provide insights
 
 **Do a city's students, academics, and inventors work on the same things?**
 
-::: {.callout-note}
-We test semantic relatedness and co-location, not causation.
+
+## Data
+
+| Source                |           Records |
+| --------------------- | ----------------: |
+| iGEM registry + wikis |    4,606 projects |
+| OpenAlex (keyword)    |     10,319 papers |
+| Oldham USPTO set      |     2,901 patents |
+| iGEM parts registry   | ~89,000 BioBricks |
+
+**17,826 documents across the three text types**
+
+## Embeddings
+
+- SPECTER2 trained on title and abstract
+- Relatedness = cosine distance
+- Fine-tuned on ~100,000 cross-type links
+
+## Mapping the Field
+
+::: {.exp-slide-caption}
+Every project, paper, and patent in one shared semantic space (left) and on the world map (right). Click a point, a **cluster label**, or a **city** to light the same work up across both views.
 :::
 
-## Building the corpus
+```{=html}
+<style>
+  /* Fit the linked explorer inside a slide and the scrolling deck. */
+  #explorer-app { font-size: 0.8rem; }
+  #exp-umap, #exp-map { height: min(500px, 50vh) !important; }
+  .exp-slide-caption { font-size: 0.6em; color: #586e75; margin: 0 0 0.4em; line-height: 1.35; }
+</style>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<div id="explorer-app"></div>
+<script src="assets/js/explorer.js"></script>
+<script>
+/* Plotly draws at 0x0 inside a hidden reveal slide. Re-fit the two panels
+   whenever this slide scrolls or flips into view (present mode + scroll view). */
+(function () {
+  function bump() {
+    ["exp-umap", "exp-map"].forEach(function (id) {
+      var d = document.getElementById(id);
+      if (d && window.Plotly && d.data) Plotly.Plots.resize(d);
+    });
+    window.dispatchEvent(new Event("resize"));
+  }
+  var app = document.getElementById("explorer-app");
+  if (app && "IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) setTimeout(bump, 80); });
+    }, { threshold: 0.05 }).observe(app);
+  }
+}());
+</script>
+```
 
-Four kinds of record, one shared schema, every document pinned to a city.
-
-| Source | Records | Geocoded to |
-|---|--:|---|
-| iGEM registry + wikis | 4,606 projects | team city |
-| OpenAlex (keyword) | 10,319 papers | institution city |
-| Oldham USPTO set | 2,901 patents | inventor cities (Breschi & Lissoni 2001) |
-| iGEM parts registry | ~89,000 BioBricks | team city |
-
-**17,826 documents across the three text types.** Each carries id, type, title, text, year, city, country, and a carbon-capture flag.
-
-## Reading meaning as numbers
-
-- SPECTER2 reads a title and abstract and returns 768 numbers. Work about the same thing lands close together, so relatedness is just cosine distance.
-- We fine-tuned it on ~100,000 cross-type links: iGEM wikis citing DOIs, and patent–paper pairs.
-- Projects, papers, and patents share one space, so a student wiki and a patent are directly comparable.
-
-The result survives on the plain, un-tuned model too. Fine-tuning sharpens the signal; it does not create it.
-
-## The map of the field
-
-![](assets/figures/tripartite_topic_map.png){width="60%" fig-align="center"}
-
-One UMAP of all 17,826 documents, sorted by HDBSCAN into 80 topics (labels drafted by an LLM, checked by hand). Papers cover the whole field; projects and patents each gather in their own corners, and both sit against the papers.
-
-## The measure that fails
+## Average Relatedness
 
 ::: {.columns}
 ::: {.column width="55%"}
 ![](assets/figures/centroid_size_artifact.png){width="100%"}
 :::
 ::: {.column width="45%"}
-Average a city's projects into one vector, its papers into another, take the cosine.
+Averaging a city's projects into one vector, its papers into another, and taking cosine distance between the two vectors
 
-- Similarity ≈ 0.95 almost everywhere
-- But it tracks city size: **r = 0.71**, about half the variance
+- tracks city size: **r = 0.71**, about half the variance
 - It measures how much a city publishes, not what
 
-Keep it as a yardstick and count topics instead.
+We need a finer grained look
+
 :::
 :::
 
-## The measure that works
+## Topic Clustering
 
 Give each city a profile over the 80 topics, scaled to unit length. The overlap of two artifact types is the cosine of their profiles:
 
@@ -87,22 +112,22 @@ One number means nothing on its own, so we test it against a **within-country pe
 
 | link | cities | excess | *p* | same-topic lift | beats null? |
 |---|:--:|:--:|:--:|:--:|:--:|
-| paper × project | 120 | +0.0102 | 0.0065 | 1.30× | ✅ |
-| paper × patent | 44 | +0.0347 | 0.0065 | 1.27× | ✅ |
-| project × patent | 28 | +0.0043 | 0.227 | 0.99× | ❌ |
+| paper × project | 120 | +0.0102 | 0.0065 | 1.30× | Y |
+| paper × patent | 44 | +0.0347 | 0.0065 | 1.27× | Y |
+| project × patent | 28 | +0.0043 | 0.227 | 0.99× | N |
 
 A city's papers share topics with both its projects and its patents. The straight project-to-patent link does not survive once country and size are held fixed.
 
 **The science a city publishes is the common ground its students and its inventors both build on.**
 
-## Trying to break it
+## Robustness Checks
 
-- **Drop a whole country.** Paper × patent survives losing the US (*p* ≈ 0.001). Paper × project leans on the US and China; without the US it softens to *p* = 0.069. We say so plainly.
+- **Drop a whole country.** Paper × patent survives losing the US (*p* ≈ 0.001). Paper × project leans on the US and China; without the US it softens to *p* = 0.069
 - **Change the topic count.** From 10 to 120 clusters, both paper links stay significant; project × patent never does.
 - **Starve the sample.** Squeeze a working link down to 28 cities and it often reads as noise. At 28 cities the project–patent leg is simply undetected — too little data to call it either way.
 - **Drop the fine-tuning.** The signal holds on base SPECTER2.
 
-## The parts agree
+## BioBrick Space Robustness Check
 
 ::: {.columns}
 ::: {.column width="52%"}

@@ -233,3 +233,95 @@ def three_way_permutation(
         "excess": observed - float(null.mean()),
         "p_value": float(p), "null": null,
     }
+
+
+def relatedness_lift(
+    clustered: pd.DataFrame,
+    k_clusters: int,
+    type_a: str,
+    type_b: str,
+    min_docs: int = 1,
+    type_col: str = "type",
+    city_col: str = "city_key",
+    label_col: str = "cluster_label",
+    topic_fe: bool = True,
+) -> dict:
+    """
+    How much more likely is a city to be active in artifact type B in a research
+    cluster where it is already active in type A, net of how big the city is and how
+    popular the cluster is?
+
+    This turns the abstract co-membership result into a plain effect size. The unit is
+    a city x cluster cell; the "treatment" is "this city has type A here" and the
+    outcome is "this city has type B here". City and cluster fixed effects play the
+    role of the two difference-in-differences subtractions: the city effect removes
+    each city's overall productivity (a prolific city is active everywhere), the
+    cluster effect removes each cluster's overall popularity (a crowded topic attracts
+    everyone). What is left on the treatment coefficient is the within-city,
+    within-field co-location -- type B concentrating in the same clusters as type A.
+
+    This is the principle of relatedness (Hidalgo et al. 2007, Science; Neffke, Henning
+    & Boschma 2011, Economic Geography) read on the shared topic space, where "related"
+    is literally "same cluster" rather than a proxy. It is an association, not a cause:
+    the fixed effects strip out size and popularity but not a city's shared local
+    interest in a topic, which can pull all three artifact types at once. It is also
+    near-symmetric, so it does not on its own say A came before B.
+
+    Cities are those active in BOTH registers, since a city with no type-B activity
+    anywhere carries no within-city variation to learn from.
+
+    topic_fe toggles the second subtraction. With topic_fe=True (default) the model
+    removes both city size and cluster popularity -- the strict, standard relatedness
+    specification. With topic_fe=False it removes only city size, so the lift also
+    counts a city's shared pull toward globally popular clusters; the gap between the
+    two tells you how much of the co-location is local specificity versus popularity.
+
+    Returns the linear-probability lift in percentage points (`lpm_pp`) and an adjusted
+    relative risk (`adj_rel_risk`, "x times as likely").
+    """
+    import statsmodels.formula.api as smf
+
+    valid = clustered[clustered[label_col] >= 0]
+    cities_a = set(valid.loc[valid[type_col] == type_a, city_col])
+    cities_b = set(valid.loc[valid[type_col] == type_b, city_col])
+    cities = sorted(cities_a & cities_b)
+
+    def _presence(typ: str) -> dict:
+        cnt = valid[valid[type_col] == typ].groupby([city_col, label_col]).size()
+        out = defaultdict(set)
+        for (c, k), n in cnt.items():
+            if n >= min_docs:
+                out[c].add(int(k))
+        return out
+    pa, pb = _presence(type_a), _presence(type_b)
+
+    rows = []
+    for c in cities:
+        ta, tb = pa.get(c, set()), pb.get(c, set())
+        for k in range(k_clusters):
+            rows.append((c, k, int(k in ta), int(k in tb)))
+    df = pd.DataFrame(rows, columns=["city", "topic", "treat", "outcome"])
+
+    # Fixed-effects linear probability model, SEs clustered by city. City FE always;
+    # topic FE optional (the second, popularity-removing subtraction).
+    formula = "outcome ~ treat + C(city)" + (" + C(topic)" if topic_fe else "")
+    m = smf.ols(formula, data=df).fit(
+        cov_type="cluster", cov_kwds={"groups": df["city"]})
+    pp = float(m.params["treat"])
+
+    # Adjusted relative risk: mean predicted P(B) if every cell were treated vs not.
+    # Only meaningful when the linear model's average predictions stay in (0, 1];
+    # a negative lift can push them out of range, where a risk ratio is undefined.
+    _p1 = float(m.predict(df.assign(treat=1)).mean())
+    _p0 = float(m.predict(df.assign(treat=0)).mean())
+    _rr = (_p1 / _p0) if (_p0 > 0 and _p1 >= 0) else float("nan")
+
+    return {
+        "type_a": type_a, "type_b": type_b, "topic_fe": topic_fe,
+        "n_cities": len(cities), "n_obs": int(len(df)),
+        "base_rate": float(df["outcome"].mean()),
+        "treated_rate": float(df.loc[df.treat == 1, "outcome"].mean()),
+        "untreated_rate": float(df.loc[df.treat == 0, "outcome"].mean()),
+        "lpm_pp": pp, "lpm_se": float(m.bse["treat"]), "lpm_p": float(m.pvalues["treat"]),
+        "adj_rel_risk": _rr,
+    }
