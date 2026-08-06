@@ -2,6 +2,7 @@
 title: Patents, Papers, Parts & Planet
 subtitle: Mapping Innovation in Synthetic Biology
 author: Zakhary Roth
+institute: "Complexity Science Hub · Technical University of Munich"
 format:
   revealjs:
     theme: serif
@@ -82,13 +83,20 @@ format:
 
 ## Calculating Relatedness
 
-
-
+::: {.columns}
+::: {.column width="42%"}
 Averaging a city's projects into one vector, its papers into another, and taking cosine distance between the two vectors
 
-
-
 **90% of projects are semantically closer to their own city’s average paper than to a random city**
+:::
+
+::: {.column width="58%"}
+```{=html}
+<div id="alignment-app"></div>
+<script src="assets/js/alignment.js"></script>
+```
+:::
+:::
 
 ## The Problem with Averaging Vectors
 
@@ -123,13 +131,24 @@ Averaging a city's projects into one vector, its papers into another, and taking
 
 ## Topic Profiling
 
+::: {.columns}
+::: {.column width="40%"}
 Give each city a profile over the 80 topics, scaled to unit length. The overlap of two artifact types is the cosine of their profiles:
 
 `overlap = Σ over topics of (paper share) × (project share)`
 
 Large when the two types weight the same topics, small when they scatter
+:::
 
-## Papers are the hub
+::: {.column width="60%"}
+```{=html}
+<div id="topic-profile-app"></div>
+<script src="assets/js/topic_profile.js"></script>
+```
+:::
+:::
+
+## Papers Link Patents and Projects
 
 | link | cities | excess | *p* | same-topic lift | beats null? |
 |---|:--:|:--:|:--:|:--:|:--:|
@@ -170,9 +189,9 @@ more likely to enter a cluster its city already publishes in
 ## Robustness Checks
 
 - **Dropping large countries.** Paper × patent survives losing the US (*p* ≈ 0.04, still below 0.05). Paper × project leans on the US; without it the link softens to *p* ≈ 0.07
-- **Change the number of clusters.** From 10 to 120 clusters, paper x patent and paper x project stay significant. project × patent never does.
-- **Drop the fine-tuning.** The signal holds on base SPECTER2.
-- **Comparison with the BioBrick Space**. Cities that specialize in the same research areas use similar tools. Cities close together in cluster co-occurence space are close in the biobrick co-occurence space
+- **Changing number of clusters.** From 10 to 120 clusters, paper x patent and paper x project stay significant. project × patent never does.
+- **Dropping fine-tuning.** The signal holds on base SPECTER2.
+- **Comparison with BioBrick Relatedness**. Cities that specialize in the same research areas use similar tools. Cities close together in cluster co-occurence space are close in the biobrick co-occurence space
 
 ## Which reaches a city's topic first?
 
