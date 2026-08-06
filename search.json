@@ -242,7 +242,7 @@
     "href": "slides.html#calculating-relatedness",
     "title": "Patents, Papers, Parts & Planet",
     "section": "Calculating Relatedness",
-    "text": "Calculating Relatedness\nAveraging a city’s projects into one vector, its papers into another, and taking cosine distance between the two vectors\n90% of projects are semantically closer to their own city’s average paper than to a random city"
+    "text": "Calculating Relatedness\n\n\nAveraging a city’s projects into one vector, its papers into another, and taking cosine distance between the two vectors\n90% of projects are semantically closer to their own city’s average paper than to a random city"
   },
   {
     "objectID": "slides.html#the-problem-with-averaging-vectors",
@@ -256,14 +256,14 @@
     "href": "slides.html#topic-profiling",
     "title": "Patents, Papers, Parts & Planet",
     "section": "Topic Profiling",
-    "text": "Topic Profiling\nGive each city a profile over the 80 topics, scaled to unit length. The overlap of two artifact types is the cosine of their profiles:\noverlap = Σ over topics of (paper share) × (project share)\nLarge when the two types weight the same topics, small when they scatter"
+    "text": "Topic Profiling\n\n\nGive each city a profile over the 80 topics, scaled to unit length. The overlap of two artifact types is the cosine of their profiles:\noverlap = Σ over topics of (paper share) × (project share)\nLarge when the two types weight the same topics, small when they scatter"
   },
   {
-    "objectID": "slides.html#papers-are-the-hub",
-    "href": "slides.html#papers-are-the-hub",
+    "objectID": "slides.html#papers-link-patents-and-projects",
+    "href": "slides.html#papers-link-patents-and-projects",
     "title": "Patents, Papers, Parts & Planet",
-    "section": "Papers are the hub",
-    "text": "Papers are the hub\n\n\n\nlink\ncities\nexcess\np\nsame-topic lift\nbeats null?\n\n\n\n\npaper × project\n120\n+0.0102\n0.0065\n1.30×\nY\n\n\npaper × patent\n44\n+0.0347\n0.0065\n1.27×\nY\n\n\nproject × patent\n28\n+0.0043\n0.227\n0.99×\nN\n\n\n\nA city’s papers share topics with its projects and patents. The project-to-patent link is not significant when country and size are held fixed fixed.\nThe science a city publishes is the common ground between student and Commercial Research"
+    "section": "Papers Link Patents and Projects",
+    "text": "Papers Link Patents and Projects\n\n\n\nlink\ncities\nexcess\np\nsame-topic lift\nbeats null?\n\n\n\n\npaper × project\n120\n+0.0102\n0.0065\n1.30×\nY\n\n\npaper × patent\n44\n+0.0347\n0.0065\n1.27×\nY\n\n\nproject × patent\n28\n+0.0043\n0.227\n0.99×\nN\n\n\n\nA city’s papers share topics with its projects and patents. The project-to-patent link is not significant when country and size are held fixed fixed.\nThe science a city publishes is the common ground between student and Commercial Research"
   },
   {
     "objectID": "slides.html#projects-enter-clusters-their-city-knows",
@@ -277,7 +277,7 @@
     "href": "slides.html#robustness-checks",
     "title": "Patents, Papers, Parts & Planet",
     "section": "Robustness Checks",
-    "text": "Robustness Checks\n\nDropping large countries. Paper × patent survives losing the US (p ≈ 0.04, still below 0.05). Paper × project leans on the US; without it the link softens to p ≈ 0.07\nChange the number of clusters. From 10 to 120 clusters, paper x patent and paper x project stay significant. project × patent never does.\nDrop the fine-tuning. The signal holds on base SPECTER2.\nComparison with the BioBrick Space. Cities that specialize in the same research areas use similar tools. Cities close together in cluster co-occurence space are close in the biobrick co-occurence space"
+    "text": "Robustness Checks\n\nDropping large countries. Paper × patent survives losing the US (p ≈ 0.04, still below 0.05). Paper × project leans on the US; without it the link softens to p ≈ 0.07\nChanging number of clusters. From 10 to 120 clusters, paper x patent and paper x project stay significant. project × patent never does.\nDropping fine-tuning. The signal holds on base SPECTER2.\nComparison with BioBrick Relatedness. Cities that specialize in the same research areas use similar tools. Cities close together in cluster co-occurence space are close in the biobrick co-occurence space"
   },
   {
     "objectID": "slides.html#which-reaches-a-citys-topic-first",

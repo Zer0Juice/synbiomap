@@ -139,7 +139,10 @@
 <div class="quarto-title-author-name">
 Zakhary Roth 
 </div>
-</div>
+        <p class="quarto-title-affiliation">
+            Complexity Science Hub · Technical University of Munich
+          </p>
+    </div>
 </div>
 
 </section>
@@ -226,8 +229,14 @@ Zakhary Roth
 </section>
 <section id="calculating-relatedness" class="slide level2">
 <h2>Calculating Relatedness</h2>
+<div class="columns">
+<div class="column" style="width:42%;">
 <p>Averaging a city’s projects into one vector, its papers into another, and taking cosine distance between the two vectors</p>
 <p><strong>90% of projects are semantically closer to their own city’s average paper than to a random city</strong></p>
+</div><div class="column" style="width:58%;">
+<div id="alignment-app"></div>
+<script src="assets/js/alignment.js"></script>
+</div></div>
 </section>
 <section id="the-problem-with-averaging-vectors" class="slide level2">
 <h2>The Problem with Averaging Vectors</h2>
@@ -280,12 +289,18 @@ Zakhary Roth
 </section>
 <section id="topic-profiling" class="slide level2">
 <h2>Topic Profiling</h2>
+<div class="columns">
+<div class="column" style="width:40%;">
 <p>Give each city a profile over the 80 topics, scaled to unit length. The overlap of two artifact types is the cosine of their profiles:</p>
 <p><code>overlap = Σ over topics of (paper share) × (project share)</code></p>
 <p>Large when the two types weight the same topics, small when they scatter</p>
+</div><div class="column" style="width:60%;">
+<div id="topic-profile-app"></div>
+<script src="assets/js/topic_profile.js"></script>
+</div></div>
 </section>
-<section id="papers-are-the-hub" class="slide level2">
-<h2>Papers are the hub</h2>
+<section id="papers-link-patents-and-projects" class="slide level2">
+<h2>Papers Link Patents and Projects</h2>
 <table class="caption-top">
 <thead>
 <tr class="header">
@@ -377,9 +392,9 @@ Zakhary Roth
 <h2>Robustness Checks</h2>
 <ul>
 <li><strong>Dropping large countries.</strong> Paper × patent survives losing the US (<em>p</em> ≈ 0.04, still below 0.05). Paper × project leans on the US; without it the link softens to <em>p</em> ≈ 0.07</li>
-<li><strong>Change the number of clusters.</strong> From 10 to 120 clusters, paper x patent and paper x project stay significant. project × patent never does.</li>
-<li><strong>Drop the fine-tuning.</strong> The signal holds on base SPECTER2.</li>
-<li><strong>Comparison with the BioBrick Space</strong>. Cities that specialize in the same research areas use similar tools. Cities close together in cluster co-occurence space are close in the biobrick co-occurence space</li>
+<li><strong>Changing number of clusters.</strong> From 10 to 120 clusters, paper x patent and paper x project stay significant. project × patent never does.</li>
+<li><strong>Dropping fine-tuning.</strong> The signal holds on base SPECTER2.</li>
+<li><strong>Comparison with BioBrick Relatedness</strong>. Cities that specialize in the same research areas use similar tools. Cities close together in cluster co-occurence space are close in the biobrick co-occurence space</li>
 </ul>
 </section>
 <section id="which-reaches-a-citys-topic-first" class="slide level2">
