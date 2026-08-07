@@ -2,14 +2,10 @@
 title: "Results"
 ---
 
-This page is the analytical heart of the project. It follows the same path as the
-[tripartite notebook](https://github.com/Zer0Juice/synbiomap/blob/main/notebooks/02_tripartite_city_analysis.py):
-build up a measure of whether a city's projects, papers, and patents are related, watch the first
-one fail, replace it with one that holds, and then spend most of the effort trying to break the
-answer it gives. Everything runs on the shared semantic space from the [Methods](methods.qmd) page,
+This page describes the narrative arc of [this notebook](https://github.com/Zer0Juice/synbiomap/blob/main/notebooks/02_tripartite_city_analysis.py). We build up a measure of whether a city's projects, papers, and patents are related. Everything runs on the shared semantic space from the [Methods](methods.qmd) page,
 where all 17,826 artifacts sit as points and 80 topic clusters mark the field's dense regions.
 
-## The obvious measure, and why it fails
+## The First Measure
 
 Start with the simplest idea. Average each city's projects into one vector, average its papers into
 another, and measure the angle between them with cosine similarity. High similarity should mean the

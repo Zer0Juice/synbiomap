@@ -3,31 +3,26 @@ title: "Overview"
 subtitle: "Do a city's students, academics, and inventors in synthetic biology work on the same things?"
 ---
 
-For most of its history, biology read nature. It broke life into organs, then cells, then
-the genes beneath them, and slowly worked out the rules that hold a living thing together.
-Synthetic biology is the moment biology starts to write. We now compose new biological
-systems from standardized genetic parts, treating DNA as code and cells as hardware. The
-same power that has been reshaping the planet by accident could, aimed on purpose, help
-repair it. Engineered microbes can already pull carbon dioxide out of the air and turn it
-into fuel.
+Science and technology has advanced to the point where we can treat DNA as a
+programming language and living organisms as hardware. Cells are factories of protein
+production, and we can enter into their insides and fine-tune the machinery that makes them
+run. With standardized genetic parts and widely used assembly protocols, life itself has
+become a series of tools to optimize production. This is a new age of biotechnological
+innovation, with tools and standards spread around the world, and a lower barrier of entry
+than ever before to genetic engineering. This project studies different forms of research in
+Synthetic Biology, student projects and academic publications, to see if geography plays a
+role in determining the focus of research.
 
-The students in [iGEM](https://igem.org) are learning to hold that pen. Every year, thousands
-of them design and build a project from a shared kit of interchangeable DNA parts, and they
-write it all up on a public wiki. That makes iGEM something most young fields never get: an
-open, geotagged record of a field composing itself. This project asks what that record can
-tell us about where synthetic biology is putting down roots.
+Research Question
+**Are students, academics, and private industry researching the same topics in the cities they live and work?** 
 
-## The question
-
-Do cities whose students research a topic in synthetic biology also produce academic papers,
-and patents, in related areas? We put student projects, academic papers, and patents into one
-shared semantic space and test whether a city's three kinds of work land on the same specific
-topics more often than chance allows.
-
-The short answer is a qualified yes, with a specific shape. A city's papers line up with its
-projects, and its papers line up with its patents, but its projects and its patents stay
-further apart. Academic research is the middle link. The field is shaped like a star, with
-papers at the hub, not a triangle.
+Trends sweep across fields of study, but conventional wisdom holds
+that certain areas will collectively specialized in specific research areas or industries. The
+International Genetic Engineering Machine, or iGEM, is a nonprofit that advances Synthetic
+Biology (SynBio) education through the curation of an annual student research competition,
+and the data from this competition provides a potential wealth of insights into the process
+of innovation in this industry. We study the corpus of iGEM project data and compare it
+empirically to a body of academic SynBio publications and patent abstracts, seeing if geographically-influenced semantic relatedness can be established. Relatedness between iGEM projects, academic research, and patent abstracts is calculated, established, and empirically tested. Clusters are identified in the semantic space, and those related to carbon capture are inspected more in-depth.
 
 ## The corpus in numbers
 
@@ -42,23 +37,17 @@ All three are geocoded to a city and embedded into the same 768-dimensional spac
 fine-tuned [SPECTER2](https://huggingface.co/allenai/specter2) model, then grouped into 80
 topic clusters. 156 cities carry all three artifact types at once.
 
-::: {.callout-note}
-## A note on language
-This work is descriptive. We measure relatedness and co-location, and we test them hard, but
-we do not claim that student projects cause later papers or that papers cause patents. The
-three share many local causes, and observational data like this cannot separate them.
-:::
 
-## Where to go next
+## Navigating this site
 
-| Page | What you will find |
-|------|-------------------|
-| [Background](background.qmd) | Why a young field is hard to see, and why iGEM is a rare window into it |
-| [Methods & data](methods.qmd) | How the corpus was built, geocoded, embedded, and clustered |
-| [Results](results.qmd) | The full analysis: the measure that failed, the one that worked, and every attempt to break it |
-| [Case study: carbon capture](case-study.qmd) | Engineering cyanobacteria to turn light and CO₂ into fuel, city by city |
-| [Explorer](explorer.qmd) | Search any city and see its projects, papers, and patents in the shared space |
-| [Paper & slides](paper.qmd) | The full manuscript and the talk |
+| Page                                         | What you will find                                                                             |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| [Background](background.qmd)                 | Why this young field is hard to measure, and why iGEM is a rare window into it                 |
+| [Methods & data](methods.qmd)                | How the corpus was built, geocoded, embedded, and clustered                                    |
+| [Results](results.qmd)                       | The full analysis: the measure that failed, the one that worked, and every attempt to break it |
+| [Case study: carbon capture](case-study.qmd) | Engineering cyanobacteria to turn light and CO₂ into fuel, city by city                        |
+| [Explorer](explorer.qmd)                     | Search any city and see its projects, papers, and patents in the shared space                  |
+| [Paper & slides](paper.qmd)                  | The full manuscript and the talk                                                               |
 
-All code and data are on [GitHub](https://github.com/Zer0Juice/synbiomap). The pipeline is
+All code and data are on [GitHub](https://github.com/Zer0Juice/synbiomap). All analysis is
 built to be rebuilt: see [Reproducibility](reproducibility.qmd).
